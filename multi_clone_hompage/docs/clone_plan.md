@@ -63,16 +63,31 @@
 | 28 | `cooking-studio` | Private Kitchen Studio | `#7C2D12` (Orange Dark) | `#FB923C` (Orange) | ⏳ PENDING |
 | 29 | `surf-school` | Surfing School | `#164E63` (Teal Dark) | `#2DD4BF` (Teal) | ⏳ PENDING |
 | 30 | `whiskey-lounge` | Whiskey Lounge & Bar | `#451A03` (Brown Dark) | `#CA8A04` (Yellow Dark) | ⏳ PENDING |
-| 31 | `camping-outfitter` | Outdoor Camping Gear | `#1A2E05` (Forest Dark) | `#A3E635` (Lime) | ⏳ PENDING |
-| 32 | `barbershop` | Premium Barbershop | `#1F2937` (Gray Dark) | `#F97316` (Orange Warm) | ⏳ PENDING |
-| 33 | `tea-house` | Korean Traditional Tea House | `#292524` (Warm Stone) | `#A3E635` (Matcha) | ⏳ PENDING |
-| 34 | `vr-arcade` | VR Gaming Arcade | `#0F0F23` (Deep Navy) | `#8B5CF6` (Purple) | ⏳ PENDING |
-| 35 | `interior-design` | Interior Design Studio | `#18181B` (Zinc Dark) | `#E2E8F0` (Silver) | ⏳ PENDING |
-| 36 | `language-academy` | Language Academy | `#1E1B4B` (Indigo Dark) | `#60A5FA` (Blue) | ⏳ PENDING |
-| 37 | `wedding-planner` | Wedding Planning Studio | `#1A1523` (Plum Dark) | `#FDA4AF` (Rose) | ⏳ PENDING |
-| 38 | `dive-center` | Scuba Diving Center | `#042F2E` (Teal Deep) | `#34D399` (Emerald) | ⏳ PENDING |
-| 39 | `chocolate-atelier` | Artisan Chocolate Atelier | `#27160A` (Cocoa) | `#C2410C` (Burnt Sienna) | ⏳ PENDING |
-| 40 | `moto-garage` | Custom Motorcycle Garage | `#0C0A09` (Black Warm) | `#DC2626` (Red) | ⏳ PENDING |
+| 31 | `camping-outfitter` | Outdoor Camping Gear | `#1A2E05` (Forest Dark) | `#A3E635` (Lime) | ✅ DONE |
+| 32 | `barbershop` | Premium Barbershop | `#1F2937` (Gray Dark) | `#F97316` (Orange Warm) | ✅ DONE |
+| 33 | `tea-house` | Traditional Tea House | `#2C2824` (Warm Brown) | `#5D8A66` (Matcha Green) | ✅ DONE |
+| 34 | `vr-arcade` | VR Gaming Arcade | `#0F0F23` (Deep Navy) | `#8B5CF6` (Purple) | ✅ DONE |
+| 35 | `interior-design` | Interior Design Studio | `#18181B` (Zinc Dark) | `#E2E8F0` (Silver) | ✅ DONE |
+| 36 | `language-academy` | Language Academy | `#1E1B4B` (Indigo Dark) | `#60A5FA` (Blue) | ✅ DONE |
+| 37 | `wedding-planner` | Wedding Planning Studio | `#1A1523` (Plum Dark) | `#FDA4AF` (Rose) | ✅ DONE |
+| 38 | `dive-center` | Scuba Diving Center | `#042F2E` (Teal Deep) | `#34D399` (Emerald) | ✅ DONE |
+| 39 | `chocolate-atelier` | Artisan Chocolate Atelier | `#27160A` (Cocoa) | `#C2410C` (Burnt Sienna) | ✅ DONE |
+| 40 | `moto-garage` | Custom Motorcycle Garage | `#0C0A09` (Black Warm) | `#DC2626` (Red) | ✅ DONE |
+
+### Phase 4 (Clones 41-50) ✅ COMPLETE
+
+| # | Folder | Business | Primary Color | Accent | Status |
+|---|--------|----------|--------------|--------|--------|
+| 41 | `skydiving-center` | Skydiving Center | `#1E3A5F` (Sky Blue Dark) | `#F59E0B` (Amber) | ✅ DONE |
+| 42 | `escape-room` | Escape Room | `#1A1A2E` (Dark Indigo) | `#10B981` (Emerald) | ✅ DONE |
+| 43 | `rock-climbing` | Rock Climbing Gym | `#3D2817` (Brown Dark) | `#F97316` (Orange) | ✅ DONE |
+| 44 | `bakery` | Artisan Bakery | `#8B4513` (Saddle Brown) | `#FDB833` (Golden) | ✅ DONE |
+| 45 | `cocktail-bar` | Craft Cocktail Bar | `#1F1A2E` (Deep Purple) | `#EC4899` (Pink) | ✅ DONE |
+| 46 | `nail-salon` | Luxury Nail Salon | `#2D1B4E` (Deep Violet) | `#F472B6` (Hot Pink) | ✅ DONE |
+| 47 | `pet-grooming` | Premium Pet Grooming | `#064E3B` (Forest Dark) | `#34D399` (Mint) | ✅ DONE |
+| 48 | `yoga-studio` | Yoga & Meditation Studio | `#1F2937` (Slate) | `#A78BFA` (Lavender) | ✅ DONE |
+| 49 | `sneaker-store` | Sneaker Boutique | `#171717` (Black) | `#EF4444` (Red) | ✅ DONE |
+| 50 | `coworking-library` | Co-working Library | `#1B2838` (Steel Blue Dark) | `#60A5FA` (Sky Blue) | ✅ DONE |
 
 ---
 
@@ -568,19 +583,160 @@
 ### Phase 1: Template Creation ✅ DONE
 ### Phase 2A: Clone Generation Wave 1 (Clones 1-10) ✅ DONE
 ### Phase 2B: Clone Generation Wave 2 (Clones 11-20) ✅ DONE
-### Phase 3A: Clone Generation Wave 3 (Clones 21-25) 🔄 IN PROGRESS
-- Clone 21-25 (brewery, hotel, art gallery, pilates, organic farm)
-### Phase 3B: Clone Generation Wave 4 (Clones 26-30)
-- Clone 26-30 (watch atelier, ev station, cooking studio, surf school, whiskey lounge)
-### Phase 3C: Clone Generation Wave 5 (Clones 31-35)
-- Clone 31-35 (camping gear, barbershop, tea house, vr arcade, interior design)
-### Phase 3D: Clone Generation Wave 6 (Clones 36-40)
-- Clone 36-40 (language academy, wedding planner, dive center, chocolate atelier, moto garage)
-### Phase 4: Screenshots & Verification
-- Screenshots for clones 21-40
-- All images load from Unsplash
-- Animations work (GSAP, Swiper)
-- Responsive layout verified
+### Phase 3A: Clone Generation Wave 3 (Clones 21-25) ✅ DONE
+### Phase 3B: Clone Generation Wave 4 (Clones 26-30) ✅ DONE
+### Phase 3C: Clone Generation Wave 5 (Clones 31-35) ✅ DONE
+### Phase 3D: Clone Generation Wave 6 (Clones 36-40) ✅ DONE
+### Phase 4: Clone Generation Wave 7 (Clones 41-50) ✅ DONE
+
+---
+
+## Phase 5: New 10 Clones (51-60) ✅ COMPLETE
+
+| # | Folder | Business | Primary Color | Accent | Status |
+|---|--------|----------|--------------|--------|--------|
+| 51 | `skate-shop` | Skateboard Shop | `#0F0F0F` (Black) | `#FF0055` (Hot Pink) | ✅ DONE |
+| 52 | `record-store` | Vinyl Record Store | `#1A0A0A` (Dark Red) | `#FFD700` (Gold) | ✅ DONE |
+| 53 | `plant-nursery` | Plant Nursery & Garden | `#0D2818` (Forest Dark) | `#90EE90` (Light Green) | ✅ DONE |
+| 54 | `whiskey-distillery` | Whiskey Distillery | `#4A1C1C` (Mahogany) | `#C9A227` (Brass) | ✅ DONE |
+| 55 | `ice-cream-shop` | Artisan Ice Cream Shop | `#FFF5F5` (Cream White) | `#FF6B9D` (Strawberry Pink) | ✅ DONE |
+| 56 | `vintage-store` | Vintage Thrift Store | `#2D1B12` (Dark Brown) | `#D4AF37` (Antique Gold) | ✅ DONE |
+| 57 | `comic-book-store` | Comic Book Store | `#1A1A3E` (Dark Indigo) | `#FFD700` (Comic Yellow) | ✅ DONE |
+| 58 | `golf-club` | Private Golf Club | `#0B3D2E` (Deep Green) | `#FFFFFF` (White) | ✅ DONE |
+| 59 | `boxing-gym` | Boxing Gym & Training | `#8B0000` (Dark Red) | `#FFD700` (Champion Gold) | ✅ DONE |
+| 60 | `cocktail-mixology` | Cocktail Mixology Bar | `#0A0A15` (Deep Navy) | `#00FFFF` (Electric Cyan) | ✅ DONE |
+
+---
+
+## Phase 5 Clone Specifications (51-60)
+
+### Clone 51: skate-shop 🛹
+- **Brand**: GRIND HOUSE — Skateboard Shop & Community
+- **Colors**: Black (#0F0F0F), Hot Pink accent (#FF0055), Dark bg (#050505)
+- **Hero**: Urban street scene with skateboarder silhouette, neon glow effects, concrete texture
+- **UNIQUE DIFFERENTIATOR**:
+  - **Deck Collection** (replaces Portfolio): Skateboard deck display with graphic art, brand, size options
+  - **Spot Guide** (replaces SignageTypes): City skate spot map with difficulty ratings
+  - **Video Gallery** (new section): Trick tutorial video thumbnails with play overlay
+  - **Preloader**: Skateboard wheel spinning animation
+  - **Font**: Bebas Neue + Anton (bold street)
+  - **Special Animation**: Neon flicker effects, glitch text on hover, concrete grain overlay
+
+### Clone 52: record-store 🎵
+- **Brand**: VINYL VAULT — Premium Record Store
+- **Colors**: Dark Red (#1A0A0A), Gold accent (#FFD700), Dark bg (#0A0505)
+- **Hero**: Vintage record store interior with vinyl bins, warm amber lighting, nostalgia vibe
+- **UNIQUE DIFFERENTIATOR**:
+  - **Genre Collection** (replaces Portfolio): Record bins organized by genre with rotating vinyl animation
+  - **Featured Artists** (replaces SignageTypes): Artist spotlight cards with album discography
+  - **Listening Station** (new): Fake audio player UI with album art, tracklist, play button
+  - **Preloader**: Record spinning on turntable with needle drop
+  - **Font**: Space Mono + Crimson Pro (vintage analog)
+  - **Special Animation**: Vinyl spin effects, warm sepia tones, dust particle float
+
+### Clone 53: plant-nursery 🌱
+- **Brand**: VERDANT — Plant Nursery & Garden Center
+- **Colors**: Forest Dark (#0D2818), Light Green accent (#90EE90), Dark bg (#051A0C)
+- **Hero**: Lush greenhouse interior with tropical plants, natural light rays, organic feel
+- **UNIQUE DIFFERENTIATOR**:
+  - **Plant Categories** (replaces Portfolio): Indoor, Outdoor, Succulents, Tropicals — card grid with care level tags
+  - **Care Guides** (replaces SignageTypes): Water, Light, Temperature info cards for each plant type
+  - **Seasonal Calendar** (new): Monthly plant care calendar with seasonal tips
+  - **Preloader**: Sprouting seedling animation
+  - **Font**: Merriweather + Nunito (botanical warmth)
+  - **Special Animation**: Leaf particles floating, gentle growth animations, natural green gradients
+
+### Clone 54: whiskey-distillery 🥃
+- **Brand**: BARREL & BLADE — Whiskey Distillery
+- **Colors**: Mahogany (#4A1C1C), Brass accent (#C9A227), Dark bg (#1E0A0A)
+- **Hero**: Distillery interior with copper stills, aging barrels, warm amber glow
+- **UNIQUE DIFFERENTIATOR**:
+  - **Distillery Process** (replaces SignageTypes): From grain to glass — Malting > Mashing > Fermentation > Distillation > Aging timeline
+  - **Barrel Collection** (replaces Portfolio): Different aged whiskeys with tasting notes, ABV, price
+  - **Distillery Tour** (new): Step-by-step tour booking with date/time selection UI
+  - **Preloader**: Barrel filling animation with liquid flow
+  - **Font**: Playfair Display + Lora (distillery elegance)
+  - **Special Animation**: Amber liquid swirl, warm glow effects, wood grain texture
+
+### Clone 55: ice-cream-shop 🍦
+- **Brand**: FROST & CO. — Artisan Ice Cream
+- **Colors**: Cream White (#FFF5F5), Strawberry Pink accent (#FF6B9D), Dark bg (#1A0A10)
+- **Hero**: Close-up of artisan ice cream scoop with colorful toppings, pastel aesthetic
+- **UNIQUE DIFFERENTIATOR**:
+  - **Flavor Gallery** (replaces Portfolio): Colorful ice cream flavors with ingredients, allergen tags
+  - **Toppings Bar** (replaces SignageTypes): Candy, fruit, sauce options displayed as selectable items
+  - **Seasonal Specials** (new): Rotating special flavors with countdown timer
+  - **Preloader**: Ice cream scoop dripping animation
+  - **Font**: Quicksand + Dancing Script (playful sweet)
+  - **Special Animation**: Drip effects, pastel color palette, sparkle on hover
+
+### Clone 56: vintage-store 🧥
+- **Brand**: RETRO REVIVE — Vintage Thrift Store
+- **Colors**: Dark Brown (#2D1B12), Antique Gold accent (#D4AF37), Dark bg (#1A0F08)
+- **Hero**: Vintage store interior with racks of retro clothing, neon signage, 70s/80s vibe
+- **UNIQUE DIFFERENTIATOR**:
+  - **Era Collection** (replaces Portfolio): 50s, 60s, 70s, 80s, 90s — decade-filtered vintage items
+  - **Designer Spotlight** (replaces SignageTypes): Rare vintage designer pieces with provenance
+  - **Condition Guide** (new): Mint, Excellent, Good, Fair rating system explanation
+  - **Preloader**: Vintage TV static turning to logo
+  - **Font**: Playfair Display + Barlow (retro luxury)
+  - **Special Animation**: Film grain overlay, vintage photo filter, warm sepia transitions
+
+### Clone 57: comic-book-store 📚
+- **Brand**: PANEL ONE — Comic Book Store
+- **Colors**: Dark Indigo (#1A1A3E), Comic Yellow accent (#FFD700), Dark bg (#0A0A1E)
+- **Hero**: Comic book cover wall with superhero silhouettes, bold graphic novel style
+- **UNIQUE DIFFERENTIATOR**:
+  - **Publisher Vault** (replaces Portfolio): Marvel, DC, Image, Dark Horse — publisher-filtered comics
+  - **Character Gallery** (replaces SignageTypes): Hero/villain cards with power stats, first appearance
+  - **Issue Tracker** (new): Fake pull list UI showing weekly new releases
+  - **Preloader**: Comic panel page-flip animation
+  - **Font**: Bangers + Comic Neue (comic book bold)
+  - **Special Animation**: Speech bubble pop-ups, halftone dot patterns, dynamic impact fonts
+
+### Clone 58: golf-club ⛳
+- **Brand**: FAIRWAY RESERVE — Private Golf Club
+- **Colors**: Deep Green (#0B3D2E), White accent (#FFFFFF), Dark bg (#051A14)
+- **Hero**: Pristine golf course with morning mist, flag waving, exclusive resort feel
+- **UNIQUE DIFFERENTIATOR**:
+  - **Course Showcase** (replaces Portfolio): Hole-by-hole gallery with par, distance, difficulty
+  - **Membership Tiers** (replaces SignageTypes): Bronze, Silver, Platinum, Diamond — exclusive benefits
+  - **Pro Shop** (new): Golf gear and apparel preview with brand logos
+  - **Preloader**: Golf ball dropping into cup animation
+  - **Font**: Cinzel + Montserrat (prestige golf)
+  - **Special Animation**: Smooth grass sway, flag ripple, elegant gold accents
+
+### Clone 59: boxing-gym 🥊
+- **Brand**: IRON FIST — Boxing Gym & Training Center
+- **Colors**: Dark Red (#8B0000), Champion Gold accent (#FFD700), Dark bg (#1E0505)
+- **Hero**: Boxing ring with dramatic lighting, champion gloves, intense atmosphere
+- **UNIQUE DIFFERENTIATOR**:
+  - **Training Programs** (replaces Services): Boxing, Muay Thai, MMA, Fitness — class cards with schedule
+  - **Fight Record** (replaces Portfolio): Fighter profiles with win/loss stats, weight class
+  - **Gear Shop** (replaces SignageTypes): Gloves, pads, bags — equipment showcase with prices
+  - **Preloader**: Boxing glove punching animation
+  - **Font**: Oswald + Roboto (athletic power)
+  - **Special Animation**: Punch impact effects, spotlight glow, intensity pulse
+
+### Clone 60: cocktail-mixology 🍸
+- **Brand**: SOLSTICE — Cocktail Mixology Bar
+- **Colors**: Deep Navy (#0A0A15), Electric Cyan accent (#00FFFF), Dark bg (#050510)
+- **Hero**: Molecular gastronomy cocktail with smoke, LED glow, futuristic bar aesthetic
+- **UNIQUE DIFFERENTIATOR**:
+  - **Menu Collection** (replaces Portfolio): Signature cocktails with ingredients, flavor profile, glass type
+  - **Mixology Lab** (replaces SignageTypes): Bar tools, techniques, molecular ingredients showcase
+  - **Flavor Explorer** (new): Taste wheel UI — Sweet, Sour, Bitter, Umami selector
+  - **Preloader**: Cocktail shake animation with splash
+  - **Font**: Montserrat + Space Mono (modern mixology)
+  - **Special Animation**: LED glow effects, smoke/steam particles, color-changing gradients
+
+---
+
+### Phase 5: Screenshots & Verification ✅ DONE
+- Screenshots for clones 51-60 ✅ DONE
+- All images load from Unsplash ✅ DONE
+- Animations work (GSAP, Swiper) ✅ DONE
+- Responsive layout verified ✅ DONE
 
 ---
 
@@ -605,16 +761,176 @@
 | Clone 29: surf-school | ⏳ PENDING | |
 | Clone 30: whiskey-lounge | ⏳ PENDING | |
 | **--- Phase 3C: Clones 31-35 ---** | | |
-| Clone 31: camping-outfitter | ⏳ PENDING | |
-| Clone 32: barbershop | ⏳ PENDING | |
-| Clone 33: tea-house | ⏳ PENDING | |
-| Clone 34: vr-arcade | ⏳ PENDING | |
-| Clone 35: interior-design | ⏳ PENDING | |
+| Clone 31: camping-outfitter | ✅ DONE | 2026-02-15 |
+| Clone 32: barbershop | ✅ DONE | 2026-02-15 |
+| Clone 33: tea-house | ✅ DONE | 2026-02-15 |
+| Clone 34: vr-arcade | ✅ DONE | 2026-02-15 |
+| Clone 35: interior-design | ✅ DONE | 2026-02-15 |
 | **--- Phase 3D: Clones 36-40 ---** | | |
-| Clone 36: language-academy | ⏳ PENDING | |
-| Clone 37: wedding-planner | ⏳ PENDING | |
-| Clone 38: dive-center | ⏳ PENDING | |
-| Clone 39: chocolate-atelier | ⏳ PENDING | |
-| Clone 40: moto-garage | ⏳ PENDING | |
-| Phase 4: Screenshots | ⏳ PENDING | |
-| Final Verification | ⏳ PENDING | |
+| Clone 36: language-academy | ✅ DONE | 2026-02-15 |
+| Clone 37: wedding-planner | ✅ DONE | 2026-02-15 |
+| Clone 38: dive-center | ✅ DONE | 2026-02-15 |
+| Clone 39: chocolate-atelier | ✅ DONE | 2026-02-15 |
+| Clone 40: moto-garage | ✅ DONE | 2026-02-15 |
+| **--- Phase 4: Clones 41-50 ---** | | |
+| Clone 41: skydiving-center | ✅ DONE | 2026-02-15 |
+| Clone 42: escape-room | ✅ DONE | 2026-02-15 |
+| Clone 43: rock-climbing | ✅ DONE | 2026-02-15 |
+| Clone 44: bakery | ✅ DONE | 2026-02-15 |
+| Clone 45: cocktail-bar | ✅ DONE | 2026-02-15 |
+| Clone 46: nail-salon | ✅ DONE | 2026-02-15 |
+| Clone 47: pet-grooming | ✅ DONE | 2026-02-15 |
+| Clone 48: yoga-studio | ✅ DONE | 2026-02-15 |
+| Clone 49: sneaker-store | ✅ DONE | 2026-02-15 |
+| Clone 50: coworking-library | ✅ DONE | 2026-02-15 |
+| Phase 5: Screenshots | ✅ DONE | 2026-02-16 |
+| Final Verification | ✅ DONE | 2026-02-16 |
+| **--- Phase 6: Clones 61-70 ---** | ✅ ALL DONE | 2026-02-16 |
+
+---
+
+## Phase 6: New 10 Clones (61-70) ✅ COMPLETE
+
+| # | Folder | Business | Primary Color | Accent | Status |
+|---|--------|----------|--------------|--------|--------|
+| 61 | `ramen-shop` | Japanese Ramen Restaurant | `#1A0F0A` (Dark Brown) | `#FF6B35` (Tonkotsu White) | ✅ DONE |
+| 62 | `cat-cafe` | Cat Cafe | `#2D1F1A` (Warm Brown) | `#FFB6C1` (Light Pink) | ✅ DONE |
+| 63 | `pinball-arcade` | Pinball Arcade | `#0A0A1A` (Deep Black) | `#00FF88` (Neon Green) | ✅ DONE |
+| 64 | `pottery-studio` | Pottery & Ceramics Studio | `#3D2817` (Terracotta) | `#D4A574` (Clay) | ✅ DONE |
+| 65 | `sake-brewery` | Sake Brewery | `#1A1A2E` (Deep Indigo) | `#E8D5B7` (Rice White) | ✅ DONE |
+| 66 | `board-game-cafe` | Board Game Cafe | `#1E3A5F` (Navy Blue) | `#FFD700` (Golden) | ✅ DONE |
+| 67 | `perfume-atelier` | Perfume Boutique | `#1A1225` (Royal Purple) | `#FFD700` (Gold) | ✅ DONE |
+| 68 | `magic-shop` | Magic & Illusion Store | `#0D0D1A` (Midnight) | `#8B5CF6` (Mystic Purple) | ✅ DONE |
+| 69 | `korean-bbq` | Korean BBQ Restaurant | `#8B0000` (Bulgogi Red) | `#FFD700` (Gold) | ✅ DONE |
+| 70 | `sushi-izakaya` | Japanese Izakaya | `#1A1A1A` (Charcoal) | `#FF4500` (Salmon Orange) | ✅ DONE |
+
+---
+
+## Phase 6 Clone Specifications (61-70)
+
+### Clone 61: ramen-shop 🍜
+- **Brand**: TONKOTSU MASTER — Japanese Ramen Restaurant
+- **Colors**: Dark Brown (#1A0F0A), Tonkotsu White accent (#FF6B35), Dark bg (#0A0505)
+- **Hero**: Steaming ramen bowl with rich broth, chashu pork, soft-boiled egg, bamboo shoots
+- **UNIQUE DIFFERENTIATOR**:
+  - **Ramen Menu** (replaces Portfolio): Ramen types with broth, noodle, toppings details
+  - **Broth Journey** (replaces SignageTypes): The making of tonkotsu broth visualization
+  - **Chef's Special** (new section): Chef's recommended ramen with story
+  - **Preloader**: Noodle pulling/stretching animation
+  - **Font**: Noto Sans JP + Dosis (Japanese modern)
+  - **Special Animation**: Steam rising from bowl, broth ripple effects
+
+### Clone 62: cat-cafe 🐱
+- **Brand**: PURRFECT HOUR — Cat Cafe
+- **Colors**: Warm Brown (#2D1F1A), Light Pink accent (#FFB6C1), Dark bg (#1A1008)
+- **Hero**: Cozy cafe interior with cats lounging, warm lighting, plants
+- **UNIQUE DIFFERENTIATOR**:
+  - **Cat Gallery** (replaces Portfolio): Meet the resident cats with personalities
+  - **Cafe Menu** (replaces SignageTypes): Drinks and pastries with cat-themed names
+  - **Booking System** (new): Time slot selection for cat cuddling sessions
+  - **Preloader**: Cat paw padding animation
+  - **Font**: Quicksand + Nunito (cozy cute)
+  - **Special Animation**: Cat ear twitch effects, paw prints floating
+
+### Clone 63: pinball-arcade 🎮
+- **Brand**: FLIP ZONE — Pinball Arcade
+- **Colors**: Deep Black (#0A0A1A), Neon Green accent (#00FF88), Dark bg (#050510)
+- **Hero**: Retro arcade with glowing pinball machines, neon signs, CRT aesthetic
+- **UNIQUE DIFFERENTIATOR**:
+  - **Machine Collection** (replaces Portfolio): Pinball machines with themes, high scores
+  - **Tournaments** (replaces SignageTypes): Upcoming pinball competitions
+  - **High Scores** (new section): Leaderboard with fake top scores
+  - **Preloader**: Pinball flipper hitting ball animation
+  - **Font**: Press Start 2P + Roboto (retro gaming)
+  - **Special Animation**: CRT scanline overlay, neon glow flicker, pixel effects
+
+### Clone 64: pottery-studio 🏺
+- **Brand**: EARTH & FIRE — Pottery Studio
+- **Colors**: Terracotta (#3D2817), Clay accent (#D4A574), Dark bg (#1A1008)
+- **Hero**: Ceramicist at wheel, pottery shelves, kiln glow, organic materials
+- **UNIQUE DIFFERENTIATOR**:
+  - **Workshop Classes** (replaces Portfolio): Pottery classes for beginners to advanced
+  - ** kiln Firing Process** (replaces SignageTypes): From clay to ceramic process
+  - **Studio Gallery** (new): Student and instructor作品 showcase
+  - **Preloader**: Spinning wheel forming a pot
+  - **Font**: Cormorant Garamond + Source Sans Pro (artisan elegance)
+  - **Special Animation**: Clay spinning effects, earthy texture overlays
+
+### Clone 65: sake-brewery 🍶
+- **Brand**: KIKUZAWA — Sake Brewery
+- **Colors**: Deep Indigo (#1A1A2E), Rice White accent (#E8D5B7), Dark bg (#0A0A15)
+- **Hero**: Traditional sake brewery with cedar barrels, bamboo filters, premium bottles
+- **UNIQUE DIFFERENTIATOR**:
+  - **Sake Collection** (replaces Portfolio): Premium sakes with tasting notes, ratings
+  - **Brewing Process** (replaces SignageTypes): Rice polishing, fermentation steps
+  - **Pairing Guide** (new section): Sake and food pairing recommendations
+  - **Preloader**: Sake bottle pouring into cup animation
+  - **Font**: Noto Serif JP + Noto Sans JP (traditional Japanese)
+  - **Special Animation**: Cherry blossom particles, warm amber glow
+
+### Clone 66: board-game-cafe 🎲
+- **Brand**: DICE & MEEPLE — Board Game Cafe
+- **Colors**: Navy Blue (#1E3A5F), Golden accent (#FFD700), Dark bg (#0F1A28)
+- **Hero**: Cozy cafe with board game shelves, players around table, warm lighting
+- **UNIQUE DIFFERENTIATOR**:
+  - **Game Library** (replaces Portfolio): Games organized by player count, category
+  - **Game Night Events** (replaces SignageTypes): Weekly event schedule
+  - **How to Play** (new section): Video tutorials for popular games
+  - **Preloader**: Dice rolling animation
+  - **Font**: Bangers + Open Sans (playful gaming)
+  - **Special Animation**: Meeple icons floating, game piece animations
+
+### Clone 67: perfume-atelier 🌸
+- **Brand**: ESSENCE — Perfume Boutique
+- **Colors**: Royal Purple (#1A1225), Gold accent (#FFD700), Dark bg (#0D0818)
+- **Hero**: Elegant perfume bottles, scent notes visualization, luxury atmosphere
+- **UNIQUE DIFFERENTIATOR**:
+  - **Fragrance Collection** (replaces Portfolio): Perfumes with notes, accords, seasons
+  - **Note Pyramid** (replaces SignageTypes): Top, heart, base notes visualization
+  - **Custom Blending** (new section): Create your own signature scent
+  - **Preloader**: Mist/spray bottle atomizing animation
+  - **Font**: Playfair Display + Lora (luxury elegance)
+  - **Special Animation**: Scent swirl particles, shimmer effects, gold accents
+
+### Clone 68: magic-shop ✨
+- **Brand**: MYSTIC ARCANE — Magic & Illusion Store
+- **Colors**: Midnight (#0D0D1A), Mystic Purple accent (#8B5CF6), Dark bg (#050510)
+- **Hero**: Magical items, playing cards, tricks, mysterious atmosphere
+- **UNIQUE DIFFERENTIATOR**:
+  - **Trick Collection** (replaces Portfolio): Card tricks, coin magic, stage magic
+  - **Difficulty Levels** (replaces SignageTypes): Beginner to advanced magic sets
+  - **Tutorial Videos** (new section): Magic lesson thumbnails
+  - **Preloader**: Wand conjuring sparkles animation
+  - **Font**: Cinzel Decorative + Raleway (mystical fantasy)
+  - **Special Animation**: Sparkle particles, magic glow, card shuffles
+
+### Clone 69: korean-bbq 🥩
+- **Brand**: BULGARI GRILL — Korean BBQ Restaurant
+- **Colors**: Bulgogi Red (#8B0000), Gold accent (#FFD700), Dark bg (#1A0505)
+- **Hero**: Korean BBQ table with sizzling meat, banchan, soju bottles
+- **UNIQUE DIFFERENTIATOR**:
+  - **Meat Menu** (replaces Portfolio): Premium cuts with marbling grades, prices
+  - **Banchan Selection** (replaces SignageTypes): Traditional side dishes showcase
+  - **Set Menus** (new section): Family, couple, group combo platters
+  - **Preloader**: Meat sizzling on grill animation
+  - **Font**: Noto Sans KR + Noto Sans (Korean modern)
+  - **Special Animation**: Smoke rising, fire glow effects, steam
+
+### Clone 70: sushi-izakaya 🍣
+- **Brand**: SAKURA IZAKAYA — Japanese Izakaya
+- **Colors**: Charcoal (#1A1A1A), Salmon Orange accent (#FF4500), Dark bg (#0A0A0A)
+- **Hero**: Sushi conveyor belt, izakaya lanterns, Japanese atmosphere
+- **UNIQUE DIFFERENTIATOR**:
+  - **Omakase Menu** (replaces Portfolio): Chef's selection sushi with descriptions
+  - **Drink Menu** (replaces SignageTypes): Sake, shochu, beer selections
+  - **Chef's Counter** (new section): Live sushi preparation experience
+  - **Preloader**: Chopsticks picking up sushi animation
+  - **Font**: Noto Sans JP + Dosis (casual Japanese)
+  - **Special Animation**: Conveyor belt movement, lantern glow, steam
+
+---
+
+## Progress Tracking
+
+| Phase | Status | Completed |
+|-------|--------|-----------|

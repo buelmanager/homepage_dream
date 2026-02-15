@@ -1,0 +1,1 @@
+/Users/chulheewon/development/main_project/homepage_dream/multi_clone_hompage/home/ 에 있는 모든 홈페이지를 확인하여서 다음과 같은 일을 하세요. 1. 모든 텍스트는 영문으로 교체한다. 2. images/ 안에fullpage.png 스크린샷이 없으면 생성하세요. 폴더가 없다면 폴더를 만들고 생성하세요. 3.readme.md 파일이 없다면 생성하고 업종,분야,언어,스타일 등의 상세한 정보를 적어주세요.  

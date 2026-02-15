@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DICE & MEEPLE — Board Game Cafe</title>
+<meta name="description" content="DICE & MEEPLE — Board Game Cafe. Play games, enjoy drinks, have fun.">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --primary: #FFD700; --accent: #FF6B35; --background: #0F1A28; --surface: #1E3A5F; --text: #FFFFFF; --text-muted: #88AACC; --border: #2A4A6A; --font-heading: 'Bangers', cursive; --font-body: 'Open Sans', sans-serif; --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--background); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+body.preloader-active { overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+button { border: none; cursor: pointer; font-family: var(--font-body); background: none; }
+img { max-width: 100%; display: block; }
+.container { max-width: 1320px; margin: 0 auto; padding: 0 40px; }
+.section-label { font-family: var(--font-heading); font-size: 1rem; color: var(--primary); margin-bottom: 12px; letter-spacing: 0.05em; }
+.section-title { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3.5rem); color: var(--text); margin-bottom: 20px; letter-spacing: 0.02em; }
+.section-subtitle { color: var(--text-muted); font-size: 1rem; max-width: 560px; line-height: 1.7; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 32px; font-family: var(--font-heading); font-size: 1rem; border-radius: 2px; transition: all 0.35s var(--transition); }
+.btn-primary { background: var(--primary); color: #0F1A28; }
+.btn-primary:hover { background: #FFE033; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,215,0,0.3); }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+#preloader { position: fixed; inset: 0; background: #0A1220; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.preloader-dice { width: 50px; height: 50px; position: relative; animation: diceRoll 0.5s ease-in-out infinite; }
+.preloader-dice::before { content: '🎲'; font-size: 3rem; }
+@keyframes diceRoll { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(90deg); } 50% { transform: rotate(180deg); } 75% { transform: rotate(270deg); } }
+.preloader-text { font-family: var(--font-heading); font-size: 2rem; color: var(--text); margin-top: 40px; letter-spacing: 0.1em; }
+.preloader-tagline { font-size: 0.7rem; color: var(--primary); margin-top: 8px; letter-spacing: 0.2em; }
+.preloader-bar { width: 120px; height: 2px; background: var(--border); margin-top: 24px; overflow: hidden; }
+.preloader-bar-fill { width: 0; height: 100%; background: var(--primary); animation: loadBar 2s ease-out forwards; }
+@keyframes loadBar { to { width: 100%; } }
+#navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 9000; padding: 20px 0; transition: all 0.4s var(--transition); }
+#navbar.scrolled { background: rgba(15,26,40,0.95); backdrop-filter: blur(20px); padding: 14px 0; border-bottom: 1px solid rgba(255,215,0,0.2); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: var(--font-heading); font-size: 1.6rem; letter-spacing: 0.05em; color: var(--text); }
+.nav-logo span { color: var(--primary); }
+.nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+.nav-links a { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); transition: color 0.3s; }
+.nav-links a:hover { color: var(--primary); }
+.nav-cta { font-size: 0.85rem; font-weight: 600; padding: 10px 24px; background: var(--primary); color: #0F1A28; border-radius: 2px; }
+.hamburger { display: none; flex-direction: column; gap: 6px; padding: 4px; cursor: pointer; z-index: 9999; }
+.hamburger span { width: 28px; height: 2px; background: var(--text); }
+.mobile-menu { position: fixed; inset: 0; background: rgba(15,26,40,0.98); z-index: 9001; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; opacity: 0; visibility: hidden; }
+.mobile-menu.active { opacity: 1; visibility: visible; }
+.mobile-menu a { font-family: var(--font-heading); font-size: 1.6rem; color: var(--text-muted); }
+#hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; padding-top: 100px; background: linear-gradient(135deg, #0F1A28 0%, #1E3A5F 50%, #2A4A6A 100%); }
+.hero-content { position: relative; z-index: 2; width: 100%; }
+.hero-label { font-size: 1rem; color: var(--primary); margin-bottom: 20px; opacity: 0; transform: translateY(20px); letter-spacing: 0.1em; }
+.hero-heading { font-family: var(--font-heading); font-size: clamp(3rem, 10vw, 7rem); line-height: 1; color: var(--text); margin-bottom: 24px; opacity: 0; transform: translateY(40px); }
+.hero-heading .accent { color: var(--primary); }
+.hero-categories { font-size: 0.9rem; font-weight: 500; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 40px; opacity: 0; transform: translateY(20px); }
+.hero-btns { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; transform: translateY(20px); }
+#stats { position: relative; padding: 48px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+.stat-item { text-align: center; padding: 20px; position: relative; }
+.stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: rgba(255,215,0,0.15); }
+.stat-number { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); color: var(--primary); line-height: 1; margin-bottom: 8px; }
+.stat-label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); letter-spacing: 0.05em; }
+#games { position: relative; padding: 120px 0; }
+.games-header { margin-bottom: 64px; }
+.games-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.game-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; text-align: center; transition: all 0.4s; opacity: 0; transform: translateY(20px); }
+.game-card:hover { border-color: var(--primary); transform: translateY(-4px); }
+.game-icon { font-size: 3rem; margin-bottom: 12px; }
+.game-card h3 { font-family: var(--font-heading); font-size: 1.1rem; margin-bottom: 8px; }
+.game-card .players { font-size: 0.8rem; color: var(--primary); }
+#events { position: relative; padding: 120px 0; background: var(--surface); }
+.events-header { margin-bottom: 64px; }
+.events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.event-card { background: var(--background); border: 1px solid var(--border); padding: 28px; }
+.event-date { font-family: var(--font-heading); font-size: 0.9rem; color: var(--primary); margin-bottom: 8px; }
+.event-card h3 { font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 8px; }
+.event-card p { font-size: 0.85rem; color: var(--text-muted); }
+#tutorials { position: relative; padding: 120px 0; }
+.tutorials-header { margin-bottom: 64px; }
+.tutorials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.tutorial-card { position: relative; overflow: hidden; border: 1px solid var(--border); }
+.tutorial-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+.tutorial-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
+.tutorial-overlay h3 { font-family: var(--font-heading); font-size: 1rem; }
+#contact { position: relative; padding: 120px 0; background: var(--surface); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; }
+.contact-info-block { margin-bottom: 36px; }
+.contact-info-block h3 { font-family: var(--font-heading); font-size: 0.8rem; color: var(--primary); margin-bottom: 10px; }
+.contact-info-block p { font-size: 1rem; color: var(--text); line-height: 1.6; }
+.contact-form { display: flex; flex-direction: column; gap: 18px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+.form-group input, .form-group textarea { width: 100%; padding: 14px 16px; font-size: 0.92rem; color: var(--text); background: var(--background); border: 1px solid var(--border); outline: none; }
+.form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-submit .btn { width: 100%; padding: 16px; }
+#footer { padding: 60px 0 32px; border-top: 1px solid var(--border); background: var(--background); }
+.footer-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 48px; gap: 40px; flex-wrap: wrap; }
+.footer-brand .nav-logo { font-size: 1.4rem; }
+.footer-tagline { font-size: 0.82rem; color: var(--text-muted); margin-top: 12px; }
+.footer-columns { display: flex; gap: 64px; }
+.footer-col h4 { font-family: var(--font-heading); font-size: 0.8rem; color: var(--primary); margin-bottom: 16px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul li a { font-size: 0.85rem; color: var(--text-muted); }
+.footer-col ul li a:hover { color: var(--primary); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 28px; border-top: 1px solid var(--border); }
+.footer-copy { font-size: 0.78rem; color: var(--text-muted); opacity: 0.6; }
+@media (max-width: 1024px) {
+  .container { padding: 0 28px; }
+  .games-grid { grid-template-columns: repeat(3, 1fr); }
+  .events-grid { grid-template-columns: repeat(2, 1fr); }
+  .tutorials-grid { grid-template-columns: repeat(2, 1fr); }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .hero-heading { font-size: clamp(2.5rem, 12vw, 4rem); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-item:not(:last-child)::after { display: none; }
+  .games-grid, .events-grid, .tutorials-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-top { flex-direction: column; }
+  .footer-columns { flex-direction: column; gap: 28px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+}
+@media (max-width: 480px) { .hero-btns { flex-direction: column; } .hero-btns .btn { width: 100%; } }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+::selection { background: rgba(255,215,0,0.3); }
+</style>
+</head>
+<body class="preloader-active">
+<div id="preloader"><div class="preloader-dice"></div><div class="preloader-text">DICE & MEEPLE</div><div class="preloader-tagline">BOARD GAME CAFE</div><div class="preloader-bar"><div class="preloader-bar-fill"></div></div></div>
+<nav id="navbar"><div class="container"><div class="nav-inner"><a href="#hero" class="nav-logo">DICE &<span>MEEPLE</span></a><ul class="nav-links"><li><a href="#hero">Home</a></li><li><a href="#games">Games</a></li><li><a href="#events">Events</a></li><li><a href="#tutorials">Learn</a></li></ul><a href="#games" class="nav-cta">Play Now</a><div class="hamburger" id="hamburger"><span></span><span></span><span></span></div></div></div></nav>
+<div class="mobile-menu" id="mobileMenu"><a href="#hero">Home</a><a href="#games">Games</a><a href="#events">Events</a><a href="#tutorials">Learn</a></div>
+<section id="hero"><div class="container hero-content"><div class="hero-label">FUN FOR EVERYONE</div><h1 class="hero-heading">ROLL &<br><span class="accent">PLAY</span></h1><div class="hero-categories">500+ GAMES &nbsp;·&nbsp; EVENTS &nbsp;·&nbsp; DRINKS</div><div class="hero-btns"><a href="#games" class="btn btn-primary">Browse Games</a><a href="#events" class="btn btn-outline">Join Event</a></div></div></section>
+<section id="stats"><div class="container"><div class="stats-grid"><div class="stat-item"><div class="stat-number" data-target="500" data-suffix="+">0</div><div class="stat-label">BOARD GAMES</div></div><div class="stat-item"><div class="stat-number" data-target="50" data-suffix="">0</div><div class="stat-label">WEEKLY EVENTS</div></div><div class="stat-item"><div class="stat-number" data-target="10000" data-suffix="+">0</div><div class="stat-label">HAPPY PLAYERS</div></div><div class="stat-item"><div class="stat-number" data-target="8" data-suffix="">0</div><div class="stat-label">YEARS</div></div></div></div></section>
+<section id="games"><div class="container"><div class="games-header"><div class="section-label">Choose Your Game</div><h2 class="section-title">GAME LIBRARY</h2></div><div class="games-grid"><div class="game-card"><div class="game-icon">🎲</div><h3>Catan</h3><div class="players">3-4 Players</div></div><div class="game-card"><div class="game-icon">♟️</div><h3>Chess</h3><div class="players">2 Players</div></div><div class="game-card"><div class="game-icon">🃏</div><h3>Uno</h3><div class="players">2-10 Players</div></div><div class="game-card"><div class="game-icon">🎯</div><h3>Monopoly</h3><div class="players">2-8 Players</div></div><div class="game-card"><div class="game-icon">🐉</div><h3>Dungeons & Dragons</h3><div class="players">3-6 Players</div></div><div class="game-card"><div class="game-icon">🚂</div><h3>Ticket to Ride</h3><div class="players">2-5 Players</div></div><div class="game-card"><div class="game-icon">🧩</div><h3>Scrabble</h3><div class="players">2-4 Players</div></div><div class="game-card"><div class="game-icon">⚔️</div><h3>Risk</h3><div class="players">2-6 Players</div></div></div></div></section>
+<section id="events"><div class="container"><div class="events-header"><div class="section-label">Join Us</div><h2 class="section-title">WEEKLY EVENTS</h2></div><div class="events-grid"><div class="event-card"><div class="event-date">FRIDAY 7PM</div><h3>Board Game Night</h3><p>Meet new players and try new games every Friday!</p></div><div class="event-card"><div class="event-date">SATURDAY 2PM</div><h3>D&D Sessions</h3><p>Weekly Dungeons & Dragons campaigns for all levels.</p></div><div class="event-card"><div class="event-date">SUNDAY 4PM</div><h3>Kids Game Time</h3><p>Family-friendly games for kids and parents.</p></div></div></div></section>
+<section id="tutorials"><div class="container"><div class="tutorials-header"><div class="section-label">Learn</div><h2 class="section-title">HOW TO PLAY</h2></div><div class="tutorials-grid"><div class="tutorial-card"><img src="https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&h=400&fit=crop" alt="Tutorial"><div class="tutorial-overlay"><h3>Catan Basics</h3></div></div><div class="tutorial-card"><img src="https://images.unsplash.com/photo-1632501641765-e568d28b0015?w=600&h=400&fit=crop" alt="Tutorial"><div class="tutorial-overlay"><h3>Chess Opening</h3></div></div><div class="tutorial-card"><img src="https://images.unsplash.com/photo-1606167668584-78701c57f1d7?w=600&h=400&fit=crop" alt="Tutorial"><div class="tutorial-overlay"><h3>Monopoly Tips</h3></div></div></div></div></section>
+<section id="contact"><div class="container"><div class="contact-grid"><div class="contact-info"><div class="contact-info-block"><h3>Location</h3><p>456 Game Street<br>San Francisco, CA 94102</p></div><div class="contact-info-block"><h3>Hours</h3><p>Mon-Thu: 3PM - 11PM<br>Fri-Sun: 12PM - 12AM</p></div><div class="contact-info-block"><h3>Contact</h3><p>hello@diceandmeeple.com<br>+1 (555) 123-4567</p></div></div><div class="contact-form-wrapper"><div class="section-label">Get In Touch</div><h2 class="section-title">CONTACT US</h2><form class="contact-form"><div class="form-row"><div class="form-group"><label>Name</label><input type="text" placeholder="Your name"></div><div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com"></div></div><div class="form-group"><label>Message</label><textarea placeholder="Tell us what you need..."></textarea></div><div class="form-submit"><button type="submit" class="btn btn-primary">Send Message</button></div></form></div></div></div></section>
+<footer id="footer"><div class="container"><div class="footer-top"><div class="footer-brand"><div class="nav-logo">DICE &<span>MEEPLE</span></div><p class="footer-tagline">Board game cafe since 2016. Roll the dice!</p></div><div class="footer-columns"><div class="footer-col"><h4>Play</h4><ul><li><a href="#games">Games</a></li><li><a href="#events">Events</a></li><li><a href="#tutorials">Learn</a></li></ul></div><div class="footer-col"><h4>Social</h4><ul><li><a href="#">Instagram</a></li><li><a href="#">Facebook</a></li><li><a href="#">Discord</a></li></ul></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 DICE & MEEPLE. All rights reserved.</p></div></div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+window.addEventListener('load', () => { setTimeout(() => { document.body.classList.remove('preloader-active'); document.getElementById('preloader').style.opacity = '0'; setTimeout(() => document.getElementById('preloader').style.display = 'none', 500); }, 2500); });
+window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50); });
+document.querySelectorAll('.stat-number').forEach(stat => { const target = parseInt(stat.dataset.target), suffix = stat.dataset.suffix || ''; let count = 0, increment = target / 125; const update = () => { count += increment; stat.textContent = (count < target ? Math.floor(count) : target).toLocaleString() + suffix; if (count < target) requestAnimationFrame(update); }; stat.style.opacity = 1; update(); });
+gsap.registerPlugin(ScrollTrigger);
+gsap.to('.hero-label, .hero-heading, .hero-categories, .hero-btns', { opacity: 1, y: 0, duration: 0.8, stagger: 0.2, delay: 2.5 });
+gsap.utils.toArray('.game-card, .event-card, .tutorial-card').forEach((el, i) => { gsap.to(el, { opacity: 1, y: 0, duration: 0.6, delay: i * 0.1, scrollTrigger: { trigger: el, start: 'top 85%' } }); });
+</script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CO-WORKING LIBRARY — Work, Learn, Create</title>
+<meta name="description" content="CO-WORKING LIBRARY — A unique coworking space combining the serenity of a library with modern work amenities.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1B2838;--primary-light:#2D3E50;--accent:#60A5FA;--accent-dark:#3B82F6;--background:#0F1724;--surface:#1B2838;--text:#F1F5F9;--text-muted:#94A3B8;--border:#334155;--font-heading:'Playfair Display',serif;--font-body:'Inter',sans-serif;--grid-color:rgba(96,165,250,0.03);--transition:cubic-bezier(0.25,0.46,0.45,0.94)}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);background:var(--background);color:var(--text);overflow-x:hidden;line-height:1.6}
+body.preloader-active{overflow:hidden}
+a{text-decoration:none;color:inherit}
+button{border:none;cursor:pointer;font-family:var(--font-body);background:none}
+img{max-width:100%;display:block}
+.container{max-width:1320px;margin:0 auto;padding:0 40px}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--grid-color) 1px,transparent 1px),linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+.section-label{font-family:var(--font-heading);font-size:0.75rem;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.section-label::before{content:'';width:32px;height:1px;background:var(--accent)}
+.section-title{font-family:var(--font-heading);font-size:clamp(2rem,4vw,3.2rem);font-weight:700;line-height:1.1;letter-spacing:-0.02em;color:var(--text);margin-bottom:20px}
+.section-subtitle{color:var(--text-muted);font-size:1.05rem;max-width:560px;line-height:1.7}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 32px;font-family:var(--font-heading);font-size:0.9rem;font-weight:700;letter-spacing:0.04em;border-radius:4px;transition:all 0.35s var(--transition);position:relative;overflow:hidden}
+.btn-primary{background:var(--accent);color:#0F1724}
+.btn-primary:hover{background:var(--accent-dark);transform:translateY(-2px);box-shadow:0 8px 30px rgba(96,165,250,0.25)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+#preloader{position:fixed;inset:0;background:#080B10;z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column}
+#preloader .grid-bg-preloader{position:absolute;inset:0;background-image:linear-gradient(rgba(96,165,250,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(96,165,250,0.025) 1px,transparent 1px);background-size:40px 40px}
+.preloader-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:32px}
+.preloader-books{position:relative;width:60px;height:80px}
+.book{position:absolute;bottom:0;width:12px;height:60px;background:var(--accent);border-radius:2px;transform-origin:bottom}
+.book:nth-child(1){left:5px;height:50px;background:#60A5FA}
+.book:nth-child(2){left:18px;height:60px;background:#3B82F6}
+.book:nth-child(3){left:31px;height:45px;background:#93C5FD}
+.book:nth-child(4){left:44px;height:55px;background:#60A5FA}
+.book.animate{animation:bookStand 0.8s ease-out forwards}
+@keyframes bookStand{0%{transform:rotateY(-90deg)}100%{transform:rotateY(0deg)}}
+.preloader-text{font-family:var(--font-heading);font-weight:700;font-size:1.8rem;letter-spacing:0.15em;color:var(--text);opacity:0;transform:translateY(12px)}
+.preloader-tagline{font-family:var(--font-body);font-size:0.8rem;letter-spacing:0.15em;color:var(--text-muted);opacity:0;text-transform:uppercase}
+.preloader-bar{width:120px;height:2px;background:var(--border);position:relative;overflow:hidden;opacity:0}
+.preloader-bar-fill{position:absolute;top:0;left:0;width:0;height:100%;background:var(--accent)}
+#navbar{position:fixed;top:0;left:0;right:0;z-index:9000;padding:20px 0;transition:all 0.4s var(--transition)}
+#navbar.scrolled{background:rgba(15,23,36,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 0;border-bottom:1px solid rgba(96,165,250,0.1)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:var(--font-heading);font-weight:700;font-size:1.4rem;letter-spacing:0.1em;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none}
+.nav-links a{font-family:var(--font-heading);font-size:0.85rem;font-weight:600;letter-spacing:0.04em;color:var(--text-muted);transition:color 0.3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width 0.3s var(--transition)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{font-family:var(--font-heading);font-size:0.85rem;font-weight:700;letter-spacing:0.04em;padding:10px 24px;background:var(--accent);color:#0F1724;border-radius:4px;transition:all 0.3s var(--transition)}
+.nav-cta:hover{background:var(--accent-dark);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:6px;padding:4px;cursor:pointer;z-index:9999}
+.hamburger span{width:28px;height:2px;background:var(--text);transition:all 0.3s;display:block}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-menu{position:fixed;inset:0;background:rgba(8,11,16,0.98);backdrop-filter:blur(30px);z-index:9001;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;opacity:0;visibility:hidden;transition:all 0.4s}
+.mobile-menu.active{opacity:1;visibility:visible}
+.mobile-menu a{font-family:var(--font-heading);font-size:1.6rem;font-weight:700;color:var(--text-muted);transition:color 0.3s}
+.mobile-menu a:hover{color:var(--accent)}
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding-top:100px}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(0.4) saturate(0.9)}
+.hero-gradient{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%,rgba(96,165,250,0.1) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(59,130,246,0.08) 0%,transparent 50%),linear-gradient(180deg,var(--background) 0%,transparent 30%,transparent 70%,var(--background) 100%);z-index:1}
+.hero-pattern{position:absolute;inset:0;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30z' fill='%2360A5FA' fill-opacity='1'/%3E%3C/svg%3E");z-index:1}
+.hero-content{position:relative;z-index:2;width:100%;max-width:700px}
+.hero-label{font-family:var(--font-heading);font-size:0.72rem;font-weight:600;letter-spacing:0.3em;color:var(--accent);margin-bottom:28px;opacity:0;transform:translateY(20px);display:flex;align-items:center;gap:14px}
+.hero-label::before{content:'';width:40px;height:2px;background:var(--accent)}
+.hero-heading{font-family:var(--font-heading);font-weight:700;font-size:clamp(3rem,7vw,5rem);line-height:1.05;letter-spacing:-0.03em;color:var(--text);margin-bottom:24px;opacity:0;transform:translateY(40px)}
+.hero-heading .accent-word{color:var(--accent)}
+.hero-categories{font-family:var(--font-heading);font-size:0.9rem;font-weight:500;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:40px;opacity:0;transform:translateY(20px)}
+.hero-categories span{margin:0 12px;opacity:0.4}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;opacity:0;transform:translateY(20px)}
+.hero-scroll-indicator{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0}
+.hero-scroll-indicator span{font-family:var(--font-heading);font-size:0.65rem;letter-spacing:0.2em;color:var(--text-muted);writing-mode:vertical-rl}
+.scroll-line{width:1px;height:50px;background:var(--border);position:relative;overflow:hidden}
+.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:50%;background:var(--accent);animation:scrollDown 2s infinite}
+@keyframes scrollDown{0%{top:-50%}100%{top:100%}}
+#spaces{position:relative;padding:120px 0}
+.spaces-header{margin-bottom:64px}
+.spaces-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.space-card{background:var(--surface);border:1px solid var(--border);padding:32px 24px;position:relative;overflow:hidden;transition:all 0.4s var(--transition);opacity:0;transform:translateY(30px);border-radius:8px}
+.space-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-dark));transform:scaleX(0);transform-origin:left;transition:transform 0.4s var(--transition)}
+.space-card:hover{border-color:rgba(96,165,250,0.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+.space-card:hover::before{transform:scaleX(1)}
+.space-icon{width:56px;height:56px;background:rgba(96,165,250,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px;color:var(--accent)}
+.space-icon svg{width:28px;height:28px;stroke:var(--accent);stroke-width:1.5;fill:none}
+.space-card h3{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:10px}
+.space-card p{font-size:0.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:16px}
+.space-price{font-family:var(--font-heading);font-size:1rem;font-weight:700;color:var(--accent)}
+#amenities{position:relative;padding:120px 0;background:var(--surface)}
+.amenities-header{margin-bottom:64px}
+.amenities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.amenity-card{background:var(--background);border:1px solid var(--border);padding:40px 32px;border-radius:12px;text-align:center;opacity:0;transform:translateY(40px);transition:all 0.4s var(--transition)}
+.amenity-card:hover{border-color:rgba(96,165,250,0.2);transform:translateY(-4px)}
+.amenity-icon{width:72px;height:72px;margin:0 auto 24px;background:rgba(96,165,250,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.amenity-icon svg{width:36px;height:36px;stroke:var(--accent);stroke-width:1.5;fill:none}
+.amenity-card h3{font-family:var(--font-heading);font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:12px}
+.amenity-card p{font-size:0.9rem;color:var(--text-muted);line-height:1.6}
+#membership{position:relative;padding:120px 0}
+.membership-header{margin-bottom:64px}
+.membership-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.membership-card{background:var(--surface);border:1px solid var(--border);padding:40px 32px;position:relative;overflow:hidden;transition:all 0.4s var(--transition);border-radius:12px;opacity:0;transform:translateY(30px)}
+.membership-card.featured{border-color:var(--accent);background:linear-gradient(180deg,rgba(96,165,250,0.08) 0%,var(--surface) 100%)}
+.membership-card.featured::before{content:'Best Value';position:absolute;top:20px;right:-30px;background:var(--accent);color:#0F1724;font-family:var(--font-heading);font-size:0.65rem;font-weight:700;padding:6px 40px;transform:rotate(45deg)}
+.membership-card:hover{border-color:rgba(96,165,250,0.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+.membership-tier{font-family:var(--font-heading);font-size:0.8rem;font-weight:600;letter-spacing:0.15em;color:var(--accent);margin-bottom:12px}
+.membership-name{font-family:var(--font-heading);font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.membership-price{font-family:var(--font-heading);font-size:2.5rem;font-weight:700;color:var(--text);margin-bottom:24px}
+.membership-price span{font-size:1rem;font-weight:500;color:var(--text-muted)}
+.membership-features{list-style:none;margin-bottom:32px}
+.membership-features li{font-size:0.9rem;color:var(--text-muted);padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:10px}
+.membership-features li::before{content:'✓';color:var(--accent);font-weight:700}
+.membership-card .btn{width:100%}
+#gallery{position:relative;padding:120px 0;background:var(--surface)}
+.gallery-header{margin-bottom:64px}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,200px);gap:16px}
+.gallery-item{position:relative;overflow:hidden;border-radius:8px;opacity:0;transform:translateY(40px)}
+.gallery-item:first-child{grid-row:span 2}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s var(--transition)}
+.gallery-item:hover img{transform:scale(1.1)}
+.gallery-overlay{position:absolute;inset:0;background:rgba(15,23,36,0.6);opacity:0;transition:opacity 0.4s;display:flex;align-items:center;justify-content:center}
+.gallery-item:hover .gallery-overlay{opacity:1}
+.gallery-overlay svg{width:32px;height:32px;stroke:var(--accent);stroke-width:2}
+#testimonials{position:relative;padding:120px 0}
+.testimonials-header{margin-bottom:64px}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.testimonial-card{background:var(--surface);border:1px solid var(--border);padding:32px;border-radius:12px;opacity:0;transform:translateY(30px)}
+.testimonial-text{font-size:0.95rem;color:var(--text-muted);line-height:1.7;margin-bottom:24px;font-style:italic}
+.testimonial-author{display:flex;align-items:center;gap:14px}
+.testimonial-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
+.testimonial-info h4{font-family:var(--font-heading);font-size:0.95rem;font-weight:700;color:var(--text)}
+.testimonial-info p{font-size:0.8rem;color:var(--accent)}
+#faq{position:relative;padding:120px 0;background:var(--surface)}
+.faq-header{margin-bottom:56px}
+.faq-list{max-width:820px}
+.faq-item{border-bottom:1px solid var(--border);opacity:0;transform:translateY(20px)}
+.faq-question{display:flex;align-items:center;justify-content:space-between;width:100%;padding:24px 0;font-family:var(--font-heading);font-size:1.05rem;font-weight:700;color:var(--text);text-align:left;cursor:pointer;transition:color 0.3s;gap:20px}
+.faq-question:hover{color:var(--accent)}
+.faq-toggle{width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);position:relative;transition:all 0.3s;border-radius:4px}
+.faq-toggle::before,.faq-toggle::after{content:'';position:absolute;background:var(--text-muted);transition:all 0.3s}
+.faq-toggle::before{width:12px;height:2px}
+.faq-toggle::after{width:2px;height:12px}
+.faq-item.active .faq-toggle{border-color:var(--accent);transform:rotate(45deg);background:var(--accent)}
+.faq-item.active .faq-toggle::before,.faq-item.active .faq-toggle::after{background:#0F1724}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.4s var(--transition)}
+.faq-answer-inner{padding-bottom:24px;font-size:0.92rem;color:var(--text-muted);line-height:1.8;padding-right:48px}
+#cta{position:relative;padding:100px 0;background:linear-gradient(135deg,var(--primary) 0%,var(--surface) 100%);overflow:hidden}
+.cta-bg{position:absolute;inset:0;opacity:0.1}
+.cta-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,var(--accent) 0%,transparent 50%)}
+.cta-content{position:relative;z-index:1;text-align:center}
+.cta-title{font-family:var(--font-heading);font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--text);margin-bottom:16px}
+.cta-text{font-size:1.1rem;color:var(--text-muted);margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+#contact{position:relative;padding:120px 0;background:var(--surface)}
+.contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:64px}
+.contact-info-block{margin-bottom:36px}
+.contact-info-block h3{font-family:var(--font-heading);font-size:0.75rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.contact-info-block p{font-size:1rem;color:var(--text);line-height:1.6}
+.contact-info-block p.muted{color:var(--text-muted);font-size:0.88rem}
+.contact-form{display:flex;flex-direction:column;gap:18px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-family:var(--font-heading);font-size:0.75rem;font-weight:600;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 16px;font-family:var(--font-body);font-size:0.92rem;color:var(--text);background:var(--background);border:1px solid var(--border);border-radius:4px;outline:none;transition:border-color 0.3s;-webkit-appearance:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(148,163,184,0.5)}
+.form-group select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
+.form-group select option{background:var(--surface);color:var(--text)}
+.form-group textarea{resize:vertical;min-height:120px}
+.form-submit{margin-top:8px}
+.form-submit .btn{width:100%;padding:16px;font-size:0.95rem}
+#footer{padding:60px 0 32px;border-top:1px solid var(--border);background:var(--background)}
+.footer-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:48px;gap:40px;flex-wrap:wrap}
+.footer-brand .nav-logo{font-size:1.3rem;margin-bottom:4px}
+.footer-tagline{font-size:0.82rem;color:var(--text-muted);margin-top:12px;line-height:1.6;max-width:280px}
+.footer-columns{display:flex;gap:64px}
+.footer-col h4{font-family:var(--font-heading);font-size:0.72rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col ul li a{font-size:0.85rem;color:var(--text-muted);transition:color 0.3s}
+.footer-col ul li a:hover{color:var(--accent)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:28px;border-top:1px solid var(--border);flex-wrap:wrap;gap:16px}
+.footer-copy{font-size:0.78rem;color:var(--text-muted);opacity:0.6}
+.footer-social{display:flex;gap:16px}
+.footer-social a{width:36px;height:36px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all 0.3s}
+.footer-social a:hover{border-color:var(--accent);color:var(--accent);background:rgba(96,165,250,0.1)}
+@media(max-width:1024px){.container{padding:0 28px}.spaces-grid{grid-template-columns:repeat(2,1fr)}.amenities-grid{grid-template-columns:repeat(2,1fr)}.membership-grid{grid-template-columns:repeat(2,1fr)}.gallery-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:auto}.gallery-item:first-child{grid-row:auto}.testimonials-grid{grid-template-columns:repeat(2,1fr)}.contact-grid{grid-template-columns:1fr;gap:48px}.footer-columns{gap:40px}}
+@media(max-width:768px){.container{padding:0 20px}.nav-links,.nav-cta{display:none}.hamburger{display:flex}.hero-heading{font-size:clamp(2.4rem,10vw,3.6rem)}.hero-categories{font-size:0.8rem}.spaces-grid,.amenities-grid,.membership-grid,.gallery-grid,.testimonials-grid{grid-template-columns:1fr;gap:16px}.membership-card.featured::before{display:none}.form-row{grid-template-columns:1fr}.footer-top{flex-direction:column}.footer-columns{flex-direction:column;gap:28px}.footer-bottom{flex-direction:column;text-align:center}.section-title{font-size:clamp(1.6rem,5vw,2.4rem)}#spaces,#amenities,#membership,#gallery,#testimonials,#faq,#cta,#contact{padding:80px 0}}
+@media(max-width:480px){.hero-btns{flex-direction:column}.hero-btns .btn{width:100%}}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--background)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+::selection{background:rgba(96,165,250,0.25);color:var(--text)}
+</style>
+</head>
+<body class="preloader-active">
+
+<div id="preloader">
+  <div class="grid-bg-preloader"></div>
+  <div class="preloader-content">
+    <div class="preloader-books">
+      <div class="book"></div>
+      <div class="book"></div>
+      <div class="book"></div>
+      <div class="book"></div>
+    </div>
+    <div class="preloader-text">CO-WORKING <span style="color:var(--accent)">LIBRARY</span></div>
+    <div class="preloader-tagline">Work in Serenity</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill"></div></div>
+  </div>
+</div>
+
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">CO-WORKING <span>LIBRARY</span></a>
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#spaces">Spaces</a></li>
+        <li><a href="#amenities">Amenities</a></li>
+        <li><a href="#membership">Membership</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="#contact" class="nav-cta">Book a Tour</a>
+      <div class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#hero" class="mobile-link">Home</a>
+  <a href="#spaces" class="mobile-link">Spaces</a>
+  <a href="#amenities" class="mobile-link">Amenities</a>
+  <a href="#membership" class="mobile-link">Membership</a>
+  <a href="#testimonials" class="mobile-link">Reviews</a>
+  <a href="#contact" class="btn btn-primary" style="margin-top:16px;">Book a Tour</a>
+</div>
+
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="hero-bg"><img src="https://images.unsplash.com/photo-1524578271613-d550eacf1290?w=1920&q=80" alt="Library workspace"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-pattern"></div>
+  <div class="container hero-content">
+    <div class="hero-label">Where Knowledge Meets Productivity</div>
+    <h1 class="hero-heading">WORK IN<br><span class="accent-word">SERENITY</span></h1>
+    <div class="hero-categories">Hot Desks <span>·</span> Private Offices <span>·</span> Meeting Rooms <span>·</span> Event Space</div>
+    <div class="hero-btns">
+      <a href="#spaces" class="btn btn-primary">Explore Spaces</a>
+      <a href="#contact" class="btn btn-outline">Book a Tour</a>
+    </div>
+  </div>
+  <div class="hero-scroll-indicator"><span>SCROLL</span><div class="scroll-line"></div></div>
+</section>
+
+<section id="spaces">
+  <div class="container">
+    <div class="spaces-header">
+      <div class="section-label">Our Spaces</div>
+      <h2 class="section-title">Find Your Perfect Spot</h2>
+      <p class="section-subtitle">From quiet corners for focused work to collaborative areas for team creativity.</p>
+    </div>
+    <div class="spaces-grid">
+      <div class="space-card">
+        <div class="space-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h3>Hot Desk</h3>
+        <p>Flexible seating with access to all common areas. Come and go as you please.</p>
+        <div class="space-price">From $15/hour</div>
+      </div>
+      <div class="space-card">
+        <div class="space-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3>Dedicated Desk</h3>
+        <p>Your personal desk with storage. Perfect for regulars who need a consistent spot.</p>
+        <div class="space-price">From $199/month</div>
+      </div>
+      <div class="space-card">
+        <div class="space-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+        <h3>Private Office</h3>
+        <p>Lockable office space for teams of 2-10. Privacy and professionalism combined.</p>
+        <div class="space-price">From $499/month</div>
+      </div>
+      <div class="space-card">
+        <div class="space-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Meeting Rooms</h3>
+        <p>Professionally equipped rooms for 4-20 people. Book by the hour or day.</p>
+        <div class="space-price">From $25/hour</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="amenities">
+  <div class="container">
+    <div class="amenities-header">
+      <div class="section-label">Comfort & Convenience</div>
+      <h2 class="section-title">Premium Amenities</h2>
+      <p class="section-subtitle">Everything you need to work productively and comfortably.</p>
+    </div>
+    <div class="amenities-grid">
+      <div class="amenity-card">
+        <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div>
+        <h3>Ultra-Fast WiFi</h3>
+        <p>Gigabit fiber internet with redundant backups. Never experience a slow connection.</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+        <h3>Free Refreshments</h3>
+        <p>Premium coffee, tea, and filtered water. Refill anytime you need a boost.</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h3>24/7 Access</h3>
+        <p>Work whenever inspiration strikes. Members have round-the-clock access.</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
+        <h3>Printing & Scanning</h3>
+        <p>High-quality printers, scanners, and copiers. Free for members.</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h3>Community Events</h3>
+        <p>Weekly networking events, workshops, and speaker sessions.</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <h3>Phone Booths</h3>
+        <p>Soundproof booths for private calls and focused work sessions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="membership">
+  <div class="container">
+    <div class="membership-header">
+      <div class="section-label">Membership Plans</div>
+      <h2 class="section-title">Choose Your Plan</h2>
+      <p class="section-subtitle">Flexible options for freelancers, startups, and growing teams.</p>
+    </div>
+    <div class="membership-grid">
+      <div class="membership-card">
+        <div class="membership-tier">FLEXIBLE</div>
+        <div class="membership-name">Day Pass</div>
+        <div class="membership-price">$25<span>/day</span></div>
+        <ul class="membership-features">
+          <li>Full day access</li>
+          <li>Hot desk seating</li>
+          <li>WiFi & refreshments</li>
+          <li>Meeting room access</li>
+        </ul>
+        <a href="#contact" class="btn btn-outline">Book Now</a>
+      </div>
+      <div class="membership-card featured">
+        <div class="membership-tier">POPULAR</div>
+        <div class="membership-name">Monthly</div>
+        <div class="membership-price">$249<span>/month</span></div>
+        <ul class="membership-features">
+          <li>Unlimited access</li>
+          <li>Dedicated desk</li>
+          <li>Storage included</li>
+          <li>10 hrs meeting rooms</li>
+          <li>Community events</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary">Join Now</a>
+      </div>
+      <div class="membership-card">
+        <div class="membership-tier">COMMITTED</div>
+        <div class="membership-name">Annual</div>
+        <div class="membership-price">$2,199<span>/year</span></div>
+        <ul class="membership-features">
+          <li>All monthly benefits</li>
+          <li>2 months free</li>
+          <li>Priority booking</li>
+          <li>Unlimited meeting rooms</li>
+          <li>Guest passes</li>
+          <li>Exclusive workshops</li>
+        </ul>
+        <a href="#contact" class="btn btn-outline">Join Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="container">
+    <div class="gallery-header">
+      <div class="section-label">The Space</div>
+      <h2 class="section-title" style="margin-bottom:48px">Explore Our Library</h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Main reading area"><div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1524578271613-d550eacf1290?w=400&q=80" alt="Workspace"><div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80" alt="Meeting room"><div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?w=400&q=80" alt="Coworking"><div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1517502884422-41eaead166d4?w=400&q=80" alt="Private office"><div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <div class="container">
+    <div class="testimonials-header">
+      <div class="section-label">Members</div>
+      <h2 class="section-title">What Our Members Say</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-text">"The perfect environment for deep work. The library atmosphere helps me focus like nowhere else. I've been more productive here than in any office."</p>
+        <div class="testimonial-author">
+          <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80" alt="David">
+          <div class="testimonial-info"><h4>David Chen</h4><p>Software Developer</p></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">"As a freelance writer, I need a quiet yet inspiring space. The CO-WORKING LIBRARY is exactly that. The community events are a great bonus!"</p>
+        <div class="testimonial-author">
+          <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="Sarah">
+          <div class="testimonial-info"><h4>Sarah Johnson</h4><p>Freelance Writer</p></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">"Our startup team moved here from a traditional office and our productivity has skyrocketed. The meeting rooms are always clean and well-equipped."</p>
+        <div class="testimonial-author">
+          <img class="testimonial-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80" alt="Marcus">
+          <div class="testimonial-info"><h4>Marcus Lee</h4><p>Startup Founder</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container">
+    <div class="faq-header">
+      <div class="section-label">Questions</div>
+      <h2 class="section-title">Frequently Asked</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question"><span>What are your operating hours?</span><span class="faq-toggle"></span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Our space is open 24/7 for all members. Day pass holders can access the space from 7am to 10pm. Front desk staff is available from 8am to 8pm daily.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question"><span>Can I try before I commit?</span><span class="faq-toggle"></span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Absolutely! We offer free day passes for first-time visitors. Schedule a tour and you'll get a complimentary day to experience our space.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question"><span>Is parking available?</span><span class="faq-toggle"></span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes, we have a parking garage with 50 spots available for members at $99/month. There's also street parking and nearby public transit options.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question"><span>Can I host events?</span><span class="faq-toggle"></span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Our event space accommodates up to 50 people and can be booked by members. Contact us for pricing and availability.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="cta-bg"></div>
+  <div class="container">
+    <div class="cta-content">
+      <h2 class="cta-title">Ready to Work in Serenity?</h2>
+      <p class="cta-text">Schedule a tour today and discover why CO-WORKING LIBRARY is the preferred workspace for creative professionals.</p>
+      <a href="#contact" class="btn btn-primary">Book a Tour</a>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-info-block"><h3>Location</h3><p>456 Knowledge Lane<br>San Francisco, CA 94102</p></div>
+        <div class="contact-info-block"><h3>Hours</h3><p>Members: 24/7<br>Front Desk: 8am - 8pm</p></div>
+        <div class="contact-info-block"><h3>Contact</h3><p>(555) 777-6666<br>hello@coworkinglibrary.com</p></div>
+      </div>
+      <div class="contact-form-wrapper">
+        <form class="contact-form">
+          <div class="form-row">
+            <div class="form-group"><label>Name</label><input type="text" placeholder="John Doe"></div>
+            <div class="form-group"><label>Email</label><input type="email" placeholder="john@example.com"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Interest</label>
+              <select><option>Day Pass</option><option>Monthly Membership</option><option>Annual Membership</option><option>Private Office</option></select>
+            </div>
+            <div class="form-group"><label>Team Size</label>
+              <select><option>Just me</option><option>2-5 people</option><option>6-10 people</option><option>10+ people</option></select>
+            </div>
+          </div>
+          <div class="form-group"><label>Message</label><textarea placeholder="Tell us about your workspace needs..."></textarea></div>
+          <div class="form-submit"><button type="submit" class="btn btn-primary">Request Info</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand"><a href="#hero" class="nav-logo">CO-WORKING <span>LIBRARY</span></a><p class="footer-tagline">Where knowledge meets productivity. Work in serenity, achieve greatness.</p></div>
+      <div class="footer-columns">
+        <div class="footer-col"><h4>Spaces</h4><ul><li><a href="#spaces">Hot Desks</a></li><li><a href="#spaces">Dedicated Desks</a></li><li><a href="#spaces">Private Offices</a></li><li><a href="#spaces">Meeting Rooms</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="#amenities">Amenities</a></li><li><a href="#membership">Membership</a></li><li><a href="#testimonials">Reviews</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="#contact">Book a Tour</a></li><li><a href="tel:5557776666">(555) 777-6666</a></li><li><a href="mailto:hello@coworkinglibrary.com">hello@coworkinglibrary.com</a></li></ul></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 CO-WORKING LIBRARY. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){gsap.registerPlugin(ScrollTrigger);const preloader=document.getElementById('preloader'),books=document.querySelectorAll('.book'),preloaderText=document.querySelector('.preloader-text'),preloaderTagline=document.querySelector('.preloader-tagline'),preloaderBar=document.querySelector('.preloader-bar'),preloaderBarFill=document.querySelector('.preloader-bar-fill');setTimeout(()=>{books.forEach((book,i)=>{setTimeout(()=>{book.classList.add('animate')},i*150)})},400);setTimeout(()=>{gsap.to([preloaderText,preloaderTagline,preloaderBar],{opacity:1,y:0,duration:0.6,stagger:0.15})},1200);setTimeout(()=>{gsap.to(preloaderBarFill,{width:'100%',duration:1,ease:'power2.inOut',onComplete:()=>{gsap.to(preloader,{opacity:0,duration:0.5,onComplete:()=>{preloader.style.display='none';document.body.classList.remove('preloader-active');initAnimations()}})})},1800);function initAnimations(){const navbar=document.getElementById('navbar');window.addEventListener('scroll',()=>{navbar.classList.toggle('scrolled',window.scrollY>50)});const hamburger=document.getElementById('hamburger'),mobileMenu=document.getElementById('mobileMenu');hamburger.addEventListener('click',()=>{hamburger.classList.toggle('active');mobileMenu.classList.toggle('active')});document.querySelectorAll('.mobile-link').forEach(link=>{link.addEventListener('click',()=>{hamburger.classList.remove('active');mobileMenu.classList.remove('active')})});gsap.to('.hero-label',{opacity:1,y:0,duration:0.8,delay:0.2});gsap.to('.hero-heading',{opacity:1,y:0,duration:1,delay:0.4});gsap.to('.hero-categories',{opacity:1,y:0,duration:0.8,delay:0.6});gsap.to('.hero-btns',{opacity:1,y:0,duration:0.8,delay:0.8});gsap.to('.hero-scroll-indicator',{opacity:1,duration:0.8,delay:1.2});document.querySelectorAll('.space-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,start:'top 85%'},opacity:1,y:0,duration:0.6,delay:i*0.1})});document.querySelectorAll('.amenity-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,start:'top 85%'},opacity:1,y:0,duration:0.6,delay:i*0.1})});document.querySelectorAll('.membership-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,start:'top 85%'},opacity:1,y:0,duration:0.6,delay:i*0.15})});document.querySelectorAll('.gallery-item').forEach((item,i)=>{gsap.to(item,{scrollTrigger:{trigger:item,start:'top 85%'},opacity:1,y:0,duration:0.8,delay:i*0.1})});document.querySelectorAll('.testimonial-card').forEach((card,i)=>{gsap.to(card,{scrollTrigger:{trigger:card,start:'top 85%'},opacity:1,y:0,duration:0.6,delay:i*0.1})});document.querySelectorAll('.faq-item').forEach((item,i)=>{gsap.to(item,{scrollTrigger:{trigger:item,start:'top 90%'},opacity:1,y:0,duration:0.5,delay:i*0.1})});document.querySelectorAll('.faq-question').forEach(question=>{question.addEventListener('click',()=>{const item=question.parentElement,answer=item.querySelector('.faq-answer'),isActive=item.classList.contains('active');document.querySelectorAll('.faq-item').forEach(faq=>{faq.classList.remove('active');faq.querySelector('.faq-answer').style.maxHeight='0'});if(!isActive){item.classList.add('active');answer.style.maxHeight=answer.scrollHeight+'px'}}})}});
+</script>
+</body>
+</html>

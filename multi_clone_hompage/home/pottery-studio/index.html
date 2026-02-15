@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EARTH & FIRE — Pottery Studio</title>
+<meta name="description" content="EARTH & FIRE — Pottery & Ceramics Studio. Create beautiful ceramics.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --primary: #D4A574; --accent: #8B6914; --background: #1A1008; --surface: #3D2817; --text: #FFFFFF; --text-muted: #BBA88A; --border: #5A4030; --font-heading: 'Cormorant Garamond', serif; --font-body: 'Source Sans Pro', sans-serif; --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--background); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+body.preloader-active { overflow: hidden; }
+a { text-decoration: none; color: inherit; }
+button { border: none; cursor: pointer; font-family: var(--font-body); background: none; }
+img { max-width: 100%; display: block; }
+.container { max-width: 1320px; margin: 0 auto; padding: 0 40px; }
+.section-label { font-family: var(--font-heading); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+.section-label::before { content: ''; width: 32px; height: 2px; background: var(--primary); }
+.section-title { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; line-height: 1.1; color: var(--text); margin-bottom: 20px; }
+.section-subtitle { color: var(--text-muted); font-size: 1rem; max-width: 560px; line-height: 1.7; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 32px; font-family: var(--font-heading); font-size: 0.9rem; font-weight: 600; border-radius: 2px; transition: all 0.35s var(--transition); }
+.btn-primary { background: var(--primary); color: #1A1008; }
+.btn-primary:hover { background: #E0B080; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,165,116,0.3); }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+#preloader { position: fixed; inset: 0; background: #0D0805; z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.preloader-wheel { width: 60px; height: 60px; border: 3px solid var(--border); border-radius: 50%; position: relative; animation: wheelSpin 2s linear infinite; }
+.preloader-wheel::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 15px; height: 15px; background: var(--primary); border-radius: 50%; }
+.preloader-wheel::after { content: ''; position: absolute; inset: 5px; border: 1px dashed var(--border); border-radius: 50%; }
+@keyframes wheelSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.preloader-text { font-family: var(--font-heading); font-weight: 700; font-size: 2rem; letter-spacing: 0.3em; color: var(--text); margin-top: 40px; }
+.preloader-tagline { font-size: 0.7rem; letter-spacing: 0.3em; color: var(--primary); margin-top: 8px; }
+.preloader-bar { width: 120px; height: 2px; background: var(--border); margin-top: 24px; overflow: hidden; }
+.preloader-bar-fill { width: 0; height: 100%; background: var(--primary); animation: loadBar 2s ease-out forwards; }
+@keyframes loadBar { to { width: 100%; } }
+#navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 9000; padding: 20px 0; transition: all 0.4s var(--transition); }
+#navbar.scrolled { background: rgba(26,16,8,0.95); backdrop-filter: blur(20px); padding: 14px 0; border-bottom: 1px solid rgba(212,165,116,0.2); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: var(--font-heading); font-weight: 700; font-size: 1.6rem; letter-spacing: 0.1em; color: var(--text); }
+.nav-logo span { color: var(--primary); }
+.nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+.nav-links a { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em; color: var(--text-muted); transition: color 0.3s; }
+.nav-links a:hover { color: var(--primary); }
+.nav-cta { font-size: 0.85rem; font-weight: 600; padding: 10px 24px; background: var(--primary); color: #1A1008; border-radius: 2px; }
+.hamburger { display: none; flex-direction: column; gap: 6px; padding: 4px; cursor: pointer; z-index: 9999; }
+.hamburger span { width: 28px; height: 2px; background: var(--text); }
+.mobile-menu { position: fixed; inset: 0; background: rgba(26,16,8,0.98); z-index: 9001; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; opacity: 0; visibility: hidden; }
+.mobile-menu.active { opacity: 1; visibility: visible; }
+.mobile-menu a { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--text-muted); }
+#hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; padding-top: 100px; background: linear-gradient(135deg, #1A1008 0%, #3D2817 50%, #2A1A10 100%); }
+.hero-content { position: relative; z-index: 2; width: 100%; }
+.hero-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.4em; color: var(--primary); margin-bottom: 20px; opacity: 0; transform: translateY(20px); }
+.hero-heading { font-family: var(--font-heading); font-weight: 700; font-size: clamp(3rem, 10vw, 7rem); line-height: 1; color: var(--text); margin-bottom: 24px; opacity: 0; transform: translateY(40px); }
+.hero-heading .accent { color: var(--primary); }
+.hero-categories { font-size: 0.9rem; font-weight: 500; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 40px; opacity: 0; transform: translateY(20px); }
+.hero-btns { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; transform: translateY(20px); }
+#stats { position: relative; padding: 48px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+.stat-item { text-align: center; padding: 20px; position: relative; }
+.stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: rgba(212,165,116,0.15); }
+.stat-number { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 8px; }
+.stat-label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); letter-spacing: 0.05em; }
+#workshops { position: relative; padding: 120px 0; }
+.workshops-header { margin-bottom: 64px; }
+.workshops-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.workshop-card { background: var(--surface); border: 1px solid var(--border); padding: 32px; transition: all 0.4s; opacity: 0; transform: translateY(20px); }
+.workshop-card:hover { border-color: var(--primary); transform: translateY(-4px); }
+.workshop-icon { font-size: 2.5rem; margin-bottom: 16px; }
+.workshop-card h3 { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+.workshop-card .level { font-size: 0.8rem; color: var(--primary); margin-bottom: 8px; }
+.workshop-card .duration { font-size: 0.85rem; color: var(--text-muted); }
+.workshop-card .price { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-top: 16px; }
+#process { position: relative; padding: 120px 0; background: var(--surface); }
+.process-header { margin-bottom: 64px; }
+.process-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+.process-step { text-align: center; opacity: 0; transform: translateY(20px); }
+.process-step-number { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: var(--primary); margin-bottom: 12px; }
+.process-step h3 { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+.process-step p { font-size: 0.8rem; color: var(--text-muted); }
+#gallery { position: relative; padding: 120px 0; }
+.gallery-header { margin-bottom: 64px; }
+.gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.gallery-item { aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border); }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+.gallery-item:hover img { transform: scale(1.05); }
+#contact { position: relative; padding: 120px 0; background: var(--surface); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; }
+.contact-info-block { margin-bottom: 36px; }
+.contact-info-block h3 { font-family: var(--font-heading); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--primary); margin-bottom: 10px; }
+.contact-info-block p { font-size: 1rem; color: var(--text); line-height: 1.6; }
+.contact-form { display: flex; flex-direction: column; gap: 18px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; }
+.form-group input, .form-group textarea { width: 100%; padding: 14px 16px; font-size: 0.92rem; color: var(--text); background: var(--background); border: 1px solid var(--border); outline: none; }
+.form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-submit .btn { width: 100%; padding: 16px; }
+#footer { padding: 60px 0 32px; border-top: 1px solid var(--border); background: var(--background); }
+.footer-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 48px; gap: 40px; flex-wrap: wrap; }
+.footer-brand .nav-logo { font-size: 1.4rem; }
+.footer-tagline { font-size: 0.82rem; color: var(--text-muted); margin-top: 12px; }
+.footer-columns { display: flex; gap: 64px; }
+.footer-col h4 { font-family: var(--font-heading); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--primary); margin-bottom: 16px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul li a { font-size: 0.85rem; color: var(--text-muted); }
+.footer-col ul li a:hover { color: var(--primary); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 28px; border-top: 1px solid var(--border); }
+.footer-copy { font-size: 0.78rem; color: var(--text-muted); opacity: 0.6; }
+@media (max-width: 1024px) {
+  .container { padding: 0 28px; }
+  .workshops-grid { grid-template-columns: repeat(2, 1fr); }
+  .process-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .hero-heading { font-size: clamp(2.5rem, 12vw, 4rem); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-item:not(:last-child)::after { display: none; }
+  .workshops-grid, .process-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-top { flex-direction: column; }
+  .footer-columns { flex-direction: column; gap: 28px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+}
+@media (max-width: 480px) { .hero-btns { flex-direction: column; } .hero-btns .btn { width: 100%; } }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+::selection { background: rgba(212,165,116,0.3); }
+</style>
+</head>
+<body class="preloader-active">
+<div id="preloader"><div class="preloader-wheel"></div><div class="preloader-text">EARTH & FIRE</div><div class="preloader-tagline">POTTERY STUDIO</div><div class="preloader-bar"><div class="preloader-bar-fill"></div></div></div>
+<nav id="navbar"><div class="container"><div class="nav-inner"><a href="#hero" class="nav-logo">EARTH &<span>FIRE</span></a><ul class="nav-links"><li><a href="#hero">Home</a></li><li><a href="#workshops">Classes</a></li><li><a href="#process">Process</a></li><li><a href="#gallery">Gallery</a></li></ul><a href="#workshops" class="nav-cta">Book Class</a><div class="hamburger" id="hamburger"><span></span><span></span><span></span></div></div></div></nav>
+<div class="mobile-menu" id="mobileMenu"><a href="#hero">Home</a><a href="#workshops">Classes</a><a href="#process">Process</a><a href="#gallery">Gallery</a></div>
+<section id="hero"><div class="container hero-content"><div class="hero-label">HANDCRAFTED CERAMICS</div><h1 class="hero-heading">CREATE<br><span class="accent">BEAUTY</span></h1><div class="hero-categories">WHEEL THROWING &nbsp;·&nbsp; HAND BUILDING &nbsp;·&nbsp; GLAZING</div><div class="hero-btns"><a href="#workshops" class="btn btn-primary">Book Class</a><a href="#gallery" class="btn btn-outline">View Gallery</a></div></div></section>
+<section id="stats"><div class="container"><div class="stats-grid"><div class="stat-item"><div class="stat-number" data-target="500" data-suffix="+">0</div><div class="stat-label">STUDENTS</div></div><div class="stat-item"><div class="stat-number" data-target="50" data-suffix="">0</div><div class="stat-label">WORKSHOPS</div></div><div class="stat-item"><div class="stat-number" data-target="10000" data-suffix="+">0</div><div class="stat-label">PIECES CREATED</div></div><div class="stat-item"><div class="stat-number" data-target="10" data-suffix="">0</div><div class="stat-label">YEARS</div></div></div></div></section>
+<section id="workshops"><div class="container"><div class="workshops-header"><div class="section-label">Learn</div><h2 class="section-title">WORKSHOPS</h2><p class="section-subtitle">Join our workshops and discover the art of pottery.</p></div><div class="workshops-grid"><div class="workshop-card"><div class="workshop-icon">🏺</div><h3>Introduction to Pottery</h3><div class="level">Beginner Friendly</div><div class="duration">2 Hours</div><div class="price">$75</div></div><div class="workshop-card"><div class="workshop-icon">🎯</div><h3>Wheel Throwing</h3><div class="level">Intermediate</div><div class="duration">3 Hours</div><div class="price">$95</div></div><div class="workshop-card"><div class="workshop-icon">✨</div><h3>Hand Building</h3><div class="level">All Levels</div><div class="duration">2.5 Hours</div><div class="price">$85</div></div><div class="workshop-card"><div class="workshop-icon">🎨</div><h3>Glazing Techniques</h3><div class="level">Intermediate</div><div class="duration">2 Hours</div><div class="price">$70</div></div><div class="workshop-card"><div class="workshop-icon">🏆</div><h3>Master Class</h3><div class="level">Advanced</div><div class="duration">4 Hours</div><div class="price">$150</div></div><div class="workshop-card"><div class="workshop-icon">👨‍👩‍👧</div><h3>Family Workshop</h3><div class="level">All Ages</div><div class="duration">1.5 Hours</div><div class="price">$60</div></div></div></div></section>
+<section id="process"><div class="container"><div class="process-header"><div class="section-label">The Craft</div><h2 class="section-title">FROM CLAY TO CERAMIC</h2></div><div class="process-grid"><div class="process-step"><div class="process-step-number">01</div><h3>Prep</h3><p>Clay wedging & preparation</p></div><div class="process-step"><div class="process-step-number">02</div><h3>Shape</h3><p>Wheel throwing or hand building</p></div><div class="process-step"><div class="process-step-number">03</div><h3>Dry</h3><p>Leather hard drying stage</p></div><div class="process-step"><div class="process-step-number">04</div><h3>Fire</h3><p>Bisque firing in kiln</p></div><div class="process-step"><div class="process-step-number">05</div><h3>Glaze</h3><p>Glazing and final firing</p></div></div></div></section>
+<section id="gallery"><div class="container"><div class="gallery-header"><div class="section-label">Our Work</div><h2 class="section-title">GALLERY</h2></div><div class="gallery-grid"><div class="gallery-item"><img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400&h=400&fit=crop" alt="Pottery"></div><div class="gallery-item"><img src="https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?w=400&h=400&fit=crop" alt="Pottery"></div><div class="gallery-item"><img src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400&h=400&fit=crop" alt="Pottery"></div><div class="gallery-item"><img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&h=400&fit=crop" alt="Pottery"></div></div></div></section>
+<section id="contact"><div class="container"><div class="contact-grid"><div class="contact-info"><div class="contact-info-block"><h3>Location</h3><p>123 Artisan Way<br>Portland, OR 97201</p></div><div class="contact-info-block"><h3>Hours</h3><p>Mon-Sat: 10AM - 7PM<br>Sun: 11AM - 5PM</p></div><div class="contact-info-block"><h3>Contact</h3><p>hello@earthandfire.com<br>+1 (555) 123-4567</p></div></div><div class="contact-form-wrapper"><div class="section-label">Get In Touch</div><h2 class="section-title">CONTACT US</h2><form class="contact-form"><div class="form-row"><div class="form-group"><label>Name</label><input type="text" placeholder="Your name"></div><div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com"></div></div><div class="form-group"><label>Message</label><textarea placeholder="Tell us what you need..."></textarea></div><div class="form-submit"><button type="submit" class="btn btn-primary">Send Message</button></div></form></div></div></div></section>
+<footer id="footer"><div class="container"><div class="footer-top"><div class="footer-brand"><div class="nav-logo">EARTH &<span>FIRE</span></div><p class="footer-tagline">Pottery studio since 2014. Create with your hands.</p></div><div class="footer-columns"><div class="footer-col"><h4>Classes</h4><ul><li><a href="#workshops">Workshops</a></li><li><a href="#process">Process</a></li><li><a href="#gallery">Gallery</a></li></ul></div><div class="footer-col"><h4>Studio</h4><ul><li><a href="#contact">Contact</a></li><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 EARTH & FIRE. All rights reserved.</p></div></div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+window.addEventListener('load', () => { setTimeout(() => { document.body.classList.remove('preloader-active'); document.getElementById('preloader').style.opacity = '0'; setTimeout(() => document.getElementById('preloader').style.display = 'none', 500); }, 2500); });
+window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50); });
+document.querySelectorAll('.stat-number').forEach(stat => { const target = parseInt(stat.dataset.target), suffix = stat.dataset.suffix || ''; let count = 0, increment = target / 125; const update = () => { count += increment; stat.textContent = (count < target ? Math.floor(count) : target).toLocaleString() + suffix; if (count < target) requestAnimationFrame(update); }; stat.style.opacity = 1; update(); });
+gsap.registerPlugin(ScrollTrigger);
+gsap.to('.hero-label, .hero-heading, .hero-categories, .hero-btns', { opacity: 1, y: 0, duration: 0.8, stagger: 0.2, delay: 2.5 });
+gsap.utils.toArray('.workshop-card, .process-step, .gallery-item').forEach((el, i) => { gsap.to(el, { opacity: 1, y: 0, duration: 0.6, delay: i * 0.1, scrollTrigger: { trigger: el, start: 'top 85%' } }); });
+</script>
+</body>
+</html>
