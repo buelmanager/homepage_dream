@@ -42,7 +42,7 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
   const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const currentCategory = searchParams.get("category") || "all";
+  const currentCategory = searchParams?.get("category") || "all";
 
   const categories = CATEGORIES.map((cat) => {
     const found = categoryCounts.find((c) => c.name === cat.name);

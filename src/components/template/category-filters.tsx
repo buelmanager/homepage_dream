@@ -27,19 +27,22 @@ export function CategoryFilters({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const safePathname = pathname ?? "/";
 
   const updateFilter = useCallback(
     (key: string, value: string | undefined) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams?.toString() ?? "");
       if (value) {
         params.set(key, value);
       } else {
         params.delete(key);
       }
       const queryString = params.toString();
-      router.push(queryString ? `${pathname}?${queryString}` : pathname);
+      router.push(
+        queryString ? `${safePathname}?${queryString}` : safePathname
+      );
     },
-    [router, pathname, searchParams]
+    [router, safePathname, searchParams]
   );
 
   const toggleFilter = (key: string, value: string, isActive: boolean) => {
