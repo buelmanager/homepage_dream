@@ -9,7 +9,6 @@ import {
   Menu,
   Command,
   Trophy,
-  BookOpen,
   User,
   LogOut,
 } from "lucide-react";
@@ -54,7 +53,6 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
 
   const navLinks = [
     { href: "/leaderboard", label: "TOP", icon: Trophy },
-    { href: "/blog", label: "Blog", icon: BookOpen },
   ];
 
   const user = session?.user;

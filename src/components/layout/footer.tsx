@@ -9,7 +9,6 @@ const footerSections = [
     links: [
       { label: "Templates", href: "/templates" },
       { label: "Leaderboard", href: "/leaderboard" },
-      { label: "Blog", href: "/blog" },
       { label: "Pricing", href: "/pricing" },
     ],
   },
@@ -21,15 +20,6 @@ const footerSections = [
         label: c.label,
         href: `/templates?category=${c.name}`,
       })),
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Documentation", href: "/docs" },
-      { label: "Changelog", href: "/changelog" },
-      { label: "Support", href: "/support" },
-      { label: "API", href: "/api" },
-    ],
   },
   {
     title: "Legal",
