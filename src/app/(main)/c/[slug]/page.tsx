@@ -203,6 +203,7 @@ export default async function SectionDetailPage({
               price={section.price}
               itemType="section"
               itemTitle={section.title}
+              itemSlug={slug}
             />
           </aside>
         </div>

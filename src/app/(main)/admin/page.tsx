@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   LayoutTemplate,
   Users,
@@ -18,6 +19,9 @@ import {
   Trash2,
   ExternalLink,
   Shield,
+  Save,
+  Settings,
+  DollarSign,
 } from "lucide-react";
 
 type AdminTemplate = {
@@ -80,6 +84,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState<string | null>(null);
+  const [defaultSignupCredits, setDefaultSignupCredits] = useState("100");
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [savingTemplateId, setSavingTemplateId] = useState<string | null>(null);
+  const [drafts, setDrafts] = useState<Record<string, { price: string; status: string }>>({});
 
   const fetchData = useCallback(async () => {
     try {
@@ -88,6 +96,14 @@ export default function AdminPage() {
 
       if (data.templates) {
         setTemplates(data.templates);
+        setDrafts(
+          Object.fromEntries(
+            (data.templates as AdminTemplate[]).map((t) => [
+              t.id,
+              { price: String(t.price), status: t.status },
+            ])
+          )
+        );
         setStats({
           templates: data.total ?? data.templates.length,
           sections: data.totalSections ?? 0,
@@ -114,6 +130,18 @@ export default function AdminPage() {
       fetchData();
     }
   }, [status, session, router, fetchData]);
+
+  useEffect(() => {
+    if (status !== "authenticated" || session?.user?.role !== "ADMIN") return;
+    fetch("/api/admin/settings")
+      .then((r) => r.json())
+      .then((data) => {
+        if (typeof data.defaultSignupCredits === "number") {
+          setDefaultSignupCredits(String(data.defaultSignupCredits));
+        }
+      })
+      .catch(() => {});
+  }, [status, session]);
 
   const handleScan = async () => {
     setScanning(true);
@@ -143,6 +171,55 @@ export default function AdminPage() {
       setTemplates((prev) => prev.filter((t) => t.id !== id));
       setStats((prev) => ({ ...prev, templates: prev.templates - 1 }));
     } catch {
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true);
+    try {
+      const value = Number(defaultSignupCredits);
+      const res = await fetch("/api/admin/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ defaultSignupCredits: value }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "Failed to save settings");
+      }
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const handleSaveTemplate = async (id: string) => {
+    const draft = drafts[id];
+    if (!draft) return;
+
+    setSavingTemplateId(id);
+    try {
+      const res = await fetch(`/api/templates/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          price: Number(draft.price),
+          status: draft.status,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "Failed to update template");
+        return;
+      }
+      setTemplates((prev) =>
+        prev.map((t) =>
+          t.id === id
+            ? { ...t, price: Number(draft.price), status: draft.status }
+            : t
+        )
+      );
+    } finally {
+      setSavingTemplateId(null);
     }
   };
 
@@ -210,6 +287,41 @@ export default function AdminPage() {
           <StatCard label="Purchases" value={stats.purchases} icon={ShoppingCart} />
         </div>
 
+        <div className="mb-8 rounded-xl border border-stone-200/80 bg-white shadow-sm">
+          <div className="border-b border-stone-100 px-6 py-4">
+            <h2 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-stone-500 uppercase">
+              <Settings className="h-4 w-4" />
+              Store Settings
+            </h2>
+          </div>
+          <div className="flex flex-col gap-3 px-6 py-5 sm:flex-row sm:items-end">
+            <div className="w-full sm:w-72">
+              <label className="mb-1.5 block text-xs font-medium text-stone-500 uppercase">
+                Default Signup Credits
+              </label>
+              <Input
+                type="number"
+                min="0"
+                value={defaultSignupCredits}
+                onChange={(e) => setDefaultSignupCredits(e.target.value)}
+                className="border-stone-200"
+              />
+            </div>
+            <Button
+              onClick={handleSaveSettings}
+              disabled={savingSettings}
+              className="gap-2 bg-stone-900 text-white hover:bg-stone-800"
+            >
+              {savingSettings ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              Save Settings
+            </Button>
+          </div>
+        </div>
+
         <div className="rounded-xl border border-stone-200/80 bg-white shadow-sm overflow-hidden">
           <div className="border-b border-stone-100 px-6 py-4">
             <h2 className="text-sm font-semibold tracking-wide text-stone-500 uppercase">
@@ -253,13 +365,61 @@ export default function AdminPage() {
                       </div>
                       <div className="mt-0.5 flex items-center gap-3 text-xs text-stone-400">
                         <span className="capitalize">{t.category}</span>
-                        <span>{t.price} credits</span>
+                        <span>{t._count.purchases} sales</span>
                         <span>{t.viewCount} views</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1 rounded-md border border-stone-200 bg-white px-2 py-1">
+                      <DollarSign className="h-3.5 w-3.5 text-stone-400" />
+                      <input
+                        type="number"
+                        min="0"
+                        className="w-16 border-0 p-0 text-xs outline-none"
+                        value={drafts[t.id]?.price ?? String(t.price)}
+                        onChange={(e) =>
+                          setDrafts((prev) => ({
+                            ...prev,
+                            [t.id]: {
+                              price: e.target.value,
+                              status: prev[t.id]?.status ?? t.status,
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                    <select
+                      className="h-8 rounded-md border border-stone-200 bg-white px-2 text-xs text-stone-700"
+                      value={drafts[t.id]?.status ?? t.status}
+                      onChange={(e) =>
+                        setDrafts((prev) => ({
+                          ...prev,
+                          [t.id]: {
+                            price: prev[t.id]?.price ?? String(t.price),
+                            status: e.target.value,
+                          },
+                        }))
+                      }
+                    >
+                      <option value="PUBLISHED">PUBLISHED</option>
+                      <option value="DRAFT">DRAFT</option>
+                      <option value="ARCHIVED">ARCHIVED</option>
+                    </select>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 border-stone-200 text-xs"
+                      onClick={() => handleSaveTemplate(t.id)}
+                      disabled={savingTemplateId === t.id}
+                    >
+                      {savingTemplateId === t.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        "Save"
+                      )}
+                    </Button>
                     <Link href={`/templates/${t.slug}`}>
                       <Button
                         size="sm"

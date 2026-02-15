@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { CATEGORIES } from "@/types";
+import { VERSION } from "@/config/version";
 
 const footerSections = [
   {
@@ -99,9 +100,12 @@ export function Footer() {
           <p className="text-xs text-muted-foreground/60">
             &copy; 2026 HomeDream. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground/40">
-            Built with Next.js, Tailwind CSS, and shadcn/ui
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-xs text-muted-foreground/40">
+              Built with Next.js, Tailwind CSS, and shadcn/ui
+            </p>
+            <span className="text-xs text-muted-foreground/30">v{VERSION}</span>
+          </div>
         </div>
       </div>
     </footer>

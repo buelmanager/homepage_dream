@@ -1,115 +1,98 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import templatesManifest from "@/data/templates-manifest.json";
 
-export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+    
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
-  const { templateId, sectionId } = await request.json();
+    const { slug, type } = await request.json();
+    
+    if (!slug || !type) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
 
-  if (!templateId && !sectionId) {
-    return NextResponse.json(
-      { error: "templateId or sectionId required" },
-      { status: 400 }
-    );
-  }
-
-  let price = 0;
-
-  if (templateId) {
-    const template = await prisma.template.findUnique({
-      where: { id: templateId },
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
     });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    const manifestTemplate = (templatesManifest as Array<{ slug: string; title: string; price: number; status?: string }>).find((t) => t.slug === slug);
+    const dbTemplate = await prisma.template.findUnique({
+      where: { slug },
+      select: { title: true, price: true, status: true },
+    });
+    const template = dbTemplate ?? manifestTemplate;
+    
     if (!template) {
       return NextResponse.json(
         { error: "Template not found" },
         { status: 404 }
       );
     }
-    price = template.price;
 
-    const existingPurchase = await prisma.purchase.findFirst({
-      where: { userId: session.user.id, templateId },
-    });
-    if (existingPurchase) {
+    if (dbTemplate && dbTemplate.status !== "PUBLISHED") {
       return NextResponse.json(
-        { error: "Already purchased" },
-        { status: 409 }
+        { error: "This template is not for sale right now" },
+        { status: 400 }
       );
     }
-  }
 
-  if (sectionId) {
-    const section = await prisma.section.findUnique({
-      where: { id: sectionId },
-    });
-    if (!section) {
+    const price = Math.max(0, Number(template.price) || 0);
+
+    if (user.credits < price) {
       return NextResponse.json(
-        { error: "Section not found" },
-        { status: 404 }
+        { error: "Insufficient credits", required: price, current: user.credits },
+        { status: 400 }
       );
     }
-    price = section.price;
 
-    const existingPurchase = await prisma.purchase.findFirst({
-      where: { userId: session.user.id, sectionId },
-    });
-    if (existingPurchase) {
-      return NextResponse.json(
-        { error: "Already purchased" },
-        { status: 409 }
-      );
-    }
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { credits: true },
-  });
-
-  if (!user || user.credits < price) {
-    return NextResponse.json(
-      { error: "Insufficient credits", required: price, current: user?.credits ?? 0 },
-      { status: 402 }
-    );
-  }
-
-  const [purchase] = await prisma.$transaction([
-    prisma.purchase.create({
-      data: {
-        userId: session.user.id,
-        templateId: templateId || null,
-        sectionId: sectionId || null,
-        creditsSpent: price,
-      },
-    }),
-    prisma.user.update({
-      where: { id: session.user.id },
+    await prisma.user.update({
+      where: { id: user.id },
       data: { credits: { decrement: price } },
-    }),
-    prisma.creditTransaction.create({
+    });
+
+    await prisma.creditTransaction.create({
       data: {
-        userId: session.user.id,
+        userId: user.id,
         amount: -price,
         type: "PURCHASE",
-        description: templateId
-          ? `Purchased template ${templateId}`
-          : `Purchased section ${sectionId}`,
+        description: `Purchased ${type}: ${template.title}`,
       },
-    }),
-  ]);
+    });
 
-  const updatedUser = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { credits: true },
-  });
+    const updatedUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { credits: true },
+    });
 
-  return NextResponse.json({
-    success: true,
-    purchaseId: purchase.id,
-    remainingCredits: updatedUser?.credits ?? 0,
-  });
+    return NextResponse.json({
+      success: true,
+      remainingCredits: updatedUser?.credits,
+      message: `Successfully purchased ${template.title}`,
+    });
+  } catch (error) {
+    console.error("Purchase error:", error);
+    return NextResponse.json(
+      { error: "Failed to process purchase" },
+      { status: 500 }
+    );
+  }
 }

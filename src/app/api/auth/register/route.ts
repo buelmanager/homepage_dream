@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod/v4";
+import { getDefaultSignupCredits } from "@/lib/app-settings";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -22,6 +23,7 @@ export async function POST(request: Request) {
     }
 
     const { name, email, password } = parsed.data;
+    const signupCredits = await getDefaultSignupCredits();
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -41,7 +43,7 @@ export async function POST(request: Request) {
         name,
         email,
         password: hashedPassword,
-        credits: 100,
+        credits: signupCredits,
         role: "USER",
       },
     });
@@ -49,9 +51,9 @@ export async function POST(request: Request) {
     await prisma.creditTransaction.create({
       data: {
         userId: user.id,
-        amount: 100,
+        amount: signupCredits,
         type: "SIGNUP_BONUS",
-        description: "Welcome bonus credits",
+        description: `Welcome bonus credits (${signupCredits})`,
       },
     });
 

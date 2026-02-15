@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Eye, ArrowRight, Layers, Globe } from "lucide-react";
+import { ArrowRight, Layers, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { TemplateWithSections } from "@/types";
@@ -46,19 +46,6 @@ export function TemplateCard({ template }: TemplateCardProps) {
             transition={{ duration: 0.2 }}
             className="absolute inset-0 flex items-center justify-center gap-3 bg-black/60 backdrop-blur-[2px]"
           >
-            <Link
-              href={`/templates/${template.slug}/preview`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 hover:text-white"
-              >
-                <Eye className="size-3.5" />
-                Preview
-              </Button>
-            </Link>
             <Link href={`/templates/${template.slug}`}>
               <Button
                 size="sm"

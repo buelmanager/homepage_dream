@@ -8,6 +8,15 @@ export async function POST(
   const { slug } = await params;
 
   try {
+    const template = await prisma.template.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+
+    if (!template) {
+      return NextResponse.json({ success: true });
+    }
+
     await prisma.template.update({
       where: { slug },
       data: { viewCount: { increment: 1 } },
@@ -15,9 +24,6 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json(
-      { error: "Template not found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ success: true });
   }
 }

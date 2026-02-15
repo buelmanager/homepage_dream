@@ -45,8 +45,8 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: "admin@homedream.dev" },
-    update: {},
-    create: { email: "admin@homedream.dev", name: "Admin", role: "ADMIN", credits: 9999, password: "$2b$10$dummyhashforadminuseronly" },
+    update: { password: "$2b$12$JEXjrwZBp0P5QwZMfusPk.B6lu2z8czwqd.AcjZ3lHVbp.AAJjNWC" },
+    create: { email: "admin@homedream.dev", name: "Admin", role: "ADMIN", credits: 9999, password: "$2b$12$JEXjrwZBp0P5QwZMfusPk.B6lu2z8czwqd.AcjZ3lHVbp.AAJjNWC" },
   });
 
   await prisma.user.upsert({

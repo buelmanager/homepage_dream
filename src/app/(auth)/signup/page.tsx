@@ -110,7 +110,7 @@ export default function SignUpPage() {
           <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5">
             <Gift className="h-4 w-4 shrink-0 text-amber-600" />
             <p className="text-sm text-amber-800">
-              <span className="font-semibold">100 free credits</span> on signup
+              <span className="font-semibold">Welcome bonus credits</span> on signup
             </p>
           </div>
 

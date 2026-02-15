@@ -1,13 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { stripePostForm } from "@/lib/stripe";
+import { lemonRequest } from "@/lib/lemonsqueezy";
 
 const SUBSCRIPTION_PLANS = {
   BASIC: { price: 10, monthlyLimit: 3, label: "Basic" },
   STANDARD: { price: 20, monthlyLimit: 7, label: "Standard" },
   PREMIUM: { price: 30, monthlyLimit: 15, label: "Premium" },
 };
+
+type PlanKey = keyof typeof SUBSCRIPTION_PLANS;
+
+function getVariantIdForPlan(plan: PlanKey) {
+  const mapping = {
+    BASIC: process.env.LEMONSQUEEZY_VARIANT_ID_BASIC,
+    STANDARD: process.env.LEMONSQUEEZY_VARIANT_ID_STANDARD,
+    PREMIUM: process.env.LEMONSQUEEZY_VARIANT_ID_PREMIUM,
+  };
+  return mapping[plan];
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     const { plan } = await request.json();
 
-    if (!plan || !SUBSCRIPTION_PLANS[plan as keyof typeof SUBSCRIPTION_PLANS]) {
+    if (!plan || !SUBSCRIPTION_PLANS[plan as PlanKey]) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
@@ -31,56 +42,78 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const planConfig = SUBSCRIPTION_PLANS[plan as keyof typeof SUBSCRIPTION_PLANS];
-    const origin = request.headers.get("origin") || request.nextUrl.origin;
-    const successUrl = `${origin}/profile?checkout=success&session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${origin}/profile?checkout=cancel`;
+    const planKey = plan as PlanKey;
+    const planConfig = SUBSCRIPTION_PLANS[planKey];
+    const storeId = process.env.LEMONSQUEEZY_STORE_ID;
+    const variantId = getVariantIdForPlan(planKey);
 
-    let stripeCustomerId = user.stripeCustomerId;
-    if (!stripeCustomerId) {
-      const customer = await stripePostForm<{ id: string }>("/customers", new URLSearchParams({
-        email: user.email,
-        name: user.name || "",
-        "metadata[userId]": user.id,
-      }));
-      stripeCustomerId = customer.id;
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { stripeCustomerId },
-      });
+    if (!storeId || !variantId) {
+      return NextResponse.json(
+        { error: "Missing Lemon Squeezy store/variant configuration" },
+        { status: 500 }
+      );
     }
 
-    const form = new URLSearchParams({
-      mode: "subscription",
-      customer: stripeCustomerId,
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      allow_promotion_codes: "true",
-      billing_address_collection: "auto",
-      "line_items[0][quantity]": "1",
-      "line_items[0][price_data][currency]": "usd",
-      "line_items[0][price_data][unit_amount]": String(planConfig.price * 100),
-      "line_items[0][price_data][recurring][interval]": "month",
-      "line_items[0][price_data][product_data][name]": `HomeDream ${planConfig.label} Plan`,
-      "line_items[0][price_data][product_data][description]": `${planConfig.monthlyLimit} credits per month`,
-      "metadata[userId]": user.id,
-      "metadata[plan]": plan,
-      "subscription_data[metadata][userId]": user.id,
-      "subscription_data[metadata][plan]": plan,
+    const origin = request.headers.get("origin") || request.nextUrl.origin;
+    const successUrl = `${origin}/profile?checkout=success`;
+    const checkoutResp = await lemonRequest<{
+      data: { attributes?: { url?: string } };
+    }>("/checkouts", {
+      method: "POST",
+      body: JSON.stringify({
+        data: {
+          type: "checkouts",
+          attributes: {
+            checkout_data: {
+              email: user.email,
+              custom: {
+                user_id: user.id,
+                plan: planKey,
+              },
+            },
+            checkout_options: {
+              embed: false,
+              media: true,
+              logo: true,
+              desc: true,
+              subscription_preview: true,
+            },
+            product_options: {
+              redirect_url: successUrl,
+              receipt_link_url: successUrl,
+              receipt_button_text: "Back to HomeDream",
+            },
+            test_mode: process.env.LEMONSQUEEZY_TEST_MODE === "true",
+          },
+          relationships: {
+            store: {
+              data: { type: "stores", id: String(storeId) },
+            },
+            variant: {
+              data: { type: "variants", id: String(variantId) },
+            },
+          },
+        },
+      }),
     });
 
-    const checkoutSession = await stripePostForm<{ id: string; url: string }>("/checkout/sessions", form);
+    const checkoutUrl = checkoutResp.data.attributes?.url;
+    if (!checkoutUrl) {
+      return NextResponse.json(
+        { error: "Failed to create checkout URL" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      sessionId: checkoutSession.id,
-      url: checkoutSession.url,
+      url: checkoutUrl,
+      plan: planConfig.label,
     });
   } catch (error) {
     console.error("Subscription error:", error);
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
+      { error: "Failed to create Lemon checkout session" },
       { status: 500 }
     );
   }

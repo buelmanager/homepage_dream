@@ -4,37 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TemplateGrid } from "@/components/template/template-grid";
 import { prisma } from "@/lib/prisma";
+import { getCatalogTemplates } from "@/lib/template-catalog";
 import { CATEGORIES } from "@/types";
 import type { TemplateWithSections } from "@/types";
 
 async function getHomeData() {
-  const [templates, templateCount, sectionCount, categoryGroups, styleGroups] =
-    await Promise.all([
-      prisma.template.findMany({
-        where: { status: "PUBLISHED" },
-        include: { sections: true },
-        orderBy: { createdAt: "desc" },
-        take: 30,
-      }),
-      prisma.template.count({ where: { status: "PUBLISHED" } }),
-      prisma.section.count(),
-      prisma.template.groupBy({
-        by: ["category"],
-        where: { status: "PUBLISHED" },
-        _count: { id: true },
-      }),
-      prisma.template.groupBy({
-        by: ["language"],
-        where: { status: "PUBLISHED" },
-        _count: { id: true },
-      }),
-    ]);
-
-  const categoryCountMap = new Map(
-    categoryGroups.map(
-      (g: { category: string; _count: { id: number } }) => [g.category, g._count.id]
-    )
-  );
+  const fileSystemTemplates = (await getCatalogTemplates({
+    publishedOnly: true,
+  })) as TemplateWithSections[];
+  const sectionCount = await prisma.section.count();
+  
+  const categoryCountMap = new Map<string, number>();
+  fileSystemTemplates.forEach(t => {
+    categoryCountMap.set(t.category, (categoryCountMap.get(t.category) ?? 0) + 1);
+  });
 
   const topCategories = CATEGORIES.filter(
     (c) => c.name !== "all" && categoryCountMap.has(c.name)
@@ -43,12 +26,14 @@ async function getHomeData() {
     .sort((a, b) => (b.count as number) - (a.count as number))
     .slice(0, 4);
 
+  const uniqueLanguages = new Set(fileSystemTemplates.map(t => t.language));
+
   return {
-    templates: templates as unknown as TemplateWithSections[],
-    templateCount,
+    templates: fileSystemTemplates,
+    templateCount: fileSystemTemplates.length,
     sectionCount,
     topCategories,
-    uniqueStyleCount: styleGroups.length,
+    uniqueStyleCount: uniqueLanguages.size,
   };
 }
 

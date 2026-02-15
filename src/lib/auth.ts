@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { getDefaultSignupCredits } from "@/lib/app-settings";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -50,13 +51,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!existingUser) {
+          const signupCredits = await getDefaultSignupCredits();
           const newUser = await prisma.user.create({
             data: {
               email: user.email,
               name: user.name,
               image: user.image,
-              credits: 100,
+              credits: signupCredits,
               role: "USER",
+            },
+          });
+          await prisma.creditTransaction.create({
+            data: {
+              userId: newUser.id,
+              amount: signupCredits,
+              type: "SIGNUP_BONUS",
+              description: `Welcome bonus credits (${signupCredits})`,
             },
           });
           user.id = newUser.id;
@@ -99,7 +109,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id!;
         token.role = (user as any).role ?? "USER";
-        token.credits = (user as any).credits ?? 100;
+        token.credits = (user as any).credits ?? 3;
       }
 
       // Refresh credits on session update

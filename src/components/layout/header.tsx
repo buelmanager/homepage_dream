@@ -3,13 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import {
   Search,
   Menu,
   Command,
   Trophy,
   BookOpen,
-  X,
+  User,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +22,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "@/types";
 
@@ -36,6 +39,7 @@ interface HeaderProps {
 export function Header({ categoryCounts = [] }: HeaderProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const currentCategory = searchParams.get("category") || "all";
@@ -52,6 +56,16 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
     { href: "/leaderboard", label: "TOP", icon: Trophy },
     { href: "/blog", label: "Blog", icon: BookOpen },
   ];
+
+  const user = session?.user;
+  const userInitials = user
+    ? (user.name ?? user.email ?? "U")
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "U";
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -99,6 +113,43 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
                 </Button>
               </Link>
             ))}
+            {user ? (
+              <>
+                <Link href="/profile">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      "gap-2 text-muted-foreground hover:text-foreground",
+                      pathname === "/profile" && "text-foreground"
+                    )}
+                  >
+                    <Avatar className="size-6">
+                      <AvatarImage src={user.image ?? undefined} />
+                      <AvatarFallback className="text-[10px]">
+                        {userInitials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">My</span>
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => signOut()}
+                >
+                  <LogOut className="size-4" />
+                </Button>
+              </>
+            ) : (
+              <Link href="/signin">
+                <Button variant="ghost" size="sm" className="gap-1.5">
+                  <User className="size-3.5" />
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </nav>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -148,6 +199,45 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
                     {link.label}
                   </Link>
                 ))}
+                {user ? (
+                  <>
+                    <Link
+                      href="/profile"
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        "flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                        pathname === "/profile" && "bg-muted text-foreground font-medium"
+                      )}
+                    >
+                      <Avatar className="size-4">
+                        <AvatarImage src={user.image ?? undefined} />
+                        <AvatarFallback className="text-[8px]">
+                          {userInitials}
+                        </AvatarFallback>
+                      </Avatar>
+                      My Page
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setMobileOpen(false);
+                        signOut();
+                      }}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
+                      <LogOut className="size-4" />
+                      Log Out
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/signin"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
+                    <User className="size-4" />
+                    Sign In
+                  </Link>
+                )}
               </div>
 
               <div className="p-2">
@@ -183,17 +273,11 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
         </div>
       </div>
 
+      {pathname === "/" && (
       <div className="border-b border-border/30 bg-background/60 backdrop-blur-lg">
         <div className="scrollbar-none mx-auto flex max-w-7xl items-center gap-0.5 overflow-x-auto px-4 sm:px-6">
           {categories.map((cat) => {
-            const isActive = (() => {
-              if (cat.name === "all") {
-                return (
-                  pathname === "/templates" && !searchParams.has("category")
-                );
-              }
-              return currentCategory === cat.name;
-            })();
+            const isActive = currentCategory === cat.name;
 
             const href =
               cat.name === "all"
@@ -230,6 +314,7 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
           })}
         </div>
       </div>
+      )}
     </header>
   );
 }

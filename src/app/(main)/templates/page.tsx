@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { TemplateGrid } from "@/components/template/template-grid";
 import { CATEGORIES } from "@/types";
 import type { TemplateWithSections } from "@/types";
 import { cn } from "@/lib/utils";
+import { getCatalogTemplates } from "@/lib/template-catalog";
 
 interface TemplatesPageProps {
   searchParams: Promise<{
@@ -18,35 +18,27 @@ export default async function TemplatesPage({ searchParams }: TemplatesPageProps
   const params = await searchParams;
   const { category, style, language } = params;
 
-  const where: Record<string, unknown> = { status: "PUBLISHED" as const };
-  if (category && category !== "all") where.category = category;
-  if (style) where.style = { has: style };
-  if (language) where.language = language;
+  const allTemplates = (await getCatalogTemplates({
+    publishedOnly: true,
+  })) as TemplateWithSections[];
 
-  const [templates, categoryCounts] = await Promise.all([
-    prisma.template.findMany({
-      where,
-      include: { sections: true },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.template.groupBy({
-      by: ["category"],
-      where: { status: "PUBLISHED" },
-      _count: { id: true },
-    }),
-  ]);
+  let filteredTemplates = allTemplates;
+  if (category && category !== "all") {
+    filteredTemplates = allTemplates.filter(t => t.category === category);
+  }
+  if (style) {
+    filteredTemplates = filteredTemplates.filter(t => t.style.includes(style));
+  }
+  if (language) {
+    filteredTemplates = filteredTemplates.filter(t => t.language === language);
+  }
 
-  const countMap = new Map(
-    categoryCounts.map(
-      (c: { category: string; _count: { id: number } }) => [c.category, c._count.id]
-    )
-  );
+  const countMap = new Map<string, number>();
+  allTemplates.forEach(t => {
+    countMap.set(t.category, (countMap.get(t.category) ?? 0) + 1);
+  });
 
-  const totalCount = categoryCounts.reduce(
-    (sum: number, c: { _count: { id: number } }) => sum + c._count.id,
-    0
-  );
-
+  const totalCount = allTemplates.length;
   const activeCategory = category || "all";
 
   const activeFilters: string[] = [];
@@ -121,13 +113,13 @@ export default async function TemplatesPage({ searchParams }: TemplatesPageProps
       <div className="mb-6 flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           <span className="font-medium text-foreground">
-            {(templates as unknown as TemplateWithSections[]).length}
+            {filteredTemplates.length}
           </span>{" "}
           templates found
         </p>
       </div>
 
-      <TemplateGrid templates={templates as unknown as TemplateWithSections[]} />
+      <TemplateGrid templates={filteredTemplates} />
     </div>
   );
 }

@@ -10,7 +10,6 @@ import {
   Eye,
   Heart,
 } from "lucide-react";
-import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -25,6 +24,7 @@ import { PurchaseCard } from "@/components/template/purchase-card";
 import { ViewCounter } from "@/components/template/view-counter";
 import { CATEGORIES } from "@/types";
 import type { TemplateWithSections, SectionItem } from "@/types";
+import { getCatalogTemplateBySlug } from "@/lib/template-catalog";
 
 export async function generateMetadata({
   params,
@@ -32,12 +32,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const template = await prisma.template.findUnique({
-    where: { slug },
-    select: { title: true, description: true },
-  });
-
-  if (!template) return { title: "Template Not Found" };
+  const template = await getCatalogTemplateBySlug(slug, { publishedOnly: true });
+  
+  if (!template) {
+    return { title: "Template Not Found" };
+  }
 
   return {
     title: `${template.title} | HomeDream`,
@@ -52,14 +51,12 @@ export default async function TemplateDetailPage({
 }) {
   const { slug } = await params;
 
-  const result = await prisma.template.findUnique({
-    where: { slug },
-    include: { sections: { orderBy: { order: "asc" } } },
-  });
+  const template = await getCatalogTemplateBySlug(slug, { publishedOnly: true });
+  
+  if (!template) {
+    notFound();
+  }
 
-  if (!result) notFound();
-
-  const template = result as unknown as TemplateWithSections;
   const htmlPath = template.htmlPath ?? `/templates/${slug}/index.html`;
 
   const uniqueCategories: string[] = [
@@ -170,11 +167,17 @@ export default async function TemplateDetailPage({
                     Categories
                   </span>
                   <div className="flex flex-wrap gap-1.5">
-                    {uniqueCategories.map((cat) => (
-                      <Badge key={cat} variant="outline" className="text-xs">
-                        {getCategoryLabel(cat)}
+                    {uniqueCategories.length > 0 ? (
+                      uniqueCategories.map((cat) => (
+                        <Badge key={cat} variant="outline" className="text-xs">
+                          {getCategoryLabel(cat)}
+                        </Badge>
+                      ))
+                    ) : (
+                      <Badge variant="outline" className="text-xs">
+                        {getCategoryLabel("pages")}
                       </Badge>
-                    ))}
+                    )}
                   </div>
                 </div>
 
@@ -206,6 +209,7 @@ export default async function TemplateDetailPage({
               price={template.price}
               itemType="template"
               itemTitle={template.title}
+              itemSlug={slug}
             />
           </aside>
         </div>
