@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAISON ÉTOILE — Boutique Hotel</title>
+  <meta name="description" content="MAISON ÉTOILE - 잊을 수 없는 밤, 돌아오고 싶은 아침. 서울 최고의 부티크 호텔.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    :root {
+      --primary: #312E81;
+      --accent: #A78BFA;
+      --background: #1A1740;
+      --surface: #231F52;
+      --text: #EDE9FE;
+      --text-muted: #8B83B8;
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Outfit', sans-serif;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --container: 1200px;
+      --glow-violet: rgba(167, 139, 250, 0.15);
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-body); background: var(--background); color: var(--text); overflow-x: hidden; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; } ul, ol { list-style: none; } img { max-width: 100%; display: block; }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; color: inherit; }
+    input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; background: transparent; border: none; outline: none; }
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+    .section-label { font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 600; line-height: 1.2; margin-bottom: 20px; }
+    .section-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 560px; line-height: 1.7; font-weight: 300; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* ── PRELOADER ── */
+    #preloader { position: fixed; inset: 0; background: var(--background); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .keycard-loader { position: relative; width: 200px; height: 80px; display: flex; align-items: center; justify-content: center; }
+    .keycard-slot { width: 200px; height: 6px; background: rgba(167, 139, 250, 0.1); border-radius: 3px; position: relative; overflow: hidden; border: 1px solid rgba(167, 139, 250, 0.15); }
+    .keycard { position: absolute; left: -60px; top: 50%; transform: translateY(-50%); width: 55px; height: 36px; background: linear-gradient(135deg, #A78BFA, #7C3AED); border-radius: 5px; box-shadow: 0 2px 10px rgba(167, 139, 250, 0.4); animation: swipeCard 2s ease-in-out forwards; }
+    .keycard::after { content: ''; position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+    .keycard-light { position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.5); transition: all 0.3s ease; }
+    .keycard-light.success { background: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.6); animation: pulseGreen 0.6s ease-in-out 3; }
+    @keyframes swipeCard { 0% { left: -60px; } 60% { left: 140px; } 70% { left: 130px; } 100% { left: 130px; opacity: 0; } }
+    @keyframes pulseGreen { 0%, 100% { transform: translateY(-50%) scale(1); box-shadow: 0 0 20px rgba(34,197,94,0.6); } 50% { transform: translateY(-50%) scale(1.4); box-shadow: 0 0 30px rgba(34,197,94,0.8); } }
+    .preloader-brand { font-family: var(--font-heading); font-size: 2rem; font-weight: 600; color: var(--text); letter-spacing: 6px; opacity: 0; margin-top: 36px; }
+    .preloader-brand span { color: var(--accent); }
+    .preloader-tagline { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; margin-top: 8px; opacity: 0; font-weight: 300; }
+
+    /* ── NAVBAR ── */
+    .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px 0; transition: all var(--transition); }
+    .navbar.scrolled { background: rgba(26, 23, 64, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 14px 0; border-bottom: 1px solid rgba(167, 139, 250, 0.08); }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.35rem; font-weight: 600; color: var(--text); letter-spacing: 3px; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-links a { font-size: 0.85rem; font-weight: 400; color: var(--text-muted); transition: color var(--transition); position: relative; letter-spacing: 1px; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width var(--transition); }
+    .nav-links a:hover { color: var(--text); } .nav-links a:hover::after { width: 100%; }
+    .nav-cta { padding: 10px 24px; background: var(--accent); color: var(--background) !important; border-radius: 50px; font-weight: 600; font-size: 0.85rem; transition: all var(--transition); }
+    .nav-cta:hover { background: #8B5CF6; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(167, 139, 250, 0.35); }
+    .nav-cta::after { display: none !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 1px; background: var(--text); transition: all var(--transition); }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+    .mobile-menu { position: fixed; top: 0; right: -100%; width: 300px; height: 100vh; background: var(--surface); z-index: 999; padding: 100px 40px 40px; transition: right 0.4s cubic-bezier(0.4,0,0.2,1); border-left: 1px solid rgba(167, 139, 250, 0.08); }
+    .mobile-menu.active { right: 0; }
+    .mobile-menu a { display: block; font-size: 1.1rem; font-weight: 400; color: var(--text-muted); padding: 16px 0; border-bottom: 1px solid rgba(139, 131, 184, 0.1); transition: color var(--transition); }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; pointer-events: none; transition: opacity var(--transition); }
+    .mobile-overlay.active { opacity: 1; pointer-events: all; }
+
+    /* ── HERO ── */
+    .hero { position: relative; width: 100%; height: 100vh; min-height: 700px; overflow: hidden; display: flex; align-items: center; }
+    .hero-bg { position: absolute; inset: -5%; width: 110%; height: 110%; background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80') center/cover; filter: brightness(0.22) saturate(0.7); }
+    .hero-gradient { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(26,23,64,0.7) 0%, rgba(26,23,64,0.2) 40%, rgba(26,23,64,0.6) 70%, rgba(26,23,64,1) 100%); z-index: 2; }
+    .hero-diagonal { position: absolute; right: -5%; top: 0; width: 55%; height: 100%; background: linear-gradient(135deg, transparent 0%, rgba(49,46,129,0.3) 100%); clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%); z-index: 2; }
+    .hero-bokeh { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+    .chandelier-dot { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(167,139,250,0.2), transparent 70%); opacity: 0; animation: chandelierFloat 7s ease-in-out infinite; }
+    @keyframes chandelierFloat { 0%, 100% { opacity: 0; transform: translateY(0) scale(0.7); } 40% { opacity: 1; transform: translateY(-20px) scale(1.1); } 60% { opacity: 0.8; transform: translateY(-25px) scale(1); } }
+    .hero-content { position: relative; z-index: 3; max-width: 600px; padding: 0 24px 0 60px; }
+    .hero-eyebrow { font-size: 0.8rem; font-weight: 400; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; opacity: 0; }
+    .hero-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 6.5vw, 4.2rem); font-weight: 600; line-height: 1.25; margin-bottom: 24px; font-style: italic; }
+    .hero-title .highlight { color: var(--accent); font-style: normal; }
+    .hero-subtitle { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 40px; opacity: 0; line-height: 1.8; font-weight: 300; }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; }
+    .btn-primary { padding: 14px 36px; background: var(--accent); color: var(--background); border-radius: 50px; font-weight: 600; font-size: 0.9rem; transition: all var(--transition); display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:hover { background: #8B5CF6; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(167, 139, 250, 0.3); }
+    .btn-outline { padding: 14px 36px; border: 1px solid rgba(167, 139, 250, 0.3); color: var(--accent); border-radius: 50px; font-weight: 500; font-size: 0.9rem; transition: all var(--transition); }
+    .btn-outline:hover { background: rgba(167, 139, 250, 0.08); border-color: var(--accent); }
+    .scroll-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; cursor: pointer; }
+    .scroll-indicator span { font-size: 0.65rem; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; font-weight: 300; }
+    .scroll-line { width: 1px; height: 50px; background: rgba(255,255,255,0.12); position: relative; overflow: hidden; }
+    .scroll-dot { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 3px; height: 10px; background: var(--accent); border-radius: 3px; animation: scrollDot 2s ease-in-out infinite; }
+    @keyframes scrollDot { 0%, 100% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+    /* ── MARQUEE ── */
+    .marquee-section { padding: 40px 0; border-top: 1px solid rgba(167, 139, 250, 0.06); border-bottom: 1px solid rgba(167, 139, 250, 0.06); overflow: hidden; }
+    .marquee-track { display: flex; gap: 60px; animation: marquee 40s linear infinite; width: max-content; }
+    .marquee-item { font-family: var(--font-heading); font-size: 1rem; font-weight: 500; color: var(--text-muted); white-space: nowrap; opacity: 0.4; letter-spacing: 3px; }
+    .marquee-separator { color: var(--accent); opacity: 0.3; font-size: 0.6rem; display: flex; align-items: center; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ── ROOM TYPES ── */
+    .rooms-section { padding: 120px 0; }
+    .rooms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .room-card { background: var(--surface); border: 1px solid rgba(167, 139, 250, 0.06); border-radius: 20px; overflow: hidden; transition: all 0.4s ease; position: relative; }
+    .room-card::before { content: ''; position: absolute; inset: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, rgba(167,139,250,0), rgba(167,139,250,0)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; z-index: 1; transition: background 0.4s ease; pointer-events: none; }
+    .room-card:hover::before { background: linear-gradient(135deg, rgba(167,139,250,0.4), rgba(124,58,237,0.2), rgba(167,139,250,0.4)); }
+    .room-card:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(167, 139, 250, 0.08); }
+    .room-image { width: 100%; height: 240px; overflow: hidden; position: relative; }
+    .room-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .room-card:hover .room-image img { transform: scale(1.05); }
+    .room-image-overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(transparent, rgba(35,31,82,0.8)); }
+    .room-body { padding: 28px; }
+    .room-name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 600; margin-bottom: 6px; font-style: italic; }
+    .room-price { font-family: var(--font-heading); font-size: 1.2rem; color: var(--accent); font-weight: 500; margin-bottom: 18px; }
+    .room-price small { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-body); font-weight: 300; }
+    .room-amenities { display: flex; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+    .room-amenity { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); font-weight: 300; }
+    .room-amenity-icon { font-size: 1rem; }
+    .room-book-btn { width: 100%; padding: 13px; background: rgba(167, 139, 250, 0.08); border: 1px solid rgba(167, 139, 250, 0.2); color: var(--accent); border-radius: 12px; font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: all var(--transition); letter-spacing: 1px; }
+    .room-book-btn:hover { background: var(--accent); color: var(--background); border-color: var(--accent); }
+
+    /* ── AMENITIES SHOWCASE ── */
+    .amenities-section { padding: 120px 0; background: var(--surface); overflow: hidden; }
+    .amenities-scroll { display: flex; gap: 24px; padding: 20px 0; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; }
+    .amenities-scroll::-webkit-scrollbar { display: none; }
+    .amenity-card { min-width: 240px; background: var(--background); border: 1px solid rgba(167, 139, 250, 0.06); border-radius: 20px; padding: 32px 24px; text-align: center; transition: all 0.4s ease; flex-shrink: 0; }
+    .amenity-card:hover { transform: translateY(-6px); border-color: rgba(167, 139, 250, 0.15); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+    .amenity-icon { font-size: 2.2rem; margin-bottom: 16px; }
+    .amenity-name { font-family: var(--font-heading); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; font-style: italic; }
+    .amenity-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+
+    /* ── GUEST REVIEWS ── */
+    .reviews-section { padding: 120px 0; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .review-card { background: var(--surface); border: 1px solid rgba(167, 139, 250, 0.06); border-radius: 20px; padding: 36px; transition: all 0.4s ease; position: relative; overflow: hidden; }
+    .review-card::after { content: ''; position: absolute; inset: 0; border-radius: 20px; box-shadow: inset 0 0 40px rgba(167,139,250,0); transition: box-shadow 0.4s ease; pointer-events: none; }
+    .review-card:hover::after { box-shadow: inset 0 0 40px rgba(167,139,250,0.06); }
+    .review-card:hover { transform: translateY(-4px); }
+    .review-guest { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .review-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(167, 139, 250, 0.2); }
+    .review-guest-info h4 { font-family: var(--font-heading); font-size: 1.05rem; font-weight: 600; }
+    .review-guest-info span { font-size: 0.8rem; color: var(--text-muted); font-weight: 300; }
+    .review-stars { color: #FBBF24; font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 14px; }
+    .review-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.8; font-weight: 300; font-style: italic; }
+    .review-quote { position: absolute; top: 20px; right: 24px; font-family: var(--font-heading); font-size: 4rem; color: rgba(167, 139, 250, 0.08); line-height: 1; }
+
+    /* ── GALLERY ── */
+    .gallery-section { padding: 120px 0; background: var(--surface); }
+    .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 220px); gap: 16px; }
+    .gallery-item { border-radius: 16px; overflow: hidden; position: relative; cursor: pointer; }
+    .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+    .gallery-item:nth-child(5) { grid-column: span 2; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .gallery-item:hover img { transform: scale(1.06); }
+    .gallery-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 50%, rgba(26,23,64,0.6)); opacity: 0; transition: opacity 0.4s ease; }
+    .gallery-item:hover::after { opacity: 1; }
+    .gallery-item-label { position: absolute; bottom: 16px; left: 16px; font-family: var(--font-heading); font-size: 1rem; font-weight: 500; color: white; z-index: 1; opacity: 0; transform: translateY(8px); transition: all 0.4s ease; font-style: italic; letter-spacing: 1px; }
+    .gallery-item:hover .gallery-item-label { opacity: 1; transform: translateY(0); }
+
+    /* ── FAQ ── */
+    .faq-section { padding: 120px 0; }
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid rgba(167, 139, 250, 0.06); }
+    .faq-question { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; cursor: pointer; transition: color var(--transition); gap: 16px; }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question h3 { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; font-style: italic; }
+    .faq-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(167, 139, 250, 0.06); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all var(--transition); font-size: 1.2rem; color: var(--accent); }
+    .faq-item.active .faq-icon { background: var(--accent); color: var(--background); transform: rotate(45deg); }
+    .faq-answer { height: 0; overflow: hidden; }
+    .faq-answer-inner { padding: 0 0 24px; color: var(--text-muted); line-height: 1.8; font-size: 0.95rem; font-weight: 300; }
+
+    /* ── CONTACT / BOOKING ── */
+    .contact-section { padding: 120px 0; background: var(--surface); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .contact-info h3 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 600; margin-bottom: 24px; font-style: italic; }
+    .contact-detail { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+    .contact-detail-icon { width: 44px; height: 44px; background: rgba(167, 139, 250, 0.06); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+    .contact-detail-text h4 { font-family: var(--font-heading); font-weight: 600; margin-bottom: 4px; font-size: 0.95rem; }
+    .contact-detail-text p { color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
+    .contact-map { margin-top: 28px; width: 100%; height: 180px; background: var(--background); border-radius: 16px; border: 1px solid rgba(167, 139, 250, 0.06); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .contact-map-grid { position: absolute; inset: 0; background-image: 
+      linear-gradient(rgba(167,139,250,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(167,139,250,0.04) 1px, transparent 1px);
+    background-size: 30px 30px; }
+    .contact-map-pin { font-size: 2rem; z-index: 1; animation: pinBounce 2s ease-in-out infinite; }
+    @keyframes pinBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .contact-map-label { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; font-weight: 300; }
+    .contact-form-container { background: var(--background); border-radius: 20px; padding: 40px; border: 1px solid rgba(167, 139, 250, 0.06); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 8px; color: var(--text-muted); letter-spacing: 1px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 14px 18px; background: var(--surface); border: 1px solid rgba(167, 139, 250, 0.08); border-radius: 14px; color: var(--text); font-size: 0.95rem; transition: border-color var(--transition); font-weight: 300; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { min-height: 100px; resize: vertical; }
+    .form-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%23A78BFA'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+    .btn-submit { width: 100%; padding: 16px; background: var(--accent); color: var(--background); border-radius: 14px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all var(--transition); border: none; letter-spacing: 1px; }
+    .btn-submit:hover { background: #8B5CF6; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(167,139,250,0.25); }
+
+    /* ── FOOTER ── */
+    .footer { padding: 80px 0 40px; border-top: 1px solid rgba(167, 139, 250, 0.06); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 600; margin-bottom: 16px; letter-spacing: 2px; }
+    .footer-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a { width: 40px; height: 40px; border-radius: 50%; background: rgba(167, 139, 250, 0.06); display: flex; align-items: center; justify-content: center; transition: all var(--transition); font-size: 1rem; }
+    .footer-social a:hover { background: var(--accent); color: var(--background); }
+    .footer-col h4 { font-family: var(--font-heading); font-weight: 600; margin-bottom: 20px; font-size: 0.95rem; font-style: italic; }
+    .footer-col a { display: block; font-size: 0.9rem; color: var(--text-muted); padding: 6px 0; transition: color var(--transition); font-weight: 300; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(167, 139, 250, 0.06); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-muted); font-weight: 300; }
+    .footer-bottom-links { display: flex; gap: 24px; }
+    .footer-bottom-links a { color: var(--text-muted); transition: color var(--transition); }
+    .footer-bottom-links a:hover { color: var(--accent); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .rooms-grid { grid-template-columns: 1fr 1fr; }
+      .rooms-grid .room-card:last-child { grid-column: span 2; max-width: 50%; margin: 0 auto; }
+      .reviews-grid { grid-template-columns: 1fr; max-width: 600px; margin: 0 auto; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+      .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 1; height: 300px; }
+      .gallery-item:nth-child(5) { grid-column: span 1; }
+      .gallery-item { height: 200px; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero-content { padding: 0 24px; }
+      .hero-diagonal { display: none; }
+      .rooms-grid { grid-template-columns: 1fr; }
+      .rooms-grid .room-card:last-child { grid-column: span 1; max-width: 100%; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-item:nth-child(1) { grid-column: span 2; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .hero-buttons { flex-direction: column; align-items: flex-start; }
+      .hero-buttons .btn-primary, .hero-buttons .btn-outline { width: 100%; justify-content: center; text-align: center; max-width: 280px; }
+    }
+    @media (max-width: 480px) {
+      .contact-form-container { padding: 24px; }
+      .room-body { padding: 20px; }
+      .room-amenities { gap: 10px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item:nth-child(1) { grid-column: span 1; }
+      .gallery-item:nth-child(5) { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════ PRELOADER ════════ -->
+  <div id="preloader">
+    <div class="keycard-loader">
+      <div class="keycard-slot">
+        <div class="keycard"></div>
+      </div>
+      <div class="keycard-light" id="keycardLight"></div>
+    </div>
+    <div class="preloader-brand">MAISON <span>ÉTOILE</span></div>
+    <div class="preloader-tagline">Boutique Hotel · Seoul</div>
+  </div>
+
+  <!-- ════════ NAVBAR ════════ -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="nav-logo">MAISON <span>ÉTOILE</span></a>
+      <div class="nav-links">
+        <a href="#rooms">Rooms</a>
+        <a href="#amenities">Amenities</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#faq">FAQ</a>
+        <a href="#booking" class="nav-cta">Book Now</a>
+      </div>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-overlay" onclick="toggleMenu()"></div>
+  <div class="mobile-menu">
+    <a href="#rooms" onclick="toggleMenu()">Rooms</a>
+    <a href="#amenities" onclick="toggleMenu()">Amenities</a>
+    <a href="#gallery" onclick="toggleMenu()">Gallery</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
+    <a href="#booking" onclick="toggleMenu()">Book Now</a>
+  </div>
+
+  <!-- ════════ HERO ════════ -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-bokeh" id="heroBokeh"></div>
+    <div class="hero-diagonal"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">BOUTIQUE HOTEL · SINCE 2019</div>
+      <h1 class="hero-title">잊을 수 없는 밤,<br><span class="highlight">돌아오고 싶은 아침</span></h1>
+      <p class="hero-subtitle">서울 한복판, 고요한 별빛 아래 특별한 하루가 시작됩니다.<br>MAISON ÉTOILE에서 잊지 못할 순간을 만들어 보세요.</p>
+      <div class="hero-buttons">
+        <a href="#rooms" class="btn-primary">객실 둘러보기</a>
+        <a href="#booking" class="btn-outline">예약 문의</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Explore</span>
+      <div class="scroll-line"><div class="scroll-dot"></div></div>
+    </div>
+  </section>
+
+  <!-- ════════ MARQUEE ════════ -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item">INFINITY POOL</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">SPA</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">FINE DINING</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">ROOFTOP BAR</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">CONCIERGE</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">VALET PARKING</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">FITNESS CENTER</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">BUSINESS CENTER</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">INFINITY POOL</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">SPA</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">FINE DINING</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">ROOFTOP BAR</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">CONCIERGE</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">VALET PARKING</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">FITNESS CENTER</span><span class="marquee-separator">&#9670;</span>
+      <span class="marquee-item">BUSINESS CENTER</span><span class="marquee-separator">&#9670;</span>
+    </div>
+  </div>
+
+  <!-- ════════ ROOM TYPES ════════ -->
+  <section id="rooms" class="rooms-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Rooms & Suites</div>
+        <h2 class="section-title">객실 안내</h2>
+        <p class="section-desc">각 객실은 세심한 디테일과 편안함으로 완성된 개인만의 안식처입니다.</p>
+      </div>
+      <div class="rooms-grid">
+
+        <div class="room-card">
+          <div class="room-image">
+            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80" alt="Deluxe Room">
+            <div class="room-image-overlay"></div>
+          </div>
+          <div class="room-body">
+            <h3 class="room-name">Deluxe Room</h3>
+            <div class="room-price">&#8361;350,000 <small>/ 1박</small></div>
+            <div class="room-amenities">
+              <span class="room-amenity"><span class="room-amenity-icon">&#128716;</span> King Bed</span>
+              <span class="room-amenity"><span class="room-amenity-icon">&#127747;</span> City View</span>
+              <span class="room-amenity"><span class="room-amenity-icon">&#128208;</span> 38m&#178;</span>
+            </div>
+            <button class="room-book-btn" onclick="scrollToBooking()">예약하기</button>
+          </div>
+        </div>
+
+        <div class="room-card">
+          <div class="room-image">
+            <img src="https://images.unsplash.com/photo-1590490360182-c33d7d9d45f6?w=800&q=80" alt="Executive Suite">
+            <div class="room-image-overlay"></div>
+          </div>
+          <div class="room-body">
+            <h3 class="room-name">Executive Suite</h3>
+            <div class="room-price">&#8361;580,000 <small>/ 1박</small></div>
+            <div class="room-amenities">
+              <span class="room-amenity"><span class="room-amenity-icon">&#128716;</span> King Bed</span>
+              <span class="room-amenity"><span class="room-amenity-icon">&#127749;</span> River View</span>
+              <span class="room-amenity"><span class="room-amenity-icon">&#128208;</span> 62m&#178;</span>
+            </div>
+            <button class="room-book-btn" onclick="scrollToBooking()">예약하기</button>
+          </div>
+        </div>
+
+        <div class="room-card">
+          <div class="room-image">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80" alt="Penthouse">
+            <div class="room-image-overlay"></div>
+          </div>
+          <div class="room-body">
+            <h3 class="room-name">Penthouse</h3>
+            <div class="room-price">&#8361;1,200,000 <small>/ 1박</small></div>
+            <div class="room-amenities">
+              <span class="room-amenity"><span class="room-amenity-icon">&#128716;</span> Super King</span>
+              <span class="room-amenity"><span class="room-amenity-icon">&#127756;</span> Panorama</span>
+              <span class="room-amenity"><span class="room-amenity-icon">&#128208;</span> 120m&#178;</span>
+            </div>
+            <button class="room-book-btn" onclick="scrollToBooking()">예약하기</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ AMENITIES SHOWCASE ════════ -->
+  <section id="amenities" class="amenities-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Amenities</div>
+        <h2 class="section-title">호텔 시설</h2>
+        <p class="section-desc">투숙 기간 동안 다양한 프리미엄 시설을 자유롭게 이용하실 수 있습니다.</p>
+      </div>
+    </div>
+    <div class="amenities-scroll" id="amenitiesScroll">
+      <div style="min-width:40px;flex-shrink:0;"></div>
+      <div class="amenity-card">
+        <div class="amenity-icon">&#127754;</div>
+        <h4 class="amenity-name">Infinity Pool</h4>
+        <p class="amenity-desc">도심 스카이라인을 바라보며 즐기는 옥상 인피니티 풀</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">&#128134;</div>
+        <h4 class="amenity-name">Luxury Spa</h4>
+        <p class="amenity-desc">전문 테라피스트의 시그니처 스파 트리트먼트</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">&#127860;</div>
+        <h4 class="amenity-name">Fine Dining</h4>
+        <p class="amenity-desc">미슐랭 셰프가 선보이는 모던 한식 파인다이닝</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">&#127863;</div>
+        <h4 class="amenity-name">Rooftop Bar</h4>
+        <p class="amenity-desc">시그니처 칵테일과 함께하는 야경 루프탑 바</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">&#127947;</div>
+        <h4 class="amenity-name">Fitness Center</h4>
+        <p class="amenity-desc">최신 장비와 퍼스널 트레이닝 프로그램</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">&#128188;</div>
+        <h4 class="amenity-name">Business Center</h4>
+        <p class="amenity-desc">회의실, 프린터, 고속 Wi-Fi 비즈니스 라운지</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">&#129333;</div>
+        <h4 class="amenity-name">Concierge</h4>
+        <p class="amenity-desc">24시간 맞춤 컨시어지 서비스로 완벽한 여정</p>
+      </div>
+      <div class="amenity-card">
+        <div class="amenity-icon">&#127803;</div>
+        <h4 class="amenity-name">Secret Garden</h4>
+        <p class="amenity-desc">도심 속 숨겨진 프라이빗 정원에서의 휴식</p>
+      </div>
+      <div style="min-width:40px;flex-shrink:0;"></div>
+    </div>
+  </section>
+
+  <!-- ════════ GUEST REVIEWS ════════ -->
+  <section id="reviews" class="reviews-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Guest Reviews</div>
+        <h2 class="section-title">투숙 후기</h2>
+        <p class="section-desc">MAISON ÉTOILE을 경험한 고객님들의 진심 어린 후기입니다.</p>
+      </div>
+      <div class="reviews-grid">
+
+        <div class="review-card">
+          <span class="review-quote">&ldquo;</span>
+          <div class="review-guest">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80" alt="Guest" class="review-photo">
+            <div class="review-guest-info">
+              <h4>김서연</h4>
+              <span>&#127472;&#127479; 서울</span>
+            </div>
+          </div>
+          <div class="review-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text">기념일에 펜트하우스를 예약했는데, 깜짝 꽃 장식까지 준비해 주셔서 정말 감동받았어요. 침구의 질감, 조명의 톤, 어메니티 하나하나에서 세심함이 느껴졌습니다.</p>
+        </div>
+
+        <div class="review-card">
+          <span class="review-quote">&ldquo;</span>
+          <div class="review-guest">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="Guest" class="review-photo">
+            <div class="review-guest-info">
+              <h4>Thomas Weber</h4>
+              <span>&#127465;&#127466; Berlin</span>
+            </div>
+          </div>
+          <div class="review-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text">출장으로 여러 부티크 호텔을 다녀봤지만, 이곳만큼 디테일에 신경 쓴 곳은 처음입니다. 루프탑 바에서 본 서울 야경은 잊을 수 없는 순간이었어요.</p>
+        </div>
+
+        <div class="review-card">
+          <span class="review-quote">&ldquo;</span>
+          <div class="review-guest">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80" alt="Guest" class="review-photo">
+            <div class="review-guest-info">
+              <h4>Yuki Tanaka</h4>
+              <span>&#127471;&#127477; Tokyo</span>
+            </div>
+          </div>
+          <div class="review-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+          <p class="review-text">체크인부터 체크아웃까지 모든 순간이 완벽했습니다. 특히 조식 레스토랑의 한식 코스는 최고였어요. 다음 서울 방문에도 꼭 다시 올 거예요.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ GALLERY ════════ -->
+  <section id="gallery" class="gallery-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Gallery</div>
+        <h2 class="section-title">공간 갤러리</h2>
+        <p class="section-desc">고요한 아름다움과 세련된 디자인이 어우러진 MAISON ÉTOILE의 공간.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=900&q=80" alt="Lobby">
+          <span class="gallery-item-label">Grand Lobby</span>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=500&q=80" alt="Room">
+          <span class="gallery-item-label">Deluxe Room</span>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80" alt="Restaurant">
+          <span class="gallery-item-label">Fine Dining</span>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1572331165267-854da2b021b1?w=500&q=80" alt="Pool">
+          <span class="gallery-item-label">Infinity Pool</span>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800&q=80" alt="Rooftop">
+          <span class="gallery-item-label">Rooftop Bar</span>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=500&q=80" alt="Bathroom">
+          <span class="gallery-item-label">Marble Bath</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ FAQ ════════ -->
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">자주 묻는 질문</h2>
+        <p class="section-desc">MAISON ÉTOILE 투숙에 관한 궁금한 점을 모았습니다.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>체크인/체크아웃 시간은 어떻게 되나요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">체크인은 오후 3시부터, 체크아웃은 오전 11시까지입니다. 얼리 체크인(오후 1시~)과 레이트 체크아웃(오후 2시까지)은 객실 상황에 따라 추가 요금 없이 가능하며, 사전 요청 시 최대한 배려해 드립니다. 컨시어지에 미리 연락 주시면 짐 보관 서비스도 무료로 제공됩니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>주차 시설이 있나요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">호텔 지하에 전용 주차장을 운영하고 있으며, 투숙객은 무료로 이용 가능합니다. 발렛 파킹 서비스도 제공되며(1일 20,000원), 전기차 충전 스테이션 4기를 갖추고 있습니다. 차량 도착 시 프론트에서 발렛 요원이 안내해 드립니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>반려동물 동반이 가능한가요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">소형 반려동물(7kg 이하)과 함께 투숙 가능한 펫 프렌들리 객실을 운영하고 있습니다. 전용 침대, 식기, 간식이 객실에 비치되며, 호텔 가든에서 산책도 가능합니다. 예약 시 반려동물 동반 여부를 알려주시면 맞춤 준비를 해드립니다. 추가 요금은 1박 50,000원입니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>예약 취소 규정은 어떻게 되나요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">체크인 3일 전까지 무료 취소가 가능합니다. 2일 전 취소 시 1박 요금의 50%, 1일 전 또는 당일 취소 시 1박 요금의 100%가 부과됩니다. 태풍, 폭설 등 천재지변의 경우 유연하게 대응해 드리며, 날짜 변경은 취소 수수료 없이 1회 가능합니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>조식은 어떻게 제공되나요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">1층 레스토랑 'Aurore'에서 매일 오전 7시~10시 30분까지 조식을 운영합니다. 한식 코스, 양식 뷔페, 건강식 옵션을 선택하실 수 있으며, 유기농 식재료와 제철 과일을 사용합니다. 투숙 패키지에 따라 무료 제공되며, 별도 이용 시 성인 45,000원, 아동 25,000원입니다. 인룸 다이닝도 가능합니다.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ CONTACT / BOOKING ════════ -->
+  <section id="booking" class="contact-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Reservation</div>
+        <h2 class="section-title">예약 & 문의</h2>
+        <p class="section-desc">특별한 하루의 시작, MAISON ÉTOILE에서 함께하세요.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h3>MAISON ÉTOILE</h3>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#128205;</div>
+            <div class="contact-detail-text">
+              <h4>오시는 길</h4>
+              <p>서울특별시 중구 을지로 30<br>을지로입구역 2번 출구 도보 5분</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#128222;</div>
+            <div class="contact-detail-text">
+              <h4>예약 전화</h4>
+              <p>02-777-0101</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#9993;</div>
+            <div class="contact-detail-text">
+              <h4>이메일</h4>
+              <p>reservation@maison-etoile.kr</p>
+            </div>
+          </div>
+          <div class="contact-map">
+            <div class="contact-map-grid"></div>
+            <span class="contact-map-pin">&#128205;</span>
+            <span class="contact-map-label">MAISON ÉTOILE · SEOUL</span>
+          </div>
+        </div>
+
+        <div class="contact-form-container">
+          <form onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group"><label>성함</label><input type="text" placeholder="홍길동" required></div>
+              <div class="form-group"><label>이메일</label><input type="email" placeholder="email@example.com" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>체크인</label><input type="date" required></div>
+              <div class="form-group"><label>체크아웃</label><input type="date" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>객실 타입</label>
+                <select required>
+                  <option value="">선택해 주세요</option>
+                  <option value="deluxe">Deluxe Room (&#8361;350,000~)</option>
+                  <option value="executive">Executive Suite (&#8361;580,000~)</option>
+                  <option value="penthouse">Penthouse (&#8361;1,200,000~)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>투숙 인원</label>
+                <select required>
+                  <option value="">선택해 주세요</option>
+                  <option value="1">성인 1명</option>
+                  <option value="2">성인 2명</option>
+                  <option value="3">성인 2명 + 아동 1명</option>
+                  <option value="4">성인 2명 + 아동 2명</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>특별 요청사항</label>
+              <textarea placeholder="기념일 준비, 얼리 체크인, 반려동물 동반 등 요청사항을 적어주세요"></textarea>
+            </div>
+            <button type="submit" class="btn-submit">예약 신청하기</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ FOOTER ════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">MAISON ÉTOILE</div>
+          <p class="footer-desc">잊을 수 없는 밤, 돌아오고 싶은 아침. 서울 중심부에 위치한 프리미엄 부티크 호텔에서 특별한 순간을 경험하세요.</p>
+          <div class="footer-social">
+            <a href="#">&#128247;</a>
+            <a href="#">&#128240;</a>
+            <a href="#">&#128231;</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="#rooms">객실 안내</a>
+          <a href="#amenities">호텔 시설</a>
+          <a href="#gallery">갤러리</a>
+          <a href="#faq">자주 묻는 질문</a>
+          <a href="#booking">예약하기</a>
+        </div>
+        <div class="footer-col">
+          <h4>Rooms</h4>
+          <a href="#">Deluxe Room</a>
+          <a href="#">Executive Suite</a>
+          <a href="#">Penthouse</a>
+          <a href="#">패키지 상품</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a href="#">02-777-0101</a>
+          <a href="#">reservation@maison-etoile.kr</a>
+          <a href="#">서울시 중구 을지로 30</a>
+          <a href="#">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 MAISON ÉTOILE. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="#">개인정보처리방침</a>
+          <a href="#">이용약관</a>
+          <a href="#">사이트맵</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ════════ SCRIPTS ════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ── Chandelier Bokeh Particles ── */
+    (function() {
+      const container = document.getElementById('heroBokeh');
+      for (let i = 0; i < 20; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'chandelier-dot';
+        dot.style.left = Math.random() * 100 + '%';
+        dot.style.top = Math.random() * 100 + '%';
+        const size = 25 + Math.random() * 70;
+        dot.style.width = size + 'px';
+        dot.style.height = size + 'px';
+        dot.style.animationDelay = Math.random() * 6 + 's';
+        dot.style.animationDuration = (5 + Math.random() * 5) + 's';
+        container.appendChild(dot);
+      }
+    })();
+
+    /* ── Preloader ── */
+    (function() {
+      const preloader = document.getElementById('preloader');
+      const brand = document.querySelector('.preloader-brand');
+      const tagline = document.querySelector('.preloader-tagline');
+      const light = document.getElementById('keycardLight');
+
+      const tl = gsap.timeline();
+      tl.to(light, {
+        onStart: () => { light.classList.add('success'); },
+        duration: 0.1
+      }, 1.4);
+      tl.to(brand, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 1.6);
+      tl.to(tagline, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 2.0);
+      tl.to(preloader, {
+        opacity: 0,
+        duration: 0.6,
+        delay: 0.4,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          preloader.style.display = 'none';
+          initAnimations();
+        }
+      });
+    })();
+
+    /* ── Mobile Menu ── */
+    function toggleMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-overlay').classList.toggle('active');
+    }
+
+    /* ── Scroll to Booking ── */
+    function scrollToBooking() {
+      const target = document.getElementById('booking');
+      if (target) {
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+      }
+    }
+
+    /* ── GSAP Animations ── */
+    function initAnimations() {
+      /* Navbar scroll */
+      window.addEventListener('scroll', () => {
+        document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 50);
+      });
+
+      /* Hero stagger */
+      const heroTL = gsap.timeline();
+      heroTL.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+      heroTL.from('.hero-title', { opacity: 0, y: 40, duration: 0.8, ease: 'power3.out' }, 0.5);
+      heroTL.to('.hero-subtitle', { opacity: 1, duration: 0.6 }, 1.0);
+      heroTL.to('.hero-buttons', { opacity: 1, y: 0, duration: 0.6 }, 1.3);
+      heroTL.to('.scroll-indicator', { opacity: 1, duration: 0.6 }, 1.6);
+
+      /* Parallax hero bg */
+      gsap.to('.hero-bg', {
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
+      });
+
+      /* Rooms section */
+      gsap.from('.rooms-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.rooms-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.room-card', {
+        y: 60, opacity: 0, duration: 0.7, stagger: 0.15, ease: 'power3.out',
+        scrollTrigger: { trigger: '.rooms-grid', start: 'top 80%', once: true }
+      });
+
+      /* Amenities section */
+      gsap.from('.amenities-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.amenities-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.amenity-card', {
+        x: 80, opacity: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out',
+        scrollTrigger: { trigger: '.amenities-scroll', start: 'top 85%', once: true }
+      });
+
+      /* Reviews section */
+      gsap.from('.reviews-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.reviews-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.review-card', {
+        y: 50, opacity: 0, duration: 0.6, stagger: 0.12, ease: 'power3.out',
+        scrollTrigger: { trigger: '.reviews-grid', start: 'top 80%', once: true }
+      });
+
+      /* Gallery section */
+      gsap.from('.gallery-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.gallery-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.gallery-item', {
+        y: 40, opacity: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out',
+        scrollTrigger: { trigger: '.gallery-grid', start: 'top 80%', once: true }
+      });
+
+      /* FAQ section */
+      gsap.from('.faq-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.faq-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.faq-item', {
+        y: 30, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.faq-list', start: 'top 80%', once: true }
+      });
+
+      /* Contact section */
+      gsap.from('.contact-info', {
+        x: -50, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-grid', start: 'top 80%', once: true }
+      });
+      gsap.from('.contact-form-container', {
+        x: 50, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-grid', start: 'top 80%', once: true }
+      });
+
+      /* Footer */
+      gsap.from('.footer-grid > *', {
+        y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.footer', start: 'top 90%', once: true }
+      });
+    }
+
+    /* ── FAQ Accordion ── */
+    (function() {
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        const inner = item.querySelector('.faq-answer-inner');
+        question.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          document.querySelectorAll('.faq-item').forEach(other => {
+            if (other !== item && other.classList.contains('active')) {
+              other.classList.remove('active');
+              gsap.to(other.querySelector('.faq-answer'), { height: 0, duration: 0.4, ease: 'power2.inOut' });
+            }
+          });
+          if (isActive) {
+            item.classList.remove('active');
+            gsap.to(answer, { height: 0, duration: 0.4, ease: 'power2.inOut' });
+          } else {
+            item.classList.add('active');
+            gsap.to(answer, { height: inner.offsetHeight, duration: 0.4, ease: 'power2.inOut' });
+          }
+        });
+      });
+    })();
+
+    /* ── Amenities Drag Scroll ── */
+    (function() {
+      const el = document.getElementById('amenitiesScroll');
+      let isDown = false, startX, scrollLeft;
+      el.addEventListener('mousedown', (e) => { isDown = true; el.style.cursor = 'grabbing'; startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft; });
+      el.addEventListener('mouseleave', () => { isDown = false; el.style.cursor = 'grab'; });
+      el.addEventListener('mouseup', () => { isDown = false; el.style.cursor = 'grab'; });
+      el.addEventListener('mousemove', (e) => { if (!isDown) return; e.preventDefault(); const x = e.pageX - el.offsetLeft; el.scrollLeft = scrollLeft - (x - startX) * 1.5; });
+    })();
+
+    /* ── Form Submit ── */
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      const originalText = btn.textContent;
+      btn.textContent = '예약 완료 ✓';
+      btn.style.background = '#22C55E';
+      gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.3, ease: 'back.out(1.7)' });
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+        e.target.reset();
+      }, 2500);
+    }
+
+    /* ── Smooth Scroll ── */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

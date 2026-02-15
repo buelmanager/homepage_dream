@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIERE JOAILLERIE — Luxury Jewelry Atelier</title>
+  <meta name="description" content="LUMIERE JOAILLERIE - 빛으로 완성하는 영원한 아름다움. 맞춤 주얼리 제작, 프리미엄 다이아몬드, 핸드크래프트.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <style>
+    :root {
+      --primary: #1A1225;
+      --accent: #F0ABFC;
+      --background: #100C18;
+      --surface: #1A1328;
+      --text: #FAF5FF;
+      --text-muted: #A78BBA;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Jost', sans-serif;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --container: 1200px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-body); background: var(--background); color: var(--text); overflow-x: hidden; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    ul, ol { list-style: none; }
+    img { max-width: 100%; display: block; }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; color: inherit; }
+    input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; background: transparent; border: none; outline: none; }
+
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+    .section-label { font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.2; margin-bottom: 20px; }
+    .section-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 560px; line-height: 1.7; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* PRELOADER — Diamond SVG */
+    #preloader {
+      position: fixed; inset: 0; background: var(--background); z-index: 10000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+
+    .diamond-loader {
+      width: 80px; height: 80px; position: relative;
+    }
+
+    .diamond-loader svg {
+      width: 100%; height: 100%;
+      stroke: var(--accent); fill: none; stroke-width: 1.5;
+      stroke-dasharray: 400; stroke-dashoffset: 400;
+      animation: drawDiamond 2s ease-in-out forwards;
+    }
+
+    @keyframes drawDiamond {
+      0% { stroke-dashoffset: 400; opacity: 0.3; }
+      60% { stroke-dashoffset: 0; opacity: 1; }
+      80% { stroke-dashoffset: 0; opacity: 1; fill: rgba(240, 171, 252, 0.05); }
+      100% { stroke-dashoffset: 0; opacity: 1; fill: rgba(240, 171, 252, 0.1); }
+    }
+
+    .diamond-sparkle {
+      position: absolute; width: 6px; height: 6px; background: var(--accent);
+      border-radius: 50%; opacity: 0; filter: blur(1px);
+    }
+
+    .diamond-sparkle:nth-child(2) { top: 10px; left: 50%; animation: sparkle 1.5s 1.2s ease-out infinite; }
+    .diamond-sparkle:nth-child(3) { top: 30px; right: 5px; animation: sparkle 1.5s 1.5s ease-out infinite; }
+    .diamond-sparkle:nth-child(4) { bottom: 15px; left: 15px; animation: sparkle 1.5s 1.8s ease-out infinite; }
+
+    @keyframes sparkle {
+      0% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1.5); }
+      100% { opacity: 0; transform: scale(0); }
+    }
+
+    .preloader-brand { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; color: var(--text); letter-spacing: 6px; opacity: 0; margin-top: 30px; }
+    .preloader-brand span { color: var(--accent); }
+    .preloader-tagline { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 5px; text-transform: uppercase; margin-top: 8px; opacity: 0; font-weight: 300; }
+
+    /* NAVBAR */
+    .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px 0; transition: all var(--transition); }
+    .navbar.scrolled { background: rgba(16,12,24,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 14px 0; border-bottom: 1px solid rgba(240,171,252,0.08); }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--text); letter-spacing: 3px; }
+    .nav-logo span { color: var(--accent); font-weight: 400; font-style: italic; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-links a { font-size: 0.85rem; font-weight: 400; color: var(--text-muted); transition: color var(--transition); position: relative; letter-spacing: 1px; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width var(--transition); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { padding: 10px 24px; background: transparent; border: 1px solid var(--accent); color: var(--accent) !important; border-radius: 0; font-weight: 500; font-size: 0.8rem; letter-spacing: 2px; transition: all var(--transition); }
+    .nav-cta:hover { background: var(--accent); color: var(--background) !important; }
+    .nav-cta::after { display: none !important; }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 1px; background: var(--text); transition: all var(--transition); }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+    .mobile-menu { position: fixed; top: 0; right: -100%; width: 300px; height: 100vh; background: var(--surface); z-index: 999; padding: 100px 40px 40px; transition: right 0.4s cubic-bezier(0.4,0,0.2,1); border-left: 1px solid rgba(240,171,252,0.08); }
+    .mobile-menu.active { right: 0; }
+    .mobile-menu a { display: block; font-size: 1.1rem; font-weight: 400; color: var(--text-muted); padding: 16px 0; border-bottom: 1px solid rgba(167,139,186,0.1); transition: color var(--transition); letter-spacing: 1px; }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; opacity: 0; pointer-events: none; transition: opacity var(--transition); }
+    .mobile-overlay.active { opacity: 1; pointer-events: all; }
+
+    /* HERO */
+    .hero { position: relative; width: 100%; height: 100vh; min-height: 700px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .hero-bg { position: absolute; inset: -5%; width: 110%; height: 110%; background: url('https://images.unsplash.com/photo-1515562141589-67f0d9c6cfb4?w=1920&q=80') center/cover; filter: brightness(0.2) contrast(1.1); }
+    .hero-gradient { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(16,12,24,0.5) 0%, rgba(16,12,24,0.1) 40%, rgba(16,12,24,0.7) 80%, rgba(16,12,24,1) 100%); z-index: 2; }
+
+    .hero-sparkles {
+      position: absolute; inset: 0; z-index: 1; overflow: hidden;
+    }
+
+    .hero-sparkle-dot {
+      position: absolute; width: 3px; height: 3px; background: var(--accent); border-radius: 50%;
+      opacity: 0; animation: heroSparkle 3s ease-in-out infinite;
+    }
+
+    @keyframes heroSparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 0.8; transform: scale(1); }
+    }
+
+    .hero-content { position: relative; z-index: 3; text-align: center; max-width: 800px; padding: 0 24px; }
+    .hero-eyebrow { font-size: 0.8rem; font-weight: 400; letter-spacing: 6px; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; opacity: 0; }
+    .hero-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 700; line-height: 1.2; margin-bottom: 24px; }
+    .hero-title .highlight { color: var(--accent); font-style: italic; }
+    .hero-subtitle { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 40px; opacity: 0; line-height: 1.8; font-weight: 300; }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; opacity: 0; }
+
+    .btn-primary { padding: 14px 40px; background: var(--accent); color: var(--background); border-radius: 0; font-weight: 600; font-size: 0.85rem; letter-spacing: 2px; transition: all var(--transition); display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:hover { background: #E88FEF; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(240,171,252,0.25); }
+    .btn-outline { padding: 14px 40px; border: 1px solid rgba(240,171,252,0.4); color: var(--accent); border-radius: 0; font-weight: 500; font-size: 0.85rem; letter-spacing: 2px; transition: all var(--transition); }
+    .btn-outline:hover { background: rgba(240,171,252,0.08); border-color: var(--accent); }
+
+    .scroll-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; cursor: pointer; }
+    .scroll-indicator span { font-size: 0.65rem; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; font-weight: 300; }
+    .scroll-line { width: 1px; height: 50px; background: rgba(255,255,255,0.15); position: relative; overflow: hidden; }
+    .scroll-dot { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 3px; height: 10px; background: var(--accent); border-radius: 3px; animation: scrollDot 2s ease-in-out infinite; }
+    @keyframes scrollDot { 0%, 100% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+    /* MARQUEE */
+    .marquee-section { padding: 40px 0; border-top: 1px solid rgba(240,171,252,0.06); border-bottom: 1px solid rgba(240,171,252,0.06); overflow: hidden; }
+    .marquee-track { display: flex; gap: 60px; animation: marquee 40s linear infinite; width: max-content; }
+    .marquee-item { font-family: var(--font-heading); font-size: 0.95rem; font-weight: 400; color: var(--text-muted); white-space: nowrap; opacity: 0.4; letter-spacing: 3px; font-style: italic; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* SERVICES */
+    .services { padding: 120px 0; }
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .service-card { background: var(--surface); border: 1px solid rgba(240,171,252,0.06); border-radius: 2px; padding: 40px 30px; transition: all var(--transition); position: relative; overflow: hidden; }
+    .service-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); opacity: 0; transition: opacity var(--transition); }
+    .service-card:hover { transform: translateY(-8px); border-color: rgba(240,171,252,0.15); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .service-card:hover::before { opacity: 1; }
+    .service-icon { width: 52px; height: 52px; background: rgba(240,171,252,0.06); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; font-size: 1.4rem; }
+    .service-card h3 { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; }
+    .service-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+    /* COLLECTION CAROUSEL (UNIQUE) */
+    .collection-section { padding: 120px 0; background: var(--surface); }
+    .collection-swiper { padding-bottom: 60px; }
+    .collection-card { background: var(--background); border: 1px solid rgba(240,171,252,0.06); border-radius: 2px; overflow: hidden; transition: all 0.5s ease; }
+    .collection-card:hover { border-color: rgba(240,171,252,0.2); transform: translateY(-4px); }
+    .collection-image { width: 100%; aspect-ratio: 1; overflow: hidden; position: relative; }
+    .collection-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .collection-card:hover .collection-image img { transform: scale(1.08); }
+    .collection-price { position: absolute; bottom: 16px; right: 16px; padding: 6px 16px; background: rgba(16,12,24,0.85); backdrop-filter: blur(10px); color: var(--accent); font-weight: 600; font-size: 0.9rem; letter-spacing: 1px; opacity: 0; transition: opacity var(--transition); }
+    .collection-card:hover .collection-price { opacity: 1; }
+    .collection-info { padding: 24px; }
+    .collection-info h3 { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .collection-info .collection-type { font-size: 0.8rem; color: var(--accent); font-weight: 500; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .collection-info p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+
+    /* CRAFTSMANSHIP TIMELINE (UNIQUE) */
+    .craftsmanship-section { padding: 120px 0; }
+    .timeline-container { max-width: 800px; margin: 0 auto; position: relative; }
+    .timeline-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: linear-gradient(180deg, transparent, rgba(240,171,252,0.3), rgba(240,171,252,0.3), transparent); transform: translateX(-50%); }
+    .timeline-item { display: flex; align-items: center; gap: 60px; margin-bottom: 60px; position: relative; }
+    .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+    .timeline-item:nth-child(even) .timeline-content { text-align: right; }
+    .timeline-dot { position: absolute; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; border-radius: 50%; background: var(--background); border: 2px solid var(--accent); z-index: 2; flex-shrink: 0; }
+    .timeline-content { flex: 1; }
+    .timeline-step { font-size: 0.7rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; font-weight: 500; margin-bottom: 8px; }
+    .timeline-content h3 { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
+    .timeline-content p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+    .timeline-image { flex: 1; border-radius: 2px; overflow: hidden; }
+    .timeline-image img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: transform 0.6s ease; }
+    .timeline-image:hover img { transform: scale(1.05); }
+
+    /* MATERIALS SECTION (UNIQUE) */
+    .materials-section { padding: 120px 0; background: var(--surface); }
+    .materials-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .material-card { text-align: center; padding: 40px 20px; border: 1px solid rgba(240,171,252,0.06); border-radius: 2px; transition: all 0.5s ease; position: relative; overflow: hidden; }
+    .material-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(240,171,252,0.05), transparent); opacity: 0; transition: opacity 0.5s ease; }
+    .material-card:hover { border-color: rgba(240,171,252,0.2); transform: translateY(-4px); }
+    .material-card:hover::after { opacity: 1; }
+    .material-icon { font-size: 2.5rem; margin-bottom: 20px; display: block; }
+    .material-card h3 { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; position: relative; z-index: 1; }
+    .material-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; position: relative; z-index: 1; }
+
+    /* Shimmer effect on headings */
+    .shimmer {
+      background: linear-gradient(90deg, var(--text) 0%, var(--accent) 50%, var(--text) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* FAQ */
+    .faq-section { padding: 120px 0; }
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid rgba(240,171,252,0.08); }
+    .faq-question { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; cursor: pointer; transition: color var(--transition); gap: 16px; }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question h3 { font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; }
+    .faq-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(240,171,252,0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all var(--transition); font-size: 1.2rem; color: var(--accent); }
+    .faq-item.active .faq-icon { background: var(--accent); color: var(--background); transform: rotate(45deg); }
+    .faq-answer { height: 0; overflow: hidden; }
+    .faq-answer-inner { padding: 0 0 24px; color: var(--text-muted); line-height: 1.8; font-size: 0.95rem; font-weight: 300; }
+
+    /* CONTACT */
+    .contact-section { padding: 120px 0; background: var(--surface); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .contact-info h3 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; }
+    .contact-detail { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+    .contact-detail-icon { width: 44px; height: 44px; background: rgba(240,171,252,0.06); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+    .contact-detail-text h4 { font-family: var(--font-heading); font-weight: 700; margin-bottom: 4px; font-size: 0.95rem; }
+    .contact-detail-text p { color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
+    .contact-hours { margin-top: 32px; padding: 24px; background: rgba(240,171,252,0.03); border-radius: 2px; border: 1px solid rgba(240,171,252,0.08); }
+    .contact-hours h4 { font-family: var(--font-heading); font-weight: 700; margin-bottom: 16px; color: var(--accent); }
+    .hours-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.9rem; color: var(--text-muted); border-bottom: 1px solid rgba(240,171,252,0.04); font-weight: 300; }
+    .hours-row:last-child { border-bottom: none; }
+    .contact-form-container { background: var(--background); border-radius: 2px; padding: 40px; border: 1px solid rgba(240,171,252,0.08); }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 8px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 14px 18px; background: var(--surface); border: 1px solid rgba(240,171,252,0.08); border-radius: 0; color: var(--text); font-size: 0.95rem; transition: border-color var(--transition); font-weight: 300; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { min-height: 120px; resize: vertical; }
+    .form-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%23F0ABFC'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+    .btn-submit { width: 100%; padding: 16px; background: var(--accent); color: var(--background); border-radius: 0; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all var(--transition); border: none; letter-spacing: 2px; }
+    .btn-submit:hover { background: #E88FEF; transform: translateY(-2px); }
+
+    /* FOOTER */
+    .footer { padding: 80px 0 40px; border-top: 1px solid rgba(240,171,252,0.06); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; letter-spacing: 2px; }
+    .footer-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a { width: 40px; height: 40px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; transition: all var(--transition); font-size: 1rem; }
+    .footer-social a:hover { background: var(--accent); color: var(--background); }
+    .footer-col h4 { font-family: var(--font-heading); font-weight: 700; margin-bottom: 20px; font-size: 0.95rem; }
+    .footer-col a { display: block; font-size: 0.9rem; color: var(--text-muted); padding: 6px 0; transition: color var(--transition); font-weight: 300; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(240,171,252,0.06); text-align: center; font-size: 0.85rem; color: var(--text-muted); font-weight: 300; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .materials-grid { grid-template-columns: repeat(2, 1fr); }
+      .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; gap: 24px; }
+      .timeline-item:nth-child(even) .timeline-content { text-align: left; }
+      .timeline-line { left: 20px; }
+      .timeline-dot { left: 20px; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .services-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .materials-grid { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .hero-buttons .btn-primary, .hero-buttons .btn-outline { width: 100%; justify-content: center; text-align: center; max-width: 280px; }
+    }
+    @media (max-width: 480px) {
+      .materials-grid { grid-template-columns: 1fr; }
+      .contact-form-container { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+    <div class="diamond-loader">
+      <svg viewBox="0 0 100 100"><polygon points="50,5 95,35 80,95 20,95 5,35"/><line x1="5" y1="35" x2="95" y2="35"/><line x1="20" y1="95" x2="50" y2="5"/><line x1="80" y1="95" x2="50" y2="5"/><line x1="20" y1="95" x2="95" y2="35"/><line x1="80" y1="95" x2="5" y2="35"/></svg>
+      <div class="diamond-sparkle"></div>
+      <div class="diamond-sparkle"></div>
+      <div class="diamond-sparkle"></div>
+    </div>
+    <div class="preloader-brand">LUMIERE <span>JOAILLERIE</span></div>
+    <div class="preloader-tagline">Haute Joaillerie Since 2001</div>
+  </div>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="nav-logo">LUMIERE <span>Joaillerie</span></a>
+      <div class="nav-links">
+        <a href="#services">아뜰리에</a>
+        <a href="#collection">컬렉션</a>
+        <a href="#craftsmanship">장인정신</a>
+        <a href="#materials">소재</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact" class="nav-cta">CONSULTATION</a>
+      </div>
+      <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <div class="mobile-overlay" onclick="toggleMenu()"></div>
+  <div class="mobile-menu">
+    <a href="#services" onclick="toggleMenu()">아뜰리에</a>
+    <a href="#collection" onclick="toggleMenu()">컬렉션</a>
+    <a href="#craftsmanship" onclick="toggleMenu()">장인정신</a>
+    <a href="#materials" onclick="toggleMenu()">소재</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
+    <a href="#contact" onclick="toggleMenu()">상담 예약</a>
+  </div>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-sparkles" id="heroSparkles"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">HAUTE JOAILLERIE · ESTABLISHED 2001</div>
+      <h1 class="hero-title">빛으로 완성하는<br><span class="highlight">영원한</span> 아름다움</h1>
+      <p class="hero-subtitle">한 점의 주얼리에 담긴 장인의 시간과 철학.<br>LUMIERE JOAILLERIE에서 당신만의 빛을 찾으세요.</p>
+      <div class="hero-buttons">
+        <a href="#collection" class="btn-primary">COLLECTION</a>
+        <a href="#contact" class="btn-outline">PRIVATE CONSULTATION</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Discover</span>
+      <div class="scroll-line"><div class="scroll-dot"></div></div>
+    </div>
+  </section>
+
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item">DIAMOND</span>
+      <span class="marquee-item">SAPPHIRE</span>
+      <span class="marquee-item">EMERALD</span>
+      <span class="marquee-item">RUBY</span>
+      <span class="marquee-item">PLATINUM</span>
+      <span class="marquee-item">18K GOLD</span>
+      <span class="marquee-item">PEARL</span>
+      <span class="marquee-item">TANZANITE</span>
+      <span class="marquee-item">DIAMOND</span>
+      <span class="marquee-item">SAPPHIRE</span>
+      <span class="marquee-item">EMERALD</span>
+      <span class="marquee-item">RUBY</span>
+      <span class="marquee-item">PLATINUM</span>
+      <span class="marquee-item">18K GOLD</span>
+      <span class="marquee-item">PEARL</span>
+      <span class="marquee-item">TANZANITE</span>
+    </div>
+  </div>
+
+  <section id="services" class="services">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Atelier</div>
+        <h2 class="section-title shimmer">아뜰리에 서비스</h2>
+        <p class="section-desc">세대를 넘어 전해지는 주얼리. 디자인부터 완성까지, 모든 과정을 장인이 직접 수행합니다.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">💎</div>
+          <h3>비스포크 제작</h3>
+          <p>고객의 이야기를 담은 세상에 하나뿐인 맞춤 주얼리. 디자인 컨설팅부터 완성까지 약 4-8주가 소요됩니다.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">💍</div>
+          <h3>웨딩 주얼리</h3>
+          <p>프러포즈 링, 웨딩 밴드, 예물 세트. 두 분의 사랑을 영원히 빛나게 할 특별한 주얼리를 제작합니다.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🔧</div>
+          <h3>리모델링</h3>
+          <p>소중한 주얼리에 새로운 생명을. 오래된 보석을 현대적 디자인으로 재탄생시켜 드립니다.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🔍</div>
+          <h3>감정 서비스</h3>
+          <p>GIA 인증 전문 감정사가 다이아몬드와 보석의 가치를 정확하게 감정합니다.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">✨</div>
+          <h3>클리닝 & 수리</h3>
+          <p>정기 클리닝, 사이즈 조절, 보석 재세팅 등 주얼리의 아름다움을 오래 유지하는 애프터케어 서비스.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📦</div>
+          <h3>보관 서비스</h3>
+          <p>항온항습 금고에서 소중한 주얼리를 안전하게 보관합니다. 보험 가입 대행도 가능합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="collection" class="collection-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Collection</div>
+        <h2 class="section-title shimmer">2025 컬렉션</h2>
+        <p class="section-desc">빛의 여정을 담은 LUMIERE의 시그니처 컬렉션을 만나보세요.</p>
+      </div>
+      <div class="swiper collection-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="collection-card">
+              <div class="collection-image">
+                <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80" alt="Eternal Light Ring">
+                <div class="collection-price">₩ 4,800,000</div>
+              </div>
+              <div class="collection-info">
+                <div class="collection-type">Ring</div>
+                <h3>Eternal Light</h3>
+                <p>1캐럿 라운드 브릴리언트 다이아몬드, 플래티넘 세팅</p>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="collection-card">
+              <div class="collection-image">
+                <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80" alt="Moonrise Necklace">
+                <div class="collection-price">₩ 12,500,000</div>
+              </div>
+              <div class="collection-info">
+                <div class="collection-type">Necklace</div>
+                <h3>Moonrise</h3>
+                <p>사파이어 3.2ct와 다이아몬드 파베 세팅, 18K 화이트골드</p>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="collection-card">
+              <div class="collection-image">
+                <img src="https://images.unsplash.com/photo-1603561596112-0a132b757442?w=800&q=80" alt="Aurora Earrings">
+                <div class="collection-price">₩ 7,200,000</div>
+              </div>
+              <div class="collection-info">
+                <div class="collection-type">Earrings</div>
+                <h3>Aurora</h3>
+                <p>에메랄드 드롭 이어링, 다이아몬드 헤일로 세팅</p>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="collection-card">
+              <div class="collection-image">
+                <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&q=80" alt="Soleil Bracelet">
+                <div class="collection-price">₩ 8,900,000</div>
+              </div>
+              <div class="collection-info">
+                <div class="collection-type">Bracelet</div>
+                <h3>Soleil</h3>
+                <p>루비 테니스 브레이슬릿, 18K 로즈골드</p>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="collection-card">
+              <div class="collection-image">
+                <img src="https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=800&q=80" alt="Celestial Pendant">
+                <div class="collection-price">₩ 3,500,000</div>
+              </div>
+              <div class="collection-info">
+                <div class="collection-type">Pendant</div>
+                <h3>Celestial</h3>
+                <p>탄자나이트 펜던트, 다이아몬드 어라운드 세팅</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="craftsmanship" class="craftsmanship-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Craftsmanship</div>
+        <h2 class="section-title shimmer">장인의 여정</h2>
+        <p class="section-desc">한 점의 주얼리가 탄생하기까지, 장인의 손끝에서 펼쳐지는 예술의 과정.</p>
+      </div>
+      <div class="timeline-container">
+        <div class="timeline-line"></div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <div class="timeline-step">Step 01</div>
+            <h3>디자인 컨설팅</h3>
+            <p>고객의 이야기와 취향을 깊이 이해하는 것에서 시작합니다. 1:1 프라이빗 컨설팅을 통해 원하시는 스타일, 보석, 예산을 논의합니다.</p>
+          </div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-image">
+            <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=600&q=80" alt="디자인 컨설팅">
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <div class="timeline-step">Step 02</div>
+            <h3>왁스 모델링</h3>
+            <p>수작업 왁스 카빙으로 주얼리의 원형을 제작합니다. 이 단계에서 디자인의 세밀한 부분을 조정하고 확정합니다.</p>
+          </div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-image">
+            <img src="https://images.unsplash.com/photo-1618325500063-14cd8117354f?w=600&q=80" alt="왁스 모델링">
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <div class="timeline-step">Step 03</div>
+            <h3>캐스팅 & 세팅</h3>
+            <p>플래티넘 또는 골드로 주조한 후, 숙련된 세터가 보석을 하나하나 정밀하게 세팅합니다.</p>
+          </div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-image">
+            <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&q=80" alt="캐스팅">
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <div class="timeline-step">Step 04</div>
+            <h3>폴리싱 & 완성</h3>
+            <p>여러 단계의 폴리싱을 거쳐 완벽한 광택을 완성합니다. 최종 품질 검사 후, 시그니처 케이스에 담아 전달합니다.</p>
+          </div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-image">
+            <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80" alt="폴리싱">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="materials" class="materials-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Materials</div>
+        <h2 class="section-title shimmer">프리미엄 소재</h2>
+        <p class="section-desc">최상급 원석과 귀금속만을 엄선하여 사용합니다.</p>
+      </div>
+      <div class="materials-grid">
+        <div class="material-card">
+          <span class="material-icon">💎</span>
+          <h3>다이아몬드</h3>
+          <p>GIA 인증 D-F 컬러, VVS1 이상 클래리티의 최상급 다이아몬드만을 사용합니다.</p>
+        </div>
+        <div class="material-card">
+          <span class="material-icon">🔵</span>
+          <h3>사파이어</h3>
+          <p>캐시미르, 미얀마, 스리랑카산 로열 블루 사파이어. 자연의 깊은 푸름을 담았습니다.</p>
+        </div>
+        <div class="material-card">
+          <span class="material-icon">🟢</span>
+          <h3>에메랄드</h3>
+          <p>콜롬비아산 무조 에메랄드. 생명력 넘치는 그린의 매력을 느껴보세요.</p>
+        </div>
+        <div class="material-card">
+          <span class="material-icon">🔴</span>
+          <h3>루비</h3>
+          <p>미얀마산 피전 블러드 루비. 가장 고귀한 빨강으로 열정을 표현합니다.</p>
+        </div>
+        <div class="material-card">
+          <span class="material-icon">⚪</span>
+          <h3>플래티넘</h3>
+          <p>PT950 플래티넘. 변하지 않는 순백의 광택으로 보석을 가장 아름답게 돋보이게 합니다.</p>
+        </div>
+        <div class="material-card">
+          <span class="material-icon">🟡</span>
+          <h3>18K 골드</h3>
+          <p>옐로, 로즈, 화이트골드. 세 가지 색상의 18K 골드로 다양한 매력을 연출합니다.</p>
+        </div>
+        <div class="material-card">
+          <span class="material-icon">🤍</span>
+          <h3>진주</h3>
+          <p>남양 진주, 아코야 진주, 타히티 진주. 자연이 만든 유일무이한 아름다움.</p>
+        </div>
+        <div class="material-card">
+          <span class="material-icon">🟣</span>
+          <h3>탄자나이트</h3>
+          <p>탄자니아에서만 산출되는 희귀한 보석. 신비로운 보라빛 블루가 매력적입니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">자주 묻는 질문</h2>
+        <p class="section-desc">LUMIERE JOAILLERIE에 대해 궁금한 점을 모았습니다.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question"><h3>비스포크 제작 기간은 얼마나 걸리나요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">디자인 복잡도에 따라 다르지만, 일반적으로 4-8주가 소요됩니다. 프러포즈 링과 같이 특별한 날짜가 있는 경우, 최소 2개월 전에 상담을 시작하시는 것을 권장합니다. 왁스 모델 승인 후 약 3주 내에 완성됩니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>다이아몬드 선택 시 가장 중요한 것은 무엇인가요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">다이아몬드는 4C(Cut, Color, Clarity, Carat)로 평가됩니다. 그 중 Cut(커트)이 가장 중요합니다. 커트 등급이 높을수록 빛의 반사가 아름답고, 다이아몬드의 본질적인 아름다움이 극대화됩니다. LUMIERE는 GIA Triple Excellent 이상의 커트만을 취급합니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>기존 주얼리 리모델링도 가능한가요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">네, 가능합니다. 어머니로부터 물려받은 보석이나 오래된 주얼리를 현대적인 디자인으로 재탄생시켜 드립니다. 기존 보석의 상태를 감정한 후, 새로운 디자인을 제안해 드립니다. 리모델링은 보통 3-5주가 소요됩니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>애프터케어 서비스는 어떻게 이용하나요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">LUMIERE에서 구매하신 모든 주얼리는 평생 무료 클리닝 서비스를 받으실 수 있습니다. 연 1회 무료 정밀 검사(보석 세팅 점검, 금속 상태 확인)를 제공하며, 사이즈 조절은 구매 후 1년 내 1회 무료입니다. 예약 후 방문해 주시면 됩니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>보증서와 인증서가 제공되나요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">0.3캐럿 이상의 모든 다이아몬드에는 GIA 감정서가 포함됩니다. 또한 LUMIERE 자체 보증서, 소재 원산지 증명서, 세부 제작 사양서를 함께 제공합니다. 모든 서류는 시그니처 가죽 케이스에 함께 보관됩니다.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Consultation</div>
+        <h2 class="section-title">프라이빗 상담</h2>
+        <p class="section-desc">완전한 프라이버시가 보장되는 아뜰리에에서 1:1 상담을 경험하세요.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h3>LUMIERE JOAILLERIE</h3>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">📍</div>
+            <div class="contact-detail-text"><h4>아뜰리에</h4><p>서울특별시 강남구 청담동 123-45, B1<br>청담역 1번 출구 도보 3분</p></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">📞</div>
+            <div class="contact-detail-text"><h4>예약 전화</h4><p>02-545-1234</p></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">✉️</div>
+            <div class="contact-detail-text"><h4>이메일</h4><p>atelier@lumiere-joaillerie.kr</p></div>
+          </div>
+          <div class="contact-hours">
+            <h4>상담 시간 안내</h4>
+            <div class="hours-row"><span>월 - 토</span><span>11:00 - 19:00</span></div>
+            <div class="hours-row"><span>일/공휴일</span><span>예약제 운영</span></div>
+            <div class="hours-row"><span>프라이빗 상담</span><span style="color: var(--accent);">사전 예약 필수</span></div>
+          </div>
+        </div>
+        <div class="contact-form-container">
+          <form onsubmit="handleSubmit(event)">
+            <div class="form-group"><label>성함</label><input type="text" placeholder="홍길동" required></div>
+            <div class="form-group"><label>연락처</label><input type="tel" placeholder="010-0000-0000" required></div>
+            <div class="form-group">
+              <label>상담 유형</label>
+              <select required>
+                <option value="">선택해 주세요</option>
+                <option value="bespoke">비스포크 제작</option>
+                <option value="wedding">웨딩 주얼리</option>
+                <option value="remodel">리모델링</option>
+                <option value="appraisal">감정 서비스</option>
+                <option value="collection">컬렉션 구매</option>
+                <option value="other">기타 문의</option>
+              </select>
+            </div>
+            <div class="form-group"><label>상담 내용</label><textarea placeholder="원하시는 주얼리나 문의사항을 자유롭게 적어주세요" required></textarea></div>
+            <button type="submit" class="btn-submit">상담 예약</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">LUMIERE JOAILLERIE</div>
+          <p class="footer-desc">빛으로 완성하는 영원한 아름다움. 2001년 설립 이후, 최상급 원석과 장인의 기술로 세상에 하나뿐인 주얼리를 만들어 왔습니다.</p>
+          <div class="footer-social"><a href="#">📷</a><a href="#">📘</a><a href="#">📌</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>서비스</h4>
+          <a href="#">비스포크 제작</a><a href="#">웨딩 주얼리</a><a href="#">리모델링</a><a href="#">감정 서비스</a><a href="#">클리닝 & 수리</a>
+        </div>
+        <div class="footer-col">
+          <h4>컬렉션</h4>
+          <a href="#">Eternal Light</a><a href="#">Moonrise</a><a href="#">Aurora</a><a href="#">Soleil</a><a href="#">Celestial</a>
+        </div>
+        <div class="footer-col">
+          <h4>안내</h4>
+          <a href="#">아뜰리에 위치</a><a href="#">상담 예약</a><a href="#">FAQ</a><a href="#">개인정보처리방침</a>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2025 LUMIERE JOAILLERIE. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* Hero sparkle particles */
+    (function createSparkles() {
+      const container = document.getElementById('heroSparkles');
+      for (let i = 0; i < 30; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'hero-sparkle-dot';
+        dot.style.left = Math.random() * 100 + '%';
+        dot.style.top = Math.random() * 100 + '%';
+        dot.style.animationDelay = Math.random() * 3 + 's';
+        dot.style.animationDuration = (2 + Math.random() * 2) + 's';
+        container.appendChild(dot);
+      }
+    })();
+
+    /* PRELOADER */
+    (function initPreloader() {
+      const preloader = document.getElementById('preloader');
+      const brand = document.querySelector('.preloader-brand');
+      const tagline = document.querySelector('.preloader-tagline');
+      const tl = gsap.timeline();
+      tl.to(brand, { opacity: 1, duration: 0.8, ease: 'power2.out' }, 1.8);
+      tl.to(tagline, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 2.2);
+      tl.to(preloader, { opacity: 0, duration: 0.6, delay: 0.5, ease: 'power2.inOut',
+        onComplete: () => { preloader.style.display = 'none'; initAnimations(); }
+      });
+    })();
+
+    function toggleMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-overlay').classList.toggle('active');
+    }
+
+    function initAnimations() {
+      window.addEventListener('scroll', () => {
+        document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 50);
+      });
+
+      const heroTL = gsap.timeline();
+      heroTL.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+      heroTL.from('.hero-title', { opacity: 0, y: 40, duration: 0.8, ease: 'power3.out' }, 0.5);
+      heroTL.to('.hero-subtitle', { opacity: 1, duration: 0.6 }, 1.0);
+      heroTL.to('.hero-buttons', { opacity: 1, y: 0, duration: 0.6 }, 1.3);
+      heroTL.to('.scroll-indicator', { opacity: 1, duration: 0.6 }, 1.6);
+
+      gsap.to('.hero-bg', { yPercent: 20, ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
+      });
+
+      gsap.from('.services .section-header', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.services', start: 'top 80%', once: true }
+      });
+      gsap.from('.service-card', { y: 50, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.services-grid', start: 'top 80%', once: true }
+      });
+
+      gsap.from('.collection-section .section-header', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.collection-section', start: 'top 80%', once: true }
+      });
+
+      gsap.from('.craftsmanship-section .section-header', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.craftsmanship-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.timeline-item', { y: 50, opacity: 0, duration: 0.7, stagger: 0.2, ease: 'power3.out',
+        scrollTrigger: { trigger: '.timeline-container', start: 'top 80%', once: true }
+      });
+
+      gsap.from('.materials-section .section-header', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.materials-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.material-card', { y: 40, opacity: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out',
+        scrollTrigger: { trigger: '.materials-grid', start: 'top 80%', once: true }
+      });
+
+      gsap.from('.faq-section .section-header', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.faq-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.faq-item', { y: 30, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.faq-list', start: 'top 80%', once: true }
+      });
+
+      gsap.from('.contact-info', { x: -50, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-grid', start: 'top 80%', once: true }
+      });
+      gsap.from('.contact-form-container', { x: 50, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-grid', start: 'top 80%', once: true }
+      });
+
+      gsap.from('.footer-grid > *', { y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.footer', start: 'top 90%', once: true }
+      });
+    }
+
+    new Swiper('.collection-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+    });
+
+    (function initFAQ() {
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        const inner = item.querySelector('.faq-answer-inner');
+        question.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          document.querySelectorAll('.faq-item').forEach(other => {
+            if (other !== item && other.classList.contains('active')) {
+              other.classList.remove('active');
+              gsap.to(other.querySelector('.faq-answer'), { height: 0, duration: 0.4, ease: 'power2.inOut' });
+            }
+          });
+          if (isActive) { item.classList.remove('active'); gsap.to(answer, { height: 0, duration: 0.4, ease: 'power2.inOut' }); }
+          else { item.classList.add('active'); gsap.to(answer, { height: inner.offsetHeight, duration: 0.4, ease: 'power2.inOut' }); }
+        });
+      });
+    })();
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      const originalText = btn.textContent;
+      btn.textContent = '예약 완료 ✓';
+      btn.style.background = '#059669';
+      gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.3, ease: 'back.out(1.7)' });
+      setTimeout(() => { btn.textContent = originalText; btn.style.background = ''; e.target.reset(); }, 2500);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) { window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' }); }
+      });
+    });
+  </script>
+</body>
+</html>

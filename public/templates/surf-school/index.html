@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIDE RIDERS — Surf School & Board Shop</title>
+  <meta name="description" content="TIDE RIDERS - 파도 위에서 자유를 만나다. 서핑 레슨, 보드 렌탈, 양양 서프 스쿨.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <style>
+    :root {
+      --primary: #164E63;
+      --accent: #2DD4BF;
+      --background: #0B2D3A;
+      --surface: #134152;
+      --text: #F0FDFA;
+      --text-muted: #5EEAD4;
+      --font-heading: 'Righteous', cursive;
+      --font-body: 'Open Sans', sans-serif;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --container: 1200px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-body); background: var(--background); color: var(--text); overflow-x: hidden; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    ul, ol { list-style: none; }
+    img { max-width: 100%; display: block; }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; color: inherit; }
+    input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; background: transparent; border: none; outline: none; }
+
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+    .section-label { font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.15; margin-bottom: 20px; }
+    .section-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 560px; line-height: 1.7; font-weight: 300; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* ============ PRELOADER — Wave Crest ============ */
+    #preloader { position: fixed; inset: 0; background: var(--background); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+    .wave-loader { position: relative; width: 260px; height: 60px; overflow: hidden; }
+    .wave-loader-svg { position: absolute; bottom: 0; left: -100%; width: 200%; animation: waveLoaderMove 2s ease-in-out infinite; }
+    .wave-loader-svg path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+    @keyframes waveLoaderMove { 0% { left: -100%; } 50% { left: 0%; } 100% { left: -100%; } }
+    .preloader-foam { position: absolute; bottom: 8px; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(45,212,191,0.6), transparent); animation: foamGlow 2s ease-in-out infinite; }
+    @keyframes foamGlow { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+    .preloader-brand { font-family: var(--font-heading); font-size: 2.4rem; color: var(--text); letter-spacing: 5px; opacity: 0; margin-top: 24px; }
+    .preloader-brand span { color: var(--accent); }
+    .preloader-tagline { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 5px; text-transform: uppercase; margin-top: 8px; opacity: 0; font-weight: 400; }
+
+    /* ============ NAVBAR ============ */
+    .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px 0; transition: all var(--transition); }
+    .navbar.scrolled { background: rgba(11,45,58,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 14px 0; border-bottom: 1px solid rgba(45,212,191,0.1); }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.35rem; color: var(--text); letter-spacing: 3px; display: flex; align-items: center; gap: 8px; }
+    .nav-logo span { color: var(--accent); }
+    .nav-wave-icon { font-size: 1.3rem; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); transition: color var(--transition); position: relative; letter-spacing: 0.5px; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent); transition: width var(--transition); border-radius: 1px; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { padding: 10px 22px; background: var(--accent); color: var(--background) !important; border-radius: 24px; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; transition: all var(--transition); }
+    .nav-cta:hover { background: #14B8A6; transform: translateY(-2px); box-shadow: 0 4px 24px rgba(45,212,191,0.35); }
+    .nav-cta::after { display: none !important; }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); transition: all var(--transition); }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    .mobile-menu { position: fixed; top: 0; right: -100%; width: 300px; height: 100vh; background: var(--surface); z-index: 999; padding: 100px 40px 40px; transition: right 0.4s cubic-bezier(0.4,0,0.2,1); border-left: 1px solid rgba(45,212,191,0.1); }
+    .mobile-menu.active { right: 0; }
+    .mobile-menu a { display: block; font-size: 1.1rem; font-weight: 500; color: var(--text-muted); padding: 16px 0; border-bottom: 1px solid rgba(94,234,212,0.08); transition: color var(--transition); }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; opacity: 0; pointer-events: none; transition: opacity var(--transition); }
+    .mobile-overlay.active { opacity: 1; pointer-events: all; }
+
+    /* ============ HERO ============ */
+    .hero { position: relative; width: 100%; height: 100vh; min-height: 700px; overflow: hidden; display: flex; align-items: center; }
+    .hero-bg { position: absolute; inset: -5%; width: 110%; height: 110%; background: url('https://images.unsplash.com/photo-1502680390548-bdbac40a5e46?w=1920&q=80') center/cover; filter: brightness(0.35); }
+    .hero-gradient { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,45,58,0.3) 0%, rgba(11,45,58,0.6) 50%, rgba(11,45,58,0.95) 100%); z-index: 2; }
+    .hero-sunset { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(251,146,60,0.12) 0%, rgba(245,158,11,0.08) 30%, transparent 60%); z-index: 2; pointer-events: none; }
+    .hero-content { position: relative; z-index: 3; text-align: center; max-width: 750px; margin: 0 auto; padding: 0 24px; }
+    .hero-eyebrow { font-family: var(--font-heading); font-size: 0.9rem; letter-spacing: 3px; color: var(--accent); margin-bottom: 20px; opacity: 0; }
+    .hero-title { font-family: var(--font-heading); font-size: clamp(2.8rem, 8vw, 5rem); line-height: 1.1; margin-bottom: 20px; }
+    .hero-title .highlight { color: var(--accent); display: inline-block; }
+    .hero-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 40px; opacity: 0; line-height: 1.8; font-weight: 300; letter-spacing: 1px; }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; justify-content: center; }
+    .btn-primary { padding: 16px 40px; background: var(--accent); color: var(--background); border-radius: 30px; font-weight: 700; font-size: 0.95rem; letter-spacing: 1px; transition: all var(--transition); display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:hover { background: #14B8A6; transform: translateY(-3px); box-shadow: 0 8px 32px rgba(45,212,191,0.3); }
+    .btn-outline { padding: 16px 40px; border: 2px solid rgba(45,212,191,0.5); color: var(--accent); border-radius: 30px; font-weight: 600; font-size: 0.95rem; letter-spacing: 1px; transition: all var(--transition); }
+    .btn-outline:hover { background: rgba(45,212,191,0.12); border-color: var(--accent); }
+
+    /* Hero wave animation bottom */
+    .hero-wave { position: absolute; bottom: -2px; left: 0; width: 100%; z-index: 4; }
+    .hero-wave svg { display: block; width: 100%; height: 80px; }
+
+    .scroll-indicator { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; cursor: pointer; }
+    .scroll-indicator span { font-size: 0.7rem; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; }
+    .scroll-line { width: 1px; height: 45px; background: rgba(255,255,255,0.15); position: relative; overflow: hidden; }
+    .scroll-dot { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 3px; height: 10px; background: var(--accent); border-radius: 3px; animation: scrollDot 2s ease-in-out infinite; }
+    @keyframes scrollDot { 0%, 100% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+    /* ============ MARQUEE ============ */
+    .marquee-section { padding: 36px 0; border-bottom: 1px solid rgba(45,212,191,0.08); overflow: hidden; background: var(--background); }
+    .marquee-track { display: flex; gap: 50px; animation: marquee 25s linear infinite; width: max-content; }
+    .marquee-item { font-family: var(--font-heading); font-size: 1rem; color: var(--text-muted); white-space: nowrap; opacity: 0.5; letter-spacing: 3px; }
+    .marquee-item .dot { color: var(--accent); margin: 0 4px; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ============ LESSON PACKAGES ============ */
+    .packages { padding: 120px 0; position: relative; }
+    .packages-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .package-card { background: var(--surface); border: 1px solid rgba(45,212,191,0.08); border-radius: 16px; padding: 40px 30px 30px; transition: all var(--transition); position: relative; overflow: hidden; }
+    .package-card.featured { border-color: rgba(45,212,191,0.35); }
+    .package-card.featured::before { content: 'BEST'; position: absolute; top: 18px; right: 18px; padding: 5px 14px; background: var(--accent); color: var(--background); font-family: var(--font-heading); font-size: 0.7rem; letter-spacing: 2px; border-radius: 12px; }
+    .package-card:hover { transform: translateY(-8px); border-color: rgba(45,212,191,0.25); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .package-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 8'%3E%3Cpath d='M0,4 Q150,0 300,4 T600,4 T900,4 T1200,4 L1200,8 L0,8Z' fill='%232DD4BF' opacity='0.4'/%3E%3C/svg%3E") repeat-x; background-size: 600px 8px; }
+    .package-level { font-family: var(--font-heading); font-size: 0.8rem; letter-spacing: 3px; color: var(--accent); margin-bottom: 8px; }
+    .package-name { font-family: var(--font-heading); font-size: 1.7rem; margin-bottom: 6px; }
+    .package-price { font-family: var(--font-heading); font-size: 2.5rem; color: var(--accent); margin-bottom: 4px; }
+    .package-price span { font-size: 0.9rem; font-weight: 400; color: var(--text-muted); font-family: var(--font-body); }
+    .package-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .package-tag { font-size: 0.75rem; padding: 4px 12px; background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.12); border-radius: 20px; color: var(--text-muted); font-weight: 500; }
+    .package-features { margin: 20px 0 28px; }
+    .package-feature { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
+    .package-feature::before { content: '🏄'; font-size: 0.75rem; }
+    .package-btn { width: 100%; padding: 14px; background: transparent; border: 2px solid rgba(45,212,191,0.3); color: var(--accent); font-family: var(--font-heading); font-size: 0.95rem; letter-spacing: 2px; border-radius: 30px; transition: all var(--transition); cursor: pointer; }
+    .package-btn:hover, .package-card.featured .package-btn { background: var(--accent); color: var(--background); border-color: var(--accent); }
+
+    /* ============ SURF CONDITIONS WIDGET ============ */
+    .conditions-section { padding: 100px 0; background: var(--surface); position: relative; overflow: hidden; }
+    .conditions-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 8'%3E%3Cpath d='M0,4 Q150,8 300,4 T600,4 T900,4 T1200,4 L1200,0 L0,0Z' fill='%230B2D3A'/%3E%3C/svg%3E") repeat-x; background-size: 600px 8px; }
+    .conditions-card { max-width: 900px; margin: 0 auto; background: linear-gradient(135deg, rgba(22,78,99,0.6), rgba(11,45,58,0.8)); border: 1px solid rgba(45,212,191,0.15); border-radius: 20px; padding: 50px; position: relative; overflow: hidden; }
+    .conditions-card::before { content: ''; position: absolute; top: -50%; right: -30%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 70%); pointer-events: none; }
+    .conditions-header { text-align: center; margin-bottom: 40px; }
+    .conditions-header h3 { font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 6px; }
+    .conditions-header p { color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
+    .conditions-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+    .condition-item { text-align: center; padding: 24px 12px; background: rgba(11,45,58,0.5); border-radius: 14px; border: 1px solid rgba(45,212,191,0.08); transition: all var(--transition); }
+    .condition-item:hover { border-color: rgba(45,212,191,0.25); transform: translateY(-4px); }
+    .condition-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .condition-value { font-family: var(--font-heading); font-size: 1.8rem; color: var(--accent); margin-bottom: 4px; }
+    .condition-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; font-weight: 500; }
+    .conditions-status { text-align: center; margin-top: 30px; padding: 14px 28px; background: rgba(45,212,191,0.08); border-radius: 30px; display: inline-block; }
+    .conditions-status-wrap { text-align: center; }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22C55E; margin-right: 8px; animation: statusPulse 2s ease-in-out infinite; }
+    @keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .conditions-status span { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+    /* ============ BOARD QUIVER ============ */
+    .boards-section { padding: 120px 0; }
+    .boards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .board-card { background: var(--surface); border: 1px solid rgba(45,212,191,0.08); border-radius: 16px; overflow: hidden; transition: all var(--transition); }
+    .board-card:hover { transform: translateY(-8px); border-color: rgba(45,212,191,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+    .board-img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.6s ease; }
+    .board-card:hover .board-img { transform: scale(1.06); }
+    .board-img-wrap { overflow: hidden; position: relative; }
+    .board-img-wrap::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(transparent, rgba(19,65,82,0.9)); }
+    .board-info { padding: 24px 20px; }
+    .board-type { font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: 8px; }
+    .board-specs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .board-spec { font-size: 0.72rem; padding: 3px 10px; background: rgba(45,212,191,0.08); border-radius: 12px; color: var(--text-muted); font-weight: 500; }
+    .board-desc { font-size: 0.85rem; color: var(--text-muted); font-weight: 300; line-height: 1.6; margin-bottom: 16px; }
+    .board-price { font-family: var(--font-heading); font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
+    .board-price span { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-body); }
+    .board-btn { width: 100%; padding: 12px; background: transparent; border: 1.5px solid rgba(45,212,191,0.25); color: var(--accent); font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 2px; border-radius: 24px; transition: all var(--transition); cursor: pointer; }
+    .board-btn:hover { background: var(--accent); color: var(--background); border-color: var(--accent); }
+
+    /* ============ GALLERY ============ */
+    .gallery-section { padding: 120px 0; background: var(--surface); position: relative; }
+    .gallery-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 8'%3E%3Cpath d='M0,4 Q150,8 300,4 T600,4 T900,4 T1200,4 L1200,0 L0,0Z' fill='%230B2D3A'/%3E%3C/svg%3E") repeat-x; background-size: 600px 8px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .gallery-item { border-radius: 14px; overflow: hidden; aspect-ratio: 4/3; position: relative; cursor: pointer; border: 2px solid rgba(45,212,191,0.1); transition: border-color var(--transition); }
+    .gallery-item:hover { border-color: rgba(45,212,191,0.4); }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(11,45,58,0.7)); opacity: 0; transition: opacity var(--transition); }
+    .gallery-item:hover::after { opacity: 1; }
+
+    /* Teal glow sweep */
+    .teal-sweep { position: relative; overflow: hidden; }
+    .teal-sweep::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(45,212,191,0.06), transparent); transition: left 0.6s ease; z-index: 1; }
+    .teal-sweep:hover::before { left: 150%; }
+
+    /* ============ FAQ ============ */
+    .faq-section { padding: 120px 0; }
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid rgba(45,212,191,0.08); }
+    .faq-question { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; cursor: pointer; transition: color var(--transition); gap: 16px; }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question h3 { font-family: var(--font-heading); font-size: 1.05rem; letter-spacing: 0.5px; }
+    .faq-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(45,212,191,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all var(--transition); font-size: 1.2rem; color: var(--accent); }
+    .faq-item.active .faq-icon { background: var(--accent); color: var(--background); transform: rotate(45deg); }
+    .faq-answer { height: 0; overflow: hidden; }
+    .faq-answer-inner { padding: 0 0 24px; color: var(--text-muted); line-height: 1.8; font-size: 0.95rem; font-weight: 300; }
+
+    /* ============ CONTACT ============ */
+    .contact-section { padding: 120px 0; background: var(--surface); position: relative; }
+    .contact-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 8'%3E%3Cpath d='M0,4 Q150,8 300,4 T600,4 T900,4 T1200,4 L1200,0 L0,0Z' fill='%230B2D3A'/%3E%3C/svg%3E") repeat-x; background-size: 600px 8px; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .contact-info h3 { font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 24px; }
+    .contact-detail { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+    .contact-detail-icon { width: 48px; height: 48px; background: rgba(45,212,191,0.08); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem; }
+    .contact-detail-text h4 { font-family: var(--font-heading); margin-bottom: 3px; font-size: 0.95rem; letter-spacing: 0.5px; }
+    .contact-detail-text p { color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
+    .contact-hours { margin-top: 32px; padding: 24px; background: rgba(45,212,191,0.04); border-radius: 14px; border: 1px solid rgba(45,212,191,0.08); }
+    .contact-hours h4 { font-family: var(--font-heading); margin-bottom: 16px; color: var(--accent); letter-spacing: 1px; }
+    .hours-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.9rem; color: var(--text-muted); border-bottom: 1px solid rgba(45,212,191,0.04); font-weight: 300; }
+    .hours-row:last-child { border-bottom: none; }
+    .contact-form-container { background: var(--background); border-radius: 16px; padding: 40px; border: 1px solid rgba(45,212,191,0.08); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-family: var(--font-heading); font-size: 0.8rem; margin-bottom: 8px; color: var(--text-muted); letter-spacing: 1px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 14px 18px; background: var(--surface); border: 1px solid rgba(45,212,191,0.08); border-radius: 10px; color: var(--text); font-size: 0.95rem; transition: border-color var(--transition); font-weight: 300; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { min-height: 100px; resize: vertical; }
+    .form-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%232DD4BF'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+    .btn-submit { width: 100%; padding: 16px; background: var(--accent); color: var(--background); border-radius: 30px; font-family: var(--font-heading); font-size: 1rem; cursor: pointer; transition: all var(--transition); border: none; letter-spacing: 2px; }
+    .btn-submit:hover { background: #14B8A6; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(45,212,191,0.3); }
+
+    /* ============ FOOTER ============ */
+    .footer { padding: 80px 0 40px; border-top: 1px solid rgba(45,212,191,0.06); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-heading); font-size: 1.4rem; margin-bottom: 16px; letter-spacing: 3px; display: flex; align-items: center; gap: 8px; }
+    .footer-brand span { color: var(--accent); }
+    .footer-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a { width: 42px; height: 42px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; transition: all var(--transition); font-size: 1rem; border: 1px solid rgba(45,212,191,0.08); }
+    .footer-social a:hover { background: var(--accent); color: var(--background); border-color: var(--accent); }
+    .footer-col h4 { font-family: var(--font-heading); margin-bottom: 20px; font-size: 0.95rem; letter-spacing: 1px; }
+    .footer-col a { display: block; font-size: 0.9rem; color: var(--text-muted); padding: 6px 0; transition: color var(--transition); font-weight: 300; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(45,212,191,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-muted); font-weight: 300; }
+
+    /* Wave section divider keyframe */
+    @keyframes waveFloat { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-25px); } }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1024px) {
+      .packages-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+      .conditions-grid { grid-template-columns: repeat(3, 1fr); }
+      .boards-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero-title { font-size: clamp(2.2rem, 7vw, 3.5rem); }
+      .hero-content { padding: 0 20px; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .conditions-grid { grid-template-columns: repeat(3, 1fr); }
+      .conditions-card { padding: 30px 20px; }
+      .boards-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      .form-row { grid-template-columns: 1fr; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .hero-buttons .btn-primary, .hero-buttons .btn-outline { width: 100%; justify-content: center; text-align: center; max-width: 300px; }
+    }
+    @media (max-width: 480px) {
+      .conditions-grid { grid-template-columns: repeat(2, 1fr); }
+      .conditions-grid .condition-item:last-child { grid-column: span 2; max-width: 50%; margin: 0 auto; }
+      .boards-grid { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .contact-form-container { padding: 24px; }
+      .hero-wave svg { height: 50px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ PRELOADER ============ -->
+  <div id="preloader">
+    <div class="wave-loader">
+      <svg class="wave-loader-svg" viewBox="0 0 520 60">
+        <path d="M0,30 Q65,10 130,30 T260,30 T390,30 T520,30" />
+      </svg>
+      <div class="preloader-foam"></div>
+    </div>
+    <div class="preloader-brand">TIDE <span>RIDERS</span></div>
+    <div class="preloader-tagline">Surf School & Board Shop</div>
+  </div>
+
+  <!-- ============ NAVBAR ============ -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="nav-logo"><span class="nav-wave-icon">🌊</span> TIDE <span>RIDERS</span></a>
+      <div class="nav-links">
+        <a href="#lessons">Lessons</a>
+        <a href="#conditions">Conditions</a>
+        <a href="#boards">Boards</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact" class="nav-cta">Book Lesson</a>
+      </div>
+      <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <div class="mobile-overlay" onclick="toggleMenu()"></div>
+  <div class="mobile-menu">
+    <a href="#lessons" onclick="toggleMenu()">Lessons</a>
+    <a href="#conditions" onclick="toggleMenu()">Conditions</a>
+    <a href="#boards" onclick="toggleMenu()">Boards</a>
+    <a href="#gallery" onclick="toggleMenu()">Gallery</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
+    <a href="#contact" onclick="toggleMenu()">Book Lesson</a>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-sunset"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">🏄 YANGYANG BEACH · EST. 2019</div>
+      <h1 class="hero-title">파도 위에서<br><span class="highlight">자유</span>를 만나다</h1>
+      <p class="hero-subtitle">Beginner Friendly · Private Lessons · Board Rental</p>
+      <div class="hero-buttons">
+        <a href="#lessons" class="btn-primary">레슨 예약하기 →</a>
+        <a href="#boards" class="btn-outline">보드 대여</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Paddle Out</span>
+      <div class="scroll-line"><div class="scroll-dot"></div></div>
+    </div>
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <path d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1440,20 1440,40 L1440,80 L0,80Z" fill="var(--background)" opacity="1"/>
+        <path d="M0,50 C200,80 400,20 600,50 C800,80 1000,20 1200,50 C1400,80 1440,50 1440,50 L1440,80 L0,80Z" fill="var(--background)" opacity="0.6" style="animation: waveFloat 4s ease-in-out infinite;"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ MARQUEE ============ -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item">BARREL <span class="dot">·</span></span>
+      <span class="marquee-item">CUTBACK <span class="dot">·</span></span>
+      <span class="marquee-item">POPUP <span class="dot">·</span></span>
+      <span class="marquee-item">DUCK DIVE <span class="dot">·</span></span>
+      <span class="marquee-item">LINEUP <span class="dot">·</span></span>
+      <span class="marquee-item">STOKED <span class="dot">·</span></span>
+      <span class="marquee-item">HANG TEN <span class="dot">·</span></span>
+      <span class="marquee-item">SHRED <span class="dot">·</span></span>
+      <span class="marquee-item">BARREL <span class="dot">·</span></span>
+      <span class="marquee-item">CUTBACK <span class="dot">·</span></span>
+      <span class="marquee-item">POPUP <span class="dot">·</span></span>
+      <span class="marquee-item">DUCK DIVE <span class="dot">·</span></span>
+      <span class="marquee-item">LINEUP <span class="dot">·</span></span>
+      <span class="marquee-item">STOKED <span class="dot">·</span></span>
+      <span class="marquee-item">HANG TEN <span class="dot">·</span></span>
+      <span class="marquee-item">SHRED <span class="dot">·</span></span>
+    </div>
+  </div>
+
+  <!-- ============ LESSON PACKAGES ============ -->
+  <section id="lessons" class="packages">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Lessons</div>
+        <h2 class="section-title">서핑 레슨 패키지</h2>
+        <p class="section-desc">초보부터 상급까지, 당신의 레벨에 맞는 맞춤 레슨을 경험하세요.</p>
+      </div>
+      <div class="packages-grid">
+        <div class="package-card teal-sweep">
+          <div class="package-level">BEGINNER</div>
+          <div class="package-name">첫 파도 클래스</div>
+          <div class="package-price">₩80,000 <span>/ 1회</span></div>
+          <div class="package-meta">
+            <span class="package-tag">2시간</span>
+            <span class="package-tag">그룹 (4~6명)</span>
+            <span class="package-tag">소프트보드 포함</span>
+          </div>
+          <div class="package-features">
+            <div class="package-feature">서핑 안전교육 & 바다 이해하기</div>
+            <div class="package-feature">육상 팝업 연습 (20분)</div>
+            <div class="package-feature">입수 후 파도 잡기 & 일어서기</div>
+            <div class="package-feature">강사 1:4 비율 밀착 지도</div>
+            <div class="package-feature">웻수트 & 래쉬가드 무료 대여</div>
+          </div>
+          <button class="package-btn" onclick="location.href='#contact'">예약</button>
+        </div>
+        <div class="package-card featured teal-sweep">
+          <div class="package-level">INTERMEDIATE</div>
+          <div class="package-name">라인업 마스터</div>
+          <div class="package-price">₩120,000 <span>/ 1회</span></div>
+          <div class="package-meta">
+            <span class="package-tag">2.5시간</span>
+            <span class="package-tag">소그룹 (2~3명)</span>
+            <span class="package-tag">하드보드 선택</span>
+          </div>
+          <div class="package-features">
+            <div class="package-feature">파도 읽기 & 라인업 포지셔닝</div>
+            <div class="package-feature">턴 기초: 바텀턴 & 탑턴</div>
+            <div class="package-feature">덕다이브 & 터틀롤 테크닉</div>
+            <div class="package-feature">강사 1:3 비율 집중 코칭</div>
+            <div class="package-feature">영상 촬영 & 피드백 제공</div>
+            <div class="package-feature">보드 & 웻수트 풀세트 포함</div>
+          </div>
+          <button class="package-btn" onclick="location.href='#contact'">예약</button>
+        </div>
+        <div class="package-card teal-sweep">
+          <div class="package-level">ADVANCED</div>
+          <div class="package-name">웨이브 라이더</div>
+          <div class="package-price">₩150,000 <span>/ 1회</span></div>
+          <div class="package-meta">
+            <span class="package-tag">3시간</span>
+            <span class="package-tag">프라이빗 (1:1)</span>
+            <span class="package-tag">숏보드 포함</span>
+          </div>
+          <div class="package-features">
+            <div class="package-feature">컷백 · 스냅 · 플로터 기술</div>
+            <div class="package-feature">파워존 활용 & 스피드 생성</div>
+            <div class="package-feature">파도 사이즈별 보드 선택 가이드</div>
+            <div class="package-feature">전담 강사 1:1 맞춤 코칭</div>
+            <div class="package-feature">GoPro 영상 촬영 & 분석</div>
+            <div class="package-feature">프리미엄 보드 & 장비 풀세트</div>
+          </div>
+          <button class="package-btn" onclick="location.href='#contact'">예약</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SURF CONDITIONS WIDGET ============ -->
+  <section id="conditions" class="conditions-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Live Conditions</div>
+        <h2 class="section-title">오늘의 서핑 컨디션</h2>
+        <p class="section-desc">양양 죽도 해변 실시간 서핑 환경 정보입니다.</p>
+      </div>
+      <div class="conditions-card">
+        <div class="conditions-header">
+          <h3>🏖️ 양양 죽도해변</h3>
+          <p>업데이트: 오늘 08:00 KST</p>
+        </div>
+        <div class="conditions-grid">
+          <div class="condition-item">
+            <div class="condition-icon">🌊</div>
+            <div class="condition-value" data-target="1.2">0</div>
+            <div class="condition-label">파고 (m)</div>
+          </div>
+          <div class="condition-item">
+            <div class="condition-icon">💨</div>
+            <div class="condition-value" data-target="8">0</div>
+            <div class="condition-label">풍속 (knots)</div>
+          </div>
+          <div class="condition-item">
+            <div class="condition-icon">🌡️</div>
+            <div class="condition-value" data-target="23">0</div>
+            <div class="condition-label">수온 (°C)</div>
+          </div>
+          <div class="condition-item">
+            <div class="condition-icon">🕐</div>
+            <div class="condition-value">14:30</div>
+            <div class="condition-label">만조 시각</div>
+          </div>
+          <div class="condition-item">
+            <div class="condition-icon">☀️</div>
+            <div class="condition-value" data-target="7">0</div>
+            <div class="condition-label">UV 지수</div>
+          </div>
+        </div>
+        <div class="conditions-status-wrap">
+          <div class="conditions-status">
+            <span class="status-dot"></span>
+            <span>컨디션 GOOD — 초보자 입수 가능 🤙</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BOARD QUIVER ============ -->
+  <section id="boards" class="boards-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Board Quiver</div>
+        <h2 class="section-title">보드 대여</h2>
+        <p class="section-desc">레벨과 파도 컨디션에 맞는 보드를 골라보세요.</p>
+      </div>
+      <div class="boards-grid">
+        <div class="board-card">
+          <div class="board-img-wrap">
+            <img class="board-img" src="https://images.unsplash.com/photo-1531722569936-825d3dd91b15?w=600&q=80" alt="Longboard">
+          </div>
+          <div class="board-info">
+            <div class="board-type">Longboard</div>
+            <div class="board-specs">
+              <span class="board-spec">9'0" ~ 9'6"</span>
+              <span class="board-spec">초보~중급</span>
+            </div>
+            <p class="board-desc">안정감 있는 긴 보드. 작은 파도에서도 쉽게 파도를 잡을 수 있어 입문자에게 최적.</p>
+            <div class="board-price">₩30,000 <span>/ 하루</span></div>
+            <button class="board-btn" onclick="location.href='#contact'">대여</button>
+          </div>
+        </div>
+        <div class="board-card">
+          <div class="board-img-wrap">
+            <img class="board-img" src="https://images.unsplash.com/photo-1502933691298-84fc14542831?w=600&q=80" alt="Shortboard">
+          </div>
+          <div class="board-info">
+            <div class="board-type">Shortboard</div>
+            <div class="board-specs">
+              <span class="board-spec">5'8" ~ 6'4"</span>
+              <span class="board-spec">중급~상급</span>
+            </div>
+            <p class="board-desc">빠른 반응과 날카로운 턴. 파워풀한 파도에서 퍼포먼스를 극대화하는 상급자 보드.</p>
+            <div class="board-price">₩35,000 <span>/ 하루</span></div>
+            <button class="board-btn" onclick="location.href='#contact'">대여</button>
+          </div>
+        </div>
+        <div class="board-card">
+          <div class="board-img-wrap">
+            <img class="board-img" src="https://images.unsplash.com/photo-1455729552457-5c322b29c789?w=600&q=80" alt="Fish">
+          </div>
+          <div class="board-info">
+            <div class="board-type">Fish</div>
+            <div class="board-specs">
+              <span class="board-spec">5'6" ~ 6'0"</span>
+              <span class="board-spec">중급</span>
+            </div>
+            <p class="board-desc">넓은 노즈와 스왈로우 테일. 잔잔한 파도에서도 스피드와 재미를 느낄 수 있는 만능 보드.</p>
+            <div class="board-price">₩35,000 <span>/ 하루</span></div>
+            <button class="board-btn" onclick="location.href='#contact'">대여</button>
+          </div>
+        </div>
+        <div class="board-card">
+          <div class="board-img-wrap">
+            <img class="board-img" src="https://images.unsplash.com/photo-1526188717906-ab4a2f949f12?w=600&q=80" alt="SUP">
+          </div>
+          <div class="board-info">
+            <div class="board-type">SUP</div>
+            <div class="board-specs">
+              <span class="board-spec">10'0" ~ 11'0"</span>
+              <span class="board-spec">전 레벨</span>
+            </div>
+            <p class="board-desc">스탠드업 패들보드. 서핑과 패들링 모두 즐길 수 있어 가족 단위 체험에 인기.</p>
+            <div class="board-price">₩40,000 <span>/ 하루</span></div>
+            <button class="board-btn" onclick="location.href='#contact'">대여</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY ============ -->
+  <section id="gallery" class="gallery-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Gallery</div>
+        <h2 class="section-title">서핑 갤러리</h2>
+        <p class="section-desc">TIDE RIDERS와 함께한 파도 위의 순간들.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1502680390548-bdbac40a5e46?w=800&q=80" alt="서핑 파도"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80" alt="열대 해변"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80" alt="서핑 일몰"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1455729552457-5c322b29c789?w=600&q=80" alt="서프보드"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1504681869696-d977211a5f4c?w=600&q=80" alt="서핑 레슨"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1505459668311-8dfac7952bf0?w=600&q=80" alt="해변 일몰"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">자주 묻는 질문</h2>
+        <p class="section-desc">서핑 레슨에 대해 궁금한 점을 모았습니다.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question"><h3>수영을 못해도 서핑 레슨을 받을 수 있나요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">네, 초보 레슨은 허리~가슴 높이의 얕은 물에서 진행되며, 구명조끼와 래쉬(보드 연결줄)를 착용하므로 수영을 못하셔도 안전하게 참여하실 수 있습니다. 다만 물에 대한 극심한 공포증이 있으신 경우 사전에 알려주시면 1:1 맞춤 레슨으로 안내해 드립니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>몇 살부터 레슨이 가능한가요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">만 8세(초등학교 2학년)부터 참여 가능합니다. 어린이 전용 소프트보드와 어린이 사이즈 웻수트를 구비하고 있으며, 키즈 레슨은 안전 강사가 추가 배치됩니다. 보호자 동반 시 만 6세부터 특별 체험 레슨도 가능하니 문의 주세요.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>웻수트는 제공되나요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">모든 레슨 패키지에 웻수트, 래쉬가드, 서프보드가 포함되어 있습니다. 수영복과 타월만 준비해 오시면 됩니다. 웻수트는 계절에 따라 3mm~5mm 두께를 사용하며, 사이즈는 XS부터 3XL까지 다양하게 구비하고 있습니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>서핑하기 가장 좋은 시즌은 언제인가요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">양양은 연중 서핑이 가능하지만, 초보자에게는 6~9월(여름)이 수온도 따뜻하고 파도가 안정적이어서 가장 좋습니다. 중급 이상이라면 10~11월 가을 스웰 시즌에 더 크고 깨끗한 파도를 즐길 수 있습니다. 겨울(12~2월)에도 두꺼운 웻수트로 서핑이 가능하며, 이 시기에는 한적한 라인업을 경험할 수 있습니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>기상 악화 시 취소/환불은 어떻게 되나요?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">태풍, 낙뢰, 높은 파도(2m 이상) 등 안전에 위험이 있는 경우 당일 레슨이 취소되며, 100% 환불 또는 일정 변경이 가능합니다. 레슨 전날 오후 6시에 기상 상태를 확인하여 카카오톡으로 안내해 드립니다. 고객 사정에 의한 취소는 전일 18시까지 무료, 당일 취소 시 50% 환불됩니다.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Booking</div>
+        <h2 class="section-title">레슨 예약 & 문의</h2>
+        <p class="section-desc">원하시는 날짜와 인원을 알려주시면 맞춤 레슨을 안내해 드립니다.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h3>TIDE RIDERS</h3>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">📍</div>
+            <div class="contact-detail-text"><h4>Location</h4><p>강원도 양양군 현남면 죽도해변길 49<br>죽도해변 서핑존 내</p></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">📞</div>
+            <div class="contact-detail-text"><h4>Phone</h4><p>033-672-7890</p></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">💬</div>
+            <div class="contact-detail-text"><h4>KakaoTalk</h4><p>@tideriders</p></div>
+          </div>
+          <div class="contact-hours">
+            <h4>운영 시간 (시즌별)</h4>
+            <div class="hours-row"><span>여름 (6~8월)</span><span>06:00 - 20:00</span></div>
+            <div class="hours-row"><span>봄/가을 (3~5, 9~11월)</span><span>08:00 - 18:00</span></div>
+            <div class="hours-row"><span>겨울 (12~2월)</span><span>09:00 - 17:00</span></div>
+            <div class="hours-row"><span>비수기 휴무</span><span style="color: var(--accent);">매주 화요일</span></div>
+          </div>
+        </div>
+        <div class="contact-form-container">
+          <form onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group"><label>이름</label><input type="text" placeholder="홍길동" required></div>
+              <div class="form-group"><label>연락처</label><input type="tel" placeholder="010-0000-0000" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>서핑 경험</label>
+                <select required>
+                  <option value="">선택해 주세요</option>
+                  <option value="none">처음이에요 (완전 초보)</option>
+                  <option value="beginner">1~3회 경험 (초급)</option>
+                  <option value="intermediate">10회 이상 (중급)</option>
+                  <option value="advanced">자유자재 라이딩 (상급)</option>
+                </select>
+              </div>
+              <div class="form-group"><label>희망 날짜</label><input type="date" required></div>
+            </div>
+            <div class="form-group">
+              <label>인원</label>
+              <select required>
+                <option value="">인원 선택</option>
+                <option value="1">1명 (프라이빗)</option>
+                <option value="2">2명</option>
+                <option value="3">3~4명</option>
+                <option value="5">5~6명</option>
+                <option value="7">7명 이상 (단체)</option>
+              </select>
+            </div>
+            <div class="form-group"><label>추가 요청사항</label><textarea placeholder="궁금한 점이나 요청사항을 자유롭게 적어주세요"></textarea></div>
+            <button type="submit" class="btn-submit">레슨 예약 신청</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">🌊 TIDE <span>RIDERS</span></div>
+          <p class="footer-desc">2019년부터 양양 죽도해변에서 서핑의 즐거움을 전하고 있습니다. 안전하고 즐거운 서핑 경험을 약속합니다.</p>
+          <div class="footer-social"><a href="#">📷</a><a href="#">📺</a><a href="#">💬</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Lessons</h4>
+          <a href="#">초보 클래스</a>
+          <a href="#">중급 클래스</a>
+          <a href="#">상급 클래스</a>
+          <a href="#">키즈 서핑</a>
+          <a href="#">단체 레슨</a>
+        </div>
+        <div class="footer-col">
+          <h4>Info</h4>
+          <a href="#">오시는 길</a>
+          <a href="#">예약 안내</a>
+          <a href="#">환불 규정</a>
+          <a href="#">안전 수칙</a>
+          <a href="#">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <h4>Social</h4>
+          <a href="#">Instagram</a>
+          <a href="#">YouTube</a>
+          <a href="#">KakaoTalk</a>
+          <a href="#">Blog</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 TIDE RIDERS Surf School. All rights reserved.</span>
+        <span>강원도 양양군 현남면 죽도해변길 49</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ SCRIPTS ============ -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ============ PRELOADER ============ */
+    (function initPreloader() {
+      const preloader = document.getElementById('preloader');
+      const brand = document.querySelector('.preloader-brand');
+      const tagline = document.querySelector('.preloader-tagline');
+      const tl = gsap.timeline();
+      tl.to(brand, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 1.2);
+      tl.to(tagline, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 1.7);
+      tl.to(preloader, { opacity: 0, duration: 0.7, delay: 0.6, ease: 'power2.inOut',
+        onComplete: () => { preloader.style.display = 'none'; initAllAnimations(); }
+      });
+    })();
+
+    /* ============ MOBILE MENU ============ */
+    function toggleMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-overlay').classList.toggle('active');
+    }
+
+    /* ============ ALL ANIMATIONS ============ */
+    function initAllAnimations() {
+      /* Navbar scroll */
+      window.addEventListener('scroll', () => {
+        document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 50);
+      });
+
+      /* Hero entrance */
+      const heroTL = gsap.timeline();
+      heroTL.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)' }, 0.2);
+      heroTL.from('.hero-title', { opacity: 0, y: 50, duration: 0.7, ease: 'power3.out' }, 0.5);
+      heroTL.to('.hero-subtitle', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 1.0);
+      heroTL.to('.hero-buttons', { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.2)' }, 1.3);
+      heroTL.to('.scroll-indicator', { opacity: 1, duration: 0.5 }, 1.6);
+
+      /* Hero parallax */
+      gsap.to('.hero-bg', { yPercent: 18, ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
+      });
+
+      /* Section reveals */
+      const revealSections = ['.packages', '.conditions-section', '.boards-section', '.gallery-section', '.faq-section'];
+      revealSections.forEach(sec => {
+        gsap.from(sec + ' .section-header', { y: 40, opacity: 0, duration: 0.7, ease: 'power3.out',
+          scrollTrigger: { trigger: sec, start: 'top 82%', once: true }
+        });
+      });
+
+      /* Package cards stagger */
+      gsap.from('.package-card', { y: 60, opacity: 0, duration: 0.5, stagger: 0.15, ease: 'back.out(1.2)',
+        scrollTrigger: { trigger: '.packages-grid', start: 'top 82%', once: true }
+      });
+
+      /* Conditions card */
+      gsap.from('.conditions-card', { scale: 0.92, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.conditions-card', start: 'top 82%', once: true,
+          onEnter: animateConditionValues
+        }
+      });
+
+      /* Board cards stagger */
+      gsap.from('.board-card', { y: 50, opacity: 0, duration: 0.5, stagger: 0.12, ease: 'back.out(1.1)',
+        scrollTrigger: { trigger: '.boards-grid', start: 'top 82%', once: true }
+      });
+
+      /* Gallery items */
+      gsap.from('.gallery-item', { y: 40, opacity: 0, duration: 0.4, stagger: 0.08, ease: 'power3.out',
+        scrollTrigger: { trigger: '.gallery-grid', start: 'top 82%', once: true }
+      });
+
+      /* FAQ items */
+      gsap.from('.faq-item', { y: 30, opacity: 0, duration: 0.4, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.faq-list', start: 'top 82%', once: true }
+      });
+
+      /* Contact slide-in */
+      gsap.from('.contact-info', { x: -50, opacity: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-grid', start: 'top 82%', once: true }
+      });
+      gsap.from('.contact-form-container', { x: 50, opacity: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-grid', start: 'top 82%', once: true }
+      });
+
+      /* Footer */
+      gsap.from('.footer-grid > *', { y: 30, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.footer', start: 'top 92%', once: true }
+      });
+    }
+
+    /* ============ CONDITION VALUES COUNTER ============ */
+    function animateConditionValues() {
+      document.querySelectorAll('.condition-value[data-target]').forEach(el => {
+        const target = parseFloat(el.dataset.target);
+        const isFloat = target % 1 !== 0;
+        const obj = { val: 0 };
+        gsap.to(obj, {
+          val: target, duration: 1.5, ease: 'power2.out',
+          onUpdate: () => { el.textContent = isFloat ? obj.val.toFixed(1) : Math.round(obj.val); }
+        });
+      });
+    }
+
+    /* ============ FAQ ACCORDION ============ */
+    (function initFAQ() {
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        const inner = item.querySelector('.faq-answer-inner');
+        question.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          document.querySelectorAll('.faq-item').forEach(other => {
+            if (other !== item && other.classList.contains('active')) {
+              other.classList.remove('active');
+              gsap.to(other.querySelector('.faq-answer'), { height: 0, duration: 0.4, ease: 'power2.inOut' });
+            }
+          });
+          if (isActive) {
+            item.classList.remove('active');
+            gsap.to(answer, { height: 0, duration: 0.4, ease: 'power2.inOut' });
+          } else {
+            item.classList.add('active');
+            gsap.to(answer, { height: inner.offsetHeight, duration: 0.4, ease: 'power2.inOut' });
+          }
+        });
+      });
+    })();
+
+    /* ============ FORM SUBMIT ============ */
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      const originalText = btn.textContent;
+      btn.textContent = '예약 완료! 🤙';
+      btn.style.background = '#22C55E';
+      gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.3, ease: 'back.out(1.7)' });
+      setTimeout(() => { btn.textContent = originalText; btn.style.background = ''; e.target.reset(); }, 2500);
+    }
+
+    /* ============ SMOOTH SCROLL ============ */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) { window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' }); }
+      });
+    });
+  </script>
+</body>
+</html>

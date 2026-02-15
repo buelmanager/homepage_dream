@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHAPTER ONE — Independent Bookstore & Cafe</title>
+  <meta name="description" content="CHAPTER ONE - 당신만의 이야기가 시작되는 곳. 독립서점 & 북카페, 큐레이션 도서, 독서모임, 프리미엄 커피.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <style>
+    /* ============================================
+       CSS CUSTOM PROPERTIES & RESET
+       ============================================ */
+    :root {
+      --primary: #1B2420;
+      --accent: #10B981;
+      --background: #0F1A14;
+      --surface: #162018;
+      --text: #F0FDF4;
+      --text-muted: #94A89E;
+      --font-heading: 'Libre Baskerville', serif;
+      --font-body: 'Source Sans 3', sans-serif;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --container: 1200px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: var(--font-body);
+      background: var(--background);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul, ol { list-style: none; }
+    img { max-width: 100%; display: block; }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; color: inherit; }
+    input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; background: transparent; border: none; outline: none; }
+
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* ============================================
+       PRELOADER — Book Pages Flipping
+       ============================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--background);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .book-loader {
+      width: 80px;
+      height: 100px;
+      position: relative;
+      perspective: 600px;
+    }
+
+    .book-page {
+      position: absolute;
+      width: 40px;
+      height: 90px;
+      right: 0;
+      top: 5px;
+      background: linear-gradient(to right, #E8E0D4, #F5F0E8);
+      border-radius: 0 3px 3px 0;
+      transform-origin: left center;
+      border-left: 2px solid #C4B69C;
+    }
+
+    .book-page:nth-child(1) { animation: flipPage 2s ease-in-out infinite; z-index: 4; }
+    .book-page:nth-child(2) { animation: flipPage 2s ease-in-out 0.3s infinite; z-index: 3; }
+    .book-page:nth-child(3) { animation: flipPage 2s ease-in-out 0.6s infinite; z-index: 2; }
+
+    .book-spine {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40px;
+      height: 100px;
+      background: linear-gradient(to left, #D4C9B8, #E8E0D4);
+      border-radius: 3px 0 0 3px;
+    }
+
+    @keyframes flipPage {
+      0%, 100% { transform: rotateY(0deg); }
+      50% { transform: rotateY(-180deg); }
+    }
+
+    .preloader-brand {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 4px;
+      opacity: 0;
+      margin-top: 40px;
+    }
+
+    .preloader-brand span { color: var(--accent); }
+
+    .preloader-tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 8px;
+      opacity: 0;
+    }
+
+    /* ============================================
+       NAVBAR
+       ============================================ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 20px 0;
+      transition: all var(--transition);
+    }
+
+    .navbar.scrolled {
+      background: rgba(15, 26, 20, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+    }
+
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo-icon {
+      font-size: 1.5rem;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color var(--transition);
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width var(--transition);
+      border-radius: 2px;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      padding: 10px 24px;
+      background: var(--accent);
+      color: var(--background) !important;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all var(--transition);
+    }
+
+    .nav-cta:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .nav-cta::after { display: none !important; }
+
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); transition: all var(--transition); border-radius: 2px; }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      position: fixed; top: 0; right: -100%; width: 300px; height: 100vh;
+      background: var(--surface); z-index: 999; padding: 100px 40px 40px;
+      transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border-left: 1px solid rgba(16, 185, 129, 0.1);
+    }
+    .mobile-menu.active { right: 0; }
+    .mobile-menu a {
+      display: block; font-size: 1.2rem; font-weight: 500; color: var(--text-muted);
+      padding: 16px 0; border-bottom: 1px solid rgba(148, 168, 158, 0.1);
+      transition: color var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998;
+      opacity: 0; pointer-events: none; transition: opacity var(--transition);
+    }
+    .mobile-overlay.active { opacity: 1; pointer-events: all; }
+
+    /* ============================================
+       HERO — Library Interior with Paper Texture
+       ============================================ */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: -5%;
+      width: 110%;
+      height: 110%;
+      background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=80') center/cover;
+      filter: brightness(0.25) sepia(0.2);
+    }
+
+    .hero-paper-noise {
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,26,20,0.4) 0%, rgba(15,26,20,0.1) 40%, rgba(15,26,20,0.7) 80%, rgba(15,26,20,1) 100%);
+      z-index: 2;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      max-width: 800px;
+      padding: 0 24px;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      opacity: 0;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 7vw, 4.2rem);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+
+    .hero-title .highlight { color: var(--accent); }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      opacity: 0;
+      line-height: 1.7;
+    }
+
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; opacity: 0; }
+
+    .btn-primary {
+      padding: 14px 36px;
+      background: var(--accent);
+      color: var(--background);
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-outline {
+      padding: 14px 36px;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent);
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all var(--transition);
+    }
+    .btn-outline:hover {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--accent);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .scroll-indicator span { font-size: 0.7rem; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; }
+    .scroll-line { width: 1px; height: 50px; background: rgba(255,255,255,0.2); position: relative; overflow: hidden; }
+    .scroll-dot {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 3px; height: 10px; background: var(--accent); border-radius: 3px;
+      animation: scrollDot 2s ease-in-out infinite;
+    }
+    @keyframes scrollDot {
+      0%, 100% { top: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* Typewriter effect */
+    .typewriter { overflow: hidden; display: inline-block; }
+    .typewriter-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1em;
+      background: var(--accent);
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ============================================
+       MARQUEE — Partner Publishers
+       ============================================ */
+    .marquee-section {
+      padding: 40px 0;
+      border-top: 1px solid rgba(16, 185, 129, 0.08);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.08);
+      overflow: hidden;
+    }
+    .marquee-track { display: flex; gap: 60px; animation: marquee 35s linear infinite; width: max-content; }
+    .marquee-item {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-muted);
+      white-space: nowrap;
+      opacity: 0.5;
+      letter-spacing: 2px;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ============================================
+       SERVICES — Curated Categories
+       ============================================ */
+    .services { padding: 120px 0; }
+
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+    .service-card {
+      background: var(--surface);
+      border: 1px solid rgba(16, 185, 129, 0.08);
+      border-radius: 16px;
+      padding: 40px 30px;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .service-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(16, 185, 129, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .service-card:hover::before { opacity: 1; }
+
+    .service-icon {
+      width: 56px; height: 56px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+      font-size: 1.5rem;
+    }
+
+    .service-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .service-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* ============================================
+       GENRE EXPLORER (UNIQUE — replaces SignageTypes)
+       ============================================ */
+    .genre-section {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+
+    .genre-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+
+    .genre-pill {
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 400;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .genre-pill::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+      z-index: -1;
+      border-radius: 50px;
+    }
+
+    .genre-pill:hover::before, .genre-pill.active::before { transform: scaleX(1); }
+    .genre-pill:hover, .genre-pill.active {
+      color: var(--background);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .genre-icon { margin-right: 8px; }
+
+    .genre-display {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .genre-books {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .book-spine-card {
+      background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02));
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+
+    .book-spine-card:hover {
+      transform: translateY(-8px) rotateY(-5deg);
+      border-color: var(--accent);
+      box-shadow: 0 16px 40px rgba(16, 185, 129, 0.15);
+    }
+
+    .book-spine-card .book-emoji { font-size: 2.5rem; margin-bottom: 12px; }
+    .book-spine-card h4 {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .book-spine-card .book-author {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .genre-info h3 {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .genre-info p {
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .genre-stats {
+      display: flex;
+      gap: 32px;
+    }
+
+    .genre-stat-item {
+      text-align: center;
+    }
+
+    .genre-stat-num {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .genre-stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ============================================
+       BOOK SHELF DISPLAY (UNIQUE — replaces Portfolio)
+       ============================================ */
+    .bookshelf-section { padding: 120px 0; }
+
+    .bookshelf {
+      position: relative;
+      padding: 40px;
+      background: linear-gradient(180deg, transparent 0%, rgba(16,185,129,0.02) 100%);
+    }
+
+    .shelf-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .shelf-book {
+      width: 120px;
+      height: 180px;
+      border-radius: 4px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      overflow: hidden;
+      box-shadow: 4px 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .shelf-book:hover {
+      transform: translateY(-20px) rotateY(-8deg) scale(1.05);
+      box-shadow: 8px 12px 30px rgba(0,0,0,0.5);
+      z-index: 2;
+    }
+
+    .shelf-book img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .shelf-book-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.8));
+      opacity: 0;
+      transition: opacity var(--transition);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 12px;
+    }
+
+    .shelf-book:hover .shelf-book-overlay { opacity: 1; }
+
+    .shelf-book-overlay h4 {
+      font-family: var(--font-heading);
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .shelf-book-overlay span {
+      font-size: 0.7rem;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+
+    .shelf-wood {
+      height: 12px;
+      background: linear-gradient(180deg, #5C4033 0%, #3E2723 100%);
+      border-radius: 0 0 4px 4px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    /* ============================================
+       READING CLUB (UNIQUE — New Section)
+       ============================================ */
+    .readingclub-section {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+
+    .readingclub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .readingclub-image {
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .readingclub-image img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .readingclub-image:hover img { transform: scale(1.05); }
+
+    .readingclub-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 8px 20px;
+      background: var(--accent);
+      color: var(--background);
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    .readingclub-info h3 {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .readingclub-month {
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .readingclub-info p {
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .readingclub-schedule {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .readingclub-schedule h4 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+
+    .schedule-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.08);
+      font-size: 0.9rem;
+    }
+
+    .schedule-item:last-child { border-bottom: none; }
+
+    .schedule-date {
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.15);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      color: var(--accent);
+    }
+
+    .schedule-desc { color: var(--text-muted); }
+
+    /* ============================================
+       FAQ
+       ============================================ */
+    .faq-section { padding: 120px 0; }
+
+    .faq-list { max-width: 800px; margin: 0 auto; }
+
+    .faq-item { border-bottom: 1px solid rgba(16, 185, 129, 0.1); }
+
+    .faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      cursor: pointer;
+      transition: color var(--transition);
+      gap: 16px;
+    }
+    .faq-question:hover { color: var(--accent); }
+
+    .faq-question h3 { font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; }
+
+    .faq-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(16, 185, 129, 0.1);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all var(--transition);
+      font-size: 1.2rem; color: var(--accent);
+    }
+
+    .faq-item.active .faq-icon {
+      background: var(--accent);
+      color: var(--background);
+      transform: rotate(45deg);
+    }
+
+    .faq-answer { height: 0; overflow: hidden; }
+
+    .faq-answer-inner {
+      padding: 0 0 24px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      font-size: 0.95rem;
+    }
+
+    /* ============================================
+       CONTACT
+       ============================================ */
+    .contact-section { padding: 120px 0; background: var(--surface); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .contact-info h3 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; }
+
+    .contact-detail { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+
+    .contact-detail-icon {
+      width: 44px; height: 44px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 1.1rem;
+    }
+
+    .contact-detail-text h4 { font-family: var(--font-heading); font-weight: 700; margin-bottom: 4px; font-size: 0.95rem; }
+    .contact-detail-text p { color: var(--text-muted); font-size: 0.9rem; }
+
+    .contact-hours {
+      margin-top: 32px;
+      padding: 24px;
+      background: rgba(16, 185, 129, 0.05);
+      border-radius: 16px;
+      border: 1px solid rgba(16, 185, 129, 0.1);
+    }
+
+    .contact-hours h4 { font-family: var(--font-heading); font-weight: 700; margin-bottom: 16px; color: var(--accent); }
+
+    .hours-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.05);
+    }
+    .hours-row:last-child { border-bottom: none; }
+
+    .contact-form-container {
+      background: var(--background);
+      border-radius: 20px;
+      padding: 40px;
+      border: 1px solid rgba(16, 185, 129, 0.1);
+    }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid rgba(16, 185, 129, 0.1);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.95rem;
+      transition: border-color var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--accent); }
+
+    .form-group textarea { min-height: 120px; resize: vertical; }
+
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%2310B981'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: var(--background);
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: none;
+    }
+    .btn-submit:hover { background: #059669; transform: translateY(-2px); }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    .footer {
+      padding: 80px 0 40px;
+      border-top: 1px solid rgba(16, 185, 129, 0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--surface); display: flex; align-items: center;
+      justify-content: center; transition: all var(--transition); font-size: 1rem;
+    }
+    .footer-social a:hover { background: var(--accent); color: var(--background); }
+
+    .footer-col h4 { font-family: var(--font-heading); font-weight: 700; margin-bottom: 20px; font-size: 0.95rem; }
+    .footer-col a { display: block; font-size: 0.9rem; color: var(--text-muted); padding: 6px 0; transition: color var(--transition); }
+    .footer-col a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      padding-top: 40px;
+      border-top: 1px solid rgba(16, 185, 129, 0.08);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .genre-display { grid-template-columns: 1fr; }
+      .genre-books { grid-template-columns: repeat(3, 1fr); }
+      .readingclub-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .shelf-book { width: 100px; height: 150px; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .services-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .genre-books { grid-template-columns: repeat(2, 1fr); }
+      .genre-stats { justify-content: center; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .hero-buttons .btn-primary,
+      .hero-buttons .btn-outline { width: 100%; justify-content: center; text-align: center; max-width: 280px; }
+      .shelf-book { width: 80px; height: 120px; }
+    }
+
+    @media (max-width: 480px) {
+      .genre-pills { gap: 10px; }
+      .genre-pill { padding: 10px 20px; font-size: 0.85rem; }
+      .contact-form-container { padding: 24px; }
+      .shelf-row { gap: 10px; }
+      .shelf-book { width: 70px; height: 105px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="book-loader">
+      <div class="book-spine"></div>
+      <div class="book-page"></div>
+      <div class="book-page"></div>
+      <div class="book-page"></div>
+    </div>
+    <div class="preloader-brand">CHAPTER <span>ONE</span></div>
+    <div class="preloader-tagline">Independent Bookstore & Cafe</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="nav-logo">
+        <span class="nav-logo-icon">📖</span>
+        CHAPTER ONE
+      </a>
+      <div class="nav-links">
+        <a href="#services">큐레이션</a>
+        <a href="#genre">장르 탐험</a>
+        <a href="#bookshelf">서가</a>
+        <a href="#readingclub">독서모임</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact" class="nav-cta">방문 예약</a>
+      </div>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-overlay" onclick="toggleMenu()"></div>
+  <div class="mobile-menu">
+    <a href="#services" onclick="toggleMenu()">큐레이션</a>
+    <a href="#genre" onclick="toggleMenu()">장르 탐험</a>
+    <a href="#bookshelf" onclick="toggleMenu()">서가</a>
+    <a href="#readingclub" onclick="toggleMenu()">독서모임</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
+    <a href="#contact" onclick="toggleMenu()">방문 예약</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-paper-noise"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">📚 SINCE 2018 · BOOKS & COFFEE</div>
+      <h1 class="hero-title">당신만의<br><span class="highlight">이야기</span>가 시작되는 곳</h1>
+      <p class="hero-subtitle">엄선된 도서 큐레이션, 독서모임, 그리고 한 잔의 커피.<br>CHAPTER ONE에서 다음 페이지를 넘기세요.</p>
+      <div class="hero-buttons">
+        <a href="#bookshelf" class="btn-primary">📖 서가 둘러보기</a>
+        <a href="#readingclub" class="btn-outline">독서모임 알아보기</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"><div class="scroll-dot"></div></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE — Partner Publishers -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item">PENGUIN RANDOM HOUSE</span>
+      <span class="marquee-item">MINUMSA</span>
+      <span class="marquee-item">MUNHAKDONGNE</span>
+      <span class="marquee-item">CHANGBI</span>
+      <span class="marquee-item">OPEN BOOKS</span>
+      <span class="marquee-item">EUNHAENGNAMU</span>
+      <span class="marquee-item">SIGONGSA</span>
+      <span class="marquee-item">DASAN BOOKS</span>
+      <span class="marquee-item">PENGUIN RANDOM HOUSE</span>
+      <span class="marquee-item">MINUMSA</span>
+      <span class="marquee-item">MUNHAKDONGNE</span>
+      <span class="marquee-item">CHANGBI</span>
+      <span class="marquee-item">OPEN BOOKS</span>
+      <span class="marquee-item">EUNHAENGNAMU</span>
+      <span class="marquee-item">SIGONGSA</span>
+      <span class="marquee-item">DASAN BOOKS</span>
+    </div>
+  </div>
+
+  <!-- SERVICES — Curated Categories -->
+  <section id="services" class="services">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Curation</div>
+        <h2 class="section-title">큐레이션 서비스</h2>
+        <p class="section-desc">단순한 서점이 아닙니다. 당신의 취향에 맞는 책을 찾아드리는 문학 파트너입니다.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">🎯</div>
+          <h3>맞춤 추천</h3>
+          <p>독서 취향 분석을 통한 1:1 맞춤 도서 추천 서비스. 좋아하는 작가와 장르를 알려주시면 다음 인생책을 찾아드립니다.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📦</div>
+          <h3>북 서브스크립션</h3>
+          <p>매월 큐레이터가 엄선한 2-3권의 책을 집으로 배송합니다. 독서 노트와 북마크가 함께 동봉됩니다.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">☕</div>
+          <h3>북카페</h3>
+          <p>스페셜티 원두로 내린 핸드드립 커피와 함께 독서하세요. 조용한 1인석과 그룹 테이블을 갖추고 있습니다.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🎤</div>
+          <h3>저자 강연회</h3>
+          <p>매월 작가를 초청하여 저자 강연회와 사인회를 개최합니다. 작가와의 직접 대화 기회를 놓치지 마세요.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🎁</div>
+          <h3>선물 큐레이션</h3>
+          <p>소중한 사람에게 책을 선물하세요. 취향 분석 후 추천 리스트를 만들어 예쁜 패키지로 포장해 드립니다.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📚</div>
+          <h3>독서모임 운영</h3>
+          <p>주제별 독서모임을 정기적으로 운영합니다. 같은 책을 읽는 사람들과의 깊은 대화를 경험해 보세요.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GENRE EXPLORER -->
+  <section id="genre" class="genre-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Genre Explorer</div>
+        <h2 class="section-title">장르 탐험</h2>
+        <p class="section-desc">관심 있는 장르를 선택하고, 큐레이터가 엄선한 추천 도서를 만나보세요.</p>
+      </div>
+      <div class="genre-pills">
+        <button class="genre-pill active" data-genre="fiction"><span class="genre-icon">📖</span> 소설</button>
+        <button class="genre-pill" data-genre="nonfiction"><span class="genre-icon">🧠</span> 인문</button>
+        <button class="genre-pill" data-genre="poetry"><span class="genre-icon">🌸</span> 시</button>
+        <button class="genre-pill" data-genre="scifi"><span class="genre-icon">🚀</span> SF</button>
+        <button class="genre-pill" data-genre="essay"><span class="genre-icon">✍️</span> 에세이</button>
+        <button class="genre-pill" data-genre="art"><span class="genre-icon">🎨</span> 예술</button>
+      </div>
+      <div class="genre-display">
+        <div class="genre-books" id="genreBooks">
+          <div class="book-spine-card"><div class="book-emoji">📕</div><h4>아몬드</h4><span class="book-author">손원평</span></div>
+          <div class="book-spine-card"><div class="book-emoji">📗</div><h4>작별하지 않는다</h4><span class="book-author">한강</span></div>
+          <div class="book-spine-card"><div class="book-emoji">📘</div><h4>파친코</h4><span class="book-author">이민진</span></div>
+          <div class="book-spine-card"><div class="book-emoji">📙</div><h4>불편한 편의점</h4><span class="book-author">김호연</span></div>
+          <div class="book-spine-card"><div class="book-emoji">📕</div><h4>달러구트 꿈<br>백화점</h4><span class="book-author">이미예</span></div>
+          <div class="book-spine-card"><div class="book-emoji">📗</div><h4>설계자들</h4><span class="book-author">김어진</span></div>
+        </div>
+        <div class="genre-info">
+          <h3 id="genreTitle">소설의 세계</h3>
+          <p id="genreDesc">현실과 상상의 경계를 넘나드는 이야기. 한국 문학의 새로운 흐름부터 세계 문학의 고전까지, 당신의 다음 인생 소설이 여기 있습니다.</p>
+          <div class="genre-stats">
+            <div class="genre-stat-item">
+              <div class="genre-stat-num" id="genreCount">1,240</div>
+              <div class="genre-stat-label">보유 도서</div>
+            </div>
+            <div class="genre-stat-item">
+              <div class="genre-stat-num">98%</div>
+              <div class="genre-stat-label">만족도</div>
+            </div>
+            <div class="genre-stat-item">
+              <div class="genre-stat-num">#1</div>
+              <div class="genre-stat-label">인기 장르</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKSHELF DISPLAY -->
+  <section id="bookshelf" class="bookshelf-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Our Bookshelf</div>
+        <h2 class="section-title">이달의 서가</h2>
+        <p class="section-desc">큐레이터가 이번 달 특별히 추천하는 책들을 모았습니다.</p>
+      </div>
+      <div class="bookshelf">
+        <div class="shelf-row">
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&q=80" alt="Book 1"><div class="shelf-book-overlay"><h4>침묵의 기술</h4><span>에세이</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&q=80" alt="Book 2"><div class="shelf-book-overlay"><h4>시간의 정원</h4><span>소설</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&q=80" alt="Book 3"><div class="shelf-book-overlay"><h4>별이 빛나는 밤</h4><span>시집</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&q=80" alt="Book 4"><div class="shelf-book-overlay"><h4>마음의 철학</h4><span>인문</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1589998059171-988d887df646?w=300&q=80" alt="Book 5"><div class="shelf-book-overlay"><h4>우주의 끝에서</h4><span>SF</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=300&q=80" alt="Book 6"><div class="shelf-book-overlay"><h4>디자인의 역사</h4><span>예술</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&q=80" alt="Book 7"><div class="shelf-book-overlay"><h4>여행자의 기록</h4><span>에세이</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80" alt="Book 8"><div class="shelf-book-overlay"><h4>달빛 서재</h4><span>소설</span></div></div>
+        </div>
+        <div class="shelf-wood"></div>
+        <div class="shelf-row">
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=300&q=80" alt="Book 9"><div class="shelf-book-overlay"><h4>사유의 시간</h4><span>인문</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1476275466078-4007374efbbe?w=300&q=80" alt="Book 10"><div class="shelf-book-overlay"><h4>빛의 조각들</h4><span>시집</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=300&q=80" alt="Book 11"><div class="shelf-book-overlay"><h4>기억의 도시</h4><span>소설</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&q=80" alt="Book 12"><div class="shelf-book-overlay"><h4>고요한 혁명</h4><span>인문</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1550399105-c4db5fb85c18?w=300&q=80" alt="Book 13"><div class="shelf-book-overlay"><h4>미래의 문</h4><span>SF</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=300&q=80" alt="Book 14"><div class="shelf-book-overlay"><h4>잉크와 종이</h4><span>에세이</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&q=80" alt="Book 15"><div class="shelf-book-overlay"><h4>색의 언어</h4><span>예술</span></div></div>
+          <div class="shelf-book"><img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=300&q=80" alt="Book 16"><div class="shelf-book-overlay"><h4>호수의 노래</h4><span>시집</span></div></div>
+        </div>
+        <div class="shelf-wood"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- READING CLUB -->
+  <section id="readingclub" class="readingclub-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Reading Club</div>
+        <h2 class="section-title">이달의 독서모임</h2>
+        <p class="section-desc">같은 책을 읽는 사람들과 나누는 깊은 대화, CHAPTER ONE 독서모임에 참여하세요.</p>
+      </div>
+      <div class="readingclub-grid">
+        <div class="readingclub-image">
+          <img src="https://images.unsplash.com/photo-1529473814998-077b4fec6770?w=800&q=80" alt="독서모임">
+          <div class="readingclub-badge">모집 중</div>
+        </div>
+        <div class="readingclub-info">
+          <h3>2월의 책: 「작별하지 않는다」</h3>
+          <div class="readingclub-month">한강 · 문학동네 · 2025년 신작</div>
+          <p>노벨문학상 수상 작가 한강의 신작. 제주 4·3의 기억을 바탕으로 한 이 작품은 상실과 기억, 그리고 인간의 존엄에 대해 이야기합니다. 함께 읽고 이야기를 나눠보세요.</p>
+          <div class="readingclub-schedule">
+            <h4>📅 2월 모임 일정</h4>
+            <div class="schedule-item">
+              <span class="schedule-date">2/8 (토)</span>
+              <span class="schedule-desc">1부 읽기 완료 & 첫인상 공유</span>
+            </div>
+            <div class="schedule-item">
+              <span class="schedule-date">2/15 (토)</span>
+              <span class="schedule-desc">2부 읽기 완료 & 주제 토론</span>
+            </div>
+            <div class="schedule-item">
+              <span class="schedule-date">2/22 (토)</span>
+              <span class="schedule-desc">완독 & 최종 토론 + 다음 달 선정</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">자주 묻는 질문</h2>
+        <p class="section-desc">CHAPTER ONE에 대해 궁금한 점을 모았습니다.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>카페만 이용해도 되나요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">물론입니다! 책을 구매하지 않아도 카페만 이용하실 수 있습니다. 스페셜티 원두로 내린 핸드드립, 에스프레소, 디카페인은 물론 시그니처 음료와 디저트도 준비되어 있습니다. 조용한 독서 환경을 유지하기 위해 통화는 자제 부탁드립니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>독서모임은 어떻게 참여하나요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">매월 초 인스타그램과 홈페이지에서 다음 달 독서모임 모집 공지를 올립니다. 참가비는 1만원(음료 1잔 포함)이며, 선착순 12명까지 참여 가능합니다. 해당 월의 책을 미리 읽어오시면 더 풍성한 토론이 가능합니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>도서 주문 및 배송은 가능한가요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">매장에 없는 도서도 주문 가능합니다. 국내 도서는 1-2일, 해외 도서는 1-2주 내 입고됩니다. 서울 지역 자전거 배송 서비스도 운영하고 있으며, 큐레이터 추천 메모와 함께 예쁘게 포장하여 배송합니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>북 서브스크립션은 무엇인가요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">매월 큐레이터가 취향 분석을 바탕으로 2-3권의 책을 엄선하여 배송하는 구독 서비스입니다. 월 29,000원부터 시작하며, 독서 노트, 북마크, 큐레이터 레터가 함께 동봉됩니다. 3개월/6개월/12개월 플랜을 선택하실 수 있습니다.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>공간 대관이 가능한가요?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">영업 종료 후(21시 이후) 소규모 모임, 북토크, 출판 기념회 등을 위한 공간 대관이 가능합니다. 최대 30명 수용 가능하며, 프로젝터와 마이크 시스템을 갖추고 있습니다. 자세한 사항은 이메일로 문의해 주세요.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Visit Us</div>
+        <h2 class="section-title">방문 & 문의</h2>
+        <p class="section-desc">CHAPTER ONE에서 당신의 다음 이야기를 시작하세요.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h3>CHAPTER ONE</h3>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">📍</div>
+            <div class="contact-detail-text">
+              <h4>오시는 길</h4>
+              <p>서울특별시 마포구 연남로 48, 1-2층<br>홍대입구역 3번 출구 도보 7분</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">📞</div>
+            <div class="contact-detail-text">
+              <h4>전화번호</h4>
+              <p>02-334-5678</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">✉️</div>
+            <div class="contact-detail-text">
+              <h4>이메일</h4>
+              <p>hello@chapterone.kr</p>
+            </div>
+          </div>
+          <div class="contact-hours">
+            <h4>🕐 영업시간 안내</h4>
+            <div class="hours-row"><span>월 - 금</span><span>10:00 - 22:00</span></div>
+            <div class="hours-row"><span>토요일</span><span>10:00 - 23:00</span></div>
+            <div class="hours-row"><span>일/공휴일</span><span>11:00 - 21:00</span></div>
+            <div class="hours-row"><span>매주 화요일</span><span style="color: var(--accent);">정기 휴무</span></div>
+          </div>
+        </div>
+        <div class="contact-form-container">
+          <form onsubmit="handleSubmit(event)">
+            <div class="form-group">
+              <label>성함</label>
+              <input type="text" placeholder="홍길동" required>
+            </div>
+            <div class="form-group">
+              <label>연락처</label>
+              <input type="tel" placeholder="010-0000-0000" required>
+            </div>
+            <div class="form-group">
+              <label>문의 유형</label>
+              <select required>
+                <option value="">선택해 주세요</option>
+                <option value="curation">맞춤 추천</option>
+                <option value="subscription">북 서브스크립션</option>
+                <option value="readingclub">독서모임</option>
+                <option value="event">저자 강연회/이벤트</option>
+                <option value="rental">공간 대관</option>
+                <option value="other">기타 문의</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>문의 내용</label>
+              <textarea placeholder="문의하실 내용을 적어주세요" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">문의하기</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">📖 CHAPTER ONE</div>
+          <p class="footer-desc">당신만의 이야기가 시작되는 독립서점 & 북카페. 엄선된 큐레이션, 따뜻한 커피, 깊은 대화가 있는 공간입니다.</p>
+          <div class="footer-social">
+            <a href="#">📷</a>
+            <a href="#">📘</a>
+            <a href="#">🐦</a>
+            <a href="#">📺</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>서비스</h4>
+          <a href="#">맞춤 추천</a>
+          <a href="#">북 서브스크립션</a>
+          <a href="#">독서모임</a>
+          <a href="#">저자 강연회</a>
+          <a href="#">선물 큐레이션</a>
+        </div>
+        <div class="footer-col">
+          <h4>안내</h4>
+          <a href="#">영업시간</a>
+          <a href="#">오시는 길</a>
+          <a href="#">주차 안내</a>
+          <a href="#">공간 대관</a>
+          <a href="#">채용 정보</a>
+        </div>
+        <div class="footer-col">
+          <h4>고객지원</h4>
+          <a href="#">자주 묻는 질문</a>
+          <a href="#">문의하기</a>
+          <a href="#">구독 관리</a>
+          <a href="#">개인정보처리방침</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2025 CHAPTER ONE. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- CDN Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ============================================
+       PRELOADER
+       ============================================ */
+    (function initPreloader() {
+      const preloader = document.getElementById('preloader');
+      const brand = document.querySelector('.preloader-brand');
+      const tagline = document.querySelector('.preloader-tagline');
+
+      const tl = gsap.timeline();
+      tl.to(brand, { opacity: 1, duration: 0.8, ease: 'power2.out' }, 1.5);
+      tl.to(tagline, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 2.0);
+      tl.to(preloader, {
+        opacity: 0, duration: 0.6, delay: 0.5, ease: 'power2.inOut',
+        onComplete: () => { preloader.style.display = 'none'; initAnimations(); }
+      });
+    })();
+
+    /* ============================================
+       MOBILE MENU
+       ============================================ */
+    function toggleMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-overlay').classList.toggle('active');
+    }
+
+    /* ============================================
+       ALL SCROLL ANIMATIONS
+       ============================================ */
+    function initAnimations() {
+      // Navbar scroll
+      window.addEventListener('scroll', () => {
+        document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 50);
+      });
+
+      // Hero
+      const heroTL = gsap.timeline();
+      heroTL.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+      heroTL.from('.hero-title', { opacity: 0, y: 40, duration: 0.8, ease: 'power3.out' }, 0.5);
+      heroTL.to('.hero-subtitle', { opacity: 1, duration: 0.6 }, 1.0);
+      heroTL.to('.hero-buttons', { opacity: 1, y: 0, duration: 0.6 }, 1.3);
+      heroTL.to('.scroll-indicator', { opacity: 1, duration: 0.6 }, 1.6);
+
+      // Hero parallax
+      gsap.to('.hero-bg', {
+        yPercent: 20, ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
+      });
+
+      // Services
+      gsap.from('.services .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.services', start: 'top 80%', once: true }
+      });
+      gsap.from('.service-card', {
+        y: 50, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.services-grid', start: 'top 80%', once: true }
+      });
+
+      // Genre Section
+      gsap.from('.genre-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.genre-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.genre-pill', {
+        y: 20, opacity: 0, duration: 0.4, stagger: 0.08, ease: 'power3.out',
+        scrollTrigger: { trigger: '.genre-pills', start: 'top 85%', once: true }
+      });
+      gsap.from('.book-spine-card', {
+        y: 30, opacity: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out',
+        scrollTrigger: { trigger: '#genreBooks', start: 'top 85%', once: true }
+      });
+      gsap.from('.genre-info', {
+        x: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.genre-display', start: 'top 80%', once: true }
+      });
+
+      // Bookshelf
+      gsap.from('.bookshelf-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.bookshelf-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.shelf-book', {
+        y: 40, opacity: 0, duration: 0.4, stagger: 0.05, ease: 'power3.out',
+        scrollTrigger: { trigger: '.bookshelf', start: 'top 80%', once: true }
+      });
+
+      // Reading Club
+      gsap.from('.readingclub-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.readingclub-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.readingclub-image', {
+        x: -50, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.readingclub-grid', start: 'top 80%', once: true }
+      });
+      gsap.from('.readingclub-info', {
+        x: 50, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.readingclub-grid', start: 'top 80%', once: true }
+      });
+
+      // FAQ
+      gsap.from('.faq-section .section-header', {
+        y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.faq-section', start: 'top 80%', once: true }
+      });
+      gsap.from('.faq-item', {
+        y: 30, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.faq-list', start: 'top 80%', once: true }
+      });
+
+      // Contact
+      gsap.from('.contact-info', {
+        x: -50, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-grid', start: 'top 80%', once: true }
+      });
+      gsap.from('.contact-form-container', {
+        x: 50, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.contact-grid', start: 'top 80%', once: true }
+      });
+
+      // Footer
+      gsap.from('.footer-grid > *', {
+        y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.footer', start: 'top 90%', once: true }
+      });
+    }
+
+    /* ============================================
+       GENRE EXPLORER TABS
+       ============================================ */
+    (function initGenreTabs() {
+      const pills = document.querySelectorAll('.genre-pill');
+      const genreData = {
+        fiction: {
+          title: '소설의 세계',
+          desc: '현실과 상상의 경계를 넘나드는 이야기. 한국 문학의 새로운 흐름부터 세계 문학의 고전까지, 당신의 다음 인생 소설이 여기 있습니다.',
+          count: '1,240',
+          books: [
+            { emoji: '📕', title: '아몬드', author: '손원평' },
+            { emoji: '📗', title: '작별하지 않는다', author: '한강' },
+            { emoji: '📘', title: '파친코', author: '이민진' },
+            { emoji: '📙', title: '불편한 편의점', author: '김호연' },
+            { emoji: '📕', title: '달러구트 꿈 백화점', author: '이미예' },
+            { emoji: '📗', title: '설계자들', author: '김어진' }
+          ]
+        },
+        nonfiction: {
+          title: '인문의 깊이',
+          desc: '인간과 세계를 이해하는 지적 여행. 철학, 역사, 심리학, 사회과학의 핵심 저작들을 만나보세요.',
+          count: '860',
+          books: [
+            { emoji: '📕', title: '사피엔스', author: '유발 하라리' },
+            { emoji: '📗', title: '정의란 무엇인가', author: '마이클 샌델' },
+            { emoji: '📘', title: '총균쇠', author: '재레드 다이아몬드' },
+            { emoji: '📙', title: '생각에 관한 생각', author: '다니엘 카너먼' },
+            { emoji: '📕', title: '역사의 쓸모', author: '최태성' },
+            { emoji: '📗', title: '멀티버스', author: '브라이언 그린' }
+          ]
+        },
+        poetry: {
+          title: '시의 언어',
+          desc: '한 줄의 시가 세상을 바꾸기도 합니다. 한국 현대시부터 세계 명시까지, 시의 아름다움을 느껴보세요.',
+          count: '420',
+          books: [
+            { emoji: '📕', title: '서시', author: '윤동주' },
+            { emoji: '📗', title: '풀', author: '김수영' },
+            { emoji: '📘', title: '사랑의 물리학', author: '김인육' },
+            { emoji: '📙', title: '너에게 묻는다', author: '안도현' },
+            { emoji: '📕', title: '봄밤', author: '나태주' },
+            { emoji: '📗', title: '별 헤는 밤', author: '윤동주' }
+          ]
+        },
+        scifi: {
+          title: 'SF의 미래',
+          desc: '상상 너머의 세계. 인공지능, 우주 탐사, 디스토피아까지 — 미래를 미리 경험하세요.',
+          count: '380',
+          books: [
+            { emoji: '📕', title: '듄', author: '프랭크 허버트' },
+            { emoji: '📗', title: '삼체', author: '류츠신' },
+            { emoji: '📘', title: '안드로이드는 전기양을 꿈꾸는가', author: '필립 K. 딕' },
+            { emoji: '📙', title: '프로젝트 헤일메리', author: '앤디 위어' },
+            { emoji: '📕', title: '멋진 신세계', author: '올더스 헉슬리' },
+            { emoji: '📗', title: '파운데이션', author: '아이작 아시모프' }
+          ]
+        },
+        essay: {
+          title: '에세이의 따뜻함',
+          desc: '누군가의 솔직한 이야기에서 위안을 찾고, 새로운 시각을 얻으세요. 일상의 작은 발견을 나누는 에세이 코너.',
+          count: '540',
+          books: [
+            { emoji: '📕', title: '나미야 잡화점의 기적', author: '히가시노 게이고' },
+            { emoji: '📗', title: '보통의 존재', author: '김쌤' },
+            { emoji: '📘', title: '여행의 이유', author: '김영하' },
+            { emoji: '📙', title: '그래도 괜찮은 하루', author: '이적' },
+            { emoji: '📕', title: '언어의 온도', author: '이기주' },
+            { emoji: '📗', title: '나는 나로 살기로 했다', author: '김수현' }
+          ]
+        },
+        art: {
+          title: '예술의 감각',
+          desc: '미술, 디자인, 사진, 건축. 시각적 영감을 주는 아트북과 도록 컬렉션.',
+          count: '310',
+          books: [
+            { emoji: '📕', title: '미술관에 간 화학자', author: '전창림' },
+            { emoji: '📗', title: '예술의 사기', author: '이진숙' },
+            { emoji: '📘', title: '사진의 힘', author: '수전 손택' },
+            { emoji: '📙', title: '디자인의 디자인', author: '하라 켄야' },
+            { emoji: '📕', title: '빈센트의 구두', author: '나카노 교코' },
+            { emoji: '📗', title: '건축이 만든 세계', author: '서현' }
+          ]
+        }
+      };
+
+      pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          const genre = pill.dataset.genre;
+          const data = genreData[genre];
+
+          pills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+
+          document.getElementById('genreTitle').textContent = data.title;
+          document.getElementById('genreDesc').textContent = data.desc;
+          document.getElementById('genreCount').textContent = data.count;
+
+          const booksContainer = document.getElementById('genreBooks');
+          booksContainer.innerHTML = data.books.map(b =>
+            `<div class="book-spine-card"><div class="book-emoji">${b.emoji}</div><h4>${b.title}</h4><span class="book-author">${b.author}</span></div>`
+          ).join('');
+
+          gsap.from('.book-spine-card', {
+            y: 20, opacity: 0, duration: 0.4, stagger: 0.06, ease: 'power3.out'
+          });
+        });
+      });
+    })();
+
+    /* ============================================
+       FAQ ACCORDION
+       ============================================ */
+    (function initFAQ() {
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        const inner = item.querySelector('.faq-answer-inner');
+
+        question.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+
+          document.querySelectorAll('.faq-item').forEach(other => {
+            if (other !== item && other.classList.contains('active')) {
+              other.classList.remove('active');
+              gsap.to(other.querySelector('.faq-answer'), { height: 0, duration: 0.4, ease: 'power2.inOut' });
+            }
+          });
+
+          if (isActive) {
+            item.classList.remove('active');
+            gsap.to(answer, { height: 0, duration: 0.4, ease: 'power2.inOut' });
+          } else {
+            item.classList.add('active');
+            gsap.to(answer, { height: inner.offsetHeight, duration: 0.4, ease: 'power2.inOut' });
+          }
+        });
+      });
+    })();
+
+    /* ============================================
+       FORM HANDLER
+       ============================================ */
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      const originalText = btn.textContent;
+      btn.textContent = '문의 완료! ✅';
+      btn.style.background = '#22C55E';
+      gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.3, ease: 'back.out(1.7)' });
+      setTimeout(() => { btn.textContent = originalText; btn.style.background = ''; e.target.reset(); }, 2500);
+    }
+
+    /* ============================================
+       SMOOTH SCROLL
+       ============================================ */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

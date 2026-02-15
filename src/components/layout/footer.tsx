@@ -1,0 +1,109 @@
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+import { CATEGORIES } from "@/types";
+
+const footerSections = [
+  {
+    title: "Product",
+    links: [
+      { label: "Templates", href: "/templates" },
+      { label: "Leaderboard", href: "/leaderboard" },
+      { label: "Blog", href: "/blog" },
+      { label: "Pricing", href: "/pricing" },
+    ],
+  },
+  {
+    title: "Categories",
+    links: CATEGORIES.filter((c) => c.name !== "all")
+      .slice(0, 6)
+      .map((c) => ({
+        label: c.label,
+        href: `/templates?category=${c.name}`,
+      })),
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Documentation", href: "/docs" },
+      { label: "Changelog", href: "/changelog" },
+      { label: "Support", href: "/support" },
+      { label: "API", href: "/api" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "License", href: "/license" },
+    ],
+  },
+];
+
+export function Footer() {
+  return (
+    <footer className="border-t border-border/40 bg-muted/30">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="grid grid-cols-2 gap-8 py-12 md:grid-cols-5 lg:py-16">
+          <div className="col-span-2 md:col-span-1">
+            <Link
+              href="/"
+              className="flex items-center gap-2 transition-opacity hover:opacity-80"
+            >
+              <div className="flex size-7 items-center justify-center rounded-lg bg-foreground">
+                <span className="text-xs font-bold text-background">HD</span>
+              </div>
+              <span className="text-[15px] font-semibold tracking-tight">
+                HomeDream
+              </span>
+            </Link>
+            <p className="mt-3 max-w-xs text-[13px] leading-relaxed text-muted-foreground">
+              Curated homepage templates and components for modern web projects.
+            </p>
+            <div className="mt-4 flex gap-3">
+              {["X", "GH"].map((social) => (
+                <span
+                  key={social}
+                  className="flex size-8 items-center justify-center rounded-full border border-border/60 text-[11px] font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+                >
+                  {social}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {footerSections.map((section) => (
+            <div key={section.title}>
+              <h3 className="text-[13px] font-semibold tracking-tight">
+                {section.title}
+              </h3>
+              <ul className="mt-3 space-y-2">
+                {section.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <Separator className="opacity-40" />
+
+        <div className="flex flex-col items-center justify-between gap-3 py-6 md:flex-row">
+          <p className="text-xs text-muted-foreground/60">
+            &copy; 2026 HomeDream. All rights reserved.
+          </p>
+          <p className="text-xs text-muted-foreground/40">
+            Built with Next.js, Tailwind CSS, and shadcn/ui
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
