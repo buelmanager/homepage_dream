@@ -1,8 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Heart, Bookmark, Check, Sparkles, CreditCard } from "lucide-react";
+import {
+  ShoppingCart,
+  Heart,
+  Bookmark,
+  Check,
+  Sparkles,
+  CreditCard,
+  Code2,
+  Download,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +21,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SubscriptionModal } from "@/components/subscription/subscription-modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PurchaseCardProps {
   price: number;
@@ -31,6 +49,24 @@ export function PurchaseCard({
   const [isLoading, setIsLoading] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [credits, setCredits] = useState<number | null>(null);
+  const [sourceOpen, setSourceOpen] = useState(false);
+  const [sourceLoading, setSourceLoading] = useState(false);
+  const [sourceText, setSourceText] = useState<string>("");
+  const [sourceError, setSourceError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch purchase status so reloads correctly show "Purchased".
+    const ac = new AbortController();
+    fetch(`/api/purchase/status?slug=${encodeURIComponent(itemSlug)}&type=${itemType}`, {
+      signal: ac.signal,
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data && typeof data.purchased === "boolean") setIsPurchased(data.purchased);
+      })
+      .catch(() => {});
+    return () => ac.abort();
+  }, [itemSlug, itemType]);
 
   const handlePurchase = async () => {
     setIsLoading(true);
@@ -54,10 +90,33 @@ export function PurchaseCard({
       } else {
         alert(data.error || "Purchase failed");
       }
-    } catch (error) {
+    } catch (_error) {
       alert("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const openSource = async () => {
+    if (itemType !== "template") return;
+    setSourceOpen(true);
+    setSourceLoading(true);
+    setSourceError(null);
+    setSourceText("");
+    try {
+      const r = await fetch(
+        `/api/templates/${encodeURIComponent(itemSlug)}/source?file=${encodeURIComponent("index.html")}`
+      );
+      const txt = await r.text();
+      if (!r.ok) {
+        setSourceError(txt || "Failed to load source");
+        return;
+      }
+      setSourceText(txt);
+    } catch {
+      setSourceError("Failed to load source");
+    } finally {
+      setSourceLoading(false);
     }
   };
 
@@ -114,6 +173,21 @@ export function PurchaseCard({
             </Button>
           )}
 
+          {isPurchased && itemType === "template" && (
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" size="sm" className="gap-2" onClick={openSource}>
+                <Code2 className="size-4" />
+                View Source
+              </Button>
+              <Button asChild variant="outline" size="sm" className="gap-2">
+                <a href={`/api/templates/${encodeURIComponent(itemSlug)}/download`}>
+                  <Download className="size-4" />
+                  Download
+                </a>
+              </Button>
+            </div>
+          )}
+
           <Button
             variant="outline"
             size="sm"
@@ -155,6 +229,36 @@ export function PurchaseCard({
         isOpen={showSubscriptionModal}
         onClose={() => setShowSubscriptionModal(false)}
       />
+
+      <Dialog open={sourceOpen} onOpenChange={setSourceOpen}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Code2 className="size-4" />
+              {itemTitle} source (index.html)
+            </DialogTitle>
+          </DialogHeader>
+
+          {sourceLoading ? (
+            <div className="flex items-center justify-center py-10 text-muted-foreground">
+              <Loader2 className="mr-2 size-4 animate-spin" />
+              Loading source...
+            </div>
+          ) : sourceError ? (
+            <div className="rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+              {sourceError}
+            </div>
+          ) : (
+            <ScrollArea className="h-[60vh] rounded-md border border-border bg-muted/20">
+              <pre className="whitespace-pre p-4 text-xs leading-relaxed">
+                {sourceText}
+              </pre>
+            </ScrollArea>
+          )}
+
+          <DialogFooter showCloseButton />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
