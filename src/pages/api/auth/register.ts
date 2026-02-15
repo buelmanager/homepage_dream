@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import type { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import { z } from "zod/v4";
+
+import { prisma } from "@/lib/prisma";
 import { getDefaultSignupCredits } from "@/lib/app-settings";
 
 const registerSchema = z.object({
@@ -10,30 +11,27 @@ const registerSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const parsed = registerSchema.safeParse(body);
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
+  try {
+    const parsed = registerSchema.safeParse(req.body);
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: z.prettifyError(parsed.error) },
-        { status: 400 }
-      );
+      return res.status(400).json({ error: z.prettifyError(parsed.error) });
     }
 
     const { name, email, password } = parsed.data;
     const signupCredits = await getDefaultSignupCredits();
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return NextResponse.json(
-        { error: "Email already registered" },
-        { status: 409 }
-      );
+      return res.status(409).json({ error: "Email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -57,14 +55,11 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(
-      { message: "Account created successfully", userId: user.id },
-      { status: 201 }
-    );
+    return res
+      .status(201)
+      .json({ message: "Account created successfully", userId: user.id });
   } catch {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
+
