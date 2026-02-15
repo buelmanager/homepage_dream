@@ -5,7 +5,7 @@ export const APP_SETTING_KEYS = {
 } as const;
 
 const DEFAULTS = {
-  [APP_SETTING_KEYS.DEFAULT_SIGNUP_CREDITS]: 100,
+  [APP_SETTING_KEYS.DEFAULT_SIGNUP_CREDITS]: 30,
 } as const;
 
 export async function getDefaultSignupCredits() {
