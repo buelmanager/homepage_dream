@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import templatesManifest from "@/data/templates-manifest.json";
+import type { Prisma } from "@/generated/prisma/client";
 
 type ManifestTemplate = {
   slug: string;
@@ -21,6 +22,10 @@ type ManifestTemplate = {
   createdAt: string;
 };
 
+type DbTemplateWithCounts = Prisma.TemplateGetPayload<{
+  include: { _count: { select: { sections: true; purchases: true } } };
+}>;
+
 async function requireAdmin() {
   const session = await auth();
   if (!session?.user?.id) {
@@ -38,7 +43,7 @@ export async function GET(request: NextRequest) {
   const includeStats = searchParams.get("includeStats") === "true";
 
   const manifest = templatesManifest as ManifestTemplate[];
-  const dbTemplates = await prisma.template.findMany({
+  const dbTemplates: DbTemplateWithCounts[] = await prisma.template.findMany({
     include: { _count: { select: { sections: true, purchases: true } } },
   });
 
