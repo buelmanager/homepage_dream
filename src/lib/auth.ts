@@ -5,6 +5,9 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { getDefaultSignupCredits } from "@/lib/app-settings";
 
+const hasGitHubOAuth =
+  !!process.env.GITHUB_ID && !!process.env.GITHUB_SECRET;
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
@@ -38,10 +41,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
-    GitHub({
-      clientId: process.env.GITHUB_ID ?? "",
-      clientSecret: process.env.GITHUB_SECRET ?? "",
-    }),
+    ...(hasGitHubOAuth
+      ? [
+          GitHub({
+            clientId: process.env.GITHUB_ID!,
+            clientSecret: process.env.GITHUB_SECRET!,
+          }),
+        ]
+      : []),
   ],
   callbacks: {
     async signIn({ user, account }) {
