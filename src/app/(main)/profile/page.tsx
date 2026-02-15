@@ -169,28 +169,65 @@ export default function ProfilePage() {
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
   useEffect(() => {
+    console.log("[Profile] useEffect triggered - status:", status);
+    
     if (status === "unauthenticated") {
+      console.log("[Profile] Unauthenticated - redirecting to /signin");
       router.push("/signin");
       return;
     }
 
     if (status === "authenticated") {
+      console.log("[Profile] Authenticated - fetching data...");
+      
       Promise.all([
-        fetch("/api/credits").then((r) => r.json()),
-        fetch("/api/favorites").then((r) => r.json()),
-        fetch("/api/bookmarks").then((r) => r.json()),
-        fetch("/api/subscription").then((r) => r.json()),
-        fetch("/api/transactions").then((r) => r.json()),
+        fetch("/api/credits").then((r) => {
+          console.log("[Profile] /api/credits response:", r.status, r.ok);
+          if (!r.ok) throw new Error(`Credits API failed: ${r.status}`);
+          return r.json();
+        }),
+        fetch("/api/favorites").then((r) => {
+          console.log("[Profile] /api/favorites response:", r.status, r.ok);
+          if (!r.ok) throw new Error(`Favorites API failed: ${r.status}`);
+          return r.json();
+        }),
+        fetch("/api/bookmarks").then((r) => {
+          console.log("[Profile] /api/bookmarks response:", r.status, r.ok);
+          if (!r.ok) throw new Error(`Bookmarks API failed: ${r.status}`);
+          return r.json();
+        }),
+        fetch("/api/subscription").then((r) => {
+          console.log("[Profile] /api/subscription response:", r.status, r.ok);
+          if (!r.ok) throw new Error(`Subscription API failed: ${r.status}`);
+          return r.json();
+        }),
+        fetch("/api/transactions").then((r) => {
+          console.log("[Profile] /api/transactions response:", r.status, r.ok);
+          if (!r.ok) throw new Error(`Transactions API failed: ${r.status}`);
+          return r.json();
+        }),
       ])
         .then(([creditsData, favData, bookData, subData, transData]) => {
+          console.log("[Profile] All data fetched successfully:", {
+            creditsData,
+            favData,
+            bookData,
+            subData,
+            transData,
+          });
           setCredits(creditsData.credits ?? 0);
           setFavorites(favData.favorites ?? []);
           setBookmarks(bookData.bookmarks ?? []);
           setSubscription(subData.subscription ?? null);
           setTransactions(transData.transactions ?? []);
           setLoading(false);
+          console.log("[Profile] Loading complete - setLoading(false)");
         })
-        .catch(() => setLoading(false));
+        .catch((error) => {
+          console.error("[Profile] Error fetching data:", error);
+          setLoading(false);
+          console.log("[Profile] Error handled - setLoading(false)");
+        });
     }
   }, [status, router]);
 
@@ -215,9 +252,13 @@ export default function ProfilePage() {
   };
 
   if (status === "loading" || loading) {
+    console.log("[Profile] Showing loader - status:", status, "loading:", loading);
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-stone-400" />
+        <div className="ml-4 text-sm text-stone-500">
+          {status === "loading" ? "Checking session..." : "Loading profile..."}
+        </div>
       </div>
     );
   }
