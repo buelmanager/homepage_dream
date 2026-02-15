@@ -19,7 +19,8 @@ model User {
   image         String?
   password      String?
   role          Role      @default(USER)
-  credits       Int       @default(100)
+  credits       Int       @default(3)
+  stripeCustomerId String? @unique
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -28,6 +29,7 @@ model User {
   purchases     Purchase[]
   favorites     Favorite[]
   bookmarks     Bookmark[]
+  subscriptions Subscription[]
 
   @@map("users")
 }
@@ -85,6 +87,18 @@ enum TemplateStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+enum SubscriptionPlan {
+  BASIC
+  STANDARD
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
 }
 
 model Template {
@@ -203,6 +217,27 @@ model Bookmark {
 // ============================================
 // Credit Transaction Log
 // ============================================
+
+model Subscription {
+  id            String             @id @default(cuid())
+  userId        String
+  stripeSubscriptionId String?     @unique
+  plan          SubscriptionPlan
+  status        SubscriptionStatus @default(ACTIVE)
+  monthlyLimit  Int
+  usedCount     Int                @default(0)
+  price         Int
+  currentPeriodStart DateTime      @default(now())
+  currentPeriodEnd   DateTime
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("subscriptions")
+}
 
 model CreditTransaction {
   id          String   @id @default(cuid())
