@@ -154,6 +154,16 @@ function TemplateGrid({
   );
 }
 
+// Helper function to add timeout to fetch requests
+function fetchWithTimeout(url: string, timeout = 10000) {
+  return Promise.race([
+    fetch(url),
+    new Promise<Response>((_, reject) =>
+      setTimeout(() => reject(new Error(`Request timeout: ${url}`)), timeout)
+    ),
+  ]);
+}
+
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -181,27 +191,27 @@ export default function ProfilePage() {
       console.log("[Profile] Authenticated - fetching data...");
       
       Promise.all([
-        fetch("/api/credits").then((r) => {
+        fetchWithTimeout("/api/credits", 10000).then((r) => {
           console.log("[Profile] /api/credits response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Credits API failed: ${r.status}`);
           return r.json();
         }),
-        fetch("/api/favorites").then((r) => {
+        fetchWithTimeout("/api/favorites", 10000).then((r) => {
           console.log("[Profile] /api/favorites response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Favorites API failed: ${r.status}`);
           return r.json();
         }),
-        fetch("/api/bookmarks").then((r) => {
+        fetchWithTimeout("/api/bookmarks", 10000).then((r) => {
           console.log("[Profile] /api/bookmarks response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Bookmarks API failed: ${r.status}`);
           return r.json();
         }),
-        fetch("/api/subscription").then((r) => {
+        fetchWithTimeout("/api/subscription", 10000).then((r) => {
           console.log("[Profile] /api/subscription response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Subscription API failed: ${r.status}`);
           return r.json();
         }),
-        fetch("/api/transactions").then((r) => {
+        fetchWithTimeout("/api/transactions", 10000).then((r) => {
           console.log("[Profile] /api/transactions response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Transactions API failed: ${r.status}`);
           return r.json();
