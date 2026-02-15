@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import fs from "fs";
-import path from "path";
+import templatesManifest from "@/data/templates-manifest.json";
 
 export async function POST() {
   const session = await auth();
@@ -15,19 +14,21 @@ export async function POST() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const templatesDir = path.join(process.cwd(), "public", "templates");
-
-  if (!fs.existsSync(templatesDir)) {
-    return NextResponse.json(
-      { error: "templates directory not found", discovered: [] },
-      { status: 200 }
-    );
-  }
-
-  const folders = fs
-    .readdirSync(templatesDir, { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => d.name);
+  const manifest = templatesManifest as Array<{
+    slug: string;
+    title: string;
+    description?: string | null;
+    price?: number;
+    category?: string;
+    tags?: string[];
+    language?: string;
+    style?: string[];
+    layout?: string | null;
+    sourceUrl?: string | null;
+    thumbnailUrl?: string | null;
+    htmlPath?: string | null;
+    status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  }>;
 
   const existingTemplates = await prisma.template.findMany({
     select: { slug: true },
@@ -36,36 +37,33 @@ export async function POST() {
 
   const discovered: string[] = [];
 
-  for (const folder of folders) {
-    if (existingSlugs.has(folder)) continue;
-
-    const indexPath = path.join(templatesDir, folder, "index.html");
-    if (!fs.existsSync(indexPath)) continue;
-
-    const title = folder
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
+  for (const t of manifest) {
+    if (!t?.slug) continue;
+    if (existingSlugs.has(t.slug)) continue;
 
     await prisma.template.create({
       data: {
-        slug: folder,
-        title,
-        description: `Auto-discovered template: ${title}`,
-        price: 10,
-        category: "pages",
-        tags: ["auto-discovered"],
-        language: "English",
-        style: [],
-        htmlPath: `/templates/${folder}`,
-        status: "PUBLISHED",
+        slug: t.slug,
+        title: t.title ?? t.slug,
+        description: t.description ?? null,
+        price: Math.max(0, Math.floor(Number(t.price ?? 10))),
+        category: t.category ?? "pages",
+        tags: t.tags ?? [],
+        language: t.language ?? "한국어",
+        style: t.style ?? [],
+        layout: t.layout ?? null,
+        sourceUrl: t.sourceUrl ?? null,
+        thumbnailUrl: t.thumbnailUrl ?? null,
+        htmlPath: t.htmlPath ?? `/templates/${t.slug}/index.html`,
+        status: t.status ?? "PUBLISHED",
       },
     });
 
-    discovered.push(folder);
+    discovered.push(t.slug);
   }
 
   return NextResponse.json({
-    scanned: folders.length,
+    scanned: manifest.length,
     discovered,
   });
 }
