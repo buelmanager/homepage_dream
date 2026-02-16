@@ -76,17 +76,17 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="subscription-description">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-8" aria-describedby="subscription-description">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold">
+          <DialogTitle className="text-center text-3xl font-bold">
             Choose Your Plan
           </DialogTitle>
         </DialogHeader>
-        <div id="subscription-description" className="text-center text-muted-foreground -mt-2">
+        <div id="subscription-description" className="text-center text-muted-foreground text-base mt-2">
           Subscribe to download templates. All plans include instant access.
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {plans.map((plan) => {
             const Icon = plan.icon;
             const isSelected = selectedPlan === plan.name;
@@ -95,56 +95,59 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
               <div
                 key={plan.name}
                 className={cn(
-                  "relative rounded-xl border-2 p-6 cursor-pointer transition-all",
+                  "relative rounded-xl border-2 p-8 cursor-pointer transition-all hover:shadow-xl",
                   isSelected
-                    ? "border-foreground shadow-lg"
+                    ? "border-foreground shadow-2xl scale-105"
                     : "border-border hover:border-foreground/50",
-                  plan.popular && "ring-2 ring-blue-500/20"
+                  plan.popular && "ring-2 ring-blue-500/30"
                 )}
                 onClick={() => setSelectedPlan(plan.name)}
               >
                 {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-1">
                     Most Popular
                   </Badge>
                 )}
 
-                <div className={cn("w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center mb-4", plan.color)}>
-                  <Icon className="w-6 h-6 text-white" />
+                <div className={cn("w-16 h-16 rounded-xl bg-gradient-to-br flex items-center justify-center mb-6", plan.color)}>
+                  <Icon className="w-8 h-8 text-white" />
                 </div>
 
-                <h3 className="text-lg font-bold">{plan.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
+                <h3 className="text-xl font-bold">{plan.name}</h3>
+                <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
 
-                <div className="mt-4 mb-6">
-                  <span className="text-3xl font-bold">${plan.price}</span>
-                  <span className="text-muted-foreground">/month</span>
+                <div className="mt-6 mb-8">
+                  <span className="text-4xl font-bold">${plan.price}</span>
+                  <span className="text-muted-foreground text-lg">/month</span>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {plan.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-green-500" />
-                      <span>{feature}</span>
+                    <div key={idx} className="flex items-start gap-3 text-sm">
+                      <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="leading-relaxed">{feature}</span>
                     </div>
                   ))}
                 </div>
 
                 <Button
                   className={cn(
-                    "w-full mt-6",
+                    "w-full mt-8 h-12 text-base font-semibold",
                     isSelected && "bg-foreground text-background"
                   )}
                   variant={isSelected ? "default" : "outline"}
-                  onClick={() => handleSubscribe(plan.name)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSubscribe(plan.name);
+                  }}
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     <>
-                      <CreditCard className="w-4 h-4 mr-2" />
-                      Subscribe
+                      <CreditCard className="w-5 h-5 mr-2" />
+                      Subscribe Now
                     </>
                   )}
                 </Button>
@@ -153,8 +156,8 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
           })}
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          Secure payment processing. Cancel anytime.
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          🔒 Secure payment processing • Cancel anytime • No hidden fees
         </p>
       </DialogContent>
     </Dialog>

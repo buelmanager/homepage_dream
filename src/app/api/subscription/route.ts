@@ -22,20 +22,24 @@ function getVariantIdForPlan(plan: PlanKey) {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("[API /api/subscription POST] Request started");
     const session = await auth();
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
+      console.log("[API /api/subscription POST] Unauthorized - no user ID");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { plan } = await request.json();
+    console.log("[API /api/subscription POST] Plan requested:", plan);
 
     if (!plan || !SUBSCRIPTION_PLANS[plan as PlanKey]) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
+    console.log("[API /api/subscription POST] Finding user:", session.user.id);
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
     });
 
     if (!user) {
