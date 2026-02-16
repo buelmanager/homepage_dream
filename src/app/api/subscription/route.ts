@@ -125,17 +125,20 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
+    console.log("[API /api/subscription GET] Request started");
     const session = await auth();
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
+      console.log("[API /api/subscription GET] Unauthorized - no user ID");
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
+    console.log("[API /api/subscription GET] Finding user:", session.user.id);
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
       include: {
         subscriptions: {
           where: { status: "ACTIVE" },
