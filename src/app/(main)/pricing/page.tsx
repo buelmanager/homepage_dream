@@ -11,10 +11,9 @@ const plans = [
   {
     name: "BASIC",
     price: 10,
-    credits: 3,
     description: "Perfect for starters",
     features: [
-      "3 template downloads/month",
+      "Unlimited Pro template downloads",
       "Basic support",
       "Standard quality",
       "Access to all templates",
@@ -25,10 +24,9 @@ const plans = [
   {
     name: "STANDARD",
     price: 20,
-    credits: 7,
     description: "Best for professionals",
     features: [
-      "7 template downloads/month",
+      "Unlimited Pro template downloads",
       "Priority support",
       "High quality",
       "Early access to new templates",
@@ -41,10 +39,9 @@ const plans = [
   {
     name: "PREMIUM",
     price: 30,
-    credits: 15,
     description: "For power users",
     features: [
-      "15 template downloads/month",
+      "Unlimited Pro template downloads",
       "24/7 priority support",
       "Premium quality",
       "Early access to new templates",
@@ -144,9 +141,9 @@ export default function PricingPage() {
                 </p>
               </div>
               <div className="rounded-lg border p-6">
-                <h3 className="font-semibold">Do unused downloads roll over?</h3>
+                <h3 className="font-semibold">Are Pro downloads limited per month?</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  No, downloads reset each month. However, you can always upgrade to a higher plan if you need more downloads.
+                  No. Active subscribers can download all Pro templates without a monthly cap.
                 </p>
               </div>
               <div className="rounded-lg border p-6">

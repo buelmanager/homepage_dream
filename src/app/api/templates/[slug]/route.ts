@@ -24,6 +24,8 @@ export async function PATCH(
   const body = (await request.json()) as {
     title?: string;
     price?: number;
+    tier?: "FREE" | "PRO";
+    storageKey?: string | null;
     status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
     category?: string;
   };
@@ -31,12 +33,16 @@ export async function PATCH(
   const data: {
     title?: string;
     price?: number;
+    tier?: "FREE" | "PRO";
+    storageKey?: string | null;
     status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
     category?: string;
   } = {};
   if (body.title !== undefined) data.title = body.title.trim();
   if (body.category !== undefined) data.category = body.category;
   if (body.price !== undefined) data.price = Math.max(0, Math.floor(Number(body.price) || 0));
+  if (body.tier !== undefined) data.tier = body.tier;
+  if (body.storageKey !== undefined) data.storageKey = body.storageKey?.trim() || null;
   if (body.status !== undefined) data.status = body.status;
 
   if (Object.keys(data).length === 0) {

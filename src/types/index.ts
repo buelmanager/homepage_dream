@@ -1,9 +1,12 @@
+export type TemplateTier = "FREE" | "PRO";
+
 export type TemplateWithSections = {
   id: string;
   slug: string;
   title: string;
   description: string | null;
   price: number;
+  tier: TemplateTier;
   category: string;
   tags: string[];
   language: string;
@@ -12,6 +15,7 @@ export type TemplateWithSections = {
   sourceUrl: string | null;
   thumbnailUrl: string | null;
   htmlPath: string | null;
+  storageKey: string | null;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   viewCount: number;
   likeCount: number;

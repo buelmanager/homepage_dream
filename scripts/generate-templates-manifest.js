@@ -1,9 +1,11 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const TEMPLATES_DIR = path.join(__dirname, '..', 'public', 'templates');
-const MULTI_CLONE_DIR = path.join(__dirname, '..', 'multi_clone_hompage', 'home');
-const OUTPUT_FILE = path.join(__dirname, '..', 'src', 'data', 'templates-manifest.json');
+const TEMPLATES_DIR = path.join(__dirname, "..", "public", "templates");
+const MULTI_CLONE_DIR = path.join(__dirname, "..", "multi_clone_hompage", "home");
+const OUTPUT_FILE = path.join(__dirname, "..", "src", "data", "templates-manifest.json");
+
+const ARCHIVE_EXTENSIONS = new Set([".zip", ".tar", ".tgz", ".gz", ".rar", ".7z"]);
 
 function resetDirectory(dir) {
   if (fs.existsSync(dir)) {
@@ -12,16 +14,30 @@ function resetDirectory(dir) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
-function copyDirectoryRecursive(sourceDir, targetDir) {
+function copyDirectoryRecursive(sourceDir, targetDir, options = {}) {
+  const {
+    excludeNames = new Set(),
+    excludeExtensions = new Set(),
+  } = options;
+
   fs.mkdirSync(targetDir, { recursive: true });
 
   const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
   for (const entry of entries) {
+    if (excludeNames.has(entry.name)) {
+      continue;
+    }
+
     const sourcePath = path.join(sourceDir, entry.name);
     const targetPath = path.join(targetDir, entry.name);
 
     if (entry.isDirectory()) {
-      copyDirectoryRecursive(sourcePath, targetPath);
+      copyDirectoryRecursive(sourcePath, targetPath, options);
+      continue;
+    }
+
+    const ext = path.extname(entry.name).toLowerCase();
+    if (excludeExtensions.has(ext)) {
       continue;
     }
 
@@ -29,8 +45,42 @@ function copyDirectoryRecursive(sourceDir, targetDir) {
   }
 }
 
+function safeReadMeta(metaPath) {
+  if (!fs.existsSync(metaPath)) {
+    return {};
+  }
+
+  try {
+    const raw = fs.readFileSync(metaPath, "utf8");
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function loadSourceMetaBySlug() {
+  const map = new Map();
+
+  if (!fs.existsSync(MULTI_CLONE_DIR)) {
+    return map;
+  }
+
+  const folders = fs
+    .readdirSync(MULTI_CLONE_DIR, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
+
+  for (const folder of folders) {
+    const metaPath = path.join(MULTI_CLONE_DIR, folder, "meta.json");
+    map.set(folder, safeReadMeta(metaPath));
+  }
+
+  return map;
+}
+
 function syncSourceTemplatesToPublic() {
-  console.log('🔄 Syncing multi_clone templates -> public/templates ...');
+  console.log("🔄 Syncing multi_clone templates -> public/templates ...");
 
   if (!fs.existsSync(MULTI_CLONE_DIR)) {
     resetDirectory(TEMPLATES_DIR);
@@ -46,72 +96,121 @@ function syncSourceTemplatesToPublic() {
 
   for (const folder of folders) {
     const sourcePath = path.join(MULTI_CLONE_DIR, folder);
+    const previewPath = path.join(sourcePath, "preview");
     const targetPath = path.join(TEMPLATES_DIR, folder);
-    copyDirectoryRecursive(sourcePath, targetPath);
+
+    if (fs.existsSync(previewPath) && fs.statSync(previewPath).isDirectory()) {
+      copyDirectoryRecursive(previewPath, targetPath);
+      continue;
+    }
+
+    copyDirectoryRecursive(sourcePath, targetPath, {
+      excludeNames: new Set(["pro", "preview", "meta.json", ".DS_Store"]),
+      excludeExtensions: ARCHIVE_EXTENSIONS,
+    });
   }
 
   return { copied: folders.length };
 }
 
-function scanTemplatesDirectory(baseDir, sourcePrefix = '/templates') {
+function toTitleFromSlug(slug) {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function normalizeTier(value) {
+  return value === "FREE" ? "FREE" : "PRO";
+}
+
+function normalizeStatus(value) {
+  if (value === "DRAFT" || value === "PUBLISHED" || value === "ARCHIVED") {
+    return value;
+  }
+  return "PUBLISHED";
+}
+
+function normalizePrice(value) {
+  const numeric = Number(value);
+  if (Number.isFinite(numeric) && numeric >= 0) {
+    return Math.floor(numeric);
+  }
+  return 10;
+}
+
+function scanTemplatesDirectory(baseDir, sourcePrefix = "/templates", sourceMetaBySlug = new Map()) {
   if (!fs.existsSync(baseDir)) {
     return [];
   }
 
-  const folders = fs.readdirSync(baseDir, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
+  const folders = fs
+    .readdirSync(baseDir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
 
   const templates = [];
 
   for (const folder of folders) {
-    const indexPath = path.join(baseDir, folder, 'index.html');
-    
+    const indexPath = path.join(baseDir, folder, "index.html");
+
     if (!fs.existsSync(indexPath)) {
       continue;
     }
 
-    const title = folder
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    const meta = sourceMetaBySlug.get(folder) || {};
+    const title = typeof meta.title === "string" && meta.title.trim()
+      ? meta.title.trim()
+      : toTitleFromSlug(folder);
 
-    const imagesDir = path.join(baseDir, folder, 'images');
+    const imagesDir = path.join(baseDir, folder, "images");
     let thumbnailUrl = null;
 
     if (fs.existsSync(imagesDir)) {
-      const fullpagePath = path.join(imagesDir, 'fullpage.png');
+      const fullpagePath = path.join(imagesDir, "fullpage.png");
       if (fs.existsSync(fullpagePath)) {
         thumbnailUrl = `${sourcePrefix}/${folder}/images/fullpage.png`;
       } else {
         const files = fs.readdirSync(imagesDir);
-        const pngFile = files.find(f => f.endsWith('.png'));
+        const pngFile = files.find((fileName) => fileName.endsWith(".png"));
         if (pngFile) {
           thumbnailUrl = `${sourcePrefix}/${folder}/images/${pngFile}`;
         }
       }
     }
 
-    const fallbackPath = path.join(baseDir, folder, '01-hero.png');
+    const fallbackPath = path.join(baseDir, folder, "01-hero.png");
     if (!thumbnailUrl && fs.existsSync(fallbackPath)) {
       thumbnailUrl = `${sourcePrefix}/${folder}/01-hero.png`;
     }
+
+    const tier = normalizeTier(meta.tier);
 
     templates.push({
       id: `templates-${folder}`,
       slug: folder,
       title,
-      description: `${title} homepage template`,
-      price: 10,
-      category: 'pages',
-      tags: ['homepage', 'landing'],
-      language: '한국어',
-      style: ['modern'],
-      layout: 'full-width',
-      sourceUrl: null,
+      description:
+        typeof meta.description === "string" && meta.description.trim()
+          ? meta.description.trim()
+          : `${title} homepage template`,
+      price: normalizePrice(meta.price),
+      tier,
+      category: typeof meta.category === "string" && meta.category.trim() ? meta.category : "pages",
+      tags: Array.isArray(meta.tags) ? meta.tags : ["homepage", "landing"],
+      language: typeof meta.language === "string" && meta.language.trim() ? meta.language : "한국어",
+      style: Array.isArray(meta.style) ? meta.style : ["modern"],
+      layout: typeof meta.layout === "string" ? meta.layout : "full-width",
+      sourceUrl: typeof meta.sourceUrl === "string" ? meta.sourceUrl : null,
       thumbnailUrl,
       htmlPath: `${sourcePrefix}/${folder}/index.html`,
-      status: 'PUBLISHED',
+      storageKey:
+        typeof meta.storageKey === "string" && meta.storageKey.trim()
+          ? meta.storageKey.trim()
+          : tier === "PRO"
+            ? `templates/${folder}/source.zip`
+            : null,
+      status: normalizeStatus(meta.status),
       viewCount: 0,
       likeCount: 0,
       saveCount: 0,
@@ -125,11 +224,12 @@ function scanTemplatesDirectory(baseDir, sourcePrefix = '/templates') {
 }
 
 function generateManifest() {
+  const sourceMetaBySlug = loadSourceMetaBySlug();
   const syncResult = syncSourceTemplatesToPublic();
   console.log(`✅ Synced ${syncResult.copied} template folders`);
-  console.log('🔍 Scanning public/templates ...');
+  console.log("🔍 Scanning public/templates ...");
 
-  const publicTemplates = scanTemplatesDirectory(TEMPLATES_DIR, '/templates');
+  const publicTemplates = scanTemplatesDirectory(TEMPLATES_DIR, "/templates", sourceMetaBySlug);
   const allTemplates = [...publicTemplates];
 
   const dataDir = path.dirname(OUTPUT_FILE);

@@ -27,6 +27,8 @@ export async function POST() {
     sourceUrl?: string | null;
     thumbnailUrl?: string | null;
     htmlPath?: string | null;
+    tier?: "FREE" | "PRO";
+    storageKey?: string | null;
     status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   }>;
 
@@ -55,6 +57,8 @@ export async function POST() {
         sourceUrl: t.sourceUrl ?? null,
         thumbnailUrl: t.thumbnailUrl ?? null,
         htmlPath: t.htmlPath ?? `/templates/${t.slug}/index.html`,
+        tier: t.tier === "PRO" ? "PRO" : "FREE",
+        storageKey: t.storageKey ?? null,
         status: t.status ?? "PUBLISHED",
       },
     });

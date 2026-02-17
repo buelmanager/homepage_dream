@@ -16,18 +16,16 @@ const plans = [
   {
     name: "BASIC",
     price: 10,
-    credits: 3,
     description: "Perfect for starters",
-    features: ["3 template downloads/month", "Basic support", "Standard quality"],
+    features: ["Unlimited Pro template downloads", "Basic support", "Standard quality"],
     icon: Star,
     color: "from-slate-500 to-slate-600",
   },
   {
     name: "STANDARD",
     price: 20,
-    credits: 7,
     description: "Best for professionals",
-    features: ["7 template downloads/month", "Priority support", "High quality", "Early access"],
+    features: ["Unlimited Pro template downloads", "Priority support", "High quality", "Early access"],
     icon: Zap,
     color: "from-blue-500 to-blue-600",
     popular: true,
@@ -35,9 +33,8 @@ const plans = [
   {
     name: "PREMIUM",
     price: 30,
-    credits: 15,
     description: "For power users",
-    features: ["15 template downloads/month", "24/7 support", "Premium quality", "Early access", "Custom requests"],
+    features: ["Unlimited Pro template downloads", "24/7 support", "Premium quality", "Early access", "Custom requests"],
     icon: Crown,
     color: "from-amber-500 to-amber-600",
   },
@@ -83,7 +80,7 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
           </DialogTitle>
         </DialogHeader>
         <div id="subscription-description" className="text-center text-muted-foreground text-base mt-2">
-          Subscribe to download templates. All plans include instant access.
+          Subscribe to unlock Pro template downloads. Access starts immediately after checkout.
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">

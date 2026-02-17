@@ -9,6 +9,7 @@ type ManifestTemplate = {
   title: string;
   description: string | null;
   price: number;
+  tier: "FREE" | "PRO";
   category: string;
   tags: string[];
   language: string;
@@ -17,6 +18,7 @@ type ManifestTemplate = {
   sourceUrl: string | null;
   thumbnailUrl: string | null;
   htmlPath: string | null;
+  storageKey: string | null;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   viewCount: number;
   createdAt: string;
@@ -58,6 +60,7 @@ export async function GET(request: NextRequest) {
       category: db?.category ?? m.category,
       status: db?.status ?? m.status,
       price: db?.price ?? m.price,
+      tier: db?.tier ?? (m.tier === "PRO" ? "PRO" : "FREE"),
       viewCount: db?.viewCount ?? m.viewCount,
       createdAt: (db?.createdAt ?? new Date(m.createdAt)).toISOString(),
       _count: {
@@ -104,6 +107,8 @@ export async function POST(request: NextRequest) {
     layout?: string;
     sourceUrl?: string;
     htmlPath?: string;
+    tier?: "FREE" | "PRO";
+    storageKey?: string;
   };
 
   if (!body.slug || !body.title) {
@@ -129,6 +134,8 @@ export async function POST(request: NextRequest) {
       layout: body.layout || null,
       sourceUrl: body.sourceUrl || null,
       htmlPath: body.htmlPath || `/templates/${slug}/index.html`,
+      tier: body.tier === "PRO" ? "PRO" : "FREE",
+      storageKey: body.storageKey?.trim() || null,
       status: "PUBLISHED",
     },
   });

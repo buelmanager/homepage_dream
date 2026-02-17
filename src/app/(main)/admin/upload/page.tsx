@@ -27,11 +27,13 @@ export default function AdminUploadPage() {
     slug: "",
     description: "",
     price: "10",
+    tier: "PRO",
     category: "pages",
     language: "English",
     layout: "",
     sourceUrl: "",
     htmlPath: "",
+    storageKey: "",
   });
   const [tags, setTags] = useState<string[]>([]);
   const [styles, setStyles] = useState<string[]>([]);
@@ -184,7 +186,7 @@ export default function AdminUploadPage() {
               <div className="grid gap-5 sm:grid-cols-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium tracking-wide text-stone-500 uppercase">
-                    Price (credits)
+                    Price (USD)
                   </label>
                   <Input
                     type="number"
@@ -193,6 +195,19 @@ export default function AdminUploadPage() {
                     className="border-stone-200 bg-stone-50/50"
                     min="0"
                   />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium tracking-wide text-stone-500 uppercase">
+                    Tier
+                  </label>
+                  <select
+                    value={form.tier}
+                    onChange={(e) => updateField("tier", e.target.value)}
+                    className="w-full rounded-md border border-stone-200 bg-stone-50/50 px-3 py-2 text-sm text-stone-900 focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-300"
+                  >
+                    <option value="FREE">FREE</option>
+                    <option value="PRO">PRO</option>
+                  </select>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium tracking-wide text-stone-500 uppercase">
@@ -343,6 +358,18 @@ export default function AdminUploadPage() {
                     className="border-stone-200 bg-stone-50/50"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium tracking-wide text-stone-500 uppercase">
+                  Private Storage Key (PRO)
+                </label>
+                <Input
+                  value={form.storageKey}
+                  onChange={(e) => updateField("storageKey", e.target.value)}
+                  placeholder="templates/my-template/source.zip"
+                  className="border-stone-200 bg-stone-50/50"
+                />
               </div>
 
               {error && (

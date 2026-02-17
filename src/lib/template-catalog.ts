@@ -7,6 +7,7 @@ type DbTemplateOverride = {
   title: string;
   description: string | null;
   price: number;
+  tier: "FREE" | "PRO";
   category: string;
   tags: string[];
   language: string;
@@ -15,6 +16,7 @@ type DbTemplateOverride = {
   sourceUrl: string | null;
   thumbnailUrl: string | null;
   htmlPath: string | null;
+  storageKey: string | null;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   viewCount: number;
   likeCount: number;
@@ -23,9 +25,18 @@ type DbTemplateOverride = {
   updatedAt: Date;
 };
 
+type ManifestTemplateItem = Omit<TemplateWithSections, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+  tier?: "FREE" | "PRO";
+  storageKey?: string | null;
+};
+
 function manifestTemplates(): TemplateWithSections[] {
-  return (templatesManifest as any[]).map((t) => ({
+  return (templatesManifest as ManifestTemplateItem[]).map((t) => ({
     ...t,
+    tier: t.tier === "PRO" ? "PRO" : "FREE",
+    storageKey: typeof t.storageKey === "string" ? t.storageKey : null,
     createdAt: new Date(t.createdAt),
     updatedAt: new Date(t.updatedAt),
   })) as TemplateWithSections[];
@@ -38,6 +49,7 @@ async function dbOverridesBySlug() {
       title: true,
       description: true,
       price: true,
+      tier: true,
       category: true,
       tags: true,
       language: true,
@@ -46,6 +58,7 @@ async function dbOverridesBySlug() {
       sourceUrl: true,
       thumbnailUrl: true,
       htmlPath: true,
+      storageKey: true,
       status: true,
       viewCount: true,
       likeCount: true,

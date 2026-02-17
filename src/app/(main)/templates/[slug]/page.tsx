@@ -11,7 +11,6 @@ import {
   Heart,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   Card,
@@ -23,7 +22,7 @@ import { DevicePreview } from "@/components/template/device-preview";
 import { PurchaseCard } from "@/components/template/purchase-card";
 import { ViewCounter } from "@/components/template/view-counter";
 import { CATEGORIES } from "@/types";
-import type { TemplateWithSections, SectionItem } from "@/types";
+import type { SectionItem } from "@/types";
 import { getCatalogTemplateBySlug } from "@/lib/template-catalog";
 
 export async function generateMetadata({
@@ -94,6 +93,9 @@ export default async function TemplateDetailPage({
               </h1>
               <Badge variant="secondary" className="tabular-nums">
                 {template.sections.length} sections
+              </Badge>
+              <Badge variant={template.tier === "PRO" ? "default" : "outline"}>
+                {template.tier}
               </Badge>
             </div>
 
@@ -207,6 +209,7 @@ export default async function TemplateDetailPage({
 
             <PurchaseCard
               price={template.price}
+              tier={template.tier}
               itemType="template"
               itemTitle={template.title}
               itemSlug={slug}
