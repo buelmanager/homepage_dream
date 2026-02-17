@@ -52,8 +52,7 @@ export async function POST(request: NextRequest) {
       .webp({ quality: 80 })
       .toBuffer();
 
-    // Use unique filename to bypass CDN cache
-    const fileName = `thumb-${Date.now()}.webp`;
+    const fileName = "thumb.webp";
 
     // Try Supabase Storage (works in production)
     const supabase = getSupabase();
@@ -61,27 +60,25 @@ export async function POST(request: NextRequest) {
     if (supabase) {
       await ensureBucket(supabase);
 
-      // Delete old thumbs first
-      const { data: existing } = await supabase.storage
-        .from(BUCKET)
-        .list(slug);
-      if (existing && existing.length > 0) {
-        const oldFiles = existing.map((f: { name: string }) => `${slug}/${f.name}`);
-        await supabase.storage.from(BUCKET).remove(oldFiles);
-      }
-
       const storagePath = `${slug}/${fileName}`;
+
+      // Remove old file first to force CDN invalidation
+      await supabase.storage.from(BUCKET).remove([storagePath]);
+
       const { error } = await supabase.storage
         .from(BUCKET)
         .upload(storagePath, webpBuffer, {
           contentType: "image/webp",
+          cacheControl: "0",
         });
 
       if (!error) {
         const { data: publicUrl } = supabase.storage
           .from(BUCKET)
           .getPublicUrl(storagePath);
-        return NextResponse.json({ url: publicUrl.publicUrl });
+        // Append cache-busting query to bypass Supabase CDN cache
+        const url = `${publicUrl.publicUrl}?v=${Date.now()}`;
+        return NextResponse.json({ url });
       }
 
       return NextResponse.json(
