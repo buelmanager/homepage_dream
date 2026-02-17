@@ -36,6 +36,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Prevent duplicate subscription
+    const existingActive = await prisma.subscription.findFirst({
+      where: {
+        userId: user.id,
+        status: "ACTIVE",
+        currentPeriodEnd: { gt: new Date() },
+      },
+    });
+
+    if (existingActive) {
+      return NextResponse.json(
+        { error: "You already have an active PRO subscription." },
+        { status: 409 }
+      );
+    }
+
     const planKey = plan as PlanKey;
     const planConfig = SUBSCRIPTION_PLANS[planKey];
     const storeId = await getLemonStoreId();

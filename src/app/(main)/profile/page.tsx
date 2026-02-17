@@ -190,58 +190,49 @@ export default function ProfilePage() {
 
       Promise.allSettled([
         fetchWithTimeout("/api/credits", 30000).then((r) => {
-          console.log("[Profile] /api/credits response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Credits API failed: ${r.status}`);
           return r.json();
         }),
         fetchWithTimeout("/api/favorites", 30000).then((r) => {
-          console.log("[Profile] /api/favorites response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Favorites API failed: ${r.status}`);
           return r.json();
         }),
         fetchWithTimeout("/api/bookmarks", 30000).then((r) => {
-          console.log("[Profile] /api/bookmarks response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Bookmarks API failed: ${r.status}`);
           return r.json();
         }),
         fetchWithTimeout("/api/subscription", 30000).then((r) => {
-          console.log("[Profile] /api/subscription response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Subscription API failed: ${r.status}`);
           return r.json();
         }),
         fetchWithTimeout("/api/transactions", 30000).then((r) => {
-          console.log("[Profile] /api/transactions response:", r.status, r.ok);
           if (!r.ok) throw new Error(`Transactions API failed: ${r.status}`);
+          return r.json();
+        }),
+        fetchWithTimeout("/api/purchases", 30000).then((r) => {
+          if (!r.ok) throw new Error(`Purchases API failed: ${r.status}`);
           return r.json();
         }),
       ])
         .then((results) => {
-          console.log("[Profile] All requests completed:", results);
-
           const creditsData = results[0].status === "fulfilled" ? results[0].value : null;
           const favData = results[1].status === "fulfilled" ? results[1].value : null;
           const bookData = results[2].status === "fulfilled" ? results[2].value : null;
           const subData = results[3].status === "fulfilled" ? results[3].value : null;
           const transData = results[4].status === "fulfilled" ? results[4].value : null;
+          const purchData = results[5].status === "fulfilled" ? results[5].value : null;
 
           setCredits(creditsData?.credits ?? 0);
           setFavorites(favData?.favorites ?? []);
           setBookmarks(bookData?.bookmarks ?? []);
           setSubscription(subData?.subscription ?? null);
           setTransactions(transData?.transactions ?? []);
+          setPurchases(purchData?.purchases ?? []);
           setLoading(false);
-
-          const failedRequests = results.filter(r => r.status === "rejected");
-          if (failedRequests.length > 0) {
-            console.warn("[Profile] Some requests failed:", failedRequests);
-          } else {
-            console.log("[Profile] All data loaded successfully");
-          }
         })
         .catch((error) => {
           console.error("[Profile] Error fetching data:", error);
           setLoading(false);
-          console.log("[Profile] Error handled - setLoading(false)");
         });
     }
   }, [status, router]);

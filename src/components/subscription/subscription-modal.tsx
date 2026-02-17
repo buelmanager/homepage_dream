@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Crown, Loader2 } from "lucide-react";
+import { Check, CreditCard, Crown, Loader2, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSubscription } from "@/components/subscription/subscription-provider";
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -20,8 +21,11 @@ const proFeatures = [
 
 export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { hasActiveSubscription } = useSubscription();
 
   const handleSubscribe = async () => {
+    if (hasActiveSubscription) return;
+
     setIsLoading(true);
     try {
       const response = await fetch("/api/subscription", {
@@ -53,11 +57,13 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto p-8" aria-describedby="subscription-description">
         <DialogHeader>
           <DialogTitle className="text-center text-3xl font-bold">
-            Upgrade to PRO
+            {hasActiveSubscription ? "You're on PRO" : "Upgrade to PRO"}
           </DialogTitle>
         </DialogHeader>
         <div id="subscription-description" className="text-center text-muted-foreground text-base mt-2">
-          Get unlimited access to all PRO templates.
+          {hasActiveSubscription
+            ? "You already have an active PRO subscription."
+            : "Get unlimited access to all PRO templates."}
         </div>
 
         <div className="mt-6">
@@ -83,20 +89,27 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
               ))}
             </div>
 
-            <Button
-              className="w-full mt-8 h-12 text-base font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
-              onClick={handleSubscribe}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <CreditCard className="w-5 h-5 mr-2" />
-                  Subscribe Now
-                </>
-              )}
-            </Button>
+            {hasActiveSubscription ? (
+              <div className="mt-8 flex items-center justify-center gap-2 rounded-lg border border-emerald-300 bg-emerald-50 py-3 text-sm font-semibold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300">
+                <ShieldCheck className="size-5" />
+                Active PRO Subscription
+              </div>
+            ) : (
+              <Button
+                className="w-full mt-8 h-12 text-base font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                onClick={handleSubscribe}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <CreditCard className="w-5 h-5 mr-2" />
+                    Subscribe Now
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
 
