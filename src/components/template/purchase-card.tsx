@@ -10,7 +10,9 @@ import {
   Loader2,
   ShieldCheck,
   ShieldAlert,
+  AlertTriangle,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,6 +44,7 @@ export function PurchaseCard({
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(true);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+  const [showLicenseConfirm, setShowLicenseConfirm] = useState(false);
 
   useEffect(() => {
     const ac = new AbortController();
@@ -70,8 +73,12 @@ export function PurchaseCard({
     return () => ac.abort();
   }, []);
 
-  const handleDownload = () => {
+  const executeDownload = () => {
     window.location.href = `/api/templates/${encodeURIComponent(itemSlug)}/download`;
+  };
+
+  const handleDownload = () => {
+    setShowLicenseConfirm(true);
   };
 
   const accessLabel =
@@ -210,6 +217,19 @@ export function PurchaseCard({
 
           {itemType === "template" ? renderTemplateActions() : renderSectionActions()}
 
+          {/* License Warning */}
+          <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 dark:border-red-900/50 dark:bg-red-950/30">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-red-600 dark:text-red-400" />
+              <p className="text-[11px] leading-relaxed text-red-700 dark:text-red-300">
+                <span className="font-bold">Resale prohibited.</span> This template is licensed for your own commercial projects only. Redistribution, resale, or sharing of the source code is strictly forbidden and subject to legal action.{" "}
+                <Link href="/license" className="underline underline-offset-2 font-medium hover:text-red-900 dark:hover:text-red-100">
+                  View License
+                </Link>
+              </p>
+            </div>
+          </div>
+
           <div className="flex gap-2">
             <Button
               variant={isFavorited ? "default" : "outline"}
@@ -236,6 +256,80 @@ export function PurchaseCard({
           </div>
         </CardContent>
       </Card>
+
+      {/* License Confirmation Modal */}
+      {showLicenseConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowLicenseConfirm(false)}
+        >
+          <div
+            className="mx-4 w-full max-w-md rounded-2xl border border-border bg-background p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-center">
+              <div className="flex size-14 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/50">
+                <AlertTriangle className="size-7 text-red-600 dark:text-red-400" />
+              </div>
+            </div>
+
+            <h3 className="text-center text-lg font-bold">
+              License Agreement
+            </h3>
+
+            <div className="mt-4 rounded-lg border border-red-300 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/30">
+              <p className="text-sm font-bold text-red-800 dark:text-red-200">
+                RESALE & REDISTRIBUTION STRICTLY PROHIBITED
+              </p>
+              <ul className="mt-3 space-y-2 text-xs text-red-700 dark:text-red-300">
+                <li className="flex items-start gap-2">
+                  <span className="mt-0.5 block size-1.5 shrink-0 rounded-full bg-red-500" />
+                  You MAY use this template for your own commercial projects (client work, personal business, etc.)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-0.5 block size-1.5 shrink-0 rounded-full bg-red-500" />
+                  You MAY NOT resell, redistribute, share, sublicense, or make the source code available to any third party
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-0.5 block size-1.5 shrink-0 rounded-full bg-red-500" />
+                  You MAY NOT upload the source code to any public or private marketplace, repository, or file-sharing service
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-0.5 block size-1.5 shrink-0 rounded-full bg-red-500" />
+                  Violations will result in immediate account termination and legal action
+                </li>
+              </ul>
+            </div>
+
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              By downloading, you agree to the{" "}
+              <Link href="/license" className="font-medium underline underline-offset-2 text-foreground">
+                HomeDream License Agreement
+              </Link>
+            </p>
+
+            <div className="mt-5 flex flex-col gap-2">
+              <Button
+                className="w-full gap-2 font-semibold"
+                onClick={() => {
+                  setShowLicenseConfirm(false);
+                  executeDownload();
+                }}
+              >
+                <Download className="size-4" />
+                I Agree &mdash; Download
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowLicenseConfirm(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <SubscriptionModal
         isOpen={showSubscriptionModal}
