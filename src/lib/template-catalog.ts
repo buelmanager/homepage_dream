@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import type { TemplateWithSections } from "@/types";
 
 type DbTemplateOverride = {
+  id: string;
   slug: string;
   title: string;
   description: string | null;
@@ -45,6 +46,7 @@ function manifestTemplates(): TemplateWithSections[] {
 async function dbOverridesBySlug() {
   const dbTemplates = await prisma.template.findMany({
     select: {
+      id: true,
       slug: true,
       title: true,
       description: true,
