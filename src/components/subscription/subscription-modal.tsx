@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Crown, Loader2, ShieldCheck } from "lucide-react";
+import { Check, CreditCard, Crown, Loader2, LogIn, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSubscription } from "@/components/subscription/subscription-provider";
 
@@ -21,6 +23,8 @@ const proFeatures = [
 
 export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { status: sessionStatus } = useSession();
+  const isAuthenticated = sessionStatus === "authenticated";
   const { hasActiveSubscription } = useSubscription();
 
   const handleSubscribe = async () => {
@@ -54,17 +58,17 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto p-8" aria-describedby="subscription-description">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto p-8">
         <DialogHeader>
           <DialogTitle className="text-center text-3xl font-bold">
             {hasActiveSubscription ? "You're on PRO" : "Upgrade to PRO"}
           </DialogTitle>
+          <DialogDescription className="text-center text-base mt-2">
+            {hasActiveSubscription
+              ? "You already have an active PRO subscription."
+              : "Get unlimited access to all PRO templates."}
+          </DialogDescription>
         </DialogHeader>
-        <div id="subscription-description" className="text-center text-muted-foreground text-base mt-2">
-          {hasActiveSubscription
-            ? "You already have an active PRO subscription."
-            : "Get unlimited access to all PRO templates."}
-        </div>
 
         <div className="mt-6">
           <div className="relative rounded-xl border-2 border-amber-500 p-8">
@@ -94,6 +98,16 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
                 <ShieldCheck className="size-5" />
                 Active PRO Subscription
               </div>
+            ) : !isAuthenticated ? (
+              <Button
+                className="w-full mt-8 h-12 text-base font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                asChild
+              >
+                <Link href="/signin">
+                  <LogIn className="w-5 h-5 mr-2" />
+                  Sign in to Subscribe
+                </Link>
+              </Button>
             ) : (
               <Button
                 className="w-full mt-8 h-12 text-base font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
