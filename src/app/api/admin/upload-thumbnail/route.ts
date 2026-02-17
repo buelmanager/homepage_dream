@@ -21,10 +21,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "file and slug are required" }, { status: 400 });
   }
 
-  if (file.size > 10 * 1024 * 1024) {
-    return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
-  }
-
   const ext = path.extname(file.name).toLowerCase() || ".png";
   const allowed = [".png", ".jpg", ".jpeg", ".webp", ".avif"];
   if (!allowed.includes(ext)) {
