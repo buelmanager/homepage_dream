@@ -83,7 +83,7 @@ export function PurchaseCard({
 
   const accessSubLabel =
     itemType === "template" && tier === "PRO"
-      ? `Template list price: $${price}`
+      ? "Requires active PRO subscription"
       : itemType === "template"
       ? "No subscription required"
       : "Included in template source package";

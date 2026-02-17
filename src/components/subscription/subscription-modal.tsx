@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Check, CreditCard, Zap, Crown, Star, Loader2 } from "lucide-react";
+import { Check, CreditCard, Crown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SubscriptionModalProps {
@@ -12,45 +11,23 @@ interface SubscriptionModalProps {
   onClose: () => void;
 }
 
-const plans = [
-  {
-    name: "BASIC",
-    price: 10,
-    description: "Perfect for starters",
-    features: ["Unlimited Pro template downloads", "Basic support", "Standard quality"],
-    icon: Star,
-    color: "from-slate-500 to-slate-600",
-  },
-  {
-    name: "STANDARD",
-    price: 20,
-    description: "Best for professionals",
-    features: ["Unlimited Pro template downloads", "Priority support", "High quality", "Early access"],
-    icon: Zap,
-    color: "from-blue-500 to-blue-600",
-    popular: true,
-  },
-  {
-    name: "PREMIUM",
-    price: 30,
-    description: "For power users",
-    features: ["Unlimited Pro template downloads", "24/7 support", "Premium quality", "Early access", "Custom requests"],
-    icon: Crown,
-    color: "from-amber-500 to-amber-600",
-  },
+const proFeatures = [
+  "Unlimited PRO template downloads",
+  "Priority support",
+  "Early access to new templates",
+  "Commercial license included",
 ];
 
 export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubscribe = async (planName: string) => {
+  const handleSubscribe = async () => {
     setIsLoading(true);
     try {
       const response = await fetch("/api/subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planName }),
+        body: JSON.stringify({ plan: "PRO" }),
       });
 
       if (response.ok) {
@@ -73,88 +50,58 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto p-8" aria-describedby="subscription-description">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto p-8" aria-describedby="subscription-description">
         <DialogHeader>
           <DialogTitle className="text-center text-3xl font-bold">
-            Choose Your Plan
+            Upgrade to PRO
           </DialogTitle>
         </DialogHeader>
         <div id="subscription-description" className="text-center text-muted-foreground text-base mt-2">
-          Subscribe to unlock Pro template downloads. Access starts immediately after checkout.
+          Get unlimited access to all PRO templates.
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          {plans.map((plan) => {
-            const Icon = plan.icon;
-            const isSelected = selectedPlan === plan.name;
+        <div className="mt-6">
+          <div className="relative rounded-xl border-2 border-amber-500 p-8">
+            <div className={cn("w-16 h-16 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-6 mx-auto")}>
+              <Crown className="w-8 h-8 text-white" />
+            </div>
 
-            return (
-              <div
-                key={plan.name}
-                className={cn(
-                  "relative rounded-xl border-2 p-8 cursor-pointer transition-all hover:shadow-xl",
-                  isSelected
-                    ? "border-foreground shadow-2xl scale-105"
-                    : "border-border hover:border-foreground/50",
-                  plan.popular && "ring-2 ring-blue-500/30"
-                )}
-                onClick={() => setSelectedPlan(plan.name)}
-              >
-                {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-1">
-                    Most Popular
-                  </Badge>
-                )}
+            <div className="text-center mb-6">
+              <span className="text-2xl font-medium text-muted-foreground line-through mr-2">
+                $50
+              </span>
+              <span className="text-5xl font-bold">$20</span>
+              <span className="text-muted-foreground text-lg">/month</span>
+            </div>
 
-                <div className={cn("w-16 h-16 rounded-xl bg-gradient-to-br flex items-center justify-center mb-6", plan.color)}>
-                  <Icon className="w-8 h-8 text-white" />
+            <div className="space-y-4">
+              {proFeatures.map((feature, idx) => (
+                <div key={idx} className="flex items-start gap-3 text-sm">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <span className="leading-relaxed">{feature}</span>
                 </div>
+              ))}
+            </div>
 
-                <h3 className="text-xl font-bold">{plan.name}</h3>
-                <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
-
-                <div className="mt-6 mb-8">
-                  <span className="text-4xl font-bold">${plan.price}</span>
-                  <span className="text-muted-foreground text-lg">/month</span>
-                </div>
-
-                <div className="space-y-4">
-                  {plan.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-start gap-3 text-sm">
-                      <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="leading-relaxed">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <Button
-                  className={cn(
-                    "w-full mt-8 h-12 text-base font-semibold",
-                    isSelected && "bg-foreground text-background"
-                  )}
-                  variant={isSelected ? "default" : "outline"}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSubscribe(plan.name);
-                  }}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      <CreditCard className="w-5 h-5 mr-2" />
-                      Subscribe Now
-                    </>
-                  )}
-                </Button>
-              </div>
-            );
-          })}
+            <Button
+              className="w-full mt-8 h-12 text-base font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+              onClick={handleSubscribe}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <CreditCard className="w-5 h-5 mr-2" />
+                  Subscribe Now
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground mt-8">
-          🔒 Secure payment processing • Cancel anytime • No hidden fees
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Secure payment processing &middot; Cancel anytime &middot; No hidden fees
         </p>
       </DialogContent>
     </Dialog>

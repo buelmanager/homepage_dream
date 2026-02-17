@@ -38,9 +38,7 @@ export async function PATCH(request: Request) {
     defaultSignupCredits?: number;
     lemon?: {
       storeId?: string;
-      variantIdBasic?: string;
-      variantIdStandard?: string;
-      variantIdPremium?: string;
+      variantIdPro?: string;
     };
   };
 

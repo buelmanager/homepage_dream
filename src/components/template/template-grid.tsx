@@ -1,3 +1,5 @@
+"use client";
+
 import { TemplateCard } from "./template-card";
 import type { TemplateWithSections } from "@/types";
 

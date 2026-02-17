@@ -8,15 +8,13 @@ import {
 
 export const runtime = "nodejs";
 
-type PlanKey = "BASIC" | "STANDARD" | "PREMIUM";
+type PlanKey = "PRO";
 
 const SUBSCRIPTION_PLANS: Record<
   PlanKey,
   { price: number; monthlyLimit: number }
 > = {
-  BASIC: { price: 10, monthlyLimit: 3 },
-  STANDARD: { price: 20, monthlyLimit: 7 },
-  PREMIUM: { price: 30, monthlyLimit: 15 },
+  PRO: { price: 20, monthlyLimit: 999999 },
 };
 
 type StripeSubscriptionResponse = {
@@ -162,7 +160,7 @@ export async function POST(request: NextRequest) {
 
         await grantCreditsOncePerInvoice(
           userId,
-          planConfig.monthlyLimit,
+          20,
           `${plan} subscription invoice ${invoiceId}`
         );
       }

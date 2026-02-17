@@ -1,57 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Crown, Star, Zap, ArrowRight } from "lucide-react";
+import { Check, Crown, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { SubscriptionModal } from "@/components/subscription/subscription-modal";
 
-const plans = [
-  {
-    name: "BASIC",
-    price: 10,
-    description: "Perfect for starters",
-    features: [
-      "Unlimited Pro template downloads",
-      "Basic support",
-      "Standard quality",
-      "Access to all templates",
-    ],
-    icon: Star,
-    color: "from-slate-500 to-slate-600",
-  },
-  {
-    name: "STANDARD",
-    price: 20,
-    description: "Best for professionals",
-    features: [
-      "Unlimited Pro template downloads",
-      "Priority support",
-      "High quality",
-      "Early access to new templates",
-      "Custom requests",
-    ],
-    icon: Zap,
-    color: "from-blue-500 to-blue-600",
-    popular: true,
-  },
-  {
-    name: "PREMIUM",
-    price: 30,
-    description: "For power users",
-    features: [
-      "Unlimited Pro template downloads",
-      "24/7 priority support",
-      "Premium quality",
-      "Early access to new templates",
-      "Custom requests",
-      "Dedicated account manager",
-    ],
-    icon: Crown,
-    color: "from-amber-500 to-amber-600",
-  },
-];
+const freePlan = {
+  name: "FREE",
+  price: 0,
+  description: "Get started with free templates",
+  features: [
+    "Access to all FREE tier templates",
+    "No subscription required",
+    "Community support",
+  ],
+  icon: Sparkles,
+  color: "from-slate-500 to-slate-600",
+};
+
+const proPlan = {
+  name: "PRO",
+  originalPrice: 50,
+  price: 20,
+  description: "Unlimited access to everything",
+  features: [
+    "Unlimited PRO template downloads",
+    "Priority support",
+    "Early access to new templates",
+    "Commercial license included",
+  ],
+  icon: Crown,
+  color: "from-amber-500 to-amber-600",
+};
 
 export default function PricingPage() {
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
@@ -59,70 +41,90 @@ export default function PricingPage() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Simple, Transparent Pricing
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Choose the perfect plan for your needs. All plans include instant access to our template library.
+              Start free, upgrade when you need unlimited access to PRO templates.
             </p>
           </div>
 
-          <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
-            {plans.map((plan) => {
-              const Icon = plan.icon;
-              
-              return (
-                <div
-                  key={plan.name}
-                  className={cn(
-                    "relative rounded-2xl border-2 p-8 transition-all hover:shadow-2xl",
-                    plan.popular
-                      ? "border-blue-500 shadow-xl scale-105"
-                      : "border-border hover:border-foreground/50"
-                  )}
-                >
-                  {plan.popular && (
-                    <Badge className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-1">
-                      Most Popular
-                    </Badge>
-                  )}
+          <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 md:max-w-4xl md:mx-auto">
+            {/* FREE Plan */}
+            <div className="relative rounded-2xl border-2 border-border p-8 transition-all hover:shadow-2xl hover:border-foreground/50">
+              <div className={cn("w-16 h-16 rounded-xl bg-gradient-to-br flex items-center justify-center mb-6", freePlan.color)}>
+                <freePlan.icon className="w-8 h-8 text-white" />
+              </div>
 
-                  <div className={cn("w-16 h-16 rounded-xl bg-gradient-to-br flex items-center justify-center mb-6", plan.color)}>
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
+              <h3 className="text-2xl font-bold">{freePlan.name}</h3>
+              <p className="mt-2 text-muted-foreground">{freePlan.description}</p>
 
-                  <h3 className="text-2xl font-bold">{plan.name}</h3>
-                  <p className="mt-2 text-muted-foreground">{plan.description}</p>
+              <div className="mt-6 mb-8">
+                <span className="text-5xl font-bold">$0</span>
+                <span className="text-muted-foreground text-lg">/forever</span>
+              </div>
 
-                  <div className="mt-6 mb-8">
-                    <span className="text-5xl font-bold">${plan.price}</span>
-                    <span className="text-muted-foreground text-lg">/month</span>
-                  </div>
+              <ul className="space-y-4 mb-8">
+                {freePlan.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm leading-relaxed">{feature}</span>
+                  </li>
+                ))}
+              </ul>
 
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm leading-relaxed">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+              <Button
+                variant="outline"
+                className="w-full h-12 text-base font-semibold"
+                asChild
+              >
+                <a href="/templates">
+                  Browse Free Templates
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </a>
+              </Button>
+            </div>
 
-                  <Button
-                    className={cn(
-                      "w-full h-12 text-base font-semibold",
-                      plan.popular && "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                    )}
-                    onClick={() => setShowSubscriptionModal(true)}
-                  >
-                    Get Started
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </div>
-              );
-            })}
+            {/* PRO Plan */}
+            <div className="relative rounded-2xl border-2 border-amber-500 p-8 transition-all hover:shadow-2xl shadow-xl scale-105">
+              <Badge className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-amber-600 text-white px-4 py-1">
+                Best Value
+              </Badge>
+
+              <div className={cn("w-16 h-16 rounded-xl bg-gradient-to-br flex items-center justify-center mb-6", proPlan.color)}>
+                <proPlan.icon className="w-8 h-8 text-white" />
+              </div>
+
+              <h3 className="text-2xl font-bold">{proPlan.name}</h3>
+              <p className="mt-2 text-muted-foreground">{proPlan.description}</p>
+
+              <div className="mt-6 mb-8">
+                <span className="text-2xl font-medium text-muted-foreground line-through mr-2">
+                  ${proPlan.originalPrice}
+                </span>
+                <span className="text-5xl font-bold">${proPlan.price}</span>
+                <span className="text-muted-foreground text-lg">/month</span>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {proPlan.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm leading-relaxed">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                onClick={() => setShowSubscriptionModal(true)}
+              >
+                Get Started
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </div>
           </div>
 
           <div className="mt-16 text-center">
@@ -141,15 +143,15 @@ export default function PricingPage() {
                 </p>
               </div>
               <div className="rounded-lg border p-6">
-                <h3 className="font-semibold">Are Pro downloads limited per month?</h3>
+                <h3 className="font-semibold">Are PRO downloads limited?</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  No. Active subscribers can download all Pro templates without a monthly cap.
+                  No. PRO subscribers have unlimited downloads of all PRO templates for the duration of their subscription.
                 </p>
               </div>
               <div className="rounded-lg border p-6">
-                <h3 className="font-semibold">Can I upgrade or downgrade my plan?</h3>
+                <h3 className="font-semibold">What&apos;s included in the free plan?</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Yes! You can change your plan at any time. Changes will be prorated based on your billing cycle.
+                  Free users can access and download all FREE tier templates without any subscription. PRO templates require an active subscription.
                 </p>
               </div>
             </div>
@@ -157,7 +159,7 @@ export default function PricingPage() {
 
           <div className="mt-16 text-center">
             <p className="text-sm text-muted-foreground">
-              🔒 Secure payment processing • Cancel anytime • No hidden fees
+              Secure payment processing &middot; Cancel anytime &middot; No hidden fees
             </p>
           </div>
         </div>

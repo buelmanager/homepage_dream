@@ -65,9 +65,7 @@ type CreditTransaction = {
 };
 
 const PLAN_COLORS: Record<string, string> = {
-  BASIC: "from-slate-500 to-slate-600",
-  STANDARD: "from-blue-500 to-blue-600",
-  PREMIUM: "from-amber-500 to-amber-600",
+  PRO: "from-amber-500 to-amber-600",
 };
 
 function TemplateGrid({
@@ -290,9 +288,7 @@ export default function ProfilePage() {
     .toUpperCase()
     .slice(0, 2);
 
-  const remainingDownloads = subscription
-    ? subscription.monthlyLimit - subscription.usedCount
-    : 0;
+  const isUnlimited = subscription && subscription.monthlyLimit >= 999999;
 
   return (
     <>
@@ -371,27 +367,16 @@ export default function ProfilePage() {
               </div>
               <CardContent className="grid grid-cols-2 gap-4 p-6">
                 <div className="rounded-lg bg-muted p-4">
-                  <p className="text-sm text-muted-foreground">Downloads This Month</p>
+                  <p className="text-sm text-muted-foreground">Downloads</p>
                   <p className="text-2xl font-bold text-foreground">
-                    {subscription.usedCount} / {subscription.monthlyLimit}
+                    {isUnlimited ? "Unlimited" : `${subscription.usedCount} / ${subscription.monthlyLimit}`}
                   </p>
-                  <div className="mt-2 h-2 rounded-full bg-muted-foreground/20">
-                    <div
-                      className="h-2 rounded-full bg-amber-500"
-                      style={{
-                        width: `${(subscription.usedCount / subscription.monthlyLimit) * 100}%`,
-                      }}
-                    />
-                  </div>
                 </div>
                 <div className="rounded-lg bg-muted p-4">
-                  <p className="text-sm text-muted-foreground">Available Downloads</p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {remainingDownloads}
-                  </p>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">Renewal Date</p>
+                  <p className="text-lg font-bold text-foreground">
                     <Calendar className="mr-1 inline h-3.5 w-3.5" />
-                    Renews {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
+                    {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
                   </p>
                 </div>
               </CardContent>
@@ -413,10 +398,10 @@ export default function ProfilePage() {
               <CardContent className="flex items-center justify-between p-6">
                 <div>
                   <h3 className="font-semibold text-amber-900 dark:text-amber-100">
-                    Subscribe for More Downloads
+                    Upgrade to PRO
                   </h3>
                   <p className="text-sm text-amber-700 dark:text-amber-300">
-                    Get up to 15 downloads per month starting at $10
+                    Get unlimited PRO template downloads for $20/month
                   </p>
                 </div>
                 <Button

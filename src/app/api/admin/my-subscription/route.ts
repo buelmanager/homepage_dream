@@ -41,9 +41,9 @@ export async function POST(request: NextRequest) {
       await prisma.subscription.create({
         data: {
           userId,
-          plan: "PREMIUM",
+          plan: "PRO",
           status: "ACTIVE",
-          monthlyLimit: 999,
+          monthlyLimit: 999999,
           price: 0,
           currentPeriodStart: new Date(),
           currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),

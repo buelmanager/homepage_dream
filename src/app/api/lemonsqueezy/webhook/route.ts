@@ -5,21 +5,21 @@ import {
   verifyLemonWebhookSignature,
 } from "@/lib/lemonsqueezy";
 
-type PlanKey = "BASIC" | "STANDARD" | "PREMIUM";
+type PlanKey = "PRO";
 type LocalStatus = "ACTIVE" | "CANCELLED" | "EXPIRED";
 
 const SUBSCRIPTION_PLANS: Record<PlanKey, { price: number; monthlyLimit: number }> = {
-  BASIC: { price: 10, monthlyLimit: 3 },
-  STANDARD: { price: 20, monthlyLimit: 7 },
-  PREMIUM: { price: 30, monthlyLimit: 15 },
+  PRO: { price: 20, monthlyLimit: 999999 },
 };
 
 function planFromVariantId(variantId?: string | number | null): PlanKey | null {
   if (!variantId) return null;
   const id = String(variantId);
-  if (id === process.env.LEMONSQUEEZY_VARIANT_ID_BASIC) return "BASIC";
-  if (id === process.env.LEMONSQUEEZY_VARIANT_ID_STANDARD) return "STANDARD";
-  if (id === process.env.LEMONSQUEEZY_VARIANT_ID_PREMIUM) return "PREMIUM";
+  if (id === process.env.LEMONSQUEEZY_VARIANT_ID_PRO) return "PRO";
+  // Legacy variant IDs also map to PRO
+  if (id === process.env.LEMONSQUEEZY_VARIANT_ID_BASIC) return "PRO";
+  if (id === process.env.LEMONSQUEEZY_VARIANT_ID_STANDARD) return "PRO";
+  if (id === process.env.LEMONSQUEEZY_VARIANT_ID_PREMIUM) return "PRO";
   return null;
 }
 
@@ -102,7 +102,11 @@ export async function POST(request: NextRequest) {
       userId = user?.id || "";
     }
 
-    let plan = (custom.plan as PlanKey | undefined) || null;
+    let plan: PlanKey | null = custom.plan === "PRO" ? "PRO" : null;
+    // Legacy: map old plan names to PRO
+    if (!plan && custom.plan && ["BASIC", "STANDARD", "PREMIUM"].includes(custom.plan)) {
+      plan = "PRO";
+    }
     if (!plan) {
       plan = planFromVariantId(attrs.variant_id);
     }
@@ -161,7 +165,7 @@ export async function POST(request: NextRequest) {
         const paymentRef = String(attrs.order_id || event.data?.id || Date.now());
         await grantCreditsIdempotent(
           userId,
-          planConfig.monthlyLimit,
+          20,
           `${plan} lemon subscription payment ${paymentRef}`
         );
       }

@@ -3,9 +3,7 @@ import { prisma } from "@/lib/prisma";
 export const APP_SETTING_KEYS = {
   DEFAULT_SIGNUP_CREDITS: "DEFAULT_SIGNUP_CREDITS",
   LEMON_STORE_ID: "LEMON_STORE_ID",
-  LEMON_VARIANT_ID_BASIC: "LEMON_VARIANT_ID_BASIC",
-  LEMON_VARIANT_ID_STANDARD: "LEMON_VARIANT_ID_STANDARD",
-  LEMON_VARIANT_ID_PREMIUM: "LEMON_VARIANT_ID_PREMIUM",
+  LEMON_VARIANT_ID_PRO: "LEMON_VARIANT_ID_PRO",
 } as const;
 
 const DEFAULTS = {
@@ -60,16 +58,12 @@ export async function getLemonStoreId() {
   return (await getSetting(APP_SETTING_KEYS.LEMON_STORE_ID)) || process.env.LEMONSQUEEZY_STORE_ID || null;
 }
 
-export async function getLemonVariantId(plan: "BASIC" | "STANDARD" | "PREMIUM") {
+export async function getLemonVariantId(plan: "PRO") {
   const keyMap = {
-    BASIC: APP_SETTING_KEYS.LEMON_VARIANT_ID_BASIC,
-    STANDARD: APP_SETTING_KEYS.LEMON_VARIANT_ID_STANDARD,
-    PREMIUM: APP_SETTING_KEYS.LEMON_VARIANT_ID_PREMIUM,
+    PRO: APP_SETTING_KEYS.LEMON_VARIANT_ID_PRO,
   } as const;
   const envMap = {
-    BASIC: process.env.LEMONSQUEEZY_VARIANT_ID_BASIC,
-    STANDARD: process.env.LEMONSQUEEZY_VARIANT_ID_STANDARD,
-    PREMIUM: process.env.LEMONSQUEEZY_VARIANT_ID_PREMIUM,
+    PRO: process.env.LEMONSQUEEZY_VARIANT_ID_PRO,
   } as const;
   return (await getSetting(keyMap[plan])) || envMap[plan] || null;
 }
@@ -77,32 +71,24 @@ export async function getLemonVariantId(plan: "BASIC" | "STANDARD" | "PREMIUM") 
 export async function getLemonSettings() {
   const keys = [
     APP_SETTING_KEYS.LEMON_STORE_ID,
-    APP_SETTING_KEYS.LEMON_VARIANT_ID_BASIC,
-    APP_SETTING_KEYS.LEMON_VARIANT_ID_STANDARD,
-    APP_SETTING_KEYS.LEMON_VARIANT_ID_PREMIUM,
+    APP_SETTING_KEYS.LEMON_VARIANT_ID_PRO,
   ];
   const rows = await prisma.appSetting.findMany({ where: { key: { in: keys } } });
   const map = new Map(rows.map((r) => [r.key, r.value]));
 
   return {
     storeId: map.get(APP_SETTING_KEYS.LEMON_STORE_ID) ?? "",
-    variantIdBasic: map.get(APP_SETTING_KEYS.LEMON_VARIANT_ID_BASIC) ?? "",
-    variantIdStandard: map.get(APP_SETTING_KEYS.LEMON_VARIANT_ID_STANDARD) ?? "",
-    variantIdPremium: map.get(APP_SETTING_KEYS.LEMON_VARIANT_ID_PREMIUM) ?? "",
+    variantIdPro: map.get(APP_SETTING_KEYS.LEMON_VARIANT_ID_PRO) ?? "",
   };
 }
 
 export async function setLemonSettings(values: {
   storeId?: string;
-  variantIdBasic?: string;
-  variantIdStandard?: string;
-  variantIdPremium?: string;
+  variantIdPro?: string;
 }) {
   const ops: { key: string; value: string }[] = [];
   if (values.storeId !== undefined) ops.push({ key: APP_SETTING_KEYS.LEMON_STORE_ID, value: values.storeId.trim() });
-  if (values.variantIdBasic !== undefined) ops.push({ key: APP_SETTING_KEYS.LEMON_VARIANT_ID_BASIC, value: values.variantIdBasic.trim() });
-  if (values.variantIdStandard !== undefined) ops.push({ key: APP_SETTING_KEYS.LEMON_VARIANT_ID_STANDARD, value: values.variantIdStandard.trim() });
-  if (values.variantIdPremium !== undefined) ops.push({ key: APP_SETTING_KEYS.LEMON_VARIANT_ID_PREMIUM, value: values.variantIdPremium.trim() });
+  if (values.variantIdPro !== undefined) ops.push({ key: APP_SETTING_KEYS.LEMON_VARIANT_ID_PRO, value: values.variantIdPro.trim() });
 
   await Promise.all(ops.map((o) => setSetting(o.key, o.value)));
 }
