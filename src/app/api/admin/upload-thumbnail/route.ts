@@ -7,6 +7,22 @@ import { createClient } from "@supabase/supabase-js";
 
 const BUCKET = process.env.TEMPLATE_THUMBNAIL_BUCKET || "template-thumbnails";
 
+function getSupabase() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) return null;
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function ensureBucket(supabase: any) {
+  const { data } = await supabase.storage.getBucket(BUCKET);
+  if (data) return;
+  await supabase.storage.createBucket(BUCKET, { public: true });
+}
+
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
@@ -38,14 +54,11 @@ export async function POST(request: NextRequest) {
 
     const fileName = "thumb.webp";
 
-    // Try Supabase Storage first (works in production)
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    // Try Supabase Storage (works in production)
+    const supabase = getSupabase();
 
-    if (supabaseUrl && serviceRoleKey) {
-      const supabase = createClient(supabaseUrl, serviceRoleKey, {
-        auth: { autoRefreshToken: false, persistSession: false },
-      });
+    if (supabase) {
+      await ensureBucket(supabase);
 
       const storagePath = `${slug}/${fileName}`;
       const { error } = await supabase.storage
