@@ -184,7 +184,7 @@ export function TemplateCard({ template, hasActiveSubscription: propSubscription
             <p className="mt-2 text-center text-sm text-muted-foreground">
               &ldquo;{template.title}&rdquo; is a PRO template. Subscribe to get unlimited access.
             </p>
-            <div className="mt-6 flex flex-col gap-2">
+            <div className="mt-6">
               <Button
                 className="w-full gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
                 onClick={() => {
@@ -195,12 +195,6 @@ export function TemplateCard({ template, hasActiveSubscription: propSubscription
                 <Crown className="size-4" />
                 Subscribe to PRO
               </Button>
-              <Link href={`/templates/${template.slug}`} className="w-full">
-                <Button variant="outline" className="w-full gap-2">
-                  View Details
-                  <ArrowRight className="size-4" />
-                </Button>
-              </Link>
             </div>
           </div>
         </div>
