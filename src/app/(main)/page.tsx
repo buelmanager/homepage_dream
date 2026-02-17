@@ -57,7 +57,7 @@ export default async function HomePage() {
     ...cat,
     templates: templates
       .filter((t) => t.category === cat.name)
-      .slice(0, 4),
+      .slice(0, 12),
   }));
 
   return (
