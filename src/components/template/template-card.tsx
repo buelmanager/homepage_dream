@@ -16,8 +16,8 @@ interface TemplateCardProps {
 export function TemplateCard({ template }: TemplateCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const thumbnailSrc =
-    template.thumbnailUrl || `/templates/${template.slug}/images/fullpage.png`;
+  const thumbnailSrc = template.thumbnailUrl || null;
+  const [imgError, setImgError] = useState(false);
 
   const categoryLabel =
     template.category.charAt(0).toUpperCase() + template.category.slice(1);
@@ -30,13 +30,21 @@ export function TemplateCard({ template }: TemplateCardProps) {
     >
       <div className="relative overflow-hidden rounded-xl border border-border/50 bg-card transition-all duration-300 hover:border-border hover:shadow-lg hover:shadow-black/5">
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-          <Image
-            src={thumbnailSrc}
-            alt={template.title}
-            fill
-            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          />
+          {thumbnailSrc && !imgError ? (
+            <Image
+              src={thumbnailSrc}
+              alt={template.title}
+              fill
+              className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
+              <Layers className="size-8 opacity-30" />
+              <span className="text-xs opacity-40">{template.title}</span>
+            </div>
+          )}
 
           <motion.div
             initial={false}

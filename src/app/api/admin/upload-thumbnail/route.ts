@@ -27,46 +27,56 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unsupported image format" }, { status: 400 });
   }
 
-  const rawBuffer = Buffer.from(await file.arrayBuffer());
+  try {
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
 
-  // Convert to webp with optimization
-  const webpBuffer = await sharp(rawBuffer)
-    .resize(1200, null, { withoutEnlargement: true })
-    .webp({ quality: 80 })
-    .toBuffer();
+    // Convert to webp with optimization
+    const webpBuffer = await sharp(rawBuffer)
+      .resize(1200, null, { withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toBuffer();
 
-  const fileName = "thumb.webp";
+    const fileName = "thumb.webp";
 
-  // Try Supabase Storage first (works in production)
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    // Try Supabase Storage first (works in production)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (supabaseUrl && serviceRoleKey) {
-    const supabase = createClient(supabaseUrl, serviceRoleKey, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    });
-
-    const storagePath = `${slug}/${fileName}`;
-    const { error } = await supabase.storage
-      .from(BUCKET)
-      .upload(storagePath, webpBuffer, {
-        contentType: "image/webp",
-        upsert: true,
+    if (supabaseUrl && serviceRoleKey) {
+      const supabase = createClient(supabaseUrl, serviceRoleKey, {
+        auth: { autoRefreshToken: false, persistSession: false },
       });
 
-    if (!error) {
-      const { data: publicUrl } = supabase.storage
+      const storagePath = `${slug}/${fileName}`;
+      const { error } = await supabase.storage
         .from(BUCKET)
-        .getPublicUrl(storagePath);
-      return NextResponse.json({ url: publicUrl.publicUrl });
+        .upload(storagePath, webpBuffer, {
+          contentType: "image/webp",
+          upsert: true,
+        });
+
+      if (!error) {
+        const { data: publicUrl } = supabase.storage
+          .from(BUCKET)
+          .getPublicUrl(storagePath);
+        return NextResponse.json({ url: publicUrl.publicUrl });
+      }
+
+      return NextResponse.json(
+        { error: `Storage upload failed: ${error.message}` },
+        { status: 502 },
+      );
     }
+
+    // Fallback: save to local public folder (dev only, Vercel is read-only)
+    const dir = path.join(process.cwd(), "public", "thumbnails", slug);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(path.join(dir, fileName), webpBuffer);
+
+    const url = `/thumbnails/${slug}/${fileName}`;
+    return NextResponse.json({ url });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  // Fallback: save to local public folder
-  const dir = path.join(process.cwd(), "public", "thumbnails", slug);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(path.join(dir, fileName), webpBuffer);
-
-  const url = `/thumbnails/${slug}/${fileName}`;
-  return NextResponse.json({ url });
 }
