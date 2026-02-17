@@ -55,15 +55,12 @@ export async function PATCH(
     return NextResponse.json({ error: "No fields to update" }, { status: 400 });
   }
 
-  try {
-    const template = await prisma.template.update({
-      where: { slug },
-      data,
-    });
-    return NextResponse.json({ template });
-  } catch {
-    return NextResponse.json({ error: `Template "${slug}" not found in database` }, { status: 404 });
-  }
+  const template = await prisma.template.upsert({
+    where: { slug },
+    update: data,
+    create: { slug, title: slug, category: "pages", ...data },
+  });
+  return NextResponse.json({ template });
 }
 
 export async function DELETE(
@@ -74,10 +71,24 @@ export async function DELETE(
   if ("error" in guard) return guard.error;
 
   const { slug } = await params;
-  try {
+
+  // Try to delete existing DB record
+  const existing = await prisma.template.findUnique({ where: { slug } });
+
+  if (existing) {
     await prisma.template.delete({ where: { slug } });
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: `Template "${slug}" not found in database` }, { status: 404 });
   }
+
+  // Manifest-only template: create ARCHIVED DB record to override manifest
+  await prisma.template.create({
+    data: {
+      slug,
+      title: slug,
+      category: "pages",
+      status: "ARCHIVED",
+    },
+  });
+
+  return NextResponse.json({ success: true });
 }
