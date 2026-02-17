@@ -52,7 +52,7 @@ export default async function HomePage() {
   const { templates, templateCount, sectionCount, topCategories, uniqueStyleCount } =
     await getHomeData();
 
-  const newTemplates = templates.slice(0, 8);
+  const newTemplates = templates.slice(0, 4);
   const categoryTemplates = topCategories.map((cat) => ({
     ...cat,
     templates: templates
