@@ -55,12 +55,15 @@ export async function PATCH(
     return NextResponse.json({ error: "No fields to update" }, { status: 400 });
   }
 
-  const template = await prisma.template.update({
-    where: { slug },
-    data,
-  });
-
-  return NextResponse.json({ template });
+  try {
+    const template = await prisma.template.update({
+      where: { slug },
+      data,
+    });
+    return NextResponse.json({ template });
+  } catch {
+    return NextResponse.json({ error: `Template "${slug}" not found in database` }, { status: 404 });
+  }
 }
 
 export async function DELETE(
@@ -71,6 +74,10 @@ export async function DELETE(
   if ("error" in guard) return guard.error;
 
   const { slug } = await params;
-  await prisma.template.delete({ where: { slug } });
-  return NextResponse.json({ success: true });
+  try {
+    await prisma.template.delete({ where: { slug } });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: `Template "${slug}" not found in database` }, { status: 404 });
+  }
 }
