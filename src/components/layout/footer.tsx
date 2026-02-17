@@ -24,9 +24,13 @@ const footerSections = [
   {
     title: "Legal",
     links: [
-      { label: "Privacy", href: "/privacy" },
       { label: "Terms", href: "/terms" },
+      { label: "Privacy", href: "/privacy" },
       { label: "License", href: "/license" },
+      { label: "Refund Policy", href: "/refund" },
+      { label: "DMCA", href: "/dmca" },
+      { label: "Cookies", href: "/cookies" },
+      { label: "Acceptable Use", href: "/acceptable-use" },
     ],
   },
 ];
