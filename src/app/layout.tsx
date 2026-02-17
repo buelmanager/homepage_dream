@@ -26,6 +26,9 @@ export const metadata: Metadata = {
     "HTML templates",
     "CSS components",
   ],
+  verification: {
+    google: "w84DO6d7tAFQJU979T7FfEkq11ICoZ4E_Kn0_cIbnkM",
+  },
   openGraph: {
     title: "HomeDream — Discover Beautiful Homepage Templates",
     description:
