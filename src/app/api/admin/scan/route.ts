@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import templatesManifest from "@/data/templates-manifest.json";
 import fs from "fs";
 import path from "path";
+import sharp from "sharp";
 
 type MetaJson = {
   title?: string;
@@ -26,20 +27,52 @@ type ManifestEntry = MetaJson & {
   htmlPath?: string | null;
 };
 
-/** Recursively copy a directory */
-function copyDirSync(src: string, dest: string) {
+const IMAGE_EXTS = new Set([".png", ".jpg", ".jpeg", ".bmp", ".tiff"]);
+
+/** Convert image to webp, return the new filename */
+function toWebpName(name: string): string {
+  const ext = path.extname(name).toLowerCase();
+  if (IMAGE_EXTS.has(ext)) {
+    return name.slice(0, -ext.length) + ".webp";
+  }
+  return name;
+}
+
+/** Recursively copy a directory, converting images to webp */
+async function copyDirWithOptimize(src: string, dest: string) {
   fs.mkdirSync(dest, { recursive: true });
-  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+
+  for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
+
     if (entry.isDirectory()) {
-      // skip pro/ folder — not needed in public
       if (entry.name === "pro") continue;
-      copyDirSync(srcPath, destPath);
+      await copyDirWithOptimize(srcPath, path.join(dest, entry.name));
+      continue;
+    }
+
+    // skip meta.json and readme.md
+    if (entry.name === "meta.json" || entry.name === "readme.md") continue;
+
+    const ext = path.extname(entry.name).toLowerCase();
+
+    if (IMAGE_EXTS.has(ext)) {
+      // Convert to webp
+      const webpName = toWebpName(entry.name);
+      const destPath = path.join(dest, webpName);
+      try {
+        await sharp(srcPath)
+          .resize(1200, null, { withoutEnlargement: true })
+          .webp({ quality: 80 })
+          .toFile(destPath);
+      } catch {
+        // Fallback: copy as-is if sharp fails
+        fs.copyFileSync(srcPath, path.join(dest, entry.name));
+      }
     } else {
-      // skip meta.json and readme.md — not needed in public
-      if (entry.name === "meta.json" || entry.name === "readme.md") continue;
-      fs.copyFileSync(srcPath, destPath);
+      // Copy non-image files as-is (html, css, js, webp, etc.)
+      fs.copyFileSync(srcPath, path.join(dest, entry.name));
     }
   }
 }
@@ -118,16 +151,16 @@ export async function POST() {
         continue;
       }
 
-      // Deploy: copy index.html + images to public/templates/{slug}/
+      // Deploy: copy + optimize images to public/templates/{slug}/
       const srcDir = path.join(cloneRoot, slug);
       const destDir = path.join(publicTemplates, slug);
 
       if (!fs.existsSync(destDir)) {
-        copyDirSync(srcDir, destDir);
+        await copyDirWithOptimize(srcDir, destDir);
         deployed.push(slug);
       }
 
-      // Check if thumbnail exists in images/
+      // Check if thumbnail exists in images/ (prefer webp)
       let thumbnailUrl: string | null = meta.thumbnailUrl ?? null;
       if (!thumbnailUrl) {
         const imagesDir = path.join(destDir, "images");
@@ -137,6 +170,13 @@ export async function POST() {
           if (fullpage) {
             thumbnailUrl = `/templates/${slug}/images/${fullpage}`;
           }
+        }
+      }
+      // Update thumbnail extension to webp if it was converted
+      if (thumbnailUrl) {
+        const thumbExt = path.extname(thumbnailUrl).toLowerCase();
+        if (IMAGE_EXTS.has(thumbExt)) {
+          thumbnailUrl = thumbnailUrl.slice(0, -thumbExt.length) + ".webp";
         }
       }
 
