@@ -211,6 +211,7 @@ export default async function TemplateDetailPage({
               itemType="template"
               itemTitle={template.title}
               itemSlug={slug}
+              templateId={template.id}
             />
           </aside>
         </div>

@@ -32,6 +32,7 @@ interface PurchaseCardProps {
   itemTitle: string;
   itemSlug: string;
   tier?: TemplateTier;
+  templateId?: string;
 }
 
 export function PurchaseCard({
@@ -40,12 +41,15 @@ export function PurchaseCard({
   itemTitle,
   itemSlug,
   tier = "PRO",
+  templateId,
 }: PurchaseCardProps) {
   const { status: sessionStatus } = useSession();
   const isAuthenticated = sessionStatus === "authenticated";
   const isSessionLoading = sessionStatus === "loading";
   const [isFavorited, setIsFavorited] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [togglingFav, setTogglingFav] = useState(false);
+  const [togglingBmk, setTogglingBmk] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(true);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
@@ -60,29 +64,51 @@ export function PurchaseCard({
 
     const ac = new AbortController();
 
-    fetch("/api/subscription", { signal: ac.signal })
-      .then(async (response) => {
-        if (!response.ok) {
-          setHasActiveSubscription(false);
-          return;
+    // Fetch subscription + favorites + bookmarks in parallel
+    Promise.allSettled([
+      fetch("/api/subscription", { signal: ac.signal }).then((r) =>
+        r.ok ? r.json() : null
+      ),
+      fetch("/api/favorites", { signal: ac.signal }).then((r) =>
+        r.ok ? r.json() : null
+      ),
+      fetch("/api/bookmarks", { signal: ac.signal }).then((r) =>
+        r.ok ? r.json() : null
+      ),
+    ])
+      .then(([subResult, favResult, bmkResult]) => {
+        // Subscription
+        if (subResult.status === "fulfilled" && subResult.value?.subscription) {
+          const sub = subResult.value.subscription;
+          const active =
+            sub.status === "ACTIVE" &&
+            new Date(sub.currentPeriodEnd).getTime() > Date.now();
+          setHasActiveSubscription(active);
         }
-        const data = await response.json();
-        const active =
-          !!data?.subscription &&
-          data.subscription.status === "ACTIVE" &&
-          new Date(data.subscription.currentPeriodEnd).getTime() > Date.now();
 
-        setHasActiveSubscription(active);
+        // Favorites - check if current template is favorited
+        if (favResult.status === "fulfilled" && favResult.value?.favorites && templateId) {
+          const favored = favResult.value.favorites.some(
+            (f: any) => f.template?.id === templateId
+          );
+          setIsFavorited(favored);
+        }
+
+        // Bookmarks - check if current template is bookmarked
+        if (bmkResult.status === "fulfilled" && bmkResult.value?.bookmarks && templateId) {
+          const saved = bmkResult.value.bookmarks.some(
+            (b: any) => b.template?.id === templateId
+          );
+          setIsBookmarked(saved);
+        }
       })
-      .catch(() => {
-        setHasActiveSubscription(false);
-      })
+      .catch(() => {})
       .finally(() => {
         setIsCheckingSubscription(false);
       });
 
     return () => ac.abort();
-  }, [isAuthenticated, isSessionLoading]);
+  }, [isAuthenticated, isSessionLoading, templateId]);
 
   const executeDownload = () => {
     window.location.href = `/api/templates/${encodeURIComponent(itemSlug)}/download`;
@@ -275,30 +301,66 @@ export function PurchaseCard({
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant={isFavorited ? "default" : "outline"}
-              size="sm"
-              className="flex-1 gap-1.5"
-              onClick={() => setIsFavorited(!isFavorited)}
-            >
-              <Heart
-                className={`size-3.5 ${isFavorited ? "fill-current" : ""}`}
-              />
-              {isFavorited ? "Favorited" : "Favorite"}
-            </Button>
-            <Button
-              variant={isBookmarked ? "default" : "outline"}
-              size="sm"
-              className="flex-1 gap-1.5"
-              onClick={() => setIsBookmarked(!isBookmarked)}
-            >
-              <Bookmark
-                className={`size-3.5 ${isBookmarked ? "fill-current" : ""}`}
-              />
-              {isBookmarked ? "Saved" : "Save"}
-            </Button>
-          </div>
+          {isAuthenticated && templateId && (
+            <div className="flex gap-2">
+              <Button
+                variant={isFavorited ? "default" : "outline"}
+                size="sm"
+                className="flex-1 gap-1.5"
+                disabled={togglingFav}
+                onClick={async () => {
+                  if (togglingFav) return;
+                  setTogglingFav(true);
+                  try {
+                    const res = await fetch("/api/favorites", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ templateId }),
+                    });
+                    if (res.ok) {
+                      const data = await res.json();
+                      setIsFavorited(data.action === "added");
+                    }
+                  } catch {} finally {
+                    setTogglingFav(false);
+                  }
+                }}
+              >
+                <Heart
+                  className={`size-3.5 ${isFavorited ? "fill-current" : ""}`}
+                />
+                {isFavorited ? "Favorited" : "Favorite"}
+              </Button>
+              <Button
+                variant={isBookmarked ? "default" : "outline"}
+                size="sm"
+                className="flex-1 gap-1.5"
+                disabled={togglingBmk}
+                onClick={async () => {
+                  if (togglingBmk) return;
+                  setTogglingBmk(true);
+                  try {
+                    const res = await fetch("/api/bookmarks", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ templateId }),
+                    });
+                    if (res.ok) {
+                      const data = await res.json();
+                      setIsBookmarked(data.action === "added");
+                    }
+                  } catch {} finally {
+                    setTogglingBmk(false);
+                  }
+                }}
+              >
+                <Bookmark
+                  className={`size-3.5 ${isBookmarked ? "fill-current" : ""}`}
+                />
+                {isBookmarked ? "Saved" : "Save"}
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

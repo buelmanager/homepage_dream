@@ -16,14 +16,12 @@ import {
   Download,
   Heart,
   Bookmark,
-  ShoppingBag,
   Loader2,
   Plus,
   Package,
   Crown,
   Calendar,
   CreditCard,
-  History,
 } from "lucide-react";
 
 type TemplateItem = {
@@ -42,10 +40,6 @@ type ListItem = {
   section: TemplateItem | null;
 };
 
-type PurchaseItem = ListItem & {
-  creditsSpent: number;
-};
-
 type Subscription = {
   id: string;
   plan: string;
@@ -54,14 +48,6 @@ type Subscription = {
   usedCount: number;
   currentPeriodEnd: string;
   price: number;
-};
-
-type CreditTransaction = {
-  id: string;
-  amount: number;
-  type: string;
-  description: string | null;
-  createdAt: string;
 };
 
 const PLAN_COLORS: Record<string, string> = {
@@ -165,12 +151,10 @@ function fetchWithTimeout(url: string, timeout = 30000) {
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [purchases, setPurchases] = useState<PurchaseItem[]>([]);
   const [favorites, setFavorites] = useState<ListItem[]>([]);
   const [bookmarks, setBookmarks] = useState<ListItem[]>([]);
   const [credits, setCredits] = useState(0);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [topUpAmount, setTopUpAmount] = useState("");
   const [toppingUp, setToppingUp] = useState(false);
@@ -205,29 +189,17 @@ export default function ProfilePage() {
           if (!r.ok) throw new Error(`Subscription API failed: ${r.status}`);
           return r.json();
         }),
-        fetchWithTimeout("/api/transactions", 30000).then((r) => {
-          if (!r.ok) throw new Error(`Transactions API failed: ${r.status}`);
-          return r.json();
-        }),
-        fetchWithTimeout("/api/purchases", 30000).then((r) => {
-          if (!r.ok) throw new Error(`Purchases API failed: ${r.status}`);
-          return r.json();
-        }),
       ])
         .then((results) => {
           const creditsData = results[0].status === "fulfilled" ? results[0].value : null;
           const favData = results[1].status === "fulfilled" ? results[1].value : null;
           const bookData = results[2].status === "fulfilled" ? results[2].value : null;
           const subData = results[3].status === "fulfilled" ? results[3].value : null;
-          const transData = results[4].status === "fulfilled" ? results[4].value : null;
-          const purchData = results[5].status === "fulfilled" ? results[5].value : null;
 
           setCredits(creditsData?.credits ?? 0);
           setFavorites(favData?.favorites ?? []);
           setBookmarks(bookData?.bookmarks ?? []);
           setSubscription(subData?.subscription ?? null);
-          setTransactions(transData?.transactions ?? []);
-          setPurchases(purchData?.purchases ?? []);
           setLoading(false);
         })
         .catch((error) => {
@@ -406,26 +378,8 @@ export default function ProfilePage() {
             </Card>
           )}
 
-          <Tabs defaultValue="purchased" className="w-full">
+          <Tabs defaultValue="favorites" className="w-full">
             <TabsList className="w-full sm:w-auto">
-              <TabsTrigger value="purchased" className="gap-1.5">
-                <ShoppingBag className="h-3.5 w-3.5" />
-                Purchased
-                {purchases.length > 0 && (
-                  <span className="ml-1 rounded-full bg-muted px-1.5 text-xs tabular-nums">
-                    {purchases.length}
-                  </span>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="transactions" className="gap-1.5">
-                <History className="h-3.5 w-3.5" />
-                Transactions
-                {transactions.length > 0 && (
-                  <span className="ml-1 rounded-full bg-muted px-1.5 text-xs tabular-nums">
-                    {transactions.length}
-                  </span>
-                )}
-              </TabsTrigger>
               <TabsTrigger value="favorites" className="gap-1.5">
                 <Heart className="h-3.5 w-3.5" />
                 Favorites
@@ -445,77 +399,6 @@ export default function ProfilePage() {
                 )}
               </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="purchased" className="mt-6">
-              <TemplateGrid
-                items={purchases}
-                emptyMessage="No purchases yet. Browse templates to find something you love."
-                showDownload
-              />
-            </TabsContent>
-
-            <TabsContent value="transactions" className="mt-6">
-              {transactions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <History className="mb-3 h-10 w-10 text-muted-foreground/40" />
-                  <p className="text-sm text-muted-foreground">No transactions yet</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {transactions.map((tx) => (
-                    <div
-                      key={tx.id}
-                      className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                            tx.amount > 0
-                              ? "bg-green-100 text-green-600 dark:bg-green-950/50 dark:text-green-400"
-                              : "bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400"
-                          }`}
-                        >
-                          {tx.amount > 0 ? (
-                            <Plus className="h-5 w-5" />
-                          ) : (
-                            <Coins className="h-5 w-5" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium text-foreground">
-                            {tx.type === "TOP_UP"
-                              ? "Credit Top Up"
-                              : tx.type === "PURCHASE"
-                              ? "Template Purchase"
-                              : tx.type === "SUBSCRIPTION"
-                              ? "Subscription"
-                              : tx.type}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {tx.description || tx.type}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p
-                          className={`font-semibold ${
-                            tx.amount > 0
-                              ? "text-green-600 dark:text-green-400"
-                              : "text-red-600 dark:text-red-400"
-                          }`}
-                        >
-                          {tx.amount > 0 ? "+" : ""}
-                          {tx.amount}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(tx.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
 
             <TabsContent value="favorites" className="mt-6">
               <TemplateGrid
