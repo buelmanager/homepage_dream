@@ -1,8 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { TemplateGrid } from "@/components/template/template-grid";
 import type { TemplateWithSections } from "@/types";
 import { getCatalogTemplates } from "@/lib/template-catalog";
+
+export const metadata: Metadata = {
+  title: "무료 홈페이지 템플릿 모음 | 스타일리쉬 웹 디자인",
+  description:
+    "럭셔리하고 아름다운 무료 홈페이지 템플릿을 둘러보세요. HTML/CSS 기반의 스타일리쉬한 웹 디자인 템플릿을 지금 바로 다운로드하세요.",
+  alternates: { canonical: "/templates" },
+  openGraph: {
+    title: "무료 홈페이지 템플릿 모음 — HomeDream",
+    description:
+      "럭셔리하고 아름다운 무료 홈페이지 템플릿을 둘러보세요.",
+    url: "/templates",
+  },
+};
 
 interface TemplatesPageProps {
   searchParams: Promise<{

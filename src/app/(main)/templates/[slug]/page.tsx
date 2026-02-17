@@ -33,14 +33,34 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const template = await getCatalogTemplateBySlug(slug, { publishedOnly: true });
-  
+
   if (!template) {
     return { title: "Template Not Found" };
   }
 
+  const description =
+    template.description ??
+    `${template.title} 홈페이지 템플릿 — 아름다운 ${template.category} 디자인을 미리보기하고 다운로드하세요.`;
+
   return {
-    title: `${template.title} | HomeDream`,
-    description: template.description ?? `Preview ${template.title} template`,
+    title: `${template.title} | 무료 홈페이지 템플릿`,
+    description,
+    alternates: { canonical: `/templates/${slug}` },
+    openGraph: {
+      title: `${template.title} — HomeDream`,
+      description,
+      url: `/templates/${slug}`,
+      type: "article",
+      ...(template.thumbnailUrl && {
+        images: [{ url: template.thumbnailUrl, alt: template.title }],
+      }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${template.title} — HomeDream`,
+      description,
+      ...(template.thumbnailUrl && { images: [template.thumbnailUrl] }),
+    },
   };
 }
 
@@ -77,6 +97,30 @@ export default async function TemplateDetailPage({
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: template.title,
+            description:
+              template.description ??
+              `${template.title} homepage template`,
+            applicationCategory: "WebApplication",
+            operatingSystem: "Web",
+            offers: {
+              "@type": "Offer",
+              price: template.tier === "FREE" ? "0" : "20",
+              priceCurrency: "USD",
+              availability: "https://schema.org/InStock",
+            },
+            ...(template.thumbnailUrl && {
+              image: template.thumbnailUrl,
+            }),
+          }).replace(/</g, "\\u003c"),
+        }}
+      />
       <ViewCounter slug={slug} />
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
