@@ -128,6 +128,14 @@ export async function GET(
     return NextResponse.json({ error: "Template not found" }, { status: 404 });
   }
 
+  // All downloads require authentication
+  const session = await auth();
+  if (!session?.user?.id) {
+    const signInUrl = new URL("/signin", request.url);
+    signInUrl.searchParams.set("callbackUrl", `/templates/${slug}`);
+    return NextResponse.redirect(signInUrl);
+  }
+
   // FREE → zip public/templates/[slug] and download
   if (template.tier === "FREE") {
     const zip = zipPublicFolder(slug);
@@ -137,14 +145,6 @@ export async function GET(
       { error: "Template files not found" },
       { status: 404 }
     );
-  }
-
-  // PRO → require auth + subscription
-  const session = await auth();
-  if (!session?.user?.id) {
-    const signInUrl = new URL("/signin", request.url);
-    signInUrl.searchParams.set("callbackUrl", `/templates/${slug}`);
-    return NextResponse.redirect(signInUrl);
   }
 
   // Admins bypass subscription check

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import { CATEGORIES } from "@/types";
+
 import { VERSION } from "@/config/version";
 
 const footerSections = [
@@ -12,16 +12,7 @@ const footerSections = [
       { label: "Pricing", href: "/pricing" },
     ],
   },
-  {
-    title: "Categories",
-    links: CATEGORIES.filter((c) => c.name !== "all")
-      .slice(0, 6)
-      .map((c) => ({
-        label: c.label,
-        href: `/templates?category=${c.name}`,
-      })),
-  },
-  {
+{
     title: "Legal",
     links: [
       { label: "Terms", href: "/terms" },
@@ -39,7 +30,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="grid grid-cols-2 gap-8 py-12 md:grid-cols-5 lg:py-16">
+        <div className="grid grid-cols-2 gap-8 py-12 md:grid-cols-4 lg:py-16">
           <div className="col-span-2 md:col-span-1">
             <Link
               href="/"
@@ -55,16 +46,6 @@ export function Footer() {
             <p className="mt-3 max-w-xs text-[13px] leading-relaxed text-muted-foreground">
               Curated homepage templates and components for modern web projects.
             </p>
-            <div className="mt-4 flex gap-3">
-              {["X", "GH"].map((social) => (
-                <span
-                  key={social}
-                  className="flex size-8 items-center justify-center rounded-full border border-border/60 text-[11px] font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-                >
-                  {social}
-                </span>
-              ))}
-            </div>
           </div>
 
           {footerSections.map((section) => (

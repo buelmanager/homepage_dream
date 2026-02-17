@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface SubscriptionContextValue {
   hasActiveSubscription: boolean;
@@ -17,10 +18,19 @@ export function useSubscription() {
 }
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Skip fetching if not authenticated
+    if (status === "loading") return;
+    if (status === "unauthenticated" || !session?.user) {
+      setHasActiveSubscription(false);
+      setIsLoading(false);
+      return;
+    }
+
     const ac = new AbortController();
 
     fetch("/api/subscription", { signal: ac.signal })
@@ -44,7 +54,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
       });
 
     return () => ac.abort();
-  }, []);
+  }, [status, session]);
 
   return (
     <SubscriptionContext.Provider value={{ hasActiveSubscription, isLoading }}>

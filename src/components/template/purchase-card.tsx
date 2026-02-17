@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import {
   Heart,
   Bookmark,
@@ -8,6 +9,7 @@ import {
   CreditCard,
   Download,
   Loader2,
+  LogIn,
   ShieldCheck,
   ShieldAlert,
   AlertTriangle,
@@ -39,6 +41,9 @@ export function PurchaseCard({
   itemSlug,
   tier = "PRO",
 }: PurchaseCardProps) {
+  const { status: sessionStatus } = useSession();
+  const isAuthenticated = sessionStatus === "authenticated";
+  const isSessionLoading = sessionStatus === "loading";
   const [isFavorited, setIsFavorited] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
@@ -47,6 +52,12 @@ export function PurchaseCard({
   const [showLicenseConfirm, setShowLicenseConfirm] = useState(false);
 
   useEffect(() => {
+    if (isSessionLoading) return;
+    if (!isAuthenticated) {
+      setIsCheckingSubscription(false);
+      return;
+    }
+
     const ac = new AbortController();
 
     fetch("/api/subscription", { signal: ac.signal })
@@ -71,7 +82,7 @@ export function PurchaseCard({
       });
 
     return () => ac.abort();
-  }, []);
+  }, [isAuthenticated, isSessionLoading]);
 
   const executeDownload = () => {
     window.location.href = `/api/templates/${encodeURIComponent(itemSlug)}/download`;
@@ -107,10 +118,24 @@ export function PurchaseCard({
             <Badge variant="secondary">FREE</Badge>
           </div>
 
-          <Button size="lg" className="w-full gap-2 font-semibold" onClick={handleDownload}>
-            <Download className="size-4" />
-            Download Free Template
-          </Button>
+          {isSessionLoading ? (
+            <div className="flex items-center justify-center rounded-lg border border-border py-4 text-sm text-muted-foreground">
+              <Loader2 className="mr-2 size-4 animate-spin" />
+              Loading...
+            </div>
+          ) : !isAuthenticated ? (
+            <Button size="lg" className="w-full gap-2 font-semibold" asChild>
+              <Link href="/signin">
+                <LogIn className="size-4" />
+                Sign in to Download
+              </Link>
+            </Button>
+          ) : (
+            <Button size="lg" className="w-full gap-2 font-semibold" onClick={handleDownload}>
+              <Download className="size-4" />
+              Download Free Template
+            </Button>
+          )}
         </>
       );
     }
@@ -138,6 +163,26 @@ export function PurchaseCard({
           <Button size="lg" className="w-full gap-2 font-semibold" onClick={handleDownload}>
             <Download className="size-4" />
             Download Pro Template
+          </Button>
+        </>
+      );
+    }
+
+    if (!isAuthenticated) {
+      return (
+        <>
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
+            <span className="flex items-center gap-1.5 font-medium">
+              <ShieldAlert className="size-4" />
+              Sign in required to access PRO templates.
+            </span>
+          </div>
+
+          <Button size="lg" className="w-full gap-2 font-semibold" asChild>
+            <Link href="/signin">
+              <LogIn className="size-4" />
+              Sign in to Continue
+            </Link>
           </Button>
         </>
       );
