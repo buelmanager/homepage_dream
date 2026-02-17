@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CADENCE — Contemporary Dance & Movement Studio</title>
+  <meta name="description" content="CADENCE - Contemporary Dance & Movement Studio. Contemporary, Hip Hop, Ballet, Jazz, K-Pop classes in Los Angeles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #0D0A1A;
+      --surface: #1A1530;
+      --accent: #A78BFA;
+      --accent-hover: #C4B5FD;
+      --accent-glow: rgba(167, 139, 250, 0.15);
+      --text: #F5F3FF;
+      --text-muted: #8B83A3;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --container: 1200px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-body); background: var(--background); color: var(--text); overflow-x: hidden; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; } ul, ol { list-style: none; } img { max-width: 100%; display: block; }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; color: inherit; }
+    input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; background: transparent; border: none; outline: none; }
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+    .section-label { font-family: var(--font-body); font-size: 0.72rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 400; line-height: 1.25; margin-bottom: 20px; }
+    .section-desc { font-size: 1.02rem; color: var(--text-muted); max-width: 560px; line-height: 1.7; font-weight: 300; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* ======== PRELOADER ======== */
+    #preloader { position: fixed; inset: 0; background: var(--background); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .spotlight-loader { width: 200px; height: 120px; position: relative; overflow: hidden; }
+    .spotlight-beam { position: absolute; bottom: 0; width: 80px; height: 120px; opacity: 0.5; border-radius: 50% 50% 0 0; }
+    .spotlight-beam:nth-child(1) {
+      left: 10px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(167,139,250,0.4), transparent 70%);
+      animation: spotlightSweepLeft 2.4s ease-in-out infinite;
+    }
+    .spotlight-beam:nth-child(2) {
+      right: 10px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(196,181,253,0.35), transparent 70%);
+      animation: spotlightSweepRight 2.4s ease-in-out infinite;
+    }
+    @keyframes spotlightSweepLeft {
+      0%, 100% { transform: translateX(-30px) rotate(-12deg); opacity: 0.3; }
+      50% { transform: translateX(50px) rotate(8deg); opacity: 0.6; }
+    }
+    @keyframes spotlightSweepRight {
+      0%, 100% { transform: translateX(30px) rotate(12deg); opacity: 0.3; }
+      50% { transform: translateX(-50px) rotate(-8deg); opacity: 0.6; }
+    }
+    .preloader-brand { font-family: var(--font-heading); font-size: 2.4rem; font-weight: 400; color: var(--text); letter-spacing: 12px; opacity: 0; margin-top: 30px; }
+    .preloader-tagline { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; margin-top: 8px; opacity: 0; font-weight: 300; }
+
+    /* ======== NAVBAR ======== */
+    .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px 0; transition: all var(--transition); }
+    .navbar.scrolled { background: rgba(13,10,26,0.88); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); padding: 14px 0; border-bottom: 1px solid rgba(167,139,250,0.08); }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 400; color: var(--text); letter-spacing: 6px; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 0.82rem; font-weight: 400; color: var(--text-muted); transition: color var(--transition); position: relative; letter-spacing: 0.5px; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width var(--transition); }
+    .nav-links a:hover { color: var(--text); } .nav-links a:hover::after { width: 100%; }
+    .nav-cta { padding: 10px 26px; background: var(--accent); color: var(--background) !important; border-radius: 50px; font-weight: 600; font-size: 0.82rem; transition: all var(--transition); letter-spacing: 0.5px; }
+    .nav-cta:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(167,139,250,0.3); }
+    .nav-cta::after { display: none !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 1.5px; background: var(--text); transition: all var(--transition); }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+    .mobile-menu { position: fixed; top: 0; right: -100%; width: 300px; height: 100vh; background: var(--surface); z-index: 999; padding: 100px 40px 40px; transition: right 0.4s cubic-bezier(0.4,0,0.2,1); border-left: 1px solid rgba(167,139,250,0.08); }
+    .mobile-menu.active { right: 0; }
+    .mobile-menu a { display: block; font-size: 1.05rem; font-weight: 400; color: var(--text-muted); padding: 16px 0; border-bottom: 1px solid rgba(139,131,163,0.08); transition: color var(--transition); }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; pointer-events: none; transition: opacity var(--transition); }
+    .mobile-overlay.active { opacity: 1; pointer-events: all; }
+
+    /* ======== HERO ======== */
+    .hero { position: relative; width: 100%; height: 100vh; min-height: 700px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .hero-bg { position: absolute; inset: -5%; width: 110%; height: 110%; background: url('https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=1920&q=80') center/cover; filter: brightness(0.22) saturate(0.7); }
+    .hero-gradient { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,10,26,0.3) 0%, rgba(13,10,26,0.05) 40%, rgba(13,10,26,0.65) 75%, rgba(13,10,26,1) 100%); z-index: 2; }
+    .hero-particles-wrap { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+    .stage-particle { position: absolute; width: 3px; height: 3px; background: rgba(167,139,250,0.6); border-radius: 50%; opacity: 0; }
+    .hero-content { position: relative; z-index: 3; text-align: center; max-width: 720px; padding: 0 24px; }
+
+    .hero-eyebrow { font-size: 0.78rem; font-weight: 400; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; opacity: 0; }
+    .hero-title { font-family: var(--font-heading); font-size: clamp(2.6rem, 7vw, 4.5rem); font-weight: 400; line-height: 1.2; margin-bottom: 24px; }
+    .hero-title .highlight { color: var(--accent); }
+    .hero-subtitle { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 40px; opacity: 0; line-height: 1.8; font-weight: 300; }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; opacity: 0; }
+    .btn-primary { padding: 15px 38px; background: var(--accent); color: var(--background); border-radius: 50px; font-weight: 600; font-size: 0.9rem; transition: all var(--transition); display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(167,139,250,0.25); }
+    .btn-outline { padding: 15px 38px; border: 1px solid rgba(167,139,250,0.35); color: var(--accent); border-radius: 50px; font-weight: 500; font-size: 0.9rem; transition: all var(--transition); }
+    .btn-outline:hover { background: rgba(167,139,250,0.08); border-color: var(--accent); }
+    .scroll-indicator { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; cursor: pointer; }
+    .scroll-indicator span { font-size: 0.62rem; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; font-weight: 300; }
+    .scroll-line { width: 1px; height: 48px; background: rgba(255,255,255,0.12); position: relative; overflow: hidden; }
+    .scroll-dot { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 3px; height: 10px; background: var(--accent); border-radius: 3px; animation: scrollDot 2s ease-in-out infinite; }
+    @keyframes scrollDot { 0%, 100% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+    /* ======== MARQUEE ======== */
+    .marquee-section { padding: 36px 0; border-top: 1px solid rgba(167,139,250,0.06); border-bottom: 1px solid rgba(167,139,250,0.06); overflow: hidden; }
+    .marquee-track { display: flex; gap: 56px; animation: marquee 30s linear infinite; width: max-content; }
+    .marquee-item { font-family: var(--font-heading); font-size: 0.95rem; font-weight: 400; color: var(--text-muted); white-space: nowrap; opacity: 0.4; letter-spacing: 3px; }
+    .marquee-sep { color: var(--accent); opacity: 0.3; font-size: 0.5rem; display: flex; align-items: center; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ======== CLASSES CARDS ======== */
+    .classes-section { padding: 120px 0; }
+    .classes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .class-card { background: var(--surface); border: 1px solid rgba(167,139,250,0.06); border-radius: 16px; padding: 32px; transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); position: relative; overflow: hidden; }
+    .class-card::before { content: ''; position: absolute; inset: 0; border-radius: 16px; background: radial-gradient(ellipse at 50% 100%, rgba(167,139,250,0.06) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s ease; }
+    .class-card:hover { transform: translateY(-8px); border-color: rgba(167,139,250,0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(167,139,250,0.08); }
+    .class-card:hover::before { opacity: 1; }
+    .class-card-icon { font-size: 2rem; margin-bottom: 16px; }
+    .class-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .class-card h3 { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 400; }
+    .class-level { display: inline-block; padding: 3px 12px; border-radius: 50px; font-size: 0.65rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; }
+    .level-beginner { background: rgba(74,222,128,0.12); color: #4ADE80; }
+    .level-intermediate { background: rgba(251,191,36,0.12); color: #FBBF24; }
+    .level-advanced { background: rgba(167,139,250,0.12); color: var(--accent); }
+    .class-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; font-size: 0.82rem; color: var(--text-muted); font-weight: 300; }
+    .class-meta span { display: flex; align-items: center; gap: 4px; }
+    .class-card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; margin-bottom: 14px; }
+    .class-instructor { font-size: 0.78rem; color: var(--accent); font-weight: 500; letter-spacing: 0.5px; }
+
+    /* ======== SCHEDULE ======== */
+    .schedule-section { padding: 120px 0; background: var(--surface); }
+    .schedule-table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid rgba(167,139,250,0.06); }
+    .schedule-table { width: 100%; min-width: 750px; border-collapse: collapse; }
+    .schedule-table th { font-family: var(--font-heading); font-size: 0.95rem; font-weight: 400; padding: 18px 12px; background: rgba(167,139,250,0.04); color: var(--text); letter-spacing: 1px; border-bottom: 1px solid rgba(167,139,250,0.08); }
+    .schedule-table td { padding: 14px 10px; text-align: center; border-bottom: 1px solid rgba(139,131,163,0.06); font-size: 0.78rem; font-weight: 400; color: var(--text-muted); vertical-align: middle; transition: background 0.25s ease; min-height: 56px; }
+    .schedule-table tr:hover td { background: rgba(167,139,250,0.02); }
+    .schedule-table td.time-col { font-family: var(--font-body); font-weight: 500; color: var(--text); font-size: 0.82rem; letter-spacing: 0.5px; background: rgba(167,139,250,0.02); white-space: nowrap; min-width: 70px; }
+    .schedule-cell { display: inline-block; padding: 6px 12px; border-radius: 8px; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.5px; line-height: 1.3; cursor: default; transition: all 0.25s ease; }
+    .schedule-cell:hover { transform: scale(1.05); }
+    .cell-contemporary { background: rgba(167,139,250,0.15); color: #C4B5FD; }
+    .cell-hiphop { background: rgba(251,146,60,0.15); color: #FDBA74; }
+    .cell-ballet { background: rgba(244,114,182,0.15); color: #F9A8D4; }
+    .cell-jazz { background: rgba(74,222,128,0.15); color: #86EFAC; }
+    .cell-kpop { background: rgba(96,165,250,0.15); color: #93C5FD; }
+    .cell-stretch { background: rgba(94,234,212,0.15); color: #99F6E4; }
+    .schedule-legend { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 28px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-muted); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    /* ======== INSTRUCTORS ======== */
+    .instructors-section { padding: 120px 0; }
+    .instructors-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+    .instructor-card { text-align: center; padding: 36px 24px; background: var(--surface); border-radius: 20px; border: 1px solid rgba(167,139,250,0.06); transition: all 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .instructor-card:hover { transform: translateY(-8px) perspective(600px) rotateX(2deg) rotateY(-2deg); border-color: rgba(167,139,250,0.15); box-shadow: 0 24px 60px rgba(0,0,0,0.3), 0 0 40px rgba(167,139,250,0.06); }
+    .instructor-photo { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px; overflow: hidden; border: 3px solid rgba(167,139,250,0.15); transition: all 0.4s ease; position: relative; }
+    .instructor-card:hover .instructor-photo { border-color: var(--accent); box-shadow: 0 0 30px rgba(167,139,250,0.2); }
+    .instructor-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .instructor-card:hover .instructor-photo img { transform: scale(1.08); }
+    .instructor-card h3 { font-family: var(--font-heading); font-size: 1.15rem; font-weight: 400; margin-bottom: 4px; }
+    .instructor-title { font-size: 0.78rem; color: var(--accent); font-weight: 500; margin-bottom: 14px; letter-spacing: 0.5px; }
+    .instructor-certs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 14px; }
+    .cert-badge { padding: 3px 10px; background: rgba(167,139,250,0.06); border-radius: 50px; font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.5px; font-weight: 400; }
+    .instructor-specialty { font-size: 0.82rem; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
+
+    /* ======== GALLERY ======== */
+    .gallery-section { padding: 120px 0; background: var(--surface); }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .gallery-item { border-radius: 14px; overflow: hidden; aspect-ratio: 4/3; position: relative; cursor: pointer; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .gallery-item:hover img { transform: scale(1.06); }
+    .gallery-item::after { content: ''; position: absolute; inset: 0; border-radius: 14px; box-shadow: inset 0 0 30px rgba(167,139,250,0); transition: box-shadow 0.4s ease; }
+    .gallery-item:hover::after { box-shadow: inset 0 0 40px rgba(167,139,250,0.12); }
+
+    /* ======== FAQ ======== */
+    .faq-section { padding: 120px 0; }
+    .faq-list { max-width: 780px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid rgba(167,139,250,0.06); }
+    .faq-question { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; cursor: pointer; transition: color var(--transition); gap: 16px; }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question h3 { font-family: var(--font-heading); font-size: 1.08rem; font-weight: 400; }
+    .faq-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(167,139,250,0.06); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all var(--transition); font-size: 1.15rem; color: var(--accent); }
+    .faq-item.active .faq-icon { background: var(--accent); color: var(--background); transform: rotate(45deg); }
+    .faq-answer { height: 0; overflow: hidden; }
+    .faq-answer-inner { padding: 0 0 24px; color: var(--text-muted); line-height: 1.8; font-size: 0.92rem; font-weight: 300; }
+
+    /* ======== CONTACT ======== */
+    .contact-section { padding: 120px 0; background: var(--surface); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .contact-info h3 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 400; margin-bottom: 24px; }
+    .contact-detail { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+    .contact-detail-icon { width: 44px; height: 44px; background: rgba(167,139,250,0.06); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+    .contact-detail-text h4 { font-family: var(--font-heading); font-weight: 400; margin-bottom: 4px; font-size: 0.95rem; }
+    .contact-detail-text p { color: var(--text-muted); font-size: 0.88rem; font-weight: 300; }
+    .trial-card { margin-top: 32px; padding: 28px; background: linear-gradient(135deg, rgba(167,139,250,0.08), rgba(167,139,250,0.02)); border-radius: 16px; border: 1px solid rgba(167,139,250,0.12); position: relative; overflow: hidden; }
+    .trial-card::before { content: ''; position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(167,139,250,0.12), transparent 70%); border-radius: 50%; }
+    .trial-card h4 { font-family: var(--font-heading); font-weight: 400; font-size: 1.15rem; margin-bottom: 8px; color: var(--accent); }
+    .trial-card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; margin-bottom: 4px; }
+    .trial-price { font-family: var(--font-heading); font-size: 1.8rem; color: var(--text); margin-top: 12px; }
+    .trial-price small { font-family: var(--font-body); font-size: 0.78rem; color: var(--text-muted); font-weight: 300; }
+    .contact-form-container { background: var(--background); border-radius: 20px; padding: 40px; border: 1px solid rgba(167,139,250,0.06); }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 500; margin-bottom: 8px; color: var(--text-muted); letter-spacing: 1px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 14px 18px; background: var(--surface); border: 1px solid rgba(167,139,250,0.08); border-radius: 12px; color: var(--text); font-size: 0.92rem; transition: border-color var(--transition); font-weight: 300; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { min-height: 110px; resize: vertical; }
+    .form-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%23A78BFA'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+    .form-group select option { background: var(--surface); color: var(--text); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .btn-submit { width: 100%; padding: 16px; background: var(--accent); color: var(--background); border-radius: 12px; font-weight: 600; font-size: 0.92rem; cursor: pointer; transition: all var(--transition); border: none; letter-spacing: 0.5px; }
+    .btn-submit:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(167,139,250,0.2); }
+
+    /* ======== FOOTER ======== */
+    .footer { padding: 80px 0 40px; border-top: 1px solid rgba(167,139,250,0.06); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 400; margin-bottom: 16px; letter-spacing: 4px; }
+    .footer-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a { width: 40px; height: 40px; border-radius: 50%; background: rgba(167,139,250,0.06); display: flex; align-items: center; justify-content: center; transition: all var(--transition); font-size: 0.95rem; }
+    .footer-social a:hover { background: var(--accent); color: var(--background); }
+    .footer-col h4 { font-family: var(--font-heading); font-weight: 400; margin-bottom: 20px; font-size: 0.95rem; }
+    .footer-col a { display: block; font-size: 0.88rem; color: var(--text-muted); padding: 5px 0; transition: color var(--transition); font-weight: 300; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(167,139,250,0.06); text-align: center; font-size: 0.82rem; color: var(--text-muted); font-weight: 300; }
+
+    /* ======== RESPONSIVE ======== */
+    @media (max-width: 1024px) {
+      .classes-grid { grid-template-columns: repeat(2, 1fr); }
+      .instructors-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+  
+  
+  
+  
+
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .classes-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .hero-buttons .btn-primary, .hero-buttons .btn-outline { width: 100%; justify-content: center; text-align: center; max-width: 280px; }
+      .form-row { grid-template-columns: 1fr; }
+      .schedule-legend { gap: 12px; }
+    }
+    @media (max-width: 480px) {
+      .contact-form-container { padding: 24px; }
+      .instructors-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .trial-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======== PRELOADER ======== -->
+  <div id="preloader">
+    <div class="spotlight-loader">
+      <div class="spotlight-beam"></div>
+      <div class="spotlight-beam"></div>
+    </div>
+    <div class="preloader-brand">CADENCE</div>
+    <div class="preloader-tagline">Contemporary Dance & Movement Studio</div>
+  </div>
+
+  <!-- ======== NAVBAR ======== -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="nav-logo">CADENCE</a>
+      <div class="nav-links">
+        <a href="#classes">Classes</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#instructors">Instructors</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact" class="nav-cta">Enroll Now</a>
+      </div>
+      <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+  <div class="mobile-overlay" onclick="toggleMenu()"></div>
+  <div class="mobile-menu">
+    <a href="#classes" onclick="toggleMenu()">Classes</a>
+    <a href="#schedule" onclick="toggleMenu()">Schedule</a>
+    <a href="#instructors" onclick="toggleMenu()">Instructors</a>
+    <a href="#gallery" onclick="toggleMenu()">Gallery</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
+    <a href="#contact" onclick="toggleMenu()">Enroll Now</a>
+  </div>
+
+  <!-- ======== HERO ======== -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-particles-wrap" id="heroParticles"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Contemporary &middot; Hip Hop &middot; Ballet &middot; Jazz</div>
+      <h1 class="hero-title">Move Beyond<br><span class="highlight">Limits</span></h1>
+      <p class="hero-subtitle">Discover your rhythm, unleash your expression, and transform through movement.<br>At CADENCE, every step tells your story.</p>
+      <div class="hero-buttons">
+        <a href="#classes" class="btn-primary">Explore Classes &rarr;</a>
+        <a href="#contact" class="btn-outline">Book a Trial</a>
+      </div>
+    </div></div>
+    <div class="scroll-indicator"><span>Explore</span><div class="scroll-line"><div class="scroll-dot"></div></div></div>
+  </section>
+
+  <!-- ======== MARQUEE ======== -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item">CONTEMPORARY</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">HIP HOP</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">BALLET</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">JAZZ</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">K-POP</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">LYRICAL</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">TAP</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">STREET</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">CONTEMPORARY</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">HIP HOP</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">BALLET</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">JAZZ</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">K-POP</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">LYRICAL</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">TAP</span><span class="marquee-sep">&#9670;</span>
+      <span class="marquee-item">STREET</span><span class="marquee-sep">&#9670;</span>
+    </div>
+  </div>
+
+  <!-- ======== CLASSES CARDS ======== -->
+  <section id="classes" class="classes-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Our Classes</div>
+        <h2 class="section-title">Find Your Movement</h2>
+        <p class="section-desc">From beginner to advanced, our diverse class lineup is designed to challenge, inspire, and elevate every dancer.</p>
+      </div>
+      <div class="classes-grid">
+        <div class="class-card">
+          <div class="class-card-icon">&#128131;</div>
+          <div class="class-card-header">
+            <h3>Contemporary Dance</h3>
+            <span class="class-level level-intermediate">Intermediate</span>
+          </div>
+          <div class="class-meta"><span>&#9201; 60 min</span><span>&#128101; 12 students</span></div>
+          <p>Fluid movement combining modern technique with creative expression. Explore improvisation, floor work, and partnering.</p>
+          <div class="class-instructor">Instructor &mdash; Maya Chen</div>
+        </div>
+        <div class="class-card">
+          <div class="class-card-icon">&#127908;</div>
+          <div class="class-card-header">
+            <h3>Hip Hop</h3>
+            <span class="class-level level-beginner">Beginner</span>
+          </div>
+          <div class="class-meta"><span>&#9201; 55 min</span><span>&#128101; 15 students</span></div>
+          <p>High-energy choreography blending street dance, popping, and locking. No experience needed, just bring your energy.</p>
+          <div class="class-instructor">Instructor &mdash; DeShawn Williams</div>
+        </div>
+        <div class="class-card">
+          <div class="class-card-icon">&#129648;</div>
+          <div class="class-card-header">
+            <h3>Classical Ballet</h3>
+            <span class="class-level level-intermediate">Intermediate</span>
+          </div>
+          <div class="class-meta"><span>&#9201; 75 min</span><span>&#128101; 10 students</span></div>
+          <p>Traditional ballet technique with barre work, center exercises, and across-the-floor combinations. Builds strength and grace.</p>
+          <div class="class-instructor">Instructor &mdash; Elena Volkov</div>
+        </div>
+        <div class="class-card">
+          <div class="class-card-icon">&#10024;</div>
+          <div class="class-card-header">
+            <h3>Jazz Funk</h3>
+            <span class="class-level level-beginner">Beginner</span>
+          </div>
+          <div class="class-meta"><span>&#9201; 50 min</span><span>&#128101; 15 students</span></div>
+          <p>Sassy, sharp choreography fusing jazz foundations with contemporary pop dance. Perfect for music video style moves.</p>
+          <div class="class-instructor">Instructor &mdash; Priya Sharma</div>
+        </div>
+        <div class="class-card">
+          <div class="class-card-icon">&#127925;</div>
+          <div class="class-card-header">
+            <h3>K-Pop Choreography</h3>
+            <span class="class-level level-beginner">Beginner</span>
+          </div>
+          <div class="class-meta"><span>&#9201; 50 min</span><span>&#128101; 20 students</span></div>
+          <p>Learn the hottest K-Pop routines step by step. Fun, social, and high-energy group sessions.</p>
+          <div class="class-instructor">Instructor &mdash; Soo-Jin Park</div>
+        </div>
+        <div class="class-card">
+          <div class="class-card-icon">&#127754;</div>
+          <div class="class-card-header">
+            <h3>Stretch &amp; Flow</h3>
+            <span class="class-level level-beginner">Beginner</span>
+          </div>
+          <div class="class-meta"><span>&#9201; 45 min</span><span>&#128101; 20 students</span></div>
+          <p>Deep stretching, flexibility training, and mindful cooldown. Essential recovery for dancers at every level.</p>
+          <div class="class-instructor">Instructor &mdash; Maya Chen</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== WEEKLY SCHEDULE ======== -->
+  <section id="schedule" class="schedule-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Weekly Schedule</div>
+        <h2 class="section-title">Plan Your Week</h2>
+        <p class="section-desc">Find the perfect time and class to fit your schedule. Book your spot today.</p>
+      </div>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+              <th>Saturday</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="time-col">9:00 AM</td>
+              <td><span class="schedule-cell cell-contemporary">Contemporary<br>Maya</span></td>
+              <td><span class="schedule-cell cell-hiphop">Hip Hop<br>DeShawn</span></td>
+              <td><span class="schedule-cell cell-ballet">Ballet<br>Elena</span></td>
+              <td><span class="schedule-cell cell-contemporary">Contemporary<br>Maya</span></td>
+              <td><span class="schedule-cell cell-jazz">Jazz<br>Priya</span></td>
+              <td><span class="schedule-cell cell-kpop">K-Pop<br>Soo-Jin</span></td>
+            </tr>
+            <tr>
+              <td class="time-col">10:30 AM</td>
+              <td><span class="schedule-cell cell-ballet">Ballet<br>Elena</span></td>
+              <td><span class="schedule-cell cell-jazz">Jazz<br>Priya</span></td>
+              <td><span class="schedule-cell cell-contemporary">Contemporary<br>Maya</span></td>
+              <td><span class="schedule-cell cell-kpop">K-Pop<br>Soo-Jin</span></td>
+              <td><span class="schedule-cell cell-ballet">Ballet<br>Elena</span></td>
+              <td><span class="schedule-cell cell-contemporary">Contemporary<br>Maya</span></td>
+            </tr>
+            <tr>
+              <td class="time-col">12:00 PM</td>
+              <td><span class="schedule-cell cell-stretch">Stretch<br>Maya</span></td>
+              <td><span class="schedule-cell cell-kpop">K-Pop<br>Soo-Jin</span></td>
+              <td><span class="schedule-cell cell-hiphop">Hip Hop<br>DeShawn</span></td>
+              <td><span class="schedule-cell cell-stretch">Stretch<br>Maya</span></td>
+              <td><span class="schedule-cell cell-kpop">K-Pop<br>Soo-Jin</span></td>
+              <td><span class="schedule-cell cell-hiphop">Hip Hop<br>DeShawn</span></td>
+            </tr>
+            <tr>
+              <td class="time-col">2:00 PM</td>
+              <td><span class="schedule-cell cell-jazz">Jazz<br>Priya</span></td>
+              <td><span class="schedule-cell cell-ballet">Ballet<br>Elena</span></td>
+              <td><span class="schedule-cell cell-kpop">K-Pop<br>Soo-Jin</span></td>
+              <td><span class="schedule-cell cell-hiphop">Hip Hop<br>DeShawn</span></td>
+              <td><span class="schedule-cell cell-contemporary">Contemporary<br>Maya</span></td>
+              <td><span class="schedule-cell cell-ballet">Ballet<br>Elena</span></td>
+            </tr>
+            <tr>
+              <td class="time-col">5:00 PM</td>
+              <td><span class="schedule-cell cell-hiphop">Hip Hop<br>DeShawn</span></td>
+              <td><span class="schedule-cell cell-contemporary">Contemporary<br>Maya</span></td>
+              <td><span class="schedule-cell cell-jazz">Jazz<br>Priya</span></td>
+              <td><span class="schedule-cell cell-ballet">Ballet<br>Elena</span></td>
+              <td><span class="schedule-cell cell-hiphop">Hip Hop<br>DeShawn</span></td>
+              <td>&mdash;</td>
+            </tr>
+            <tr>
+              <td class="time-col">7:00 PM</td>
+              <td><span class="schedule-cell cell-kpop">K-Pop<br>Soo-Jin</span></td>
+              <td><span class="schedule-cell cell-stretch">Stretch<br>Maya</span></td>
+              <td><span class="schedule-cell cell-ballet">Ballet<br>Elena</span></td>
+              <td><span class="schedule-cell cell-jazz">Jazz<br>Priya</span></td>
+              <td><span class="schedule-cell cell-stretch">Stretch<br>Maya</span></td>
+              <td>&mdash;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="schedule-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(167,139,250,0.5);"></div>Contemporary</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(251,146,60,0.5);"></div>Hip Hop</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(244,114,182,0.5);"></div>Ballet</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(74,222,128,0.5);"></div>Jazz</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(96,165,250,0.5);"></div>K-Pop</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(94,234,212,0.5);"></div>Stretch &amp; Flow</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== INSTRUCTORS ======== -->
+  <section id="instructors" class="instructors-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Instructors</div>
+        <h2 class="section-title">Meet Your Teachers</h2>
+        <p class="section-desc">World-class dancers and educators dedicated to helping you find your voice through movement.</p>
+      </div>
+      <div class="instructors-grid">
+        <div class="instructor-card">
+          <div class="instructor-photo">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" alt="Maya Chen">
+          </div>
+          <h3>Maya Chen</h3>
+          <div class="instructor-title">Head Choreographer &middot; Contemporary</div>
+          <div class="instructor-certs">
+            <span class="cert-badge">Juilliard MFA</span>
+            <span class="cert-badge">12 Years Teaching</span>
+            <span class="cert-badge">Alvin Ailey Company</span>
+          </div>
+          <p class="instructor-specialty">Former principal dancer at Alvin Ailey. Specializes in contemporary fusion and improvisation.</p>
+        </div>
+        <div class="instructor-card">
+          <div class="instructor-photo">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="DeShawn Williams">
+          </div>
+          <h3>DeShawn Williams</h3>
+          <div class="instructor-title">Lead Instructor &middot; Hip Hop</div>
+          <div class="instructor-certs">
+            <span class="cert-badge">World of Dance</span>
+            <span class="cert-badge">MTV Awards</span>
+            <span class="cert-badge">BET Certified</span>
+          </div>
+          <p class="instructor-specialty">Toured with Beyonce and Chris Brown. Brings authentic street dance culture to every class.</p>
+        </div>
+        <div class="instructor-card">
+          <div class="instructor-photo">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80" alt="Elena Volkov">
+          </div>
+          <h3>Elena Volkov</h3>
+          <div class="instructor-title">Senior Instructor &middot; Ballet</div>
+          <div class="instructor-certs">
+            <span class="cert-badge">Royal Academy</span>
+            <span class="cert-badge">Bolshoi Graduate</span>
+            <span class="cert-badge">RAD Examiner</span>
+          </div>
+          <p class="instructor-specialty">Trained at the Bolshoi Academy. 15 years of classical ballet instruction experience.</p>
+        </div>
+        <div class="instructor-card">
+          <div class="instructor-photo">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80" alt="Priya Sharma">
+          </div>
+          <h3>Priya Sharma</h3>
+          <div class="instructor-title">Instructor &middot; Jazz &amp; K-Pop</div>
+          <div class="instructor-certs">
+            <span class="cert-badge">Broadway Experience</span>
+            <span class="cert-badge">Commercial Dance</span>
+            <span class="cert-badge">K-Pop Certified</span>
+          </div>
+          <p class="instructor-specialty">Broadway performer turned dance educator. Expert in jazz technique and K-Pop choreography.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== GALLERY ======== -->
+  <section id="gallery" class="gallery-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Our Space</div>
+        <h2 class="section-title">Studio Gallery</h2>
+        <p class="section-desc">Step inside our state-of-the-art studios where creativity and movement come alive.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1508807526345-15e9b5f4eaff?w=600&q=80" alt="Dancer in motion"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1547153760-18fc86324498?w=600&q=80" alt="Dance class"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=600&q=80" alt="Studio performance"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=600&q=80" alt="Dance rehearsal"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1535525153412-5a42439a210d?w=600&q=80" alt="Contemporary dance"></div>
+        <div class="gallery-item"><img src="https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=600&q=80" alt="Dance studio"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== FAQ ======== -->
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-desc">Everything you need to know before your first class at CADENCE.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question"><h3>Do I need dance experience to join?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">No experience necessary for Beginner classes. We welcome absolute beginners. Our Beginner-level classes like Hip Hop, Jazz Funk, K-Pop, and Stretch &amp; Flow are designed for first-timers. Our instructors break down each move step by step. Many of our students discovered their passion for dance right here at CADENCE.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>What should I wear to class?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">Wear comfortable, form-fitting clothing that allows full range of motion. Leggings or joggers with a fitted top work great. For Ballet, bring ballet slippers; for Hip Hop, clean sneakers; for Contemporary and Jazz, bare feet or half-sole shoes. Avoid jewelry and tie back long hair.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>How do memberships work?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">We offer flexible plans: Drop-In ($25/class), 10-Class Pass ($200, valid 3 months), Monthly Unlimited ($149/month), and Annual Unlimited ($1,290/year). All memberships include access to every class style. First-timers can try a Trial Class for just $15.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>Can I attend performances and recitals?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">Absolutely! CADENCE hosts seasonal showcases every quarter where students perform on our in-house stage. Our annual Winter Gala and Summer Spotlight are highlights of the year. All students are welcome to participate regardless of skill level.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question"><h3>Do you offer private lessons?</h3><span class="faq-icon">+</span></div>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes, private one-on-one lessons are available with all our instructors. Rates start at $75/hour. Private lessons are ideal for wedding first dances, audition preparation, or accelerated skill development. Contact us to schedule.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CONTACT ======== -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Contact</div>
+        <h2 class="section-title">Start Your Journey</h2>
+        <p class="section-desc">Book your trial class today. No commitment, no pressure &mdash; just movement.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h3>CADENCE Studio</h3>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#128205;</div>
+            <div class="contact-detail-text"><h4>Location</h4><p>234 Arts District Blvd, Suite 300<br>Los Angeles, CA 90013<br>2 blocks from 7th St Metro</p></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#128222;</div>
+            <div class="contact-detail-text"><h4>Phone</h4><p>(213) 555-0180</p></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#9993;&#65039;</div>
+            <div class="contact-detail-text"><h4>Email</h4><p>hello@cadencedance.com</p></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#128336;</div>
+            <div class="contact-detail-text"><h4>Hours</h4><p>Mon&ndash;Fri 8:00 AM &ndash; 10:00 PM<br>Sat 9:00 AM &ndash; 6:00 PM &middot; Sun Closed</p></div>
+          </div>
+          <div class="trial-card">
+            <h4>Your First Class &mdash; $15</h4>
+            <p>Experience any class with no commitment. See what CADENCE is all about and find your perfect style.</p>
+            <div class="trial-price">$15 <small>/ Trial Class</small></div>
+          </div>
+        </div>
+        <div class="contact-form-container">
+          <form onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group"><label>Name</label><input type="text" placeholder="Your full name" required></div>
+              <div class="form-group"><label>Phone</label><input type="tel" placeholder="(213) 555-0000" required></div>
+            </div>
+            <div class="form-group">
+              <label>Class Interest</label>
+              <select required>
+                <option value="">Select a class</option>
+                <option value="contemporary">Contemporary</option>
+                <option value="hiphop">Hip Hop</option>
+                <option value="ballet">Ballet</option>
+                <option value="jazz">Jazz Funk</option>
+                <option value="kpop">K-Pop</option>
+                <option value="stretch">Stretch &amp; Flow</option>
+                <option value="unsure">Not Sure Yet</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Experience Level</label>
+              <select required>
+                <option value="">Select your level</option>
+                <option value="none">Complete Beginner</option>
+                <option value="some">Some Dance Experience (0-1 year)</option>
+                <option value="intermediate">Intermediate (1-3 years)</option>
+                <option value="advanced">Advanced (3+ years)</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Message</label><textarea placeholder="Tell us about your goals, preferred schedule, or any questions you have" required></textarea></div>
+            <button type="submit" class="btn-submit">Book Your Trial</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== FOOTER ======== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">CADENCE</div>
+          <p class="footer-desc">Contemporary Dance &amp; Movement Studio. Discover your rhythm, unleash your expression, and transform through the art of dance in Los Angeles.</p>
+          <div class="footer-social"><a href="#">&#128247;</a><a href="#">&#128240;</a><a href="#">&#9654;&#65039;</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Classes</h4>
+          <a href="#">Contemporary</a>
+          <a href="#">Hip Hop</a>
+          <a href="#">Ballet</a>
+          <a href="#">Jazz Funk</a>
+          <a href="#">K-Pop</a>
+          <a href="#">Stretch &amp; Flow</a>
+        </div>
+        <div class="footer-col">
+          <h4>Info</h4>
+          <a href="#">Hours</a>
+          <a href="#">Location</a>
+          <a href="#">Membership</a>
+          <a href="#">Gift Cards</a>
+          <a href="#">Careers</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="#">FAQ</a>
+          <a href="#">Book a Trial</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2025 CADENCE Contemporary Dance &amp; Movement Studio. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <!-- ======== SCRIPTS ======== -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    /* ======== Hero floating stage-dust particles ======== */
+    (function() {
+      var wrap = document.getElementById('heroParticles');
+      for (var i = 0; i < 18; i++) {
+        var p = document.createElement('div');
+        p.className = 'stage-particle';
+        p.style.left = (Math.random() * 100) + '%';
+        p.style.top = (Math.random() * 100) + '%';
+        var size = 2 + Math.random() * 4;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.opacity = '0';
+        p.style.animation = 'stageDustFloat ' + (5 + Math.random() * 6) + 's ' + (Math.random() * 5) + 's cubic-bezier(0.22,0.61,0.36,1) infinite';
+        wrap.appendChild(p);
+      }
+      var styleEl = document.createElement('style');
+      styleEl.textContent = '@keyframes stageDustFloat{0%,100%{opacity:0;transform:translateY(0) translateX(0)}20%{opacity:0.4;transform:translateY(-15px) translateX(8px)}50%{opacity:0.25;transform:translateY(-35px) translateX(-5px)}80%{opacity:0.15;transform:translateY(-55px) translateX(10px)}100%{opacity:0;transform:translateY(-70px) translateX(0)}}';
+      document.head.appendChild(styleEl);
+    })();
+
+    /* ======== Preloader ======== */
+    (function() {
+      var p = document.getElementById('preloader');
+      var b = document.querySelector('.preloader-brand');
+      var t = document.querySelector('.preloader-tagline');
+      var tl = gsap.timeline();
+      tl.to(b, { opacity: 1, duration: 1, ease: 'power2.out' }, 1.2);
+      tl.to(t, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 1.8);
+      tl.to(p, { opacity: 0, duration: 0.8, delay: 0.6, ease: 'power2.inOut', onComplete: function() { p.style.display = 'none'; initAnimations(); } });
+    })();
+
+    /* ======== Mobile Menu ======== */
+    function toggleMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-overlay').classList.toggle('active');
+    }
+
+    /* ======== IntersectionObserver Reveal System ======== */
+    var revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        revealObserver.unobserve(el);
+        var delay = parseFloat(el.dataset.revealDelay || '0');
+        gsap.fromTo(el,
+          { opacity: 0, y: parseFloat(el.dataset.revealY || '0'), x: parseFloat(el.dataset.revealX || '0'), scale: parseFloat(el.dataset.revealScale || '1') },
+          { opacity: 1, y: 0, x: 0, scale: 1, duration: parseFloat(el.dataset.revealDuration || '0.7'), delay: delay, ease: 'power3.out' }
+        );
+      });
+    }, { threshold: 0.1 });
+
+    function setupReveal(selector, opts) {
+      opts = opts || {};
+      var y = opts.y !== undefined ? opts.y : 40;
+      var x = opts.x !== undefined ? opts.x : 0;
+      var scale = opts.scale !== undefined ? opts.scale : 1;
+      var duration = opts.duration !== undefined ? opts.duration : 0.7;
+      var staggerDelay = opts.staggerDelay !== undefined ? opts.staggerDelay : 0;
+      document.querySelectorAll(selector).forEach(function(el, i) {
+        el.style.opacity = '0';
+        el.dataset.revealY = String(y);
+        el.dataset.revealX = String(x);
+        el.dataset.revealScale = String(scale);
+        el.dataset.revealDuration = String(duration);
+        el.dataset.revealDelay = String(i * staggerDelay);
+        revealObserver.observe(el);
+      });
+    }
+
+    /* ======== Main Animations ======== */
+    function initAnimations() {
+      /* Navbar scroll */
+      window.addEventListener('scroll', function() {
+        document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 50);
+      });
+
+      /* Hero stagger */
+      var hero = gsap.timeline();
+      hero.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 0.2);
+      hero.from('.hero-title', { opacity: 0, y: 50, duration: 1, ease: 'power2.out' }, 0.5);
+      hero.to('.hero-subtitle', { opacity: 1, duration: 0.8, ease: 'power2.out' }, 1.2);
+      hero.to('.hero-buttons', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 1.6);
+      hero.to('.scroll-indicator', { opacity: 1, duration: 0.6, ease: 'power2.out' }, 2.0);
+
+      /* Hero parallax (simple scroll listener, no ScrollTrigger) */
+      var heroBg = document.querySelector('.hero-bg');
+      var heroSection = document.querySelector('.hero');
+      window.addEventListener('scroll', function() {
+        var scrollY = window.pageYOffset;
+        var heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        if (scrollY < heroBottom) {
+          var progress = scrollY / heroBottom;
+          gsap.set(heroBg, { y: scrollY * 0.18 });
+        }
+      });
+
+      /* Scroll reveal animations using IntersectionObserver */
+      /* Section headers */
+      setupReveal('.classes-section .section-header', { y: 40 });
+      setupReveal('.schedule-section .section-header', { y: 40 });
+      setupReveal('.instructors-section .section-header', { y: 40 });
+      setupReveal('.gallery-section .section-header', { y: 40 });
+      setupReveal('.faq-section .section-header', { y: 40 });
+      setupReveal('.contact-section .section-header', { y: 40 });
+
+      /* Class cards */
+      setupReveal('.class-card', { y: 50, staggerDelay: 0.1 });
+
+      /* Schedule table wrap */
+      setupReveal('.schedule-table-wrap', { y: 40 });
+
+      /* Instructor cards */
+      setupReveal('.instructor-card', { y: 50, staggerDelay: 0.12 });
+
+      /* Gallery items */
+      setupReveal('.gallery-item', { y: 40, staggerDelay: 0.08 });
+
+      /* FAQ items */
+      setupReveal('.faq-item', { y: 30, staggerDelay: 0.1 });
+
+      /* Contact info and form */
+      setupReveal('.contact-info', { x: -50, y: 0 });
+      setupReveal('.contact-form-container', { x: 50, y: 0 });
+
+      /* Footer grid children */
+      setupReveal('.footer-grid > *', { y: 30, staggerDelay: 0.1 });
+    }
+
+    /* ======== FAQ Accordion ======== */
+    (function() {
+      document.querySelectorAll('.faq-item').forEach(function(item) {
+        var q = item.querySelector('.faq-question');
+        var a = item.querySelector('.faq-answer');
+        var inner = item.querySelector('.faq-answer-inner');
+        q.addEventListener('click', function() {
+          var isActive = item.classList.contains('active');
+          document.querySelectorAll('.faq-item').forEach(function(o) {
+            if (o !== item && o.classList.contains('active')) {
+              o.classList.remove('active');
+              gsap.to(o.querySelector('.faq-answer'), { height: 0, duration: 0.45, ease: 'power2.inOut' });
+            }
+          });
+          if (isActive) {
+            item.classList.remove('active');
+            gsap.to(a, { height: 0, duration: 0.45, ease: 'power2.inOut' });
+          } else {
+            item.classList.add('active');
+            gsap.to(a, { height: inner.offsetHeight, duration: 0.45, ease: 'power2.inOut' });
+          }
+        });
+      });
+    })();
+
+    /* ======== Form Submit ======== */
+    function handleSubmit(e) {
+      e.preventDefault();
+      var btn = e.target.querySelector('.btn-submit');
+      var original = btn.textContent;
+      btn.textContent = 'Booking Confirmed!';
+      btn.style.background = '#22C55E';
+      gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.35, ease: 'back.out(1.7)' });
+      setTimeout(function() {
+        btn.textContent = original;
+        btn.style.background = '';
+        e.target.reset();
+      }, 2500);
+    }
+
+    /* ======== Smooth Scroll ======== */
+    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

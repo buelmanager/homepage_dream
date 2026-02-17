@@ -6,7 +6,6 @@ import {
   Globe,
   Layers,
   Calendar,
-  Languages,
   Eye,
   Heart,
 } from "lucide-react";
@@ -20,10 +19,12 @@ import {
 } from "@/components/ui/card";
 import { DevicePreview } from "@/components/template/device-preview";
 import { PurchaseCard } from "@/components/template/purchase-card";
+import { AdminEditPanel } from "@/components/template/admin-edit-panel";
 import { ViewCounter } from "@/components/template/view-counter";
 import { CATEGORIES } from "@/types";
 import type { SectionItem } from "@/types";
 import { getCatalogTemplateBySlug } from "@/lib/template-catalog";
+import { auth } from "@/lib/auth";
 
 export async function generateMetadata({
   params,
@@ -49,8 +50,10 @@ export default async function TemplateDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const session = await auth();
+  const isAdmin = session?.user?.role === "ADMIN";
 
-  const template = await getCatalogTemplateBySlug(slug, { publishedOnly: true });
+  const template = await getCatalogTemplateBySlug(slug, { publishedOnly: !isAdmin });
   
   if (!template) {
     notFound();
@@ -131,6 +134,8 @@ export default async function TemplateDetailPage({
           </div>
 
           <aside className="flex flex-col gap-4">
+            {isAdmin && <AdminEditPanel template={template} />}
+
             <Card className="border-border/50 shadow-md">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -147,13 +152,6 @@ export default async function TemplateDetailPage({
                     </span>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <span className="text-muted-foreground">Language</span>
-                    <span className="flex items-center gap-1 font-semibold">
-                      <Languages className="size-3.5" />
-                      {template.language}
-                    </span>
-                  </div>
-                  <div className="col-span-2 flex flex-col gap-1">
                     <span className="text-muted-foreground">Created</span>
                     <span className="flex items-center gap-1 font-semibold">
                       <Calendar className="size-3.5" />

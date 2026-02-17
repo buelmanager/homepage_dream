@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { lemonRequest } from "@/lib/lemonsqueezy";
+import { getLemonStoreId, getLemonVariantId } from "@/lib/app-settings";
 
 const SUBSCRIPTION_PLANS = {
   BASIC: { price: 10, monthlyLimit: 3, label: "Basic" },
@@ -10,15 +11,6 @@ const SUBSCRIPTION_PLANS = {
 };
 
 type PlanKey = keyof typeof SUBSCRIPTION_PLANS;
-
-function getVariantIdForPlan(plan: PlanKey) {
-  const mapping = {
-    BASIC: process.env.LEMONSQUEEZY_VARIANT_ID_BASIC,
-    STANDARD: process.env.LEMONSQUEEZY_VARIANT_ID_STANDARD,
-    PREMIUM: process.env.LEMONSQUEEZY_VARIANT_ID_PREMIUM,
-  };
-  return mapping[plan];
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,18 +40,41 @@ export async function POST(request: NextRequest) {
 
     const planKey = plan as PlanKey;
     const planConfig = SUBSCRIPTION_PLANS[planKey];
-    const storeId = process.env.LEMONSQUEEZY_STORE_ID;
-    const variantId = getVariantIdForPlan(planKey);
-
-    if (!storeId || !variantId) {
-      return NextResponse.json(
-        { error: "Missing Lemon Squeezy store/variant configuration" },
-        { status: 500 }
-      );
-    }
+    const storeId = await getLemonStoreId();
+    const variantId = await getLemonVariantId(planKey);
 
     const origin = request.headers.get("origin") || request.nextUrl.origin;
     const successUrl = `${origin}/profile?checkout=success`;
+
+    // Test mode: Lemon Squeezy not configured → create subscription directly
+    if (!storeId || !variantId) {
+      // Cancel existing active subscriptions
+      await prisma.subscription.updateMany({
+        where: { userId: user.id, status: "ACTIVE" },
+        data: { status: "CANCELLED" },
+      });
+
+      await prisma.subscription.create({
+        data: {
+          userId: user.id,
+          plan: planKey,
+          status: "ACTIVE",
+          monthlyLimit: planConfig.monthlyLimit,
+          price: planConfig.price,
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        url: successUrl,
+        plan: planConfig.label,
+        testMode: true,
+      });
+    }
+
+    // Production mode: Lemon Squeezy checkout
     const checkoutResp = await lemonRequest<{
       data: { attributes?: { url?: string } };
     }>("/checkouts", {

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Layers, Globe } from "lucide-react";
+import { ArrowRight, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { TemplateWithSections } from "@/types";
@@ -94,10 +94,6 @@ export function TemplateCard({ template }: TemplateCardProps) {
             <span className="flex items-center gap-1">
               <Layers className="size-3" />
               {template.sections.length}
-            </span>
-            <span className="flex items-center gap-1">
-              <Globe className="size-3" />
-              {template.language}
             </span>
           </div>
         </div>

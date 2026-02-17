@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import {
   getDefaultSignupCredits,
   setDefaultSignupCredits,
+  getLemonSettings,
+  setLemonSettings,
 } from "@/lib/app-settings";
 
 async function requireAdmin() {
@@ -20,24 +22,42 @@ export async function GET() {
   const guard = await requireAdmin();
   if ("error" in guard) return guard.error;
 
-  const defaultSignupCredits = await getDefaultSignupCredits();
-  return NextResponse.json({ defaultSignupCredits });
+  const [defaultSignupCredits, lemon] = await Promise.all([
+    getDefaultSignupCredits(),
+    getLemonSettings(),
+  ]);
+
+  return NextResponse.json({ defaultSignupCredits, lemon });
 }
 
 export async function PATCH(request: Request) {
   const guard = await requireAdmin();
   if ("error" in guard) return guard.error;
 
-  const body = (await request.json()) as { defaultSignupCredits?: number };
-  const value = Number(body.defaultSignupCredits);
+  const body = (await request.json()) as {
+    defaultSignupCredits?: number;
+    lemon?: {
+      storeId?: string;
+      variantIdBasic?: string;
+      variantIdStandard?: string;
+      variantIdPremium?: string;
+    };
+  };
 
-  if (!Number.isFinite(value) || value < 0 || value > 100000) {
-    return NextResponse.json(
-      { error: "defaultSignupCredits must be between 0 and 100000" },
-      { status: 400 }
-    );
+  if (body.defaultSignupCredits !== undefined) {
+    const value = Number(body.defaultSignupCredits);
+    if (!Number.isFinite(value) || value < 0 || value > 100000) {
+      return NextResponse.json(
+        { error: "defaultSignupCredits must be between 0 and 100000" },
+        { status: 400 }
+      );
+    }
+    await setDefaultSignupCredits(value);
   }
 
-  await setDefaultSignupCredits(value);
-  return NextResponse.json({ success: true, defaultSignupCredits: Math.floor(value) });
+  if (body.lemon) {
+    await setLemonSettings(body.lemon);
+  }
+
+  return NextResponse.json({ success: true });
 }

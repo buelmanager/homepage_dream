@@ -86,8 +86,8 @@ function TemplateGrid({
   if (templates.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <Package className="mb-3 h-10 w-10 text-stone-300" />
-        <p className="text-sm text-stone-500">{emptyMessage}</p>
+        <Package className="mb-3 h-10 w-10 text-muted-foreground/40" />
+        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
         <Link href="/templates">
           <Button variant="outline" className="mt-4" size="sm">
             Browse Templates
@@ -104,10 +104,10 @@ function TemplateGrid({
         return (
           <Card
             key={item.id}
-            className="group overflow-hidden border-stone-200/80 transition-all hover:border-stone-300 hover:shadow-md"
+            className="group overflow-hidden border-border/80 transition-all hover:border-border hover:shadow-md"
           >
             <Link href={`/templates/${t.slug}`}>
-              <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
+              <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                 {t.thumbnailUrl ? (
                   <Image
                     src={t.thumbnailUrl}
@@ -117,7 +117,7 @@ function TemplateGrid({
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-sm text-stone-400">
+                  <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
                     No preview
                   </div>
                 )}
@@ -126,12 +126,12 @@ function TemplateGrid({
             <CardContent className="p-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <h3 className="truncate text-sm font-medium text-stone-800">
+                  <h3 className="truncate text-sm font-medium text-foreground">
                     {t.title}
                   </h3>
                   <Badge
                     variant="secondary"
-                    className="mt-1 bg-stone-100 text-stone-500 text-xs capitalize"
+                    className="mt-1 text-xs capitalize"
                   >
                     {t.category}
                   </Badge>
@@ -140,7 +140,7 @@ function TemplateGrid({
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="shrink-0 h-8 w-8 p-0 text-stone-400 hover:text-stone-700"
+                    className="shrink-0 h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
                   >
                     <Download className="h-4 w-4" />
                   </Button>
@@ -180,7 +180,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     console.log("[Profile] useEffect triggered - status:", status);
-    
+
     if (status === "unauthenticated") {
       console.log("[Profile] Unauthenticated - redirecting to /signin");
       router.push("/signin");
@@ -189,7 +189,7 @@ export default function ProfilePage() {
 
     if (status === "authenticated") {
       console.log("[Profile] Authenticated - fetching data...");
-      
+
       Promise.allSettled([
         fetchWithTimeout("/api/credits", 30000).then((r) => {
           console.log("[Profile] /api/credits response:", r.status, r.ok);
@@ -219,20 +219,20 @@ export default function ProfilePage() {
       ])
         .then((results) => {
           console.log("[Profile] All requests completed:", results);
-          
+
           const creditsData = results[0].status === "fulfilled" ? results[0].value : null;
           const favData = results[1].status === "fulfilled" ? results[1].value : null;
           const bookData = results[2].status === "fulfilled" ? results[2].value : null;
           const subData = results[3].status === "fulfilled" ? results[3].value : null;
           const transData = results[4].status === "fulfilled" ? results[4].value : null;
-          
+
           setCredits(creditsData?.credits ?? 0);
           setFavorites(favData?.favorites ?? []);
           setBookmarks(bookData?.bookmarks ?? []);
           setSubscription(subData?.subscription ?? null);
           setTransactions(transData?.transactions ?? []);
           setLoading(false);
-          
+
           const failedRequests = results.filter(r => r.status === "rejected");
           if (failedRequests.length > 0) {
             console.warn("[Profile] Some requests failed:", failedRequests);
@@ -272,8 +272,8 @@ export default function ProfilePage() {
     console.log("[Profile] Showing loader - status:", status, "loading:", loading);
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-stone-400" />
-        <div className="ml-4 text-sm text-stone-500">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="ml-4 text-sm text-muted-foreground">
           {status === "loading" ? "Checking session..." : "Loading profile..."}
         </div>
       </div>
@@ -296,56 +296,58 @@ export default function ProfilePage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white">
+      <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
         <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-10 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-            <Avatar className="h-20 w-20 border-2 border-stone-200 shadow-lg">
+            <Avatar className="h-20 w-20 border-2 border-border shadow-lg">
               <AvatarImage src={user.image ?? undefined} alt={user.name ?? ""} />
-              <AvatarFallback className="bg-gradient-to-br from-stone-800 to-stone-950 text-xl font-semibold text-white">
+              <AvatarFallback className="bg-gradient-to-br from-foreground/80 to-foreground text-xl font-semibold text-background">
                 {initials}
               </AvatarFallback>
             </Avatar>
 
             <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                 {user.name ?? "User"}
               </h1>
-              <p className="mt-0.5 text-sm text-stone-500">{user.email}</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">{user.email}</p>
 
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50/60 px-4 py-2">
-                  <Coins className="h-5 w-5 text-amber-600" />
-                  <span className="text-lg font-bold tabular-nums text-amber-800">
-                    {credits.toLocaleString()}
-                  </span>
-                  <span className="text-sm text-amber-600">credits</span>
-                </div>
+              {user.role === "ADMIN" && (
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <div className="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50/60 px-4 py-2 dark:border-amber-900/50 dark:bg-amber-950/30">
+                    <Coins className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    <span className="text-lg font-bold tabular-nums text-amber-800 dark:text-amber-200">
+                      {credits.toLocaleString()}
+                    </span>
+                    <span className="text-sm text-amber-600 dark:text-amber-400">credits</span>
+                  </div>
 
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    placeholder="Amount"
-                    value={topUpAmount}
-                    onChange={(e) => setTopUpAmount(e.target.value)}
-                    className="h-9 w-24 rounded-lg border border-stone-200 bg-white px-3 text-sm tabular-nums text-stone-800 placeholder:text-stone-400 focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-300"
-                    min="1"
-                    max="10000"
-                  />
-                  <Button
-                    size="sm"
-                    onClick={handleTopUp}
-                    disabled={toppingUp || !topUpAmount}
-                    className="gap-1 bg-stone-900 text-white hover:bg-stone-800"
-                  >
-                    {toppingUp ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Plus className="h-3.5 w-3.5" />
-                    )}
-                    Top Up
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      placeholder="Amount"
+                      value={topUpAmount}
+                      onChange={(e) => setTopUpAmount(e.target.value)}
+                      className="h-9 w-24 rounded-lg border border-border bg-background px-3 text-sm tabular-nums text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
+                      min="1"
+                      max="10000"
+                    />
+                    <Button
+                      size="sm"
+                      onClick={handleTopUp}
+                      disabled={toppingUp || !topUpAmount}
+                      className="gap-1"
+                    >
+                      {toppingUp ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Plus className="h-3.5 w-3.5" />
+                      )}
+                      Top Up
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -368,12 +370,12 @@ export default function ProfilePage() {
                 </div>
               </div>
               <CardContent className="grid grid-cols-2 gap-4 p-6">
-                <div className="rounded-lg bg-stone-50 p-4">
-                  <p className="text-sm text-stone-500">Downloads This Month</p>
-                  <p className="text-2xl font-bold text-stone-900">
+                <div className="rounded-lg bg-muted p-4">
+                  <p className="text-sm text-muted-foreground">Downloads This Month</p>
+                  <p className="text-2xl font-bold text-foreground">
                     {subscription.usedCount} / {subscription.monthlyLimit}
                   </p>
-                  <div className="mt-2 h-2 rounded-full bg-stone-200">
+                  <div className="mt-2 h-2 rounded-full bg-muted-foreground/20">
                     <div
                       className="h-2 rounded-full bg-amber-500"
                       style={{
@@ -382,18 +384,18 @@ export default function ProfilePage() {
                     />
                   </div>
                 </div>
-                <div className="rounded-lg bg-stone-50 p-4">
-                  <p className="text-sm text-stone-500">Available Downloads</p>
-                  <p className="text-2xl font-bold text-stone-900">
+                <div className="rounded-lg bg-muted p-4">
+                  <p className="text-sm text-muted-foreground">Available Downloads</p>
+                  <p className="text-2xl font-bold text-foreground">
                     {remainingDownloads}
                   </p>
-                  <p className="mt-2 text-sm text-stone-500">
+                  <p className="mt-2 text-sm text-muted-foreground">
                     <Calendar className="mr-1 inline h-3.5 w-3.5" />
                     Renews {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
                   </p>
                 </div>
               </CardContent>
-              <div className="flex gap-2 border-t border-stone-100 p-4">
+              <div className="flex gap-2 border-t border-border p-4">
                 <Button
                   variant="outline"
                   className="flex-1 gap-2"
@@ -407,18 +409,18 @@ export default function ProfilePage() {
           )}
 
           {!subscription && (
-            <Card className="mb-8 border-amber-200 bg-amber-50">
+            <Card className="mb-8 border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/30">
               <CardContent className="flex items-center justify-between p-6">
                 <div>
-                  <h3 className="font-semibold text-amber-900">
+                  <h3 className="font-semibold text-amber-900 dark:text-amber-100">
                     Subscribe for More Downloads
                   </h3>
-                  <p className="text-sm text-amber-700">
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
                     Get up to 15 downloads per month starting at $10
                   </p>
                 </div>
                 <Button
-                  className="gap-2 bg-amber-600 hover:bg-amber-700"
+                  className="gap-2 bg-amber-600 hover:bg-amber-700 dark:bg-amber-600 dark:hover:bg-amber-500"
                   onClick={() => setShowSubscriptionModal(true)}
                 >
                   <Crown className="h-4 w-4" />
@@ -429,12 +431,12 @@ export default function ProfilePage() {
           )}
 
           <Tabs defaultValue="purchased" className="w-full">
-            <TabsList className="bg-stone-100 w-full sm:w-auto">
+            <TabsList className="w-full sm:w-auto">
               <TabsTrigger value="purchased" className="gap-1.5">
                 <ShoppingBag className="h-3.5 w-3.5" />
                 Purchased
                 {purchases.length > 0 && (
-                  <span className="ml-1 rounded-full bg-stone-200 px-1.5 text-xs tabular-nums">
+                  <span className="ml-1 rounded-full bg-muted px-1.5 text-xs tabular-nums">
                     {purchases.length}
                   </span>
                 )}
@@ -443,7 +445,7 @@ export default function ProfilePage() {
                 <History className="h-3.5 w-3.5" />
                 Transactions
                 {transactions.length > 0 && (
-                  <span className="ml-1 rounded-full bg-stone-200 px-1.5 text-xs tabular-nums">
+                  <span className="ml-1 rounded-full bg-muted px-1.5 text-xs tabular-nums">
                     {transactions.length}
                   </span>
                 )}
@@ -452,7 +454,7 @@ export default function ProfilePage() {
                 <Heart className="h-3.5 w-3.5" />
                 Favorites
                 {favorites.length > 0 && (
-                  <span className="ml-1 rounded-full bg-stone-200 px-1.5 text-xs tabular-nums">
+                  <span className="ml-1 rounded-full bg-muted px-1.5 text-xs tabular-nums">
                     {favorites.length}
                   </span>
                 )}
@@ -461,7 +463,7 @@ export default function ProfilePage() {
                 <Bookmark className="h-3.5 w-3.5" />
                 Bookmarks
                 {bookmarks.length > 0 && (
-                  <span className="ml-1 rounded-full bg-stone-200 px-1.5 text-xs tabular-nums">
+                  <span className="ml-1 rounded-full bg-muted px-1.5 text-xs tabular-nums">
                     {bookmarks.length}
                   </span>
                 )}
@@ -479,22 +481,22 @@ export default function ProfilePage() {
             <TabsContent value="transactions" className="mt-6">
               {transactions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <History className="mb-3 h-10 w-10 text-stone-300" />
-                  <p className="text-sm text-stone-500">No transactions yet</p>
+                  <History className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">No transactions yet</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {transactions.map((tx) => (
                     <div
                       key={tx.id}
-                      className="flex items-center justify-between rounded-lg border border-stone-200 bg-white p-4"
+                      className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className={`flex h-10 w-10 items-center justify-center rounded-full ${
                             tx.amount > 0
-                              ? "bg-green-100 text-green-600"
-                              : "bg-red-100 text-red-600"
+                              ? "bg-green-100 text-green-600 dark:bg-green-950/50 dark:text-green-400"
+                              : "bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400"
                           }`}
                         >
                           {tx.amount > 0 ? (
@@ -504,7 +506,7 @@ export default function ProfilePage() {
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-stone-800">
+                          <p className="font-medium text-foreground">
                             {tx.type === "TOP_UP"
                               ? "Credit Top Up"
                               : tx.type === "PURCHASE"
@@ -513,7 +515,7 @@ export default function ProfilePage() {
                               ? "Subscription"
                               : tx.type}
                           </p>
-                          <p className="text-sm text-stone-500">
+                          <p className="text-sm text-muted-foreground">
                             {tx.description || tx.type}
                           </p>
                         </div>
@@ -521,13 +523,15 @@ export default function ProfilePage() {
                       <div className="text-right">
                         <p
                           className={`font-semibold ${
-                            tx.amount > 0 ? "text-green-600" : "text-red-600"
+                            tx.amount > 0
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-red-600 dark:text-red-400"
                           }`}
                         >
                           {tx.amount > 0 ? "+" : ""}
                           {tx.amount}
                         </p>
-                        <p className="text-xs text-stone-400">
+                        <p className="text-xs text-muted-foreground">
                           {new Date(tx.createdAt).toLocaleDateString()}
                         </p>
                       </div>

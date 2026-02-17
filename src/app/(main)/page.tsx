@@ -68,7 +68,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-2xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/50 px-3.5 py-1.5 text-xs text-muted-foreground">
               <Sparkles className="size-3" />
-              <span className="font-medium">{sectionCount.toLocaleString()}+ Components Available</span>
+              <span className="font-medium">{templateCount.toLocaleString()}+ Templates Available</span>
             </div>
 
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">

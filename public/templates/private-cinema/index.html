@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VELVET SCREEN — Private Cinema Experience</title>
+  <meta name="description" content="VELVET SCREEN - Your Story, Your Screen. Boutique private cinema with Dolby Atmos, 4K laser projection, gourmet dining, and VIP lounges.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #1A1A1A;
+      --accent: #C41E3A;
+      --accent-hover: #A01830;
+      --background: #0D0D0D;
+      --surface: #1A1A1A;
+      --text: #F5F0EB;
+      --text-muted: #8A8078;
+      --font-heading: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --container: 1200px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-body); background: var(--background); color: var(--text); overflow-x: hidden; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    ul, ol { list-style: none; }
+    img { max-width: 100%; display: block; }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; color: inherit; }
+    input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; background: transparent; border: none; outline: none; }
+
+    .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+    .section-label { font-family: var(--font-heading); font-size: 0.85rem; font-weight: 400; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 400; line-height: 1.1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+    .section-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 560px; line-height: 1.7; font-weight: 300; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* SECTION DIVIDER — Red line with diamond */
+    .section-divider { display: flex; align-items: center; justify-content: center; padding: 0 24px; margin: 0 auto; max-width: 600px; }
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+    .section-divider .diamond {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      transform: rotate(45deg);
+      margin: 0 16px;
+      flex-shrink: 0;
+      opacity: 0.6;
+    }
+
+    /* PRELOADER — Film Countdown */
+    #preloader {
+      position: fixed; inset: 0; background: var(--background); z-index: 10000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .countdown-circle {
+      width: 120px; height: 120px; position: relative; margin-bottom: 40px;
+    }
+    .countdown-circle svg {
+      width: 120px; height: 120px; transform: rotate(-90deg);
+    }
+    .countdown-circle .circle-bg {
+      fill: none; stroke: rgba(196,30,58,0.15); stroke-width: 3;
+    }
+    .countdown-circle .circle-progress {
+      fill: none; stroke: var(--accent); stroke-width: 3;
+      stroke-dasharray: 339.292; stroke-dashoffset: 339.292;
+      stroke-linecap: round; transition: stroke-dashoffset 0.8s ease-in-out;
+    }
+    .countdown-number {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-family: var(--font-heading); font-size: 3.5rem; color: var(--text);
+      letter-spacing: 2px; opacity: 0;
+    }
+    .sweep-loader { width: 200px; height: 2px; background: rgba(196,30,58,0.15); border-radius: 2px; overflow: hidden; position: relative; margin-bottom: 30px; }
+    .sweep-light { position: absolute; top: 0; left: -50%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, var(--accent), transparent); animation: sweepAnim 1.5s ease-in-out infinite; }
+    @keyframes sweepAnim { 0% { left: -50%; } 100% { left: 100%; } }
+    .preloader-brand { font-family: var(--font-heading); font-size: 2.4rem; color: var(--text); letter-spacing: 8px; text-transform: uppercase; opacity: 0; }
+    .preloader-brand span { color: var(--accent); }
+    .preloader-tagline { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 5px; text-transform: uppercase; margin-top: 8px; opacity: 0; font-weight: 400; }
+
+    /* NAVBAR */
+    .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px 0; transition: all var(--transition); }
+    .navbar.scrolled { background: rgba(13,13,13,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 14px 0; border-bottom: 1px solid rgba(196,30,58,0.1); }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.5rem; color: var(--text); letter-spacing: 5px; text-transform: uppercase; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); transition: color var(--transition); position: relative; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent); transition: width var(--transition); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { padding: 10px 24px; background: var(--accent); color: var(--text) !important; border-radius: 4px; font-weight: 700; font-size: 0.8rem; letter-spacing: 2px; transition: all var(--transition); text-transform: uppercase; }
+    .nav-cta:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(196,30,58,0.3); }
+    .nav-cta::after { display: none !important; }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); transition: all var(--transition); }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    .mobile-menu { position: fixed; top: 0; right: -100%; width: 300px; height: 100vh; background: var(--surface); z-index: 999; padding: 100px 40px 40px; transition: right 0.4s cubic-bezier(0.4,0,0.2,1); border-left: 1px solid rgba(196,30,58,0.1); }
+    .mobile-menu.active { right: 0; }
+    .mobile-menu a { display: block; font-size: 1.1rem; font-weight: 500; color: var(--text-muted); padding: 16px 0; border-bottom: 1px solid rgba(138,128,120,0.1); transition: color var(--transition); text-transform: uppercase; letter-spacing: 1px; }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 998; opacity: 0; pointer-events: none; transition: opacity var(--transition); }
+    .mobile-overlay.active { opacity: 1; pointer-events: all; }
+
+    /* HERO — Diagonal Split with Spotlight Vignette */
+    .hero { position: relative; width: 100%; height: 100vh; min-height: 700px; overflow: hidden; display: flex; align-items: center; }
+    .hero-bg { position: absolute; inset: -5%; width: 110%; height: 110%; background: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1920&q=80') center/cover; filter: brightness(0.2); }
+    .hero-diagonal { position: absolute; right: -10%; top: 0; width: 55%; height: 100%; background: url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200&q=80') center/cover; clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%); z-index: 1; filter: brightness(0.4) contrast(1.1); }
+    .hero-gradient { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,13,13,0.95) 0%, rgba(13,13,13,0.7) 40%, rgba(13,13,13,0.3) 100%); z-index: 2; }
+    /* Spotlight vignette effect */
+    .hero-vignette { position: absolute; inset: 0; z-index: 2; background: radial-gradient(ellipse at 30% 50%, transparent 20%, rgba(13,13,13,0.4) 60%, rgba(13,13,13,0.8) 100%); pointer-events: none; }
+    .hero-content { position: relative; z-index: 3; max-width: 620px; padding: 0 24px; margin-left: 5%; }
+
+    .hero-eyebrow { font-family: var(--font-heading); font-size: 0.9rem; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; opacity: 0; }
+    .hero-title { font-family: var(--font-heading); font-size: clamp(2.8rem, 7vw, 5rem); line-height: 1.05; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 3px; }
+    .hero-title .highlight { color: var(--accent); }
+    .hero-subtitle { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 40px; opacity: 0; line-height: 1.7; font-weight: 300; }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; }
+    .btn-primary { padding: 14px 36px; background: var(--accent); color: var(--text); border-radius: 4px; font-weight: 700; font-size: 0.9rem; letter-spacing: 1px; transition: all var(--transition); display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(196,30,58,0.25); }
+    .btn-outline { padding: 14px 36px; border: 1px solid rgba(196,30,58,0.5); color: var(--accent); border-radius: 4px; font-weight: 600; font-size: 0.9rem; letter-spacing: 1px; transition: all var(--transition); text-transform: uppercase; }
+    .btn-outline:hover { background: rgba(196,30,58,0.1); border-color: var(--accent); }
+
+    .scroll-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; cursor: pointer; }
+    .scroll-indicator span { font-size: 0.7rem; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; }
+    .scroll-line { width: 1px; height: 50px; background: rgba(255,255,255,0.15); position: relative; overflow: hidden; }
+    .scroll-dot { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 3px; height: 10px; background: var(--accent); border-radius: 3px; animation: scrollDot 2s ease-in-out infinite; }
+    @keyframes scrollDot { 0%, 100% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+    /* MARQUEE */
+    .marquee-section { padding: 40px 0; border-top: 1px solid rgba(196,30,58,0.08); border-bottom: 1px solid rgba(196,30,58,0.08); overflow: hidden; }
+    .marquee-track { display: flex; gap: 60px; animation: marquee 35s linear infinite; width: max-content; }
+    .marquee-item { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-muted); white-space: nowrap; opacity: 0.4; letter-spacing: 4px; text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
+    .marquee-item::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; opacity: 0.5; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* PACKAGES — Red Curtain Gradient */
+    .packages { padding: 120px 0; }
+    .packages-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .package-card {
+      background: var(--surface); border: 1px solid rgba(196,30,58,0.08); border-radius: 8px;
+      padding: 40px 30px; transition: all var(--transition); position: relative; overflow: hidden;
+    }
+    /* Red curtain gradient at top */
+    .package-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.4; transition: opacity var(--transition);
+    }
+    .package-card:hover::after { opacity: 1; }
+    .package-card.featured { border-color: rgba(196,30,58,0.3); }
+    .package-card.featured::before {
+      content: 'POPULAR'; position: absolute; top: 16px; right: 16px;
+      padding: 4px 12px; background: var(--accent); color: var(--text);
+      font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 2px; border-radius: 3px;
+    }
+    .package-card.featured::after { opacity: 0.8; height: 6px;
+      background: linear-gradient(90deg, #8B0000, var(--accent), #8B0000);
+    }
+    .package-card:hover { transform: translateY(-8px); border-color: rgba(196,30,58,0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .package-tier { font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .package-name { font-family: var(--font-heading); font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase; }
+    .package-price { font-family: var(--font-heading); font-size: 2.5rem; color: var(--accent); margin-bottom: 4px; }
+    .package-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+    .package-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px; font-weight: 300; line-height: 1.6; }
+    .package-features { margin-bottom: 32px; }
+    .package-feature { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
+    .package-feature::before { content: '\2713'; color: var(--accent); font-weight: 700; font-size: 0.9rem; }
+    .package-btn {
+      width: 100%; padding: 14px; background: transparent;
+      border: 1px solid rgba(196,30,58,0.3); color: var(--accent);
+      font-family: var(--font-heading); font-size: 0.95rem;
+      letter-spacing: 3px; text-transform: uppercase; border-radius: 4px;
+      transition: all var(--transition); cursor: pointer;
+    }
+    .package-btn:hover, .package-card.featured .package-btn {
+      background: var(--accent); color: var(--text); border-color: var(--accent);
+    }
+
+    /* BEFORE/AFTER SLIDER */
+    .comparison-section { padding: 120px 0; background: var(--surface); }
+    .comparison-container {
+      max-width: 900px; margin: 0 auto; position: relative; border-radius: 8px;
+      overflow: hidden; cursor: col-resize; user-select: none; aspect-ratio: 16/9;
+    }
+    .comparison-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+    .comparison-after { clip-path: inset(0 0 0 50%); }
+    .comparison-handle { position: absolute; top: 0; bottom: 0; left: 50%; width: 4px; background: var(--accent); z-index: 5; transform: translateX(-50%); cursor: col-resize; }
+    .comparison-handle::before {
+      content: '\25C0\25B6'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 44px; height: 44px; background: var(--accent); color: var(--text); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; letter-spacing: -1px;
+    }
+    .comparison-label {
+      position: absolute; bottom: 20px; padding: 6px 16px; background: rgba(13,13,13,0.85);
+      font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 3px;
+      text-transform: uppercase; border-radius: 4px; z-index: 4;
+    }
+    .comparison-label.before { left: 20px; }
+    .comparison-label.after { right: 20px; color: var(--accent); }
+
+    /* PROCESS TIMELINE */
+    .process-section { padding: 120px 0; }
+    .process-steps { display: flex; gap: 0; justify-content: center; position: relative; }
+    .process-steps::before { content: ''; position: absolute; top: 30px; left: 10%; right: 10%; height: 2px; background: rgba(196,30,58,0.15); }
+    .process-step { flex: 1; text-align: center; position: relative; max-width: 200px; }
+    .step-number {
+      width: 60px; height: 60px; border-radius: 50%; background: var(--surface);
+      border: 2px solid rgba(196,30,58,0.2); display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-family: var(--font-heading); font-size: 1.3rem;
+      color: var(--accent); position: relative; z-index: 2; transition: all var(--transition);
+    }
+    .process-step:hover .step-number { background: var(--accent); color: var(--text); border-color: var(--accent); }
+    .step-icon { font-size: 1.5rem; margin-bottom: 12px; }
+    .process-step h3 { font-family: var(--font-heading); font-size: 1.05rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+    .process-step p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+
+    /* GALLERY — Film Strip Style */
+    .gallery-section { padding: 120px 0; background: var(--surface); }
+    .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .gallery-item {
+      border-radius: 4px; overflow: hidden; aspect-ratio: 1; position: relative; cursor: pointer;
+      border: 3px solid #222;
+      box-shadow: inset 0 0 0 2px var(--background);
+    }
+    /* Film strip perforated edges */
+    .gallery-item::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 14px;
+      background: repeating-linear-gradient(
+        90deg,
+        #222 0px, #222 4px,
+        transparent 4px, transparent 8px,
+        #222 8px, #222 12px,
+        transparent 12px, transparent 20px
+      );
+      z-index: 3;
+    }
+    .gallery-item::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 14px;
+      background: repeating-linear-gradient(
+        90deg,
+        #222 0px, #222 4px,
+        transparent 4px, transparent 8px,
+        #222 8px, #222 12px,
+        transparent 12px, transparent 20px
+      );
+      z-index: 3;
+    }
+    .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-overlay {
+      position: absolute; inset: 14px 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7));
+      opacity: 0; transition: opacity var(--transition); z-index: 2;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+    /* Film Strip hover effect (replaces chrome sweep) */
+    .film-strip-hover { position: relative; overflow: hidden; }
+    .film-strip-hover::before {
+      content: '';
+      position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0px, transparent 4px,
+        rgba(196,30,58,0.04) 4px, rgba(196,30,58,0.04) 5px
+      );
+      transition: left 0.6s ease; z-index: 1; pointer-events: none;
+    }
+    .film-strip-hover:hover::before { left: 0; }
+
+    /* FAQ */
+    .faq-section { padding: 120px 0; }
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid rgba(196,30,58,0.08); }
+    .faq-question { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; cursor: pointer; transition: color var(--transition); gap: 16px; }
+    .faq-question:hover { color: var(--accent); }
+    .faq-question h3 { font-family: var(--font-heading); font-size: 1.15rem; text-transform: uppercase; letter-spacing: 1px; }
+    .faq-icon {
+      width: 32px; height: 32px; border-radius: 4px; background: rgba(196,30,58,0.1);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: all var(--transition); font-size: 1.2rem; color: var(--accent);
+    }
+    .faq-item.active .faq-icon { background: var(--accent); color: var(--text); transform: rotate(45deg); }
+    .faq-answer { height: 0; overflow: hidden; }
+    .faq-answer-inner { padding: 0 0 24px; color: var(--text-muted); line-height: 1.8; font-size: 0.95rem; font-weight: 300; }
+
+    /* CONTACT */
+    .contact-section { padding: 120px 0; background: var(--surface); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .contact-info h3 { font-family: var(--font-heading); font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 24px; text-transform: uppercase; }
+    .contact-detail { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+    .contact-detail-icon { width: 44px; height: 44px; background: rgba(196,30,58,0.08); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+    .contact-detail-text h4 { font-family: var(--font-heading); margin-bottom: 4px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+    .contact-detail-text p { color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
+    .contact-hours { margin-top: 32px; padding: 24px; background: rgba(196,30,58,0.03); border-radius: 8px; border: 1px solid rgba(196,30,58,0.08); }
+    .contact-hours h4 { font-family: var(--font-heading); margin-bottom: 16px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-size: 1rem; }
+    .hours-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.9rem; color: var(--text-muted); border-bottom: 1px solid rgba(196,30,58,0.04); font-weight: 300; }
+    .hours-row:last-child { border-bottom: none; }
+    .contact-form-container { background: var(--background); border-radius: 8px; padding: 40px; border: 1px solid rgba(196,30,58,0.08); }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-family: var(--font-heading); font-size: 0.85rem; margin-bottom: 8px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 14px 18px; background: var(--surface);
+      border: 1px solid rgba(196,30,58,0.08); border-radius: 4px;
+      color: var(--text); font-size: 0.95rem; transition: border-color var(--transition); font-weight: 300;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { min-height: 100px; resize: vertical; }
+    .form-group select {
+      cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%23C41E3A'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 16px center;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .btn-submit {
+      width: 100%; padding: 16px; background: var(--accent); color: var(--text);
+      border-radius: 4px; font-family: var(--font-heading); font-size: 1rem;
+      cursor: pointer; transition: all var(--transition); border: none; letter-spacing: 3px; text-transform: uppercase;
+    }
+    .btn-submit:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+    /* FOOTER */
+    .footer { padding: 80px 0 40px; border-top: 1px solid rgba(196,30,58,0.06); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 16px; letter-spacing: 4px; text-transform: uppercase; }
+    .footer-brand span { color: var(--accent); }
+    .footer-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a { width: 40px; height: 40px; border-radius: 4px; background: var(--surface); border: 1px solid rgba(196,30,58,0.08); display: flex; align-items: center; justify-content: center; transition: all var(--transition); font-size: 1rem; }
+    .footer-social a:hover { background: var(--accent); color: var(--text); border-color: var(--accent); }
+    .footer-col h4 { font-family: var(--font-heading); margin-bottom: 20px; font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; }
+    .footer-col a { display: block; font-size: 0.9rem; color: var(--text-muted); padding: 6px 0; transition: color var(--transition); font-weight: 300; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(196,30,58,0.06); text-align: center; font-size: 0.85rem; color: var(--text-muted); font-weight: 300; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .packages-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+      .process-steps { flex-wrap: wrap; gap: 40px; }
+      .process-steps::before { display: none; }
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+      .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+  
+  
+  
+  
+
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero-content { margin-left: 0; }
+      .hero-diagonal { display: none; }
+      .hero-gradient { background: linear-gradient(180deg, rgba(13,13,13,0.5) 0%, rgba(13,13,13,0.95) 100%); }
+      .contact-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-item:nth-child(1) { grid-column: span 1; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-buttons { flex-direction: column; align-items: flex-start; }
+      .hero-buttons .btn-primary, .hero-buttons .btn-outline { width: 100%; justify-content: center; text-align: center; max-width: 280px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .process-step { max-width: 100%; flex: none; width: 100%; }
+      .contact-form-container { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER — Film Countdown -->
+  <div id="preloader">
+    <div class="countdown-circle">
+      <svg viewBox="0 0 120 120">
+        <circle class="circle-bg" cx="60" cy="60" r="54" />
+        <circle class="circle-progress" cx="60" cy="60" r="54" />
+      </svg>
+      <div class="countdown-number" id="countdownNum">3</div>
+    </div>
+    <div class="sweep-loader"><div class="sweep-light"></div></div>
+    <div class="preloader-brand">VELVET <span>SCREEN</span></div>
+    <div class="preloader-tagline">Private Cinema Experience</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="nav-logo">VELVET <span>SCREEN</span></a>
+      <div class="nav-links">
+        <a href="#packages">Packages</a>
+        <a href="#comparison">Before & After</a>
+        <a href="#process">How It Works</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact" class="nav-cta">Book Screening</a>
+      </div>
+      <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <div class="mobile-overlay" onclick="toggleMenu()"></div>
+  <div class="mobile-menu">
+    <a href="#packages" onclick="toggleMenu()">Packages</a>
+    <a href="#comparison" onclick="toggleMenu()">Before & After</a>
+    <a href="#process" onclick="toggleMenu()">How It Works</a>
+    <a href="#gallery" onclick="toggleMenu()">Gallery</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
+    <a href="#contact" onclick="toggleMenu()">Book Screening</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-diagonal"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-vignette"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Exclusive Private Cinema Since 2019</div>
+      <h1 class="hero-title">Your Story,<br>Your <span class="highlight">Screen</span></h1>
+      <p class="hero-subtitle">Immerse yourself in cinema like never before. Private suites, Dolby Atmos sound, 4K laser projection, and gourmet dining &mdash; all curated for you.</p>
+      <div class="hero-buttons">
+        <a href="#packages" class="btn-primary">View Packages</a>
+        <a href="#contact" class="btn-outline">Book a Screening</a>
+      </div>
+    </div></div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"><div class="scroll-dot"></div></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item">Dolby Atmos</span>
+      <span class="marquee-item">4K Laser</span>
+      <span class="marquee-item">IMAX Quality</span>
+      <span class="marquee-item">Private Suites</span>
+      <span class="marquee-item">Gourmet Dining</span>
+      <span class="marquee-item">VIP Lounge</span>
+      <span class="marquee-item">Film Library</span>
+      <span class="marquee-item">Premiere Events</span>
+      <span class="marquee-item">Dolby Atmos</span>
+      <span class="marquee-item">4K Laser</span>
+      <span class="marquee-item">IMAX Quality</span>
+      <span class="marquee-item">Private Suites</span>
+      <span class="marquee-item">Gourmet Dining</span>
+      <span class="marquee-item">VIP Lounge</span>
+      <span class="marquee-item">Film Library</span>
+      <span class="marquee-item">Premiere Events</span>
+    </div>
+  </div>
+
+  <!-- SECTION DIVIDER -->
+  <div style="padding: 60px 0 0;">
+    <div class="section-divider"><div class="diamond"></div></div>
+  </div>
+
+  <!-- PACKAGES -->
+  <section id="packages" class="packages">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Packages</div>
+        <h2 class="section-title">Choose Your Experience</h2>
+        <p class="section-desc">From intimate solo screenings to unforgettable premiere events, we have the perfect package for every occasion.</p>
+      </div>
+      <div class="packages-grid">
+
+        <!-- Solo Screen -->
+        <div class="package-card film-strip-hover">
+          <div class="package-tier">Intimate</div>
+          <div class="package-name">Solo Screen</div>
+          <div class="package-price">$150 <span>/ session</span></div>
+          <div class="package-desc">A private screening room just for you. Perfect for solo movie marathons, personal viewing, or quiet relaxation.</div>
+          <div class="package-features">
+            <div class="package-feature">Private screening room (up to 4 seats)</div>
+            <div class="package-feature">4K laser projection</div>
+            <div class="package-feature">Surround sound system</div>
+            <div class="package-feature">Complimentary popcorn & drink</div>
+            <div class="package-feature">Choose from 500+ films</div>
+            <div class="package-feature">3-hour session</div>
+          </div>
+          <button class="package-btn" onclick="location.href='#contact'">Book Now</button>
+        </div>
+
+        <!-- Date Night -->
+        <div class="package-card featured film-strip-hover">
+          <div class="package-tier">Romantic</div>
+          <div class="package-name">Date Night</div>
+          <div class="package-price">$350 <span>/ session</span></div>
+          <div class="package-desc">An unforgettable cinematic date. Luxurious reclining seats, gourmet food, and a curated wine selection for two.</div>
+          <div class="package-features">
+            <div class="package-feature">Premium couple suite with recliners</div>
+            <div class="package-feature">Dolby Atmos immersive audio</div>
+            <div class="package-feature">4K laser projection</div>
+            <div class="package-feature">Gourmet dinner for two</div>
+            <div class="package-feature">Wine or champagne pairing</div>
+            <div class="package-feature">Personalized movie selection</div>
+            <div class="package-feature">4-hour session</div>
+          </div>
+          <button class="package-btn" onclick="location.href='#contact'">Book Now</button>
+        </div>
+
+        <!-- Grand Premiere -->
+        <div class="package-card film-strip-hover">
+          <div class="package-tier">Exclusive</div>
+          <div class="package-name">Grand Premiere</div>
+          <div class="package-price">$1,200 <span>/ event</span></div>
+          <div class="package-desc">Host your own premiere event. Full venue access, red carpet setup, catering, and a dedicated event coordinator.</div>
+          <div class="package-features">
+            <div class="package-feature">Grand theater (up to 40 guests)</div>
+            <div class="package-feature">IMAX-quality screen & Dolby Atmos</div>
+            <div class="package-feature">Red carpet & photo booth</div>
+            <div class="package-feature">Full catering with open bar</div>
+            <div class="package-feature">Dedicated event coordinator</div>
+            <div class="package-feature">Custom branding & invitations</div>
+            <div class="package-feature">6-hour event window</div>
+          </div>
+          <button class="package-btn" onclick="location.href='#contact'">Book Now</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION DIVIDER -->
+  <div style="padding: 0;">
+    <div class="section-divider"><div class="diamond"></div></div>
+  </div>
+
+  <!-- BEFORE / AFTER -->
+  <section id="comparison" class="comparison-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">The Difference</div>
+        <h2 class="section-title">Standard vs. Private Cinema</h2>
+        <p class="section-desc">Drag the slider to compare a standard multiplex theater with the VELVET SCREEN private cinema experience.</p>
+      </div>
+      <div class="comparison-container" id="comparisonSlider">
+        <img class="comparison-img" src="https://images.unsplash.com/photo-1596445836561-991bcd39a86d?w=1200&q=80" alt="Standard Theater" style="filter: brightness(0.6) saturate(0.5);">
+        <img class="comparison-img comparison-after" src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80" alt="Private Cinema">
+        <div class="comparison-handle" id="comparisonHandle"></div>
+        <div class="comparison-label before">STANDARD</div>
+        <div class="comparison-label after">VIP PRIVATE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION DIVIDER -->
+  <div style="padding: 60px 0 0;">
+    <div class="section-divider"><div class="diamond"></div></div>
+  </div>
+
+  <!-- PROCESS -->
+  <section id="process" class="process-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Five Steps to Your Screening</h2>
+        <p class="section-desc">From browsing our film library to sinking into your luxurious seat, we make every step effortless.</p>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="step-number">01</div>
+          <div class="step-icon">&#127916;</div>
+          <h3>Browse</h3>
+          <p>Explore our library of 500+ films, from timeless classics to the latest blockbusters.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">02</div>
+          <div class="step-icon">&#127903;</div>
+          <h3>Select</h3>
+          <p>Pick your package, date, and preferred screening room to match your occasion.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">03</div>
+          <div class="step-icon">&#9881;</div>
+          <h3>Customize</h3>
+          <p>Choose your food, drinks, seating arrangement, and any special requests.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">04</div>
+          <div class="step-icon">&#128664;</div>
+          <h3>Arrive</h3>
+          <p>Step onto the red carpet and be welcomed by your personal concierge at the door.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">05</div>
+          <div class="step-icon">&#10024;</div>
+          <h3>Experience</h3>
+          <p>Sit back, relax, and enjoy your private cinema experience in full luxury.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION DIVIDER -->
+  <div style="padding: 0 0 60px;">
+    <div class="section-divider"><div class="diamond"></div></div>
+  </div>
+
+  <!-- GALLERY -->
+  <section id="gallery" class="gallery-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Gallery</div>
+        <h2 class="section-title">A Glimpse Inside</h2>
+        <p class="section-desc">Explore the world of VELVET SCREEN through our carefully curated spaces.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=80" alt="Cinema Interior" loading="lazy">
+          <div class="gallery-overlay"></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&q=80" alt="Movie Screen" loading="lazy">
+          <div class="gallery-overlay"></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=600&q=80" alt="Luxury Seats" loading="lazy">
+          <div class="gallery-overlay"></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=600&q=80" alt="Popcorn" loading="lazy">
+          <div class="gallery-overlay"></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&q=80" alt="Film Projection" loading="lazy">
+          <div class="gallery-overlay"></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=600&q=80" alt="Theater Seating" loading="lazy">
+          <div class="gallery-overlay"></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1595769816263-9b910be24d5f?w=600&q=80" alt="Cinema Room" loading="lazy">
+          <div class="gallery-overlay"></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600&q=80" alt="Film Reels" loading="lazy">
+          <div class="gallery-overlay"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION DIVIDER -->
+  <div style="padding: 60px 0 0;">
+    <div class="section-divider"><div class="diamond"></div></div>
+  </div>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-desc">Everything you need to know about your private cinema experience.</p>
+      </div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>What is the seating capacity of each screening room?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Our Solo Screen room comfortably seats up to 4 guests in plush recliners. The Date Night suite is designed for 2 with oversized loveseat recliners. The Grand Premiere theater accommodates up to 40 guests with tiered luxury seating, a stage area, and standing room for cocktail receptions of up to 60 people.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>What food and beverage options are available?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">All packages include complimentary gourmet popcorn and soft drinks. The Date Night package features a curated three-course dinner with wine or champagne pairing. The Grand Premiere includes full catering with an open bar. We also offer a la carte menus, dietary accommodations (vegan, gluten-free, halal), and custom menus for special events. Pre-order is available up to 48 hours before your screening.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>What movies can I watch at Velvet Screen?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Our library contains over 500 titles spanning all genres, from classic cinema to the latest releases. You can choose any film from our catalog, bring your own digital content (USB, HDMI, or streaming), or request a specific title in advance. We also host special premiere events for new releases and can arrange screening rights for films not in our standard catalog, subject to licensing availability.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>How do I book a screening and what is the cancellation policy?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Bookings can be made through our website, by phone, or by email. We recommend booking at least 72 hours in advance, especially for weekend slots and the Grand Premiere package. A 50% deposit is required at the time of booking. Free cancellation is available up to 48 hours before your screening. Cancellations within 48 hours will forfeit the deposit. Rescheduling is free with at least 24 hours notice.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <h3>What are the technical specifications of your screening rooms?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">All rooms feature state-of-the-art 4K laser projection (Sony VPL-GTZ380) with HDR10+ support, delivering crystal-clear images on acoustically transparent screens. Audio is powered by Dolby Atmos with up to 32 speakers in our Grand Premiere theater for true 3D surround sound. Rooms are acoustically isolated with studio-grade soundproofing. We support all major formats including Blu-ray 4K, streaming platforms, HDMI input, and USB playback. Climate control, adjustable lighting, and smart room controls are accessible from your seat.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION DIVIDER -->
+  <div style="padding: 0 0 60px;">
+    <div class="section-divider"><div class="diamond"></div></div>
+  </div>
+
+  <!-- CONTACT / BOOKING -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Booking</div>
+        <h2 class="section-title">Reserve Your Screening</h2>
+        <p class="section-desc">Fill out the form below and our concierge team will confirm your booking within 24 hours.</p>
+      </div>
+      <div class="contact-grid">
+
+        <div class="contact-info">
+          <h3>Visit Velvet Screen</h3>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#128205;</div>
+            <div class="contact-detail-text">
+              <h4>Location</h4>
+              <p>88 Cinema Boulevard, Suite 200<br>Los Angeles, CA 90028</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#128222;</div>
+            <div class="contact-detail-text">
+              <h4>Phone</h4>
+              <p>+1 (323) 555-0199</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">&#9993;</div>
+            <div class="contact-detail-text">
+              <h4>Email</h4>
+              <p>bookings@velvetscreen.com</p>
+            </div>
+          </div>
+
+          <div class="contact-hours">
+            <h4>Operating Hours</h4>
+            <div class="hours-row"><span>Monday - Thursday</span><span>2:00 PM - 12:00 AM</span></div>
+            <div class="hours-row"><span>Friday</span><span>12:00 PM - 2:00 AM</span></div>
+            <div class="hours-row"><span>Saturday</span><span>10:00 AM - 2:00 AM</span></div>
+            <div class="hours-row"><span>Sunday</span><span>10:00 AM - 11:00 PM</span></div>
+          </div>
+        </div>
+
+        <div class="contact-form-container">
+          <form onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="Your full name" required>
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="your@email.com" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" placeholder="+1 (555) 000-0000" required>
+              </div>
+              <div class="form-group">
+                <label>Package</label>
+                <select required>
+                  <option value="" disabled selected>Select a package</option>
+                  <option value="solo">Solo Screen — $150/session</option>
+                  <option value="date">Date Night — $350/session</option>
+                  <option value="premiere">Grand Premiere — $1,200/event</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Preferred Date</label>
+              <input type="date" required>
+            </div>
+            <div class="form-group">
+              <label>Special Requests</label>
+              <textarea placeholder="Tell us about your occasion, dietary needs, movie preferences, or any other special requests..."></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Request Booking</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">VELVET <span>SCREEN</span></div>
+          <p class="footer-desc">Your story, your screen. Since 2019, we have hosted over 2,000 private screenings, premiere events, and unforgettable cinematic experiences in Los Angeles.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram">&#9673;</a>
+            <a href="#" aria-label="Twitter">&#120143;</a>
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="YouTube">&#9654;</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Experiences</h4>
+          <a href="#">Solo Screen</a>
+          <a href="#">Date Night</a>
+          <a href="#">Grand Premiere</a>
+          <a href="#">Corporate Events</a>
+          <a href="#">Film Festivals</a>
+        </div>
+        <div class="footer-col">
+          <h4>Venue</h4>
+          <a href="#">Screening Rooms</a>
+          <a href="#">VIP Lounge</a>
+          <a href="#">Bar & Kitchen</a>
+          <a href="#">Red Carpet Area</a>
+          <a href="#">Film Library</a>
+        </div>
+        <div class="footer-col">
+          <h4>Information</h4>
+          <a href="#">About Us</a>
+          <a href="#">How to Book</a>
+          <a href="#">FAQ</a>
+          <a href="#">Careers</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2026 VELVET SCREEN. All rights reserved. Private Cinema Experience, Los Angeles.</div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+/* ===== PRELOADER — Film Countdown 3, 2, 1 ===== */
+    (function initPreloader() {
+      const preloader = document.getElementById('preloader');
+      const countdownNum = document.getElementById('countdownNum');
+      const circleProgress = document.querySelector('.circle-progress');
+      const brand = document.querySelector('.preloader-brand');
+      const tagline = document.querySelector('.preloader-tagline');
+      const circumference = 2 * Math.PI * 54; // ~339.292
+
+      const tl = gsap.timeline();
+
+      // Show number 3
+      tl.to(countdownNum, { opacity: 1, duration: 0.2 }, 0.2);
+      tl.to(circleProgress, { strokeDashoffset: circumference * 0.667, duration: 0.7, ease: 'power1.inOut' }, 0.2);
+      tl.to(countdownNum, { opacity: 0, duration: 0.15 }, 0.9);
+
+      // Show number 2
+      tl.call(() => { countdownNum.textContent = '2'; }, null, 1.05);
+      tl.to(countdownNum, { opacity: 1, duration: 0.2 }, 1.1);
+      tl.to(circleProgress, { strokeDashoffset: circumference * 0.333, duration: 0.7, ease: 'power1.inOut' }, 1.1);
+      tl.to(countdownNum, { opacity: 0, duration: 0.15 }, 1.8);
+
+      // Show number 1
+      tl.call(() => { countdownNum.textContent = '1'; }, null, 1.95);
+      tl.to(countdownNum, { opacity: 1, duration: 0.2 }, 2.0);
+      tl.to(circleProgress, { strokeDashoffset: 0, duration: 0.7, ease: 'power1.inOut' }, 2.0);
+      tl.to(countdownNum, { opacity: 0, duration: 0.15 }, 2.7);
+
+      // Show brand
+      tl.to(brand, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 2.9);
+      tl.to(tagline, { opacity: 1, duration: 0.4, ease: 'power2.out' }, 3.2);
+
+      // Fade out preloader
+      tl.to(preloader, {
+        opacity: 0, duration: 0.6, delay: 0.4, ease: 'power2.inOut',
+        onComplete: () => { preloader.style.display = 'none'; initAnimations(); }
+      });
+    })();
+
+    /* ===== MOBILE MENU ===== */
+    function toggleMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-overlay').classList.toggle('active');
+    }
+
+    /* ===== SCROLL & GSAP ANIMATIONS ===== */
+    function initAnimations() {
+      // Navbar scroll effect
+      window.addEventListener('scroll', () => {
+        document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 50);
+      });
+
+      // Hero animations
+      const heroTL = gsap.timeline();
+      heroTL.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+      heroTL.from('.hero-title', { opacity: 0, y: 40, duration: 0.8, ease: 'power3.out' }, 0.5);
+      heroTL.to('.hero-subtitle', { opacity: 1, duration: 0.6 }, 1.0);
+      heroTL.to('.hero-buttons', { opacity: 1, y: 0, duration: 0.6 }, 1.3);
+      heroTL.to('.scroll-indicator', { opacity: 1, duration: 0.6 }, 1.6);
+
+      // Parallax hero background
+      gsap.to('.hero-bg', {
+        yPercent: 20, ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
+      });
+
+      /* IntersectionObserver-based reveal (works in iframes) */
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          revealObserver.unobserve(el);
+          const delay = parseFloat(el.dataset.revealDelay || '0');
+          gsap.fromTo(el,
+            { opacity: 0, y: parseFloat(el.dataset.revealY || '0'), x: parseFloat(el.dataset.revealX || '0'), scale: parseFloat(el.dataset.revealScale || '1') },
+            { opacity: 1, y: 0, x: 0, scale: 1, duration: parseFloat(el.dataset.revealDuration || '0.7'), delay, ease: 'power3.out' }
+          );
+        });
+      }, { threshold: 0.1 });
+
+      function setupReveal(selector, opts = {}) {
+        const { y = 40, x = 0, scale = 1, duration = 0.7, staggerDelay = 0 } = opts;
+        document.querySelectorAll(selector).forEach((el, i) => {
+          el.style.opacity = '0';
+          el.dataset.revealY = String(y);
+          el.dataset.revealX = String(x);
+          el.dataset.revealScale = String(scale);
+          el.dataset.revealDuration = String(duration);
+          el.dataset.revealDelay = String(i * staggerDelay);
+          revealObserver.observe(el);
+        });
+      }
+
+      // Packages
+      setupReveal('.packages .section-header', { y: 40, duration: 0.8 });
+      setupReveal('.package-card', { y: 50, duration: 0.6, staggerDelay: 0.15 });
+
+      // Comparison
+      setupReveal('.comparison-section .section-header', { y: 40, duration: 0.8 });
+      setupReveal('.comparison-container', { y: 0, scale: 0.95, duration: 0.8 });
+
+      // Process
+      setupReveal('.process-section .section-header', { y: 40, duration: 0.8 });
+      setupReveal('.process-step', { y: 40, duration: 0.5, staggerDelay: 0.12 });
+
+      // Gallery
+      setupReveal('.gallery-section .section-header', { y: 40, duration: 0.8 });
+      setupReveal('.gallery-item', { y: 40, duration: 0.5, staggerDelay: 0.08 });
+
+      // FAQ
+      setupReveal('.faq-section .section-header', { y: 40, duration: 0.8 });
+      setupReveal('.faq-item', { y: 30, duration: 0.5, staggerDelay: 0.1 });
+
+      // Contact
+      setupReveal('.contact-info', { x: -50, duration: 0.8 });
+      setupReveal('.contact-form-container', { x: 50, duration: 0.8 });
+
+      // Footer
+      setupReveal('.footer-grid > *', { y: 30, duration: 0.6, staggerDelay: 0.1 });
+
+      // Section dividers
+      setupReveal('.section-divider', { y: 0, duration: 0.8 });
+    }
+
+    /* ===== BEFORE/AFTER SLIDER ===== */
+    (function initComparison() {
+      const slider = document.getElementById('comparisonSlider');
+      const handle = document.getElementById('comparisonHandle');
+      const afterImg = slider.querySelector('.comparison-after');
+      let isDragging = false;
+
+      function updatePosition(x) {
+        const rect = slider.getBoundingClientRect();
+        let pct = ((x - rect.left) / rect.width) * 100;
+        pct = Math.max(5, Math.min(95, pct));
+        handle.style.left = pct + '%';
+        afterImg.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+      }
+
+      handle.addEventListener('mousedown', () => isDragging = true);
+      slider.addEventListener('mousedown', (e) => { isDragging = true; updatePosition(e.clientX); });
+      document.addEventListener('mouseup', () => isDragging = false);
+      document.addEventListener('mousemove', (e) => { if (isDragging) updatePosition(e.clientX); });
+
+      handle.addEventListener('touchstart', () => isDragging = true);
+      slider.addEventListener('touchstart', (e) => { isDragging = true; updatePosition(e.touches[0].clientX); });
+      document.addEventListener('touchend', () => isDragging = false);
+      document.addEventListener('touchmove', (e) => { if (isDragging) updatePosition(e.touches[0].clientX); });
+    })();
+
+    /* ===== FAQ ACCORDION ===== */
+    (function initFAQ() {
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        const inner = item.querySelector('.faq-answer-inner');
+        question.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          // Close all other items
+          document.querySelectorAll('.faq-item').forEach(other => {
+            if (other !== item && other.classList.contains('active')) {
+              other.classList.remove('active');
+              gsap.to(other.querySelector('.faq-answer'), { height: 0, duration: 0.4, ease: 'power2.inOut' });
+            }
+          });
+          if (isActive) {
+            item.classList.remove('active');
+            gsap.to(answer, { height: 0, duration: 0.4, ease: 'power2.inOut' });
+          } else {
+            item.classList.add('active');
+            gsap.to(answer, { height: inner.offsetHeight, duration: 0.4, ease: 'power2.inOut' });
+          }
+        });
+      });
+    })();
+
+    /* ===== FORM SUBMIT ===== */
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      const originalText = btn.textContent;
+      btn.textContent = 'Booking Requested Successfully';
+      btn.style.background = '#22C55E';
+      gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.3, ease: 'back.out(1.7)' });
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+        e.target.reset();
+      }, 2500);
+    }
+
+    /* ===== SMOOTH SCROLL ===== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          window.scrollTo({
+            top: target.getBoundingClientRect().top + window.pageYOffset - 80,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

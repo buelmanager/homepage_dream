@@ -73,7 +73,7 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-8" aria-describedby="subscription-description">
+      <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto p-8" aria-describedby="subscription-description">
         <DialogHeader>
           <DialogTitle className="text-center text-3xl font-bold">
             Choose Your Plan

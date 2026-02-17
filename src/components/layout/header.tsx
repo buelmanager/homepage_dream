@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
   Search,
@@ -20,36 +20,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
-import { CATEGORIES } from "@/types";
 
-type CategoryCount = {
-  name: string;
-  label: string;
-  count: number;
-};
-
-interface HeaderProps {
-  categoryCounts?: CategoryCount[];
-}
-
-export function Header({ categoryCounts = [] }: HeaderProps) {
+export function Header() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const currentCategory = searchParams?.get("category") || "all";
-
-  const categories = CATEGORIES.map((cat) => {
-    const found = categoryCounts.find((c) => c.name === cat.name);
-    return { ...cat, count: found?.count ?? 0 };
-  });
-
-  const totalCount = categoryCounts.reduce((sum, c) => sum + c.count, 0);
-  categories[0] = { ...categories[0], count: totalCount };
 
   const navLinks = [
     { href: "/leaderboard", label: "TOP", icon: Trophy },
@@ -111,6 +89,7 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
                 </Button>
               </Link>
             ))}
+            <ThemeToggle />
             {user ? (
               <>
                 <Link href="/profile">
@@ -238,81 +217,11 @@ export function Header({ categoryCounts = [] }: HeaderProps) {
                 )}
               </div>
 
-              <div className="p-2">
-                <p className="px-3 py-2 text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
-                  Categories
-                </p>
-                {categories.map((cat) => (
-                  <Link
-                    key={cat.name}
-                    href={
-                      cat.name === "all"
-                        ? "/templates"
-                        : `/templates?category=${cat.name}`
-                    }
-                    onClick={() => setMobileOpen(false)}
-                    className={cn(
-                      "flex items-center justify-between rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-                      currentCategory === cat.name &&
-                        "bg-muted text-foreground font-medium"
-                    )}
-                  >
-                    {cat.label}
-                    {cat.count > 0 && (
-                      <span className="text-xs text-muted-foreground/60">
-                        {cat.count}
-                      </span>
-                    )}
-                  </Link>
-                ))}
-              </div>
             </SheetContent>
           </Sheet>
         </div>
       </div>
 
-      {pathname === "/" && (
-      <div className="border-b border-border/30 bg-background/60 backdrop-blur-lg">
-        <div className="scrollbar-none mx-auto flex max-w-7xl items-center gap-0.5 overflow-x-auto px-4 sm:px-6">
-          {categories.map((cat) => {
-            const isActive = currentCategory === cat.name;
-
-            const href =
-              cat.name === "all"
-                ? "/templates"
-                : `/templates?category=${cat.name}`;
-
-            return (
-              <Link
-                key={cat.name}
-                href={href}
-                className={cn(
-                  "relative flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-[13px] transition-colors",
-                  isActive
-                    ? "border-foreground text-foreground font-medium"
-                    : "border-transparent text-muted-foreground hover:text-foreground/70"
-                )}
-              >
-                {cat.label}
-                {cat.count > 0 && (
-                  <Badge
-                    variant="secondary"
-                    className={cn(
-                      "h-4 min-w-4 px-1 text-[10px]",
-                      isActive
-                        ? "bg-foreground text-background"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    {cat.count}
-                  </Badge>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-      )}
     </header>
   );
 }

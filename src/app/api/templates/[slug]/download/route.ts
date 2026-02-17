@@ -1,5 +1,8 @@
 import path from "path";
+import fs from "fs";
 import { readFile } from "fs/promises";
+import { PassThrough } from "stream";
+import archiver from "archiver";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
@@ -25,6 +28,40 @@ async function findActiveSubscription(userId: string) {
     },
     orderBy: { currentPeriodEnd: "desc" },
     select: { id: true },
+  });
+}
+
+/** Zip public/templates/[slug] on-the-fly and return as a streaming Response */
+function zipPublicFolder(slug: string): Response | null {
+  const dir = path.join(process.cwd(), "public", "templates", slug);
+  if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return null;
+
+  const passthrough = new PassThrough();
+  const archive = archiver("zip", { zlib: { level: 5 } });
+
+  archive.on("error", (err) => passthrough.destroy(err));
+  archive.pipe(passthrough);
+  archive.directory(dir, slug);
+  archive.finalize();
+
+  const stream = new ReadableStream({
+    start(controller) {
+      passthrough.on("data", (chunk: Buffer) => controller.enqueue(new Uint8Array(chunk)));
+      passthrough.on("end", () => controller.close());
+      passthrough.on("error", (err) => controller.error(err));
+    },
+    cancel() {
+      archive.abort();
+      passthrough.destroy();
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "application/zip",
+      "Content-Disposition": `attachment; filename="${slug}.zip"`,
+      "Cache-Control": "no-store",
+    },
   });
 }
 
@@ -91,11 +128,18 @@ export async function GET(
     return NextResponse.json({ error: "Template not found" }, { status: 404 });
   }
 
+  // FREE → zip public/templates/[slug] and download
   if (template.tier === "FREE") {
-    const publicPath = template.htmlPath ?? `/templates/${slug}/index.html`;
-    return NextResponse.redirect(new URL(publicPath, request.url));
+    const zip = zipPublicFolder(slug);
+    if (zip) return zip;
+
+    return NextResponse.json(
+      { error: "Template files not found" },
+      { status: 404 }
+    );
   }
 
+  // PRO → require auth + subscription
   const session = await auth();
   if (!session?.user?.id) {
     const signInUrl = new URL("/signin", request.url);
@@ -103,30 +147,35 @@ export async function GET(
     return NextResponse.redirect(signInUrl);
   }
 
-  const activeSubscription = await findActiveSubscription(session.user.id);
-  if (!activeSubscription) {
-    const pricingUrl = new URL("/pricing", request.url);
-    pricingUrl.searchParams.set("required", "subscription");
-    return NextResponse.redirect(pricingUrl);
+  // Admins bypass subscription check
+  if (session.user.role !== "ADMIN") {
+    const activeSubscription = await findActiveSubscription(session.user.id);
+    if (!activeSubscription) {
+      const pricingUrl = new URL("/pricing", request.url);
+      pricingUrl.searchParams.set("required", "subscription");
+      return NextResponse.redirect(pricingUrl);
+    }
   }
 
+  // 1) Supabase signed URL
   const storageKey = template.storageKey || defaultStorageKey(slug);
   const signedUrl = await createSupabaseSignedUrl(storageKey, slug);
-
   if (signedUrl) {
     return NextResponse.redirect(signedUrl);
   }
 
+  // 2) Pre-built local zip
   const localFallback = await localZipResponse(slug);
   if (localFallback) {
     return localFallback;
   }
 
+  // 3) Zip public folder on-the-fly
+  const publicZip = zipPublicFolder(slug);
+  if (publicZip) return publicZip;
+
   return NextResponse.json(
-    {
-      error:
-        "Pro source package not found. Set template storageKey and upload source.zip to private storage.",
-    },
+    { error: "Template source package not found" },
     { status: 404 }
   );
 }
