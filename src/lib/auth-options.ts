@@ -1,12 +1,14 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
 import { getDefaultSignupCredits } from "@/lib/app-settings";
 
 const hasGitHubOAuth = !!process.env.GITHUB_ID && !!process.env.GITHUB_SECRET;
+const hasGoogleOAuth = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 
 function createRequestId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
@@ -107,6 +109,14 @@ export const authOptions: NextAuthOptions = {
           }),
         ]
       : []),
+    ...(hasGoogleOAuth
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+          }),
+        ]
+      : []),
   ],
   debug: true,
   session: { strategy: "jwt" },
@@ -150,7 +160,7 @@ export const authOptions: NextAuthOptions = {
         email: redactEmail(user?.email),
       });
 
-      if (account?.provider === "github" && user.email) {
+      if ((account?.provider === "github" || account?.provider === "google") && user.email) {
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email },
         });
@@ -175,7 +185,7 @@ export const authOptions: NextAuthOptions = {
             },
           });
 
-          logAuth("info", "callback.signIn.github_created_user", {
+          logAuth("info", "callback.signIn.oauth_created_user", {
             userId: newUser.id,
             email: redactEmail(newUser.email),
             credits: signupCredits,
@@ -189,7 +199,7 @@ export const authOptions: NextAuthOptions = {
           (user as any).role = existingUser.role;
           (user as any).credits = existingUser.credits;
 
-          logAuth("info", "callback.signIn.github_existing_user", {
+          logAuth("info", "callback.signIn.oauth_existing_user", {
             userId: existingUser.id,
             email: redactEmail(existingUser.email),
             credits: existingUser.credits,
@@ -219,7 +229,7 @@ export const authOptions: NextAuthOptions = {
             },
           });
 
-          logAuth("info", "callback.signIn.github_account_linked", {
+          logAuth("info", "callback.signIn.oauth_account_linked", {
             userId: (user as any).id,
             provider: account.provider,
           });
