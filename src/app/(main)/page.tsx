@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { Search, ArrowRight, Sparkles, Layers, Grid3X3, Palette } from "lucide-react";
+import { Search, ArrowRight, Sparkles, Layers, Grid3X3, Palette, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TemplateGrid } from "@/components/template/template-grid";
@@ -222,6 +222,12 @@ export default async function HomePage() {
                 <Button className="gap-2">
                   Browse Templates
                   <ArrowRight className="size-3.5" />
+                </Button>
+              </Link>
+              <Link href="/blog">
+                <Button variant="outline" className="gap-2">
+                  <BookOpen className="size-3.5" />
+                  Read Blog
                 </Button>
               </Link>
             </div>
