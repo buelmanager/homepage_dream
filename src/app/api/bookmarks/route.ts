@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import templatesManifest from "@/data/templates-manifest.json";
+
+const manifestBySlug = new Map(
+  (templatesManifest as { slug: string; thumbnailUrl: string | null }[]).map(
+    (t) => [t.slug, t.thumbnailUrl]
+  )
+);
 
 export async function GET() {
   try {
@@ -36,7 +43,20 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ bookmarks });
+    const enriched = bookmarks.map((bm) => ({
+      ...bm,
+      template: bm.template
+        ? {
+            ...bm.template,
+            thumbnailUrl:
+              bm.template.thumbnailUrl ??
+              manifestBySlug.get(bm.template.slug) ??
+              null,
+          }
+        : null,
+    }));
+
+    return NextResponse.json({ bookmarks: enriched });
   } catch (error) {
     console.error("[API /api/bookmarks GET] Error:", error);
     return NextResponse.json(

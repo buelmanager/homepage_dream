@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import templatesManifest from "@/data/templates-manifest.json";
+
+const manifestBySlug = new Map(
+  (templatesManifest as { slug: string; thumbnailUrl: string | null }[]).map(
+    (t) => [t.slug, t.thumbnailUrl]
+  )
+);
 
 export async function GET() {
   try {
@@ -36,7 +43,20 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ favorites });
+    const enriched = favorites.map((fav) => ({
+      ...fav,
+      template: fav.template
+        ? {
+            ...fav.template,
+            thumbnailUrl:
+              fav.template.thumbnailUrl ??
+              manifestBySlug.get(fav.template.slug) ??
+              null,
+          }
+        : null,
+    }));
+
+    return NextResponse.json({ favorites: enriched });
   } catch (error) {
     console.error("[API /api/favorites GET] Error:", error);
     return NextResponse.json(
