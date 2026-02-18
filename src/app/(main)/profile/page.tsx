@@ -97,7 +97,7 @@ function TemplateGrid({
                     src={t.thumbnailUrl}
                     alt={t.title}
                     fill
-                    className="object-cover transition-transform group-hover:scale-105"
+                    className="object-cover object-top transition-transform group-hover:scale-105"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 ) : (
