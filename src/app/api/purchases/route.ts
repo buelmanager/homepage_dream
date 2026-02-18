@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import templatesManifest from "@/data/templates-manifest.json";
+
+const manifestBySlug = new Map(
+  (templatesManifest as { slug: string; thumbnailUrl: string | null }[]).map(
+    (t) => [t.slug, t.thumbnailUrl]
+  )
+);
 
 export async function GET() {
   try {
@@ -37,7 +44,20 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ purchases });
+    const enriched = purchases.map((p) => ({
+      ...p,
+      template: p.template
+        ? {
+            ...p.template,
+            thumbnailUrl:
+              p.template.thumbnailUrl ??
+              manifestBySlug.get(p.template.slug) ??
+              null,
+          }
+        : null,
+    }));
+
+    return NextResponse.json({ purchases: enriched });
   } catch (error) {
     console.error("Error fetching purchases:", error);
     return NextResponse.json(

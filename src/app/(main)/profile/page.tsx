@@ -153,6 +153,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [favorites, setFavorites] = useState<ListItem[]>([]);
   const [bookmarks, setBookmarks] = useState<ListItem[]>([]);
+  const [purchases, setPurchases] = useState<ListItem[]>([]);
   const [credits, setCredits] = useState(0);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
@@ -189,17 +190,23 @@ export default function ProfilePage() {
           if (!r.ok) throw new Error(`Subscription API failed: ${r.status}`);
           return r.json();
         }),
+        fetchWithTimeout("/api/purchases", 30000).then((r) => {
+          if (!r.ok) throw new Error(`Purchases API failed: ${r.status}`);
+          return r.json();
+        }),
       ])
         .then((results) => {
           const creditsData = results[0].status === "fulfilled" ? results[0].value : null;
           const favData = results[1].status === "fulfilled" ? results[1].value : null;
           const bookData = results[2].status === "fulfilled" ? results[2].value : null;
           const subData = results[3].status === "fulfilled" ? results[3].value : null;
+          const purchData = results[4].status === "fulfilled" ? results[4].value : null;
 
           setCredits(creditsData?.credits ?? 0);
           setFavorites(favData?.favorites ?? []);
           setBookmarks(bookData?.bookmarks ?? []);
           setSubscription(subData?.subscription ?? null);
+          setPurchases(purchData?.purchases ?? []);
           setLoading(false);
         })
         .catch((error) => {
@@ -378,8 +385,17 @@ export default function ProfilePage() {
             </Card>
           )}
 
-          <Tabs defaultValue="favorites" className="w-full">
+          <Tabs defaultValue="downloads" className="w-full">
             <TabsList className="w-full sm:w-auto">
+              <TabsTrigger value="downloads" className="gap-1.5">
+                <Download className="h-3.5 w-3.5" />
+                Downloads
+                {purchases.length > 0 && (
+                  <span className="ml-1 rounded-full bg-muted px-1.5 text-xs tabular-nums">
+                    {purchases.length}
+                  </span>
+                )}
+              </TabsTrigger>
               <TabsTrigger value="favorites" className="gap-1.5">
                 <Heart className="h-3.5 w-3.5" />
                 Favorites
@@ -399,6 +415,14 @@ export default function ProfilePage() {
                 )}
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="downloads" className="mt-6">
+              <TemplateGrid
+                items={purchases}
+                emptyMessage="No downloads yet. Purchase templates to access them here."
+                showDownload
+              />
+            </TabsContent>
 
             <TabsContent value="favorites" className="mt-6">
               <TemplateGrid
