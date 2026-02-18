@@ -91,7 +91,7 @@ export default async function BlogPostPage({
           <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="size-3.5" />
             <time dateTime={post.date}>
-              {new Date(post.date).toLocaleDateString("ko-KR", {
+              {new Date(post.date).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",

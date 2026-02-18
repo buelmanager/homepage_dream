@@ -8,14 +8,14 @@ import { getAllPosts } from "@/lib/blog";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "블로그 | 홈페이지 디자인 팁 & 트렌드",
+  title: "Blog | Homepage Design Tips & Trends",
   description:
-    "홈페이지 디자인 팁, 웹 개발 트렌드, 템플릿 활용 가이드를 확인하세요.",
+    "Explore homepage design tips, web development trends, and template guides.",
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: "블로그 — HomeDream",
+    title: "Blog — HomeDream",
     description:
-      "홈페이지 디자인 팁, 웹 개발 트렌드, 템플릿 활용 가이드.",
+      "Homepage design tips, web development trends, and template guides.",
     url: "/blog",
   },
 };
@@ -32,7 +32,7 @@ export default function BlogPage() {
         </div>
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Blog</h1>
         <p className="mt-2 text-muted-foreground">
-          홈페이지 디자인 팁, 웹 개발 트렌드, 템플릿 활용 가이드
+          Homepage design tips, web development trends, and template guides
         </p>
       </div>
 
@@ -40,7 +40,7 @@ export default function BlogPage() {
         <div className="rounded-xl border border-dashed border-border/60 p-12 text-center">
           <BookOpen className="mx-auto size-10 text-muted-foreground/40" />
           <p className="mt-4 text-sm text-muted-foreground">
-            아직 게시된 글이 없습니다.
+            No posts published yet.
           </p>
         </div>
       ) : (
@@ -63,7 +63,7 @@ export default function BlogPage() {
                   <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
                     <Calendar className="size-3" />
                     <time dateTime={post.date}>
-                      {new Date(post.date).toLocaleDateString("ko-KR", {
+                      {new Date(post.date).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
