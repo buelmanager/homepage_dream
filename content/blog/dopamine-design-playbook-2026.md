@@ -11,7 +11,7 @@ For the past five years, the safe choice for a homepage was a clean sans-serif w
 
 This is not a story about aesthetics replacing strategy. It is a story about aesthetics becoming strategy -- because the visual language of your homepage now carries more weight in the buyer's decision than it ever has before.
 
-![Glass facade of a modern office building reflecting uniform corporate architecture](https://images.unsplash.com/photo-V5vF94h52r0?w=800&q=80)
+![Glass facade of a modern office building reflecting uniform corporate architecture](https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80)
 *Photo by [Fabian Kleiser](https://unsplash.com/@fabiankleiser) on [Unsplash](https://unsplash.com)*
 
 ---
@@ -34,7 +34,7 @@ This is the structural paradox of blanding: the more brands optimize for the sam
 
 Dopamine design is the aesthetic shift from muted minimalism to vibrant saturated color, kinetic motion, tactile textures, and emotionally engaging visuals. It is a deliberate move toward homepages that create a visceral, positive emotional response on first contact -- homepages that make you feel something before you read a single word of copy.
 
-![Abstract swirling neon colors and vibrant patterns representing the energy of dopamine design](https://images.unsplash.com/photo-rKqHcsGEFZc?w=800&q=80)
+![Abstract swirling neon colors and vibrant patterns representing the energy of dopamine design](https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80)
 *Photo by [Logan Voss](https://unsplash.com/@loganvoss) on [Unsplash](https://unsplash.com)*
 
 Multiple independent 2026 trend reports -- from [Squarespace Circle](https://pros.squarespace.com/blog/design-trends), [Contentsquare](https://contentsquare.com/guides/web-design/trends/), Webstacks, UXpilot, and TheeDigital -- identify this direction as the defining shift of the era, representing a mainstream move away from the restrained minimalism that dominated 2018 through 2022. This is not one blogger's opinion. It is consensus from practitioners, analytics platforms, and design forecasters simultaneously.
@@ -61,7 +61,7 @@ Kinetic typography -- animated headlines that slide, fade, rotate, or morph -- b
 
 The brand positioning implications of each aesthetic are distinct and audience-specific. A muted, restrained homepage signals professionalism, reliability, and institutional trust -- appropriate for complex B2B products with long sales cycles. A vibrant, expressive homepage signals confidence, personality, and cultural alignment -- appropriate for consumer brands, creative tools, and businesses targeting under-35 audiences.
 
-![Multicolored wall representing the vibrant spectrum of brand identity choices](https://images.unsplash.com/photo-jbtfM0XBeRc?w=800&q=80)
+![Multicolored wall representing the vibrant spectrum of brand identity choices](https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800&q=80)
 *Photo by [Robert Katzki](https://unsplash.com/@ro_ka) on [Unsplash](https://unsplash.com)*
 
 These are not aesthetic preferences. They are strategic positions with measurable outcomes. [Kalungi's B2B SaaS analysis](https://www.kalungi.com/blog/choosing-branding-colors-for-your-b2b-saas-company) and [Contentsquare's behavior data](https://contentsquare.com/guides/web-design/trends/) both confirm that design aesthetic directly signals audience intent -- cool tones for risk-averse enterprise buyers, expressive palettes for engagement-first consumer contexts. The color of your homepage hero section is a targeting decision as much as any ad campaign audience filter.
@@ -84,7 +84,7 @@ Stripe's homepage demonstrates that the binary of "boring-safe vs. expressive-ri
 
 The dopamine design movement has a CSS technology foundation that most designers and developers are not yet using: the OKLCH color space. If you are designing vibrant palettes and specifying them in hex or RGB, you are leaving the most vivid colors on the table.
 
-![Rainbow-colored light spectrum on a dark background representing the expanded color gamut of OKLCH](https://images.unsplash.com/photo-USXJbx1cFxg?w=800&q=80)
+![Rainbow-colored light spectrum on a dark background representing the expanded color gamut of OKLCH](https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=800&q=80)
 *Photo by [David Clode](https://unsplash.com/@davidclode) on [Unsplash](https://unsplash.com)*
 
 Traditional CSS color specifications -- `rgb()`, `hsl()`, hex codes -- are all confined to the sRGB gamut, a color space defined in 1996 for CRT monitors. Modern screens, particularly Apple's Retina displays and any screen supporting Display P3, can render significantly more colors than sRGB can describe. Those extra colors are precisely the vivid, saturated hues that dopamine design demands. You have been designing with one hand tied behind your back, and OKLCH unties it.
@@ -148,7 +148,7 @@ Dopamine design is not exclusively a light-mode phenomenon either. [Webstacks 20
 
 Dopamine design is not a mandate to paint everything neon. It is a strategic tool, and like all strategic tools, its effectiveness depends entirely on context. The question is not "should I use dopamine design?" but "does my brand have a genuine personality that dopamine design can express?"
 
-![A person standing at a crossroads in the woods, symbolizing the strategic choice between design directions](https://images.unsplash.com/photo-KTpSVEcU0XU?w=800&q=80)
+![A person standing at a crossroads in the woods, symbolizing the strategic choice between design directions](https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80)
 *Photo by [Vladislav Babienko](https://unsplash.com/@garri) on [Unsplash](https://unsplash.com)*
 
 The minimalism-versus-maximalism tension is best understood as a spectrum, not a binary. The emerging practitioner consensus, documented by both [TG Studio](https://www.wearetg.com/blog/web-design-trends/) and [Clevertize](https://clevertize.com/blog/minimalism-vs-maximalism-in-2025-what-works/), is to use minimal product UI for functional clarity inside the product while allowing the homepage marketing layer to absorb expressive, dopamine-coded elements. Separate the tool from its advertisement. The dashboard can be clean. The homepage can be bold. These are not contradictions -- they are complementary layers of the same brand system.

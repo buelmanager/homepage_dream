@@ -34,7 +34,7 @@ The scientific vocabulary around these principles is accelerating, not settling.
 
 If the previous section explained *why* conventions matter, this section explains *which* conventions matter most -- and quantifies what happens when you break them.
 
-![UX designer sketching wireframe layout for mobile application](https://images.unsplash.com/photo-1581291518633-83b4eef1d2f2?w=800&q=80)
+![UX designer sketching wireframe layout for mobile application](https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80)
 *Photo by [Hal Gatewood](https://unsplash.com/@halacious) on [Unsplash](https://unsplash.com)*
 
 ### Logo Placement Is a Cognitive Decision

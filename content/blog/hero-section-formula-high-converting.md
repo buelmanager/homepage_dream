@@ -11,7 +11,7 @@ description: "74% of hero sections fail for the same fixable reasons. Learn the 
 
 Here is the formula, audited against real examples, so you can see exactly where yours stands -- and where the single highest-impact fix lives.
 
-![Close-up of a stopwatch on a dark background representing the limited time visitors spend evaluating a hero section](https://images.unsplash.com/photo-1701721085935-563f59cf49e4?w=800&q=80)
+![Close-up of a stopwatch on a dark background representing the limited time visitors spend evaluating a hero section](https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=800&q=80)
 *Photo by [William Warby](https://unsplash.com/@wwarby) on [Unsplash](https://unsplash.com)*
 
 ---
@@ -100,7 +100,7 @@ If there is a single pattern that separates good hero sections from great ones, 
 
 The numbers are compelling. According to [Omniconvert's above-the-fold design research](https://www.omniconvert.com/blog/above-the-fold-design/), trust signals placed above the fold improve conversion rates by up to 42% on eCommerce sites. Yet only 20% of startup hero sections include any credibility markers above the fold. That means 80% of sites are missing the single highest-ROI addition available to them. Not the most creative addition. Not the most technically sophisticated. The highest-ROI.
 
-![Five-star rating icon representing customer trust signals and social proof](https://images.unsplash.com/photo-1553729459-uj68kg7uokg?w=800&q=80)
+![Five-star rating icon representing customer trust signals and social proof](https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80)
 *Photo by [Towfiqu barbhuiya](https://unsplash.com/@towfiqu999999) on [Unsplash](https://unsplash.com)*
 
 The flip side of this equation is equally instructive. [Carrot's hero section conversion test](https://carrot.com/blog/hero-section-conversion-test/) documented what happens when you simplify the hero section -- reduced surrounding content, CTA pushed above the fold on mobile. The results across three independently tested sites: conversion uplifts of 45.87%, 22.35%, and 46.86%. The single change was content removal. No new copy. No new visuals. Just less.
