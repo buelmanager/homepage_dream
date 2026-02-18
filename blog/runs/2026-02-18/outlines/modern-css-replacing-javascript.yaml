@@ -1,0 +1,287 @@
+topic: "modern-css-replacing-javascript"
+title: "Modern CSS is Replacing JavaScript: Native Browser Features Every Homepage Builder Should Know"
+created_at: "2026-02-18T16:00:00+09:00"
+
+hook: >
+  The JavaScript you wrote last year to position a tooltip, animate a scroll reveal, or build
+  a responsive card grid may already have a CSS replacement shipping in every major browser —
+  one that is faster, shorter, and requires no dependencies. CSS in 2025-2026 has reached a
+  tipping point, and the patterns that once made JavaScript indispensable on homepages are being
+  systematically eliminated by the browser itself.
+
+sections:
+  - heading: "Why CSS Is Now Doing JavaScript's Job"
+    image_keyword: "browser code web development"
+    key_points:
+      - point: >
+          The narrative among leading web engineering publications has converged: CSS is entering
+          an era of native state, logic, and UI power that systematically removes JavaScript from
+          common UI patterns.
+        evidence: >
+          Smashing Magazine's 'CSS Wrapped 2025' declared this shift explicitly. LogRocket framed
+          2026 CSS as 'about reducing JavaScript, increasing native UI intelligence, and building
+          scalable design systems.' Google's Chrome for Developers team has published performance
+          case studies supporting the same conclusion.
+          (Sources: smashingmagazine.com/2025/12/state-logic-native-power-css-wrapped-2025/,
+          blog.logrocket.com/css-in-2026/)
+      - point: >
+          The median JavaScript per page has grown to 23 requests in 2025 — up 8% since 2022 —
+          with total page weight reaching approximately 2 MB. CSS-native replacements directly
+          counter this trend.
+        evidence: >
+          Smashing Magazine documented this growth in the context of native CSS masonry layout,
+          which targets the elimination of Masonry.js (approximately 200,000 npm downloads per
+          week). CSS-native alternatives reduce both JS request count and execution overhead.
+          (Source: smashingmagazine.com/2025/12/masonry-things-you-wont-need-library-anymore/)
+      - point: >
+          Developer demand for CSS's JavaScript-replacing capabilities is measurable in survey
+          data: 53% of State of CSS 2024 respondents write more JavaScript than CSS in their
+          day-to-day work, signaling significant reclaim potential.
+        evidence: >
+          State of CSS 2024 survey conducted by web.dev. The :has() selector ranked as the
+          favorite new CSS feature at 36%, with @container (container queries) second at 17%,
+          reflecting strong interest in CSS features that deliver conditional, context-aware
+          behavior previously requiring JavaScript.
+          (Source: web.dev/blog/state-of-css-html-2024, 2024.stateofcss.com/en-US/)
+    subsections: []
+
+  - heading: "Before and After: Three Homepage Patterns Rewritten in CSS"
+    image_keyword: "code comparison side by side development"
+    key_points:
+      - point: >
+          Pattern 1 — Sticky Tooltip: The JavaScript approach requires importing Popper.js or
+          Floating UI, registering scroll and resize event listeners, calling
+          getBoundingClientRect() per frame, and writing 30-50 lines of JS plus the library
+          import. The CSS replacement uses four properties and three HTML attributes with zero
+          JavaScript.
+        evidence: >
+          CSS implementation: anchor-name on the trigger, position-anchor and position-area on
+          the tooltip, and position-try-fallbacks for automatic overflow detection. For show/hide,
+          the HTML popover="hint" attribute with popovertarget handles it natively. Southwell
+          Media quantified: 'the positioning logic that once consumed 200+ lines of JavaScript
+          condenses into four lines of CSS.'
+          (Sources: southwellmedia.com/blog/css-2026-7-features-that-let-browsers-do-the-work,
+          learnwebcraft.com/learn/css/css-anchor-positioning-api-popperjs-replacement)
+      - point: >
+          Pattern 2 — Scroll Reveal Animation: The JavaScript approach requires creating an
+          IntersectionObserver, writing observe() and disconnect() calls, and managing two files
+          (25-40 total lines). The CSS replacement uses animation-timeline: view() and
+          animation-range directly on the element — 8-12 lines in a single file.
+        evidence: >
+          Performance difference is significant: JavaScript-based IntersectionObserver runs on
+          the main thread, while CSS scroll-driven animations run on the compositor thread (GPU).
+          Chrome's performance case study demonstrated CSS scroll animations are 'completely
+          unaffected by heavy JavaScript work' running concurrently, whereas JS animations
+          'become janky and sluggish due to main thread resource contention.'
+          (Sources: developer.chrome.com/blog/scroll-animation-performance-case-study,
+          smashingmagazine.com/2024/12/introduction-css-scroll-driven-animations/)
+      - point: >
+          Pattern 3 — Responsive Card Grid: The JavaScript approach requires a debounced resize
+          listener, dynamic class or style manipulation, SSR mismatch handling, and cleanup on
+          unmount — approximately 20-40 lines of JS plus 15 lines of CSS with breakpoint media
+          queries (45 total). The CSS replacement is one property: grid-template-columns:
+          repeat(auto-fill, minmax(280px, 1fr)).
+        evidence: >
+          CSS-Tricks documented this as a 'magical one-liner' for responsive column behavior.
+          The browser calculates column count automatically as the container resizes. Total
+          implementation: 3-4 lines of CSS, zero media queries, zero JavaScript. Eliminates all
+          JS execution on every resize event, improving input responsiveness.
+          (Source: css-tricks.com/look-ma-no-media-queries-responsive-layouts-using-css-grid/)
+    subsections:
+      - heading: "Bundle Size Impact at a Glance"
+        key_points:
+          - point: >
+              Eliminating Popper.js or Floating UI removes approximately 2 kB of JavaScript
+              (minzipped) plus all associated event listener registration and runtime recalculation
+              overhead. Eliminating GSAP for scroll animations removes 60-72 kB of minified JS
+              (the full package is 6.26 MB on npm).
+            evidence: >
+              Popper.js: approximately 2 kB minzipped (LogRocket). Floating UI core: approximately
+              600 bytes. GSAP: 6.26 MB full npm package, approximately 60-72 kB for gsap.min.js
+              (bundlephobia.com/package/gsap). CSS scroll-driven animations require zero additional
+              download — the implementation lives in the browser engine itself.
+              (Sources: blog.logrocket.com/popper-vs-floating-ui/, bundlephobia.com/package/gsap)
+
+  - heading: "The 2026 CSS Feature Replacement Checklist"
+    image_keyword: "checklist web features browser"
+    key_points:
+      - point: >
+          CSS Scroll-Driven Animations (animation-timeline: scroll() and view()) replace
+          IntersectionObserver-based reveal patterns and GSAP ScrollTrigger for single-property
+          scroll-linked effects. Browser status: Chrome 115+, Edge 115+, Safari 26+, Firefox
+          in progress under Interop 2026.
+        evidence: >
+          Reached cross-browser Baseline production stability as of December 2024 for Chrome
+          and Edge. Kevin Powell (CSS educator, 900K+ YouTube subscribers) demonstrated that
+          parallax effects previously requiring GSAP or custom scroll listeners are achievable
+          in pure CSS, running off the main thread with no dependencies.
+          (Sources: developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations,
+          classcentral.com/course/youtube-incredible-scroll-based-animations-with-css-only-275166)
+      - point: >
+          CSS Anchor Positioning (position-anchor, position-area, position-try-fallbacks)
+          replaces Popper.js and Floating UI for tooltip and popover positioning including
+          automatic overflow detection and flip-fallback behavior. Browser status: Chrome 125+,
+          Edge 125+, Safari 26+, Firefox 145+. Included in Interop 2026.
+        evidence: >
+          OddBird (CSS Working Group contributors) confirmed in October 2025 that anchor
+          positioning has stabilized significantly and is production-ready for progressive
+          enhancement. The Floating UI team released a CSS Anchor Positioning polyfill for
+          teams needing full browser coverage today.
+          (Sources: medianic.co.uk/2026/02/10/css-features-2026-exciting-updates-from-firefox-and-chrome/,
+          oddbird.net/2025/10/13/anchor-position-area-update/)
+      - point: >
+          The Popover API combined with Anchor Positioning enables fully accessible tooltip and
+          modal patterns with zero JavaScript, replacing manual focus trapping, aria-expanded
+          toggling, and scroll/resize event listeners. Browser status: Baseline Widely Available
+          since April 2025 across all major browsers.
+        evidence: >
+          Reached Baseline Widely Available in April 2025, meaning it is supported by Chrome,
+          Firefox, Safari, and Edge — enabling zero-JavaScript tooltip and modal patterns for
+          100% of modern browser users.
+          (Source: web.dev/blog/popover-api)
+      - point: >
+          CSS Scroll State Queries (container-type: scroll-state) detect whether a sticky element
+          is currently adhered to the viewport, enabling patterns like sticky headers that gain a
+          drop-shadow only when stuck — previously requiring 15-20 lines of JavaScript with an
+          IntersectionObserver watching a sentinel element.
+        evidence: >
+          CSS implementation: @container scroll-state(stuck: top) { nav { box-shadow: 0 2px 8px
+          rgba(0,0,0,0.15); } } — two lines of CSS. Smashing Magazine highlights this as one of
+          the most practically impactful CSS features for homepage design in 2025.
+          (Source: smashingmagazine.com/2025/12/state-logic-native-power-css-wrapped-2025/)
+      - point: >
+          The @starting-style at-rule enables CSS entry/exit animations for elements transitioning
+          from display: none, removing the JavaScript setTimeout timing hacks that were standard
+          for animated disclosure patterns. The sibling-index() function computes staggered
+          animation delays from DOM position, eliminating JS-injected inline style attributes.
+        evidence: >
+          @starting-style reached cross-browser Baseline in 2025. sibling-index() is shipping in
+          2025-2026. Both eliminate distinct categories of JavaScript previously required for
+          animated list and disclosure components.
+          (Sources: developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@starting-style,
+          southwellmedia.com/blog/css-2026-7-features-that-let-browsers-do-the-work)
+    subsections: []
+
+  - heading: "Where JavaScript Still Wins: The Honest Counterpoint"
+    image_keyword: "balance decision tradeoff"
+    key_points:
+      - point: >
+          CSS scroll-driven animations excel at single-property transforms tied to scroll position
+          but lack the timeline orchestration capabilities that GSAP's ScrollTrigger provides for
+          complex, multi-step sequenced animations. For storytelling sequences with precise timing
+          control, JavaScript remains the superior tool.
+        evidence: >
+          The 'CSS vs. JS' framing can be misleading for advanced use cases. GSAP's ScrollTrigger
+          enables pinning, scrubbing across multiple elements, and synchronized cross-element
+          animation timelines that CSS view() timelines do not support natively.
+          (Source: clcreative.co/blog/should-you-use-the-intersection-observer-api-or-gsap-for-scroll-animations)
+      - point: >
+          Purely CSS tooltip and popover patterns work well for simple presentation cases but
+          lose flexibility compared to JavaScript libraries for dynamic content, programmatic
+          show/hide based on application state, or complex trigger logic such as show-after-500ms-hover
+          or hide-on-external-click. JavaScript remains correct when interaction state is entangled
+          with application logic rather than pure presentation.
+        evidence: >
+          Frontend Masters documented the boundary clearly: CSS Popover API and Anchor Positioning
+          cover the presentation layer, but application-state-driven visibility (e.g., conditionally
+          showing a tooltip based on API response data) requires JavaScript regardless of how the
+          tooltip is positioned.
+          (Source: frontendmasters.com/blog/using-the-popover-api-for-html-tooltips/)
+      - point: >
+          Browser support gaps in early 2026 mean progressive enhancement strategies are required
+          for production: CSS scroll-driven animations have no native Safari support until Safari 26
+          (gradual rollout), and CSS Anchor Positioning still requires flag enablement in some
+          Firefox versions. Sites targeting broad compatibility need fallback planning.
+        evidence: >
+          Safari 26 adds scroll-driven animation support but the rollout to users is gradual.
+          Sites requiring scroll animation in Safari still need either GSAP, IntersectionObserver
+          fallbacks, or graceful degradation. For anchor positioning, the Floating UI polyfill
+          provides a progressive enhancement bridge.
+          (Sources: caniuse.com/wf-scroll-driven-animations, caniuse.com/css-anchor-positioning)
+      - point: >
+          Despite strong technical readiness, CSS feature adoption follows a slow curve in
+          production. Cascade Layers have only 18.9% adoption despite years of availability,
+          suggesting anchor positioning and scroll-driven animations may take 2-3 additional
+          years to reach widespread production use regardless of browser support.
+        evidence: >
+          State of CSS 2024 data shows Cascade Layers at 18.9% adoption. This pattern of delayed
+          production adoption applies to container queries, anchor positioning, and scroll-driven
+          animations — features that are technically ready but require team buy-in and codebase
+          migration investment.
+          (Source: web.dev/blog/state-of-css-html-2024)
+    subsections: []
+
+  - heading: "How to Start the Migration: Highest-ROI Targets First"
+    image_keyword: "roadmap migration strategy steps"
+    key_points:
+      - point: >
+          The highest-ROI starting points for replacing JavaScript with CSS are carousels,
+          tooltips, and dropdowns — UI patterns where CSS alternatives are browser-ready today
+          and the JavaScript implementation carries the most event listener and bundle overhead.
+        evidence: >
+          LogRocket explicitly recommended these three component types as the highest-ROI migration
+          targets. The CSS carousel pattern using ::scroll-marker and ::scroll-button() pseudo-elements
+          was called 'a triumph for performance' by Smashing Magazine.
+          (Sources: blog.logrocket.com/css-in-2026/,
+          smashingmagazine.com/2025/12/state-logic-native-power-css-wrapped-2025/)
+      - point: >
+          Use @supports (animation-timeline: scroll()) as a feature detection gate to deliver
+          CSS scroll animations as progressive enhancement — modern browsers receive the GPU-composited
+          CSS version, unsupported browsers receive a clean static fallback without any animation,
+          with no JavaScript required to detect either case.
+        evidence: >
+          This @supports-based approach is the standard progressive enhancement pattern recommended
+          for scroll-driven animations. It requires no JavaScript polyfill and degrades gracefully —
+          the element is simply visible at its final state without any reveal transition in
+          unsupported browsers.
+          (Source: developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations)
+      - point: >
+          For teams maintaining existing JavaScript-based implementations, the migration priority
+          order is: (1) tooltip positioning to CSS Anchor Positioning, eliminating the library
+          import entirely; (2) scroll reveal to CSS view-timeline, removing IntersectionObserver
+          setup code; (3) responsive card grid to auto-fill, removing the resize listener; (4)
+          sticky header shadow to CSS scroll-state queries, removing the sentinel-observer pattern.
+        evidence: >
+          Each of these patterns has a documented CSS replacement with measured line-count and
+          bundle-size data. The sticky header shadow pattern reduces from 15-20 lines of JavaScript
+          to 2 lines of CSS. The card grid reduces from 45 total lines (JS + CSS with breakpoints)
+          to 3-4 lines of pure CSS.
+          (Sources: southwellmedia.com/blog/css-2026-7-features-that-let-browsers-do-the-work,
+          smashingmagazine.com/2025/12/state-logic-native-power-css-wrapped-2025/)
+    subsections: []
+
+conclusion:
+  summary: >
+    The browser has caught up to the patterns developers spent years solving with JavaScript.
+    Scroll animations, tooltip positioning, responsive grids, sticky state detection, and
+    carousel navigation all have CSS-native implementations that are shorter, faster, and more
+    maintainable than their JavaScript counterparts. The question for homepage builders in 2026
+    is not whether CSS can replace JavaScript — it demonstrably can for these patterns — but
+    which patterns in a given codebase represent the highest-ROI targets for migration, and
+    where JavaScript still earns its place when application state rather than presentation
+    logic drives the behavior.
+  call_to_action: >
+    Audit the JavaScript on your homepage for the four highest-ROI patterns — tooltip positioning,
+    scroll reveal, responsive grid layout, and sticky header state — and check whether a CSS
+    replacement is already browser-ready for your user base. Start with one pattern, ship it
+    with a @supports fallback, and measure both the bundle size reduction and the Core Web
+    Vitals impact before expanding the migration.
+
+seo:
+  suggested_title: "Modern CSS Replacing JavaScript: Homepage Patterns You Can Rewrite Today (2026)"
+  meta_description: >
+    Scroll animations, tooltips, responsive grids — CSS now handles them natively. See before/after
+    code comparisons and bundle size data for 4 key homepage patterns.
+  keywords:
+    - "modern CSS replacing JavaScript"
+    - "CSS scroll-driven animations"
+    - "CSS anchor positioning"
+    - "no JavaScript homepage"
+    - "CSS vs JavaScript performance"
+    - "scroll-driven animations 2026"
+    - "CSS anchor positioning tooltip"
+    - "CSS grid responsive layout"
+    - "frontend performance optimization"
+    - "CSS native features 2026"
+
+estimated_length: "2800-3200 words"
