@@ -1,7 +1,17 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import { marked } from "marked";
+import { marked, Renderer } from "marked";
+
+// Escape raw HTML blocks in markdown to prevent XSS.
+// Normal markdown formatting (bold, code, links, etc.) is unaffected
+// because marked renders those through its own pipeline.
+const safeRenderer = new Renderer();
+safeRenderer.html = ({ text }: { text: string }) =>
+  text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 
 const BLOG_DIR = path.join(process.cwd(), "content/blog");
 
@@ -70,7 +80,7 @@ export async function getPostBySlug(
   const post = parseFrontmatter(filePath, slug);
   if (!post.published) return null;
 
-  const html = await marked(post.content);
+  const html = await marked(post.content, { renderer: safeRenderer });
 
   return {
     slug: post.slug,

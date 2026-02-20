@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collection — KANADE Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #1a2240; --surface: #1c2a3e; --surface-2: #1e2e44;
+      --gold: #C9A96E; --gold-light: #e0c28a; --gold-dim: rgba(201,169,110,0.3);
+      --white: #f5f0e8; --white-dim: rgba(245,240,232,0.7); --white-faint: rgba(245,240,232,0.15);
+      --gray: #8a8078; --red-accent: #7a1a1a;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-jp: 'Shippori Mincho', serif;
+      --font-body: 'Jost', sans-serif;
+      --ease-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body { background: var(--bg); color: var(--white); font-family: var(--font-body); font-weight: 300; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; width: 100%; }
+    ul { list-style: none; }
+
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 900; padding: 28px 60px; display: flex; align-items: center; justify-content: space-between; transition: all 0.5s; }
+    .navbar.scrolled { background: rgba(20,28,50,0.94); backdrop-filter: blur(20px); padding: 18px 60px; border-bottom: 1px solid var(--gold-dim); }
+    .nav-logo { display: flex; align-items: center; gap: 12px; }
+    .nav-logo-jp { font-family: var(--font-jp); font-size: 1.4rem; color: var(--gold); }
+    .nav-logo-en { font-family: var(--font-body); font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--white-dim); }
+    .nav-links { display: flex; align-items: center; gap: 48px; list-style: none; }
+    .nav-links a { font-size: 11px; font-weight: 300; letter-spacing: 0.3em; text-transform: uppercase; color: var(--white-dim); position: relative; transition: color 0.3s; }
+    .nav-links a::after { content: ''; position: absolute; left: 0; bottom: -4px; width: 0; height: 1px; background: var(--gold); transition: width 0.4s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-cta { font-size: 10px; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold-dim); padding: 10px 24px; transition: all 0.4s; }
+    .nav-cta:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+
+    .page-banner { height: 50vh; min-height: 360px; position: relative; display: flex; align-items: center; justify-content: center; background-image: url('https://images.pexels.com/photos/2182973/pexels-photo-2182973.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80'); background-size: cover; background-position: center; }
+    .page-banner::before { content: ''; position: absolute; inset: 0; background: rgba(10,15,32,0.62); }
+    .banner-content { position: relative; text-align: center; }
+    .banner-eyebrow { font-family: var(--font-body); font-size: 0.65rem; letter-spacing: 0.45em; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; }
+    .banner-title { font-family: var(--font-display); font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 300; font-style: italic; color: var(--white); }
+
+    section { padding: 100px 0; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 60px; }
+    .eyebrow { font-family: var(--font-body); font-size: 0.65rem; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
+    .section-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 300; font-style: italic; line-height: 1.15; margin-bottom: 24px; }
+    .section-body { font-family: var(--font-body); font-size: 0.9rem; font-weight: 300; line-height: 1.95; color: var(--white-dim); max-width: 620px; }
+
+    /* COLLECTION GRID */
+    .col-intro { margin-bottom: 60px; }
+    .col-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .col-item { position: relative; overflow: hidden; }
+    .col-item-img { height: 460px; object-fit: cover; width: 100%; transition: transform 0.8s var(--ease-luxury); }
+    .col-item:hover .col-item-img { transform: scale(1.05); }
+    .col-item-info { padding: 20px 0 0; }
+    .col-item-name { font-family: var(--font-display); font-size: 1.25rem; font-style: italic; margin-bottom: 4px; }
+    .col-item-jp { font-family: var(--font-jp); font-size: 0.75rem; color: var(--gold); margin-bottom: 6px; }
+    .col-item-desc { font-family: var(--font-body); font-size: 0.8rem; color: var(--white-dim); }
+
+    /* MATERIAL */
+    .material { background: var(--surface); }
+    .material-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .material-image { height: 520px; object-fit: cover; }
+    .material-list { display: flex; flex-direction: column; gap: 24px; margin-top: 32px; }
+    .mat-item { border-left: 1px solid var(--gold-dim); padding-left: 20px; }
+    .mat-name { font-family: var(--font-display); font-size: 1.1rem; font-style: italic; margin-bottom: 6px; }
+    .mat-desc { font-family: var(--font-body); font-size: 0.82rem; color: var(--white-dim); line-height: 1.75; }
+
+    /* CTA */
+    .cta-band { background: var(--surface-2); text-align: center; padding: 80px 60px; }
+    .cta-band h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 3rem); font-style: italic; font-weight: 300; margin-bottom: 16px; }
+    .cta-band p { font-family: var(--font-body); font-size: 0.9rem; color: var(--white-dim); margin-bottom: 36px; }
+    .btn-cta { display: inline-block; font-family: var(--font-body); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--bg); background: var(--gold); padding: 16px 40px; transition: background 0.3s, transform 0.3s; }
+    .btn-cta:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+    footer { background: var(--surface); border-top: 1px solid var(--gold-dim); padding: 80px 0 40px; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-logo-jp { font-family: var(--font-jp); font-size: 1.6rem; color: var(--white); margin-bottom: 4px; }
+    .footer-logo-en { font-family: var(--font-body); font-size: 0.65rem; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
+    .footer-tagline { font-family: var(--font-display); font-size: 1rem; font-style: italic; color: var(--white-dim); line-height: 1.7; margin-bottom: 28px; }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social-link { width: 36px; height: 36px; border: 1px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--white-dim); transition: border-color 0.3s, color 0.3s; }
+    .footer-col-title { font-family: var(--font-body); font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-family: var(--font-body); font-size: 0.82rem; color: var(--white-dim); transition: color 0.3s; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-address { font-style: normal; font-family: var(--font-body); font-size: 0.82rem; color: var(--white-dim); line-height: 1.8; }
+    .footer-bottom { border-top: 1px solid var(--gold-dim); padding-top: 28px; display: flex; align-items: center; justify-content: space-between; }
+    .footer-copy { font-family: var(--font-body); font-size: 0.7rem; color: rgba(245,240,232,0.25); }
+    .footer-copy span { color: var(--gold); }
+    .footer-bottom-links { display: flex; gap: 28px; }
+    .footer-bottom-links a { font-family: var(--font-body); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(245,240,232,0.3); }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 20px 24px; } .nav-links { display: none; }
+      .container { padding: 0 24px; } .col-grid { grid-template-columns: 1fr; }
+      .material-inner { grid-template-columns: 1fr; } .footer-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-jp">奏</span>
+      <span class="nav-logo-en">Kanade Atelier</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="about.html">Philosophy</a></li>
+      <li><a href="collection.html" class="active">Collection</a></li>
+      <li><a href="about.html">Atelier</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="about.html">Heritage</a></li>
+      <li><a href="about.html">Press</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Begin Commission</a>
+  </nav>
+
+  <div class="page-banner">
+    <div class="banner-content">
+      <div class="banner-eyebrow">Selected Works</div>
+      <h1 class="banner-title">The Collection</h1>
+    </div>
+  </div>
+
+  <section>
+    <div class="container">
+      <div class="col-intro">
+        <div class="eyebrow reveal-up">Current Season</div>
+        <h2 class="section-title reveal-up">Woven from silence, worn for eternity</h2>
+        <p class="section-body reveal-up">Each piece in the KANADE collection represents years of accumulated knowledge — of the loom, the dye bath, the hand — made available as a commission foundation or as a completed work for direct acquisition.</p>
+      </div>
+      <div class="col-grid">
+        <div class="col-item reveal-up sr">
+          <img class="col-item-img sr" src="https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Fuyu" />
+          <div class="col-item-info sr">
+            <div class="col-item-name sr">Fuyu — Winter</div>
+            <div class="col-item-jp sr">冬 · Nishijin-ori · Indigo ground</div>
+            <div class="col-item-desc sr">Woven over 14 weeks. A deep indigo field with silver-threaded pine motif.</div>
+          </div>
+        </div>
+        <div class="col-item reveal-up sr">
+          <img class="col-item-img sr" src="https://images.pexels.com/photos/1181695/pexels-photo-1181695.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Shizuku" />
+          <div class="col-item-info sr">
+            <div class="col-item-name sr">Shizuku — Droplet</div>
+            <div class="col-item-jp sr">雫 · Tsujigahana · Safflower dye</div>
+            <div class="col-item-desc sr">Hand-painted tsujigahana technique on a silk habutae ground. Ceremony kimono.</div>
+          </div>
+        </div>
+        <div class="col-item reveal-up sr">
+          <img class="col-item-img sr" src="https://images.pexels.com/photos/1251175/pexels-photo-1251175.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Kiri" />
+          <div class="col-item-info sr">
+            <div class="col-item-name sr">Kiri — Paulownia</div>
+            <div class="col-item-jp sr">桐 · Rinzu · Gold ground</div>
+            <div class="col-item-desc sr">Formal momentsonly. Paulownia mon embroidered over woven gold satin.</div>
+          </div>
+        </div>
+        <div class="col-item reveal-up sr">
+          <img class="col-item-img sr" src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=800&q=80&auto=format&fit=crop" alt="Kaze" />
+          <div class="col-item-info sr">
+            <div class="col-item-name sr">Kaze — Wind</div>
+            <div class="col-item-jp sr">風 · Ro weave · Summer silk</div>
+            <div class="col-item-desc sr">A gossamer ro-weave kimono for the tea ceremony. Near-invisible at distance.</div>
+          </div>
+        </div>
+        <div class="col-item reveal-up sr">
+          <img class="col-item-img sr" src="https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=800&q=80&auto=format&fit=crop" alt="Tsuki" />
+          <div class="col-item-info sr">
+            <div class="col-item-name sr">Tsuki — Moon</div>
+            <div class="col-item-jp sr">月 · Chirimen · Persimmon ground</div>
+            <div class="col-item-desc sr">Persimmon-dyed chirimen with silver moon disc embroidery. Evening commission.</div>
+          </div>
+        </div>
+        <div class="col-item reveal-up sr">
+          <img class="col-item-img sr" src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Commission" />
+          <div class="col-item-info sr">
+            <div class="col-item-name sr">Bespoke Commission</div>
+            <div class="col-item-jp sr">特注 · Your vision, our mastery</div>
+            <div class="col-item-desc sr">A fully bespoke commission begins with a conversation. No boundaries of pattern or colour.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATERIAL -->
+  <section class="material">
+    <div class="container">
+      <div class="material-inner">
+        <div class="reveal-left">
+          <div class="eyebrow">Textile Philosophy</div>
+          <h2 class="section-title">The cloth before the garment</h2>
+          <p class="section-body">KANADE works only with textiles produced within a ten-kilometre radius of our Kyoto atelier, or sourced from a small number of trusted mills we have worked with for decades.</p>
+          <div class="material-list">
+            <div class="mat-item">
+              <div class="mat-name">Nishijin-ori</div>
+              <p class="mat-desc">The woven textile that defines Kyoto luxury. Complex Jacquard patterns woven at 3cm per hour on heritage looms.</p>
+            </div>
+            <div class="mat-item">
+              <div class="mat-name">Chirimen Crepe</div>
+              <p class="mat-desc">A silk crepe ground with distinctive texture. Our chirimen is sourced from Tango Peninsula weavers who supply no more than six ateliers worldwide.</p>
+            </div>
+            <div class="mat-item">
+              <div class="mat-name">Habutae Silk</div>
+              <p class="mat-desc">The smooth silk ground used for hand-painted tsujigahana work. Our habutae is weighted with persimmon tannin, a process unchanged since 1890.</p>
+            </div>
+          </div>
+        </div>
+        <img class="material-image reveal-right" src="https://images.pexels.com/photos/2122361/pexels-photo-2122361.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Textile" />
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-band reveal-up">
+    <h2>Commission your kimono</h2>
+    <p>Begin a conversation with our atelier. A KANADE commission takes between one and three years. Begin early.</p>
+    <a href="contact.html" class="btn-cta">Begin Commission</a>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo-jp">KANADE</div>
+          <div class="footer-logo-en">奏 — Atelier de Kimono de Luxe</div>
+          <p class="footer-tagline">Woven from Silence.<br>Worn for Eternity.</p>
+          <div class="footer-social"><a href="#" class="footer-social-link">Ig</a><a href="#" class="footer-social-link">Pt</a><a href="#" class="footer-social-link">Wc</a></div>
+        </div>
+        <div><div class="footer-col-title sr">Navigate</div><ul class="footer-links"><li><a href="about.html">Philosophy</a></li><li><a href="collection.html">Collection</a></li><li><a href="process.html">Our Process</a></li><li><a href="contact.html">Begin Commission</a></li></ul></div>
+        <div><div class="footer-col-title sr">Atelier</div><address class="footer-address"><strong>Kyoto</strong><br>Nishijin District<br>Kyoto, 602-8217<br>Japan</address></div>
+        <div><div class="footer-col-title sr">Legal</div><ul class="footer-links"><li><a href="#">Privacy Policy</a></li><li><a href="#">Commission Terms</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2024 <span>KANADE 奏</span> — Maison Kanade. All commissions reserved.</p>
+        <nav class="footer-bottom-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.reveal-up').forEach(el => {
+      gsap.from(el, { opacity: 0, y: 24, duration: 1, ease: 'power2.out', immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 82%', once: true } });
+    });
+    document.querySelectorAll('.reveal-left').forEach(el => {
+      gsap.from(el, { opacity: 0, x: -50, duration: 1.1, ease: 'power2.out', immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 80%', once: true } });
+    });
+    document.querySelectorAll('.reveal-right').forEach(el => {
+      gsap.from(el, { opacity: 0, x: 50, duration: 1.1, ease: 'power2.out', immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 80%', once: true } });
+    });
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); });
+  </script>
+</body>
+</html>

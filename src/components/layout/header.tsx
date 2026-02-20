@@ -11,6 +11,7 @@ import {
   Trophy,
   User,
   LogOut,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +32,7 @@ export function Header() {
 
   const navLinks = [
     { href: "/leaderboard", label: "TOP", icon: Trophy },
+    { href: "/blog", label: "Blog", icon: BookOpen },
   ];
 
   const user = session?.user;

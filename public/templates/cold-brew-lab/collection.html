@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brew Catalogue — CRYO LAB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Jost:wght@200;300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg:           #1C1610;
+      --bg-void:      #141009;
+      --bg-panel:     #252018;
+      --bg-surface:   #2E2820;
+      --blue:         #4A8FA8;
+      --blue-light:   #8FC4D4;
+      --amber:        #C8A46A;
+      --cream:        #E8E0D4;
+      --muted:        #7A7268;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-sans:    'Jost', sans-serif;
+      --font-mono:    'Space Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--cream); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 4rem; background: rgba(28,22,16,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(74,143,168,0.12); }
+    .nav-logo { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cream); }
+    .nav-logo span { color: var(--blue); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream); opacity: 0.55; transition: opacity 0.3s; }
+    .nav-links a:hover, .nav-links a.active { opacity: 1; color: var(--blue); }
+    .nav-cta { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; border: 1px solid rgba(74,143,168,0.5); padding: 0.6rem 1.4rem; color: var(--blue); transition: all 0.3s; }
+    .nav-cta:hover { background: var(--blue); color: var(--bg); border-color: var(--blue); }
+
+    .page-banner { height: 50vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .page-banner-bg { position: absolute; inset: 0; background-image: url('https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80'); background-size: cover; background-position: center; filter: brightness(0.35) saturate(0.7); }
+    .page-banner-overlay { position: absolute; inset: 0; background: rgba(28,22,16,0.6); }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; }
+    .page-banner-label { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--blue); margin-bottom: 1rem; display: block; }
+    .page-banner-title { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; color: var(--cream); letter-spacing: -0.02em; }
+
+    .section-label { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--blue); margin-bottom: 1rem; display: block; }
+
+    /* INTRO */
+    .intro-section { background: var(--bg-panel); padding: 7rem 4rem; }
+    .intro-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+    .intro-inner h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 600; color: var(--cream); margin-bottom: 1.5rem; letter-spacing: -0.01em; }
+    .intro-inner p { font-size: 1rem; line-height: 1.9; color: var(--muted); max-width: 620px; margin: 0 auto; }
+
+    /* BREW GRID */
+    .grid-section { background: var(--bg); padding: 7rem 4rem; }
+    .grid-header { max-width: 1200px; margin: 0 auto 4rem; }
+    .brew-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; max-width: 1200px; margin: 0 auto; }
+    .brew-card { background: var(--bg-surface); border: 1px solid rgba(74,143,168,0.12); overflow: hidden; transition: border-color 0.3s; }
+    .brew-card:hover { border-color: rgba(74,143,168,0.4); }
+    .brew-card-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; }
+    .brew-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .brew-card:hover .brew-card-img img { transform: scale(1.05); }
+    .brew-card-body { padding: 1.8rem; }
+    .brew-card-number { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.3em; color: var(--blue); margin-bottom: 0.5rem; }
+    .brew-card-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; color: var(--cream); margin-bottom: 0.6rem; letter-spacing: -0.01em; }
+    .brew-card-desc { font-size: 0.82rem; line-height: 1.75; color: var(--muted); margin-bottom: 1.2rem; }
+    .brew-card-meta { display: flex; gap: 1rem; font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.15em; color: var(--blue); opacity: 0.7; }
+
+    /* QUALITY */
+    .quality-section { background: var(--bg-panel); padding: 8rem 4rem; }
+    .quality-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; max-width: 1200px; margin: 0 auto; align-items: center; }
+    .quality-img { aspect-ratio: 4/5; overflow: hidden; }
+    .quality-img img { width: 100%; height: 100%; object-fit: cover; }
+    .quality-content h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 600; color: var(--cream); margin-bottom: 1.5rem; letter-spacing: -0.01em; }
+    .quality-content p { font-size: 0.9rem; line-height: 1.9; color: var(--muted); margin-bottom: 1.5rem; }
+    .quality-specs { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+    .spec-row { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid rgba(74,143,168,0.12); }
+    .spec-label { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+    .spec-value { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; color: var(--blue-light); }
+
+    /* CTA */
+    .cta-section { background: var(--bg-void); padding: 8rem 4rem; text-align: center; }
+    .cta-inner h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 600; color: var(--cream); margin-bottom: 1.2rem; letter-spacing: -0.02em; }
+    .cta-inner p { font-size: 0.9rem; color: var(--muted); margin-bottom: 3rem; line-height: 1.8; }
+    .cta-btn { display: inline-block; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; border: 1px solid var(--blue); padding: 1rem 3rem; color: var(--blue); transition: all 0.3s; }
+    .cta-btn:hover { background: var(--blue); color: var(--bg); }
+
+    footer { background: var(--bg-void); padding: 6rem 4rem 3rem; border-top: 1px solid rgba(74,143,168,0.12); }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+    .footer-brand { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.2em; color: var(--cream); margin-bottom: 0.4rem; }
+    .footer-brand span { color: var(--blue); }
+    .footer-batch { font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.25em; color: var(--blue); margin-bottom: 1rem; }
+    .footer-tagline { font-size: 0.8rem; line-height: 1.8; color: var(--muted); max-width: 240px; }
+    .footer-col-title { font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--blue); margin-bottom: 1.5rem; }
+    .footer-col-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-col-list a { font-size: 0.8rem; color: var(--muted); transition: color 0.3s; }
+    .footer-col-list a:hover { color: var(--cream); }
+    .footer-address { font-size: 0.75rem; line-height: 1.9; color: var(--muted); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid rgba(74,143,168,0.1); }
+    .footer-copy { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.18em; color: var(--muted); opacity: 0.6; }
+    .footer-socials { display: flex; gap: 1.5rem; }
+    .footer-socials a { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); transition: color 0.3s; }
+    .footer-socials a:hover { color: var(--blue); }
+
+    @media (max-width: 900px) {
+      .nav { padding: 1.4rem 2rem; }
+      .nav-links { display: none; }
+      .brew-grid { grid-template-columns: 1fr 1fr; }
+      .quality-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .brew-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">CRYO<span>LAB</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html" class="active">Brews</a></li>
+      <li><a href="process.html">Method</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="collection.html" class="nav-cta">Subscribe</a>
+  </nav>
+
+  <section class="page-banner">
+    <div class="page-banner-bg"></div>
+    <div class="page-banner-overlay"></div>
+    <div class="page-banner-content">
+      <span class="page-banner-label">Batch Series 2024</span>
+      <h1 class="page-banner-title">Brew Catalogue</h1>
+    </div>
+  </section>
+
+  <section class="intro-section">
+    <div class="intro-inner">
+      <span class="section-label">The Spectrum</span>
+      <h2>Six Extractions. One Temperature.</h2>
+      <p>Every bottle in the CRYO LAB catalogue begins at 2°C and ends 22 hours later. What differs is the origin, the roast profile, and the extraction ratio. Each brew is a precisely controlled variable within a fixed protocol. We do not blend. We do not adjust for palatability. We document what the bean becomes when treated as a specimen.</p>
+    </div>
+  </section>
+
+  <section class="grid-section">
+    <div class="grid-header">
+      <span class="section-label">Current Batch</span>
+    </div>
+    <div class="brew-grid">
+
+      <div class="brew-card">
+        <div class="brew-card-img">
+          <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Protocol 01" loading="lazy" />
+        </div>
+        <div class="brew-card-body">
+          <div class="brew-card-number">Protocol 01 · Batch 2024.v4</div>
+          <div class="brew-card-name">OBSIDIAN</div>
+          <div class="brew-card-desc">Ethiopian Yirgacheffe, natural process. Extracted at full immersion ratio 1:8. Dark, stone-fruit forward with a finish that lingers at the back of the palate long after the glass is empty.</div>
+          <div class="brew-card-meta"><span>2°C · 22hrs</span><span>1:8 ratio</span><span>Ethiopia</span></div>
+        </div>
+      </div>
+
+      <div class="brew-card">
+        <div class="brew-card-img">
+          <img src="https://images.unsplash.com/photo-1448932223592-d1fc686e76ea?w=800&q=80&auto=format&fit=crop" alt="Protocol 02" loading="lazy" />
+        </div>
+        <div class="brew-card-body">
+          <div class="brew-card-number">Protocol 02 · Batch 2024.v4</div>
+          <div class="brew-card-name">GLACIER</div>
+          <div class="brew-card-desc">Kenyan AA, washed process. Light roast maintained at strict 195°C development. The cold extraction preserves citrus acidity that conventional brewing destroys. Pale in colour, precise on the tongue.</div>
+          <div class="brew-card-meta"><span>2°C · 22hrs</span><span>1:10 ratio</span><span>Kenya</span></div>
+        </div>
+      </div>
+
+      <div class="brew-card">
+        <div class="brew-card-img">
+          <img src="https://images.pexels.com/photos/2098913/pexels-photo-2098913.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Protocol 03" loading="lazy" />
+        </div>
+        <div class="brew-card-body">
+          <div class="brew-card-number">Protocol 03 · Batch 2024.v4</div>
+          <div class="brew-card-name">AMBER</div>
+          <div class="brew-card-desc">Colombian Huila, honey process. Medium roast. The honey process introduces fermentation notes without sacrificing clarity. Caramel forward, structured tannins, long cocoa finish.</div>
+          <div class="brew-card-meta"><span>2°C · 22hrs</span><span>1:9 ratio</span><span>Colombia</span></div>
+        </div>
+      </div>
+
+      <div class="brew-card">
+        <div class="brew-card-img">
+          <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3df1?w=800&q=80&auto=format&fit=crop" alt="Protocol 04" loading="lazy" />
+        </div>
+        <div class="brew-card-body">
+          <div class="brew-card-number">Protocol 04 · Batch 2024.v4</div>
+          <div class="brew-card-name">MINERAL</div>
+          <div class="brew-card-desc">Guatemalan Antigua, washed. Volcanic soil produces an unusually mineral quality. This brew is for those who prefer to taste the earth beneath the crop. Earthy, dry, and quietly complex.</div>
+          <div class="brew-card-meta"><span>2°C · 22hrs</span><span>1:9 ratio</span><span>Guatemala</span></div>
+        </div>
+      </div>
+
+      <div class="brew-card">
+        <div class="brew-card-img">
+          <img src="https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Protocol 05" loading="lazy" />
+        </div>
+        <div class="brew-card-body">
+          <div class="brew-card-number">Protocol 05 · Batch 2024.v4</div>
+          <div class="brew-card-name">NIGHT</div>
+          <div class="brew-card-desc">Brazilian Cerrado Mineiro, natural. The most approachable in the catalogue. Rich, round, and low in perceived acidity. An extended 26-hour extraction — our only deviation from the standard protocol.</div>
+          <div class="brew-card-meta"><span>2°C · 26hrs</span><span>1:7 ratio</span><span>Brazil</span></div>
+        </div>
+      </div>
+
+      <div class="brew-card">
+        <div class="brew-card-img">
+          <img src="https://images.pexels.com/photos/1640773/pexels-photo-1640773.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Protocol 06" loading="lazy" />
+        </div>
+        <div class="brew-card-body">
+          <div class="brew-card-number">Protocol 06 · Batch 2024.v4</div>
+          <div class="brew-card-name">ARCHIVE</div>
+          <div class="brew-card-desc">Seasonal single-origin selection from our sourcing partners. Varies by harvest. Batch 2024.v4 features Panama Geisha — floral, tea-like, and so delicate it almost does not feel like coffee.</div>
+          <div class="brew-card-meta"><span>2°C · 22hrs</span><span>1:11 ratio</span><span>Seasonal</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="quality-section">
+    <div class="quality-grid">
+      <div class="quality-img">
+        <img src="https://images.pexels.com/photos/1619854/pexels-photo-1619854.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Sourcing" />
+      </div>
+      <div class="quality-content">
+        <span class="section-label">Sourcing Protocol</span>
+        <h2>Every Origin Documented. Every Batch Numbered.</h2>
+        <p>We source from fewer than twelve farms annually. Each relationship is built over multiple seasons before a single gram reaches our extraction chamber. Farm elevation, varietal, processing method, and harvest date are recorded for every batch.</p>
+        <p>Quality for CRYO LAB is not a marketing position. It is a technical baseline. If an origin does not perform within expected parameters at 2°C, it does not enter the catalogue.</p>
+        <div class="quality-specs">
+          <div class="spec-row">
+            <span class="spec-label">Extraction Temperature</span>
+            <span class="spec-value">2°C ± 0.5°C</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-label">Standard Duration</span>
+            <span class="spec-value">22 Hours</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-label">Grind Precision</span>
+            <span class="spec-value">± 3 microns</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-label">Batch Size</span>
+            <span class="spec-value">Max 200 litres</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-label">Shelf Life (sealed)</span>
+            <span class="spec-value">14 days</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner">
+      <span class="section-label">Wholesale & Subscription</span>
+      <h2>Order for Your Venue or Home</h2>
+      <p>CRYO LAB operates on a subscription and wholesale model. Minimum order 24 units. Cold-chain delivery within the UK. We do not sell through third-party retailers.</p>
+      <a href="contact.html" class="cta-btn">Contact the Lab</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">CRYO<span>LAB</span></div>
+        <div class="footer-batch">Batch series: 2024.v4</div>
+        <p class="footer-tagline">Extracted at 2°C. For 22 Hours. All batches numbered.</p>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Protocol</div>
+        <ul class="footer-col-list sr">
+          <li><a href="process.html">Process</a></li>
+          <li><a href="collection.html">The Spectrum</a></li>
+          <li><a href="about.html">Origin Series</a></li>
+          <li><a href="about.html">Lab Notes</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Extraction Lab</div>
+        <div class="footer-address">
+          Unit 14, Bermondsey<br/>
+          London, SE1 3XE<br/><br/>
+          Open: Mon–Fri 08:00–16:00<br/>
+          Lab visits: by appt only
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Wholesale</div>
+        <div class="footer-address">
+          lab@cryo-lab.co<br/><br/>
+          +44 (0)20 XXXX XXXX<br/><br/>
+          Minimum order: 24 units<br/>
+          Cold chain delivery
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">CRYO LAB © 2024. All batches numbered.</span>
+      <div class="footer-socials">
+        <a href="#">IG</a>
+        <a href="#">TW</a>
+        <a href="#">LN</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.intro-inner', { opacity: 0, y: 24, immediateRender: false, scrollTrigger: { trigger: '.intro-section', start: 'top 80%', once: true } });
+    gsap.from('.brew-card', { opacity: 0, y: 24, stagger: 0.12, immediateRender: false, scrollTrigger: { trigger: '.brew-grid', start: 'top 80%', once: true } });
+    gsap.from('.quality-img', { opacity: 0, x: -40, immediateRender: false, scrollTrigger: { trigger: '.quality-grid', start: 'top 80%', once: true } });
+    gsap.from('.quality-content', { opacity: 0, x: 40, immediateRender: false, scrollTrigger: { trigger: '.quality-grid', start: 'top 75%', once: true } });
+    gsap.from('.cta-inner', { opacity: 0, y: 24, immediateRender: false, scrollTrigger: { trigger: '.cta-section', start: 'top 80%', once: true } });
+  </script>
+</body>
+</html>

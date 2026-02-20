@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Process — Casa Obscura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+  :root {
+    --bg:#180f08;--bg-2:#1f1510;--bg-3:#261a12;
+    --ember:#c4622d;--ember-light:#e07843;--tobacco:#8b5e3c;
+    --gold:#d4a847;--parchment:#f0e4cc;
+    --text:#d0c0a8;--text-muted:#7a6550;--border:rgba(196,98,45,0.22);
+    --font-display:'Cinzel',serif;--font-body:'Cormorant Garamond',serif;--font-sans:'Inter',sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:18px;line-height:1.7;overflow-x:hidden}
+  nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:1.5rem 4rem;display:flex;align-items:center;justify-content:space-between;background:rgba(24,15,8,0.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+  .nav-logo{font-family:var(--font-display);font-size:1.1rem;color:var(--gold);text-decoration:none;letter-spacing:0.15em}
+  .nav-logo span{color:var(--parchment);font-style:italic;font-family:var(--font-body)}
+  .nav-links{display:flex;gap:3rem;list-style:none}
+  .nav-links a{font-family:var(--font-sans);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text);text-decoration:none;transition:color 0.3s}
+  .nav-links a:hover,.nav-links a.active{color:var(--ember)}
+  .page-banner{height:50vh;min-height:380px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .banner-bg{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/2265634/pexels-photo-2265634.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80');background-size:cover;background-position:center;filter:sepia(0.3)}
+  .banner-overlay{position:absolute;inset:0;background:rgba(10,6,3,0.58)}
+  .banner-content{position:relative;z-index:1;text-align:center}
+  .banner-eyebrow{font-family:var(--font-sans);font-size:10px;letter-spacing:0.5em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:1rem}
+  .banner-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);color:var(--parchment);font-weight:400;letter-spacing:0.1em}
+  .banner-title em{font-style:italic;color:var(--gold);font-family:var(--font-body)}
+  section{padding:5rem 6rem}
+  .section-eyebrow{font-family:var(--font-sans);font-size:10px;letter-spacing:0.5em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:1rem}
+  .section-title{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.2rem);color:var(--parchment);font-weight:400;letter-spacing:0.08em;margin-bottom:2.5rem}
+  .section-title em{font-style:italic;color:var(--gold);font-family:var(--font-body)}
+  p{color:var(--text-muted);line-height:1.9;margin-bottom:1.5rem;font-size:1.05rem}
+  .step-block{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin-bottom:6rem}
+  .step-block:last-child{margin-bottom:0}
+  .step-block.reverse{direction:rtl}
+  .step-block.reverse > *{direction:ltr}
+  .step-img{position:relative}
+  .step-img img{width:100%;height:440px;object-fit:cover;filter:sepia(0.2);border:1px solid var(--border)}
+  .step-num{position:absolute;top:-1.5rem;left:-1.5rem;font-family:var(--font-display);font-size:5rem;color:rgba(196,98,45,0.12);line-height:1;letter-spacing:0.05em;user-select:none}
+  .step-content{}
+  .step-label{font-family:var(--font-sans);font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--ember);margin-bottom:1rem;display:block}
+  .step-title{font-family:var(--font-display);font-size:1.6rem;color:var(--parchment);letter-spacing:0.08em;font-weight:400;margin-bottom:1.5rem}
+  .step-body{color:var(--text-muted);line-height:1.9;font-size:1rem}
+  .step-detail{margin-top:1.5rem;padding:1.25rem;border-left:2px solid var(--ember);background:rgba(196,98,45,0.05)}
+  .step-detail dt{font-family:var(--font-sans);font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--ember);margin-bottom:0.25rem}
+  .step-detail dd{color:var(--text-muted);font-size:0.9rem}
+  /* Timeline strip */
+  .timeline-strip{display:flex;gap:0;border:1px solid var(--border);overflow:hidden;margin-top:3rem}
+  .timeline-node{flex:1;padding:2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg-2)}
+  .timeline-node:last-child{border-right:none}
+  .timeline-node:hover{background:var(--bg-3)}
+  .tl-year{font-family:var(--font-display);font-size:0.85rem;color:var(--ember);letter-spacing:0.1em;margin-bottom:0.5rem}
+  .tl-label{font-family:var(--font-sans);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted)}
+  footer{background:var(--bg);border-top:1px solid var(--border);padding:3rem 6rem;display:flex;justify-content:space-between;align-items:center}
+  .footer-brand{font-family:var(--font-display);font-size:1rem;color:var(--gold);letter-spacing:0.15em}
+  .footer-copy{font-family:var(--font-sans);font-size:11px;color:var(--text-muted)}
+  .footer-links{display:flex;gap:2rem}
+  .footer-links a{font-family:var(--font-sans);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color 0.3s}
+  .footer-links a:hover{color:var(--ember)}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">Casa <span>Obscura</span></a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Collection</a></li>
+    <li><a href="process.html" class="active">Process</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+<div class="page-banner">
+  <div class="banner-bg"></div>
+  <div class="banner-overlay"></div>
+  <div class="banner-content">
+    <span class="banner-eyebrow">The Craft</span>
+    <h1 class="banner-title">From <em>Seed to Smoke</em></h1>
+  </div>
+</div>
+<section style="background:var(--bg)">
+  <span class="section-eyebrow">The Five Stages</span>
+  <h2 class="section-title">An <em>Ancient Method</em></h2>
+  <div class="step-block sr">
+    <div class="step-img sr">
+      <div class="step-num sr">I</div>
+      <img src="https://images.unsplash.com/photo-1504593811423-6dd665756598?w=800&q=80&auto=format&fit=crop" alt="Cultivation">
+    </div>
+    <div class="step-content sr">
+      <span class="step-label sr">Stage One · Cultivation</span>
+      <div class="step-title sr">The Seed & The Soil</div>
+      <div class="step-body sr">Every Casa Obscura cigar begins in volcanic earth. Our seed library — maintained since 1947 — contains seventeen heirloom Nicotiana tabacum cultivars. We plant only under the new moon, following a tradition our founder brought from the Vuelta Abajo.
+      <p>Topsoil is enriched with aged organic matter and rested for two seasons between plantings. Fertiliser is prohibited. The earth must give freely, or not at all.</p></div>
+      <dl class="step-detail sr">
+        <dt>Growing Period</dt><dd>90–120 days from transplant to harvest</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="step-block reverse sr">
+    <div class="step-img sr">
+      <div class="step-num sr">II</div>
+      <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&q=80&auto=format&fit=crop" alt="Fermentation">
+    </div>
+    <div class="step-content sr">
+      <span class="step-label sr">Stage Two · Fermentation</span>
+      <div class="step-title sr">The Pilón & The Patience</div>
+      <div class="step-body sr">Harvested leaves are bundled into pilónes — large mounds that generate their own internal heat. Over months, nitrogen and ammonia exhale from the leaf. Harshness departs; complexity arrives.
+      <p>Our cellar master turns each pilón by hand, regulating temperature between 90° and 110°F. A single degree of variance produces a different cigar. We have turned pilónes the same way for seventy years.</p></div>
+      <dl class="step-detail sr">
+        <dt>Fermentation Duration</dt><dd>18–36 months depending on leaf priming</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="step-block sr">
+    <div class="step-img sr">
+      <div class="step-num sr">III</div>
+      <img src="https://images.unsplash.com/photo-1580261450046-d0a30080dc9b?w=800&q=80&auto=format&fit=crop" alt="Blending">
+    </div>
+    <div class="step-content sr">
+      <span class="step-label sr">Stage Three · Blending</span>
+      <div class="step-title sr">The Architecture of Smoke</div>
+      <div class="step-body sr">Our master blender treats each cigar as a structural problem: the filler is the skeleton, the binder the musculature, the wrapper the skin. Every layer must function independently and together.
+      <p>We produce test blends in runs of twelve. These are smoked blind by a panel of five — never fewer — before any blend is approved. Most blends are revised eight to fifteen times before release.</p></div>
+      <dl class="step-detail sr">
+        <dt>Average Blend Development</dt><dd>14 months, 11 iterations</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="step-block reverse sr">
+    <div class="step-img sr">
+      <div class="step-num sr">IV</div>
+      <img src="https://images.unsplash.com/photo-1547887538-047dcdc4a42e?w=800&q=80&auto=format&fit=crop" alt="Rolling">
+    </div>
+    <div class="step-content sr">
+      <span class="step-label sr">Stage Four · The Roll</span>
+      <div class="step-title sr">The Torcedor's Hands</div>
+      <div class="step-body sr">Our torcedores train for a minimum of five years before touching a production cigar. The bunch must be packed uniformly — not too tight to restrict the draw, not too loose to collapse under the wrapper's tension.
+      <p>Each cigar is measured, weighed, and drawn before it leaves the rolling table. Tolerance: ±0.2g. Draw resistance: 1.2–1.8 inches of mercury. Cigars outside tolerance are unrolled and rerolled.</p></div>
+      <dl class="step-detail sr">
+        <dt>Production Rate</dt><dd>Each torcedor rolls a maximum of 80 cigars per day</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="step-block sr">
+    <div class="step-img sr">
+      <div class="step-num sr">V</div>
+      <img src="https://images.unsplash.com/photo-1567306301408-9b74779a11af?w=800&q=80&auto=format&fit=crop" alt="Aging">
+    </div>
+    <div class="step-content sr">
+      <span class="step-label sr">Stage Five · Final Aging</span>
+      <div class="step-title sr">The Geneva Vault</div>
+      <div class="step-body sr">Rolled cigars enter our Geneva vault for a minimum of eight months at 65–68% relative humidity and 16°C. The vault is maintained by hygrometer, not electronic control — a deliberate choice. Seasonal fluctuation produces depth that precision cannot.
+      <p>Our oldest vault inventory dates to 1989. We do not rush what time improves.</p></div>
+      <dl class="step-detail sr">
+        <dt>Vault Conditions</dt><dd>65–68% RH · 16°C · Cedar-lined cedar cabinets</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+<section style="background:var(--bg-2)">
+  <span class="section-eyebrow">Timeline</span>
+  <h2 class="section-title">Milestones of <em>the Atelier</em></h2>
+  <div class="timeline-strip">
+    <div class="timeline-node"><div class="tl-year">1947</div><div class="tl-label">Atelier Founded</div></div>
+    <div class="timeline-node"><div class="tl-year">1963</div><div class="tl-label">First private commission</div></div>
+    <div class="timeline-node"><div class="tl-year">1981</div><div class="tl-label">Geneva vault opened</div></div>
+    <div class="timeline-node"><div class="tl-year">1999</div><div class="tl-label">London salon established</div></div>
+    <div class="timeline-node"><div class="tl-year">2014</div><div class="tl-label">Patron programme launch</div></div>
+    <div class="timeline-node"><div class="tl-year">2024</div><div class="tl-label">77th anniversary collection</div></div>
+  </div>
+</section>
+<footer>
+  <span class="footer-brand">CASA OBSCURA</span>
+  <span class="footer-copy">&copy; 2024 Casa Obscura, Geneva. All rights reserved.</span>
+  <div class="footer-links"><a href="index.html">Home</a><a href="collection.html">Collection</a><a href="contact.html">Contact</a></div>
+</footer>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from('.banner-content > *', { opacity:0, y:30, duration:1, stagger:0.1, delay:0.3 });
+  document.querySelectorAll('.step-block').forEach(function(block) {
+    gsap.from(block, { scrollTrigger:{ trigger:block, start:'top 80%'}, immediateRender: false, opacity:0, y:30, duration:1 });
+  });
+  gsap.from('.timeline-node', { scrollTrigger:{ trigger:'.timeline-strip', start:'top 80%'}, immediateRender: false, opacity:0, x:-20, stagger:0.1, duration:0.8 });
+</script>
+</body>
+</html>

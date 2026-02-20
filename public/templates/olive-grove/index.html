@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATHENAION ESTATE — Three Hundred Years of Pressing</title>
+  <meta name="description" content="ATHENAION ESTATE. Single-estate ultra-premium olive oil pressed from 300-year-old Koroneiki groves in the Peloponnese. One harvest. One expression." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- GSAP 3.12 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+/* SplitText polyfill — replaces Club GSAP premium plugin (not on CDN) */
+class SplitText {
+  constructor(target, opts = {}) {
+    const el = typeof target === 'string'
+      ? document.querySelector(target)
+      : (target instanceof Element ? target : null);
+    this.chars = []; this.words = []; this.lines = [];
+    if (!el) return;
+    this._el = el;
+    const type = (opts.type || 'chars,words').toLowerCase();
+    const original = el.textContent;
+    el.setAttribute('data-split-orig', original);
+    if (type.includes('chars')) {
+      el.innerHTML = original.split('').map(c =>
+        c === ' '
+          ? '<span class="char" style="display:inline-block">&nbsp;</span>'
+          : `<span class="char" style="display:inline-block">${c}</span>`
+      ).join('');
+      this.chars = Array.from(el.querySelectorAll('.char'));
+    } else if (type.includes('words')) {
+      el.innerHTML = original.split(/\s+/).filter(Boolean).map(w =>
+        `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`
+      ).join('');
+      this.words = Array.from(el.querySelectorAll('.word'));
+    }
+    this.lines = [el];
+  }
+  revert() {
+    if (this._el) {
+      const orig = this._el.getAttribute('data-split-orig');
+      if (orig) this._el.textContent = orig;
+    }
+  }
+}
+</script>
+
+  <!-- Swiper 11 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    /* ================================================================
+       DESIGN TOKENS — all avg(R+G+B)/3 >= 20
+    ================================================================ */
+    :root {
+      --bg:            #1A2210;  /* 26+34+16/3 = 25.3 ✅ */
+      --surface:       #212D14;  /* 33+45+20/3 = 32.7 ✅ */
+      --surface2:      #1E2812;  /* 30+40+18/3 = 29.3 ✅ */
+      --grove:         #4A6B2A;  /* aged olive leaf */
+      --gold:          #B8961E;  /* cold-pressed oil */
+      --gold-light:    #D4B040;
+      --gold-dark:     #7D6510;
+      --gold-pale:     rgba(184,150,30,0.10);
+      --stone:         #8A8070;  /* limestone */
+      --ivory:         #F0EBD8;  /* warm parchment */
+      --smoke:         #6A6458;
+      --muted:         #4A4438;
+      --border:        #2A3418;
+      --border2:       #38441E;
+      --font-serif:    'Cormorant Garamond', Georgia, serif;
+      --font-sans:     'Jost', sans-serif;
+    }
+
+    /* ================================================================
+       RESET / BASE
+    ================================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold-dark) var(--bg);
+    }
+    html::-webkit-scrollbar { width: 4px; }
+    html::-webkit-scrollbar-track { background: var(--bg); }
+    html::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 2px; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    body.locked { overflow: hidden; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ================================================================
+       PRELOADER
+    ================================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .pre-emblem {
+      width: 64px;
+      height: 64px;
+    }
+
+    .pre-ring {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      animation: ringDraw 2s 0.3s ease forwards;
+    }
+    @keyframes ringDraw { to { stroke-dashoffset: 0; } }
+
+    .pre-leaf-inner {
+      transform-origin: center;
+      animation: leafSpin 2s 0.3s ease-out forwards;
+    }
+    @keyframes leafSpin {
+      from { transform: rotate(-45deg); opacity: 0; }
+      to   { transform: rotate(0deg);  opacity: 1; }
+    }
+
+    .pre-wordmark {
+      font-family: var(--font-serif);
+      font-size: 11px;
+      letter-spacing: 0.6em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0;
+      animation: fadeUp 0.8s 1.8s ease forwards;
+    }
+
+    .pre-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--stone);
+      letter-spacing: 0.2em;
+      opacity: 0;
+      animation: fadeUp 0.8s 2.1s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* ================================================================
+       CUSTOM CURSOR
+    ================================================================ */
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      border-radius: 50%;
+    }
+    .cursor-dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(184,150,30,0.5);
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+    }
+    body:hover .cursor-ring { border-color: rgba(184,150,30,0.7); }
+    @media (hover: none) { .cursor-dot, .cursor-ring { display: none; } }
+
+    /* ================================================================
+       NAVBAR
+    ================================================================ */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      transition: background 0.4s, padding 0.4s, backdrop-filter 0.4s;
+    }
+
+    #navbar.scrolled {
+      background: rgba(26,34,16,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      font-weight: 500;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--stone);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--ivory); }
+
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 10px 28px;
+      border: 1px solid var(--gold-dark);
+      color: var(--gold);
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-cta:hover { background: var(--gold); color: var(--bg); }
+
+    .nav-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none; border: none; padding: 4px;
+    }
+    .nav-menu-btn span {
+      display: block;
+      width: 24px; height: 1px;
+      background: var(--ivory);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* Mobile menu */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 498;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      transform: translateX(100%);
+      transition: transform 0.5s cubic-bezier(0.76,0,0.24,1);
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      color: var(--ivory);
+      letter-spacing: 0.1em;
+      font-style: italic;
+    }
+
+    /* ================================================================
+       HERO — TYPE B: MULTI-LAYER PARALLAX
+    ================================================================ */
+    .hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Parallax layers: inset: -8%, 116% size for shift room */
+    .parallax-layer {
+      position: absolute;
+      inset: -8%;
+      width: 116%;
+      height: 116%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    /* Layer 1: sky / distant hills — slow */
+    .layer-1 {
+      background-image: url('https://images.unsplash.com/photo-1450338872a20bc3e124e4decc87a96?w=1920&q=80&auto=format&fit=crop');
+      filter: brightness(0.65) saturate(0.8);
+    }
+
+    /* Layer 2: mid olive grove */
+    .layer-2 {
+      background-image: url('https://images.unsplash.com/photo-1536152470836-b943b246224c?w=1920&q=80&auto=format&fit=crop');
+      filter: brightness(0.55) saturate(0.9);
+      opacity: 0.75;
+      mix-blend-mode: screen;
+      mix-blend-mode: normal;
+    }
+
+    /* Layer 3: foreground stone / trees */
+    .layer-3 {
+      background-image: url('https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80');
+      filter: brightness(0.45) saturate(0.7);
+      opacity: 0.45;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(26,34,16,0.25) 0%,
+        rgba(26,34,16,0.10) 40%,
+        rgba(26,34,16,0.75) 100%
+      );
+      z-index: 2;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 24px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold-dark);
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(52px, 8vw, 112px);
+      font-weight: 300;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold-light);
+      display: block;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(16px, 2vw, 22px);
+      color: var(--stone);
+      margin-bottom: 48px;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      background: var(--gold);
+      color: var(--bg);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+    .btn-ghost {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      border: 1px solid rgba(240,235,216,0.3);
+      color: var(--ivory);
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--ivory); }
+
+    /* Floating seal badge */
+    .hero-float {
+      position: absolute;
+      bottom: 80px;
+      right: 80px;
+      z-index: 5;
+      width: 100px;
+      height: 100px;
+      animation: floatSpin 20s linear infinite;
+    }
+    @keyframes floatSpin { to { transform: rotate(360deg); } }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--gold-dark), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+    .scroll-label {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* ================================================================
+       SECTION BASE
+    ================================================================ */
+    section { position: relative; }
+
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--gold-dark);
+    }
+
+    .section-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 4vw, 56px);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--ivory);
+    }
+    .section-heading em { font-style: italic; color: var(--gold-light); }
+
+    .section-body {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--stone);
+      max-width: 540px;
+    }
+
+    /* ================================================================
+       THE AGE SECTION
+    ================================================================ */
+    .age-section {
+      background: var(--surface);
+      padding: 120px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .age-numeral-wrap {
+      position: relative;
+    }
+
+    .age-numeral {
+      font-family: var(--font-serif);
+      font-size: clamp(140px, 20vw, 280px);
+      font-weight: 300;
+      line-height: 0.85;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(184,150,30,0.3);
+      user-select: none;
+      position: relative;
+    }
+
+    .age-numeral-fill {
+      font-family: var(--font-serif);
+      font-size: clamp(140px, 20vw, 280px);
+      font-weight: 300;
+      line-height: 0.85;
+      color: var(--gold);
+      position: absolute;
+      top: 0; left: 0;
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0s;
+    }
+
+    .age-unit {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-top: 16px;
+    }
+
+    .age-content { padding: 20px 0; }
+    .age-content .section-heading { margin-bottom: 24px; }
+    .age-content .section-body { margin-bottom: 40px; }
+
+    .age-stat-row {
+      display: flex;
+      gap: 48px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .age-stat { display: flex; flex-direction: column; gap: 6px; }
+    .age-stat-val {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--ivory);
+    }
+    .age-stat-label {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* ================================================================
+       HARVEST WINDOW
+    ================================================================ */
+    .harvest-section {
+      background: var(--bg);
+      padding: 100px 80px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .harvest-header {
+      max-width: 600px;
+      margin: 0 auto 64px;
+    }
+
+    .harvest-countdown {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 48px auto;
+    }
+
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 48px;
+      border: 1px solid var(--border);
+      min-width: 140px;
+    }
+    .countdown-unit + .countdown-unit { border-left: none; }
+
+    .countdown-val {
+      font-family: var(--font-serif);
+      font-size: 64px;
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1;
+    }
+    .countdown-label {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 10px;
+    }
+
+    .harvest-note {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 17px;
+      color: var(--stone);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ================================================================
+       THREE EXPRESSIONS — collection
+    ================================================================ */
+    .expressions-section {
+      background: var(--surface);
+      padding: 120px 80px;
+    }
+
+    .expressions-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 64px;
+      gap: 40px;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      overflow: visible;
+    }
+
+    .expression-card {
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.4s cubic-bezier(0.25,0.1,0.25,1);
+    }
+    .expression-card:hover { transform: translateY(-8px); }
+
+    .expression-img-wrap {
+      height: 360px;
+      overflow: hidden;
+      position: relative;
+    }
+    .expression-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+    .expression-card:hover .expression-img-wrap img {
+      transform: scale(1.06);
+    }
+
+    .expression-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      background: var(--gold);
+      color: var(--bg);
+    }
+
+    .expression-body {
+      padding: 32px 28px 36px;
+    }
+
+    .expression-variety {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    .expression-name {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 20px;
+    }
+
+    .expression-specs {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .expression-specs li {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-sans);
+      font-size: 11px;
+    }
+    .expression-specs li span:first-child {
+      color: var(--smoke);
+      letter-spacing: 0.1em;
+    }
+    .expression-specs li span:last-child {
+      color: var(--ivory);
+      font-weight: 400;
+    }
+
+    .expression-cta {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: gap 0.3s;
+    }
+    .expression-card:hover .expression-cta { gap: 18px; }
+    .expression-cta::after {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--gold-dark);
+    }
+
+    /* ================================================================
+       THE GROVE — immersive video
+    ================================================================ */
+    .grove-section {
+      background: var(--bg);
+      position: relative;
+      height: 600px;
+      overflow: hidden;
+    }
+
+    .grove-visual {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1557591584-5547af40e6d0?w=1920&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35) saturate(0.7);
+      will-change: transform;
+    }
+
+    .grove-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(26,34,16,0.85) 0%,
+        rgba(26,34,16,0.30) 60%,
+        rgba(26,34,16,0.10) 100%
+      );
+      z-index: 2;
+    }
+
+    .grove-content {
+      position: relative;
+      z-index: 3;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      max-width: 600px;
+    }
+
+    .grove-history {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      line-height: 1.8;
+      color: var(--ivory);
+      font-weight: 300;
+    }
+    .grove-history strong { color: var(--gold-light); font-weight: 400; }
+
+    /* ================================================================
+       HARVEST JOURNAL — blog
+    ================================================================ */
+    .journal-section {
+      background: var(--surface);
+      padding: 120px 80px;
+    }
+
+    .journal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 64px;
+    }
+
+    .journal-card {
+      cursor: pointer;
+    }
+
+    .journal-img-wrap {
+      height: 220px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .journal-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+      filter: saturate(0.8);
+    }
+    .journal-card:hover .journal-img-wrap img { transform: scale(1.05); }
+
+    .journal-category {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .journal-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+
+    .journal-excerpt {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--smoke);
+      line-height: 1.75;
+    }
+
+    .journal-date {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      margin-top: 16px;
+    }
+
+    /* ================================================================
+       THE AMPHORA — order section
+    ================================================================ */
+    .amphora-section {
+      background: var(--bg);
+      padding: 120px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .amphora-visual {
+      position: relative;
+    }
+
+    .amphora-img-outer {
+      position: relative;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .amphora-img-outer::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border: 1px solid var(--border2);
+    }
+
+    .amphora-img-outer img {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      filter: saturate(0.85);
+    }
+
+    .amphora-ornament {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      width: 80px;
+      height: 80px;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 11px;
+      color: var(--bg);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .amphora-content .section-heading { margin-bottom: 20px; }
+
+    .amphora-price-block {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    .amphora-price-label {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-bottom: 8px;
+    }
+    .amphora-price {
+      font-family: var(--font-serif);
+      font-size: 52px;
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1;
+    }
+    .amphora-price sup {
+      font-size: 24px;
+      vertical-align: super;
+      color: var(--gold);
+    }
+    .amphora-price-sub {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--smoke);
+      margin-top: 6px;
+    }
+
+    .amphora-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .amphora-features li {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--stone);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .amphora-features li::before {
+      content: '';
+      display: block;
+      width: 16px;
+      height: 1px;
+      background: var(--gold-dark);
+      margin-top: 10px;
+      flex-shrink: 0;
+    }
+
+    /* ================================================================
+       PROVENANCE MAP
+    ================================================================ */
+    .map-section {
+      background: var(--surface);
+      padding: 120px 80px;
+    }
+
+    .map-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 64px;
+    }
+
+    .map-visual {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* SVG antique map illustration */
+    .map-visual svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-marker {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .map-marker-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 4px rgba(184,150,30,0.2);
+      animation: mapPulse 2s ease-in-out infinite;
+    }
+    @keyframes mapPulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(184,150,30,0.2); }
+      50% { box-shadow: 0 0 0 12px rgba(184,150,30,0.05); }
+    }
+
+    .map-marker-label {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+      background: var(--bg);
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+    }
+
+    /* ================================================================
+       FOOTER
+    ================================================================ */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 80px 48px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 64px;
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--ivory);
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .footer-brand-desc {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--smoke);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .footer-coords {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--gold-dark);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col ul li a {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--smoke);
+      transition: color 0.3s;
+    }
+    .footer-col ul li a:hover { color: var(--ivory); }
+
+    .footer-bottom {
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-copy {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+    }
+
+    .footer-since {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--stone);
+    }
+
+    /* ================================================================
+       ANIMATIONS — visibility defaults (NO opacity:0 on content)
+    ================================================================ */
+    .reveal-item { will-change: transform; }
+
+    /* ================================================================
+       RESPONSIVE
+    ================================================================ */
+    @media (max-width: 1024px) {
+      .age-section,
+      .amphora-section {
+        grid-template-columns: 1fr;
+        padding: 80px 40px;
+        gap: 48px;
+      }
+
+      .collection-grid { grid-template-columns: 1fr 1fr; }
+      .journal-grid { grid-template-columns: 1fr 1fr; }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #navbar { padding: 20px 24px; }
+      #navbar.scrolled { padding: 14px 24px; }
+
+      .nav-links, .nav-cta { display: none; }
+      .nav-menu-btn { display: flex; }
+
+      .hero-float { display: none; }
+
+      .harvest-section,
+      .expressions-section,
+      .grove-section,
+      .journal-section,
+      .map-section { padding: 80px 24px; }
+
+      .harvest-countdown { flex-wrap: wrap; gap: 2px; }
+      .countdown-unit { padding: 20px 28px; min-width: 110px; }
+      .countdown-val { font-size: 44px; }
+
+      .collection-grid { grid-template-columns: 1fr; }
+      .journal-grid { grid-template-columns: 1fr; }
+
+      .grove-content { padding: 48px 24px; max-width: 100%; }
+
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      footer { padding: 64px 24px 40px; }
+
+      .age-numeral, .age-numeral-fill { font-size: 100px; }
+    }
+</style>
+</head>
+<body class="locked">
+
+  <!-- ===== CURSOR ===== -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ===== PRELOADER ===== -->
+  <div id="preloader">
+    <svg class="pre-emblem" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle class="pre-ring" cx="32" cy="32" r="30" stroke="#B8961E" stroke-width="0.75"/>
+      <g class="pre-leaf-inner" fill="#B8961E" opacity="0.9">
+        <ellipse cx="32" cy="22" rx="4" ry="10" transform="rotate(-20 32 22)"/>
+        <ellipse cx="32" cy="22" rx="4" ry="10" transform="rotate(20 32 22)"/>
+        <line x1="32" y1="32" x2="32" y2="42" stroke="#B8961E" stroke-width="1"/>
+      </g>
+    </svg>
+    <div class="pre-wordmark">ATHENAION ESTATE</div>
+    <div class="pre-tagline">Three Hundred Years of Pressing.</div>
+  </div>
+
+  <!-- ===== MOBILE MENU ===== -->
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="#grove">The Grove</a>
+    <a href="#expressions">Expressions</a>
+    <a href="#journal">Journal</a>
+    <a href="#amphora">Reserve</a>
+  </nav>
+
+  <!-- ===== NAVBAR ===== -->
+  <header id="navbar">
+    <div class="nav-logo"><span>ATHENAION</span> ESTATE</div>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Harvest</a></li>
+      <li><a href="process.html">Grove to Table</a></li>
+      <li><a href="contact.html">Reserve</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Reserve Harvest</a>
+    <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ===== HERO TYPE B — MULTI-LAYER PARALLAX ===== -->
+  <section class="hero" id="hero">
+    <div class="parallax-layer layer-1" id="pLayer1"></div>
+    <div class="parallax-layer layer-2" id="pLayer2"></div>
+    <div class="parallax-layer layer-3" id="pLayer3"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Single Estate · Peloponnese, Greece</div>
+      <h1 class="hero-title">
+        Athenaion
+        <em>Estate</em>
+      </h1>
+      <p class="hero-tagline">Three Hundred Years of Pressing.</p>
+      <div class="hero-actions">
+        <a href="#amphora" class="btn-primary">Reserve This Harvest</a>
+        <a href="#expressions" class="btn-ghost">Explore Expressions</a>
+      </div>
+    </div>
+
+    <!-- Floating olive branch seal -->
+    <div class="hero-float">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="48" stroke="#B8961E" stroke-width="0.5" opacity="0.6"/>
+        <circle cx="50" cy="50" r="40" stroke="#B8961E" stroke-width="0.5" opacity="0.4"/>
+        <text font-family="Cormorant Garamond, serif" font-size="7" fill="#B8961E" opacity="0.8">
+          <textPath href="#circleText">· SINCE 1724 · KORONEIKI · PELOPONNESE · SINGLE HARVEST ·</textPath>
+        </text>
+        <defs>
+          <path id="circleText" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0"/>
+        </defs>
+        <path d="M46 54 Q50 40 54 54 Q50 58 46 54Z" fill="#B8961E" opacity="0.7"/>
+        <line x1="50" y1="58" x2="50" y2="66" stroke="#B8961E" stroke-width="0.7" opacity="0.7"/>
+      </svg>
+    </div>
+
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span class="scroll-label">Scroll</span>
+    </div>
+  </section>
+
+  <!-- ===== THE AGE OF THE GROVE ===== -->
+  <section class="age-section" id="age">
+    <div class="age-numeral-wrap">
+      <div class="age-numeral" aria-hidden="true">300</div>
+      <div class="age-numeral-fill reveal-item" id="ageNumeralFill" aria-hidden="true">300</div>
+      <div class="age-unit">Years. The oldest tree still bears fruit.</div>
+    </div>
+    <div class="age-content">
+      <div class="section-label reveal-item">The Grove</div>
+      <h2 class="section-heading reveal-item">
+        A Living<br/><em>Archive</em>
+      </h2>
+      <p class="section-body reveal-item">
+        Our trees were planted before your grandfather was born. The Athenaion grove in the Peloponnese has been cultivated without interruption since 1724, surviving famines, occupations, and three centuries of harvest seasons. ATHENAION does not farm olives — it tends a memory.
+      </p>
+      <div class="age-stat-row reveal-item">
+        <div class="age-stat">
+          <span class="age-stat-val">1724</span>
+          <span class="age-stat-label">Founded</span>
+        </div>
+        <div class="age-stat">
+          <span class="age-stat-val">37.8°N</span>
+          <span class="age-stat-label">Latitude</span>
+        </div>
+        <div class="age-stat">
+          <span class="age-stat-val">320m</span>
+          <span class="age-stat-label">Altitude</span>
+        </div>
+        <div class="age-stat">
+          <span class="age-stat-val">1,200</span>
+          <span class="age-stat-label">Trees</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HARVEST WINDOW ===== -->
+  <section class="harvest-section" id="harvest">
+    <div class="harvest-header reveal-item">
+      <div class="section-label" style="justify-content:center">Harvest Window</div>
+      <h2 class="section-heading" style="text-align:center">The Season<br/><em>Opens Soon</em></h2>
+    </div>
+    <div class="harvest-countdown" id="countdown">
+      <div class="countdown-unit">
+        <div class="countdown-val" id="cd-days">142</div>
+        <div class="countdown-label">Days</div>
+      </div>
+      <div class="countdown-unit">
+        <div class="countdown-val" id="cd-hours">18</div>
+        <div class="countdown-label">Hours</div>
+      </div>
+      <div class="countdown-unit">
+        <div class="countdown-val" id="cd-mins">44</div>
+        <div class="countdown-label">Minutes</div>
+      </div>
+      <div class="countdown-unit">
+        <div class="countdown-val" id="cd-secs">07</div>
+        <div class="countdown-label">Seconds</div>
+      </div>
+    </div>
+    <p class="harvest-note reveal-item">
+      "We press only in the window between early November and late December, when the fruit reaches
+      precise phenolic density. A single week late or early changes everything."
+    </p>
+  </section>
+
+  <!-- ===== THREE EXPRESSIONS ===== -->
+  <section class="expressions-section" id="expressions">
+    <div class="expressions-header">
+      <div>
+        <div class="section-label reveal-item">Three Expressions</div>
+        <h2 class="section-heading reveal-item">The Estate<br/><em>Collection</em></h2>
+      </div>
+      <p class="section-body reveal-item" style="max-width:320px">
+        Each expression reflects a single variety, a single altitude, and a single moment in the harvest window.
+      </p>
+    </div>
+
+    <div class="collection-grid">
+      <!-- Card 1 -->
+      <div class="expression-card reveal-item">
+        <div class="expression-img-wrap">
+          <img src="https://images.pexels.com/photos/842571/pexels-photo-842571.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Koroneiki Expression" loading="lazy" />
+          <div class="expression-badge">Early Harvest</div>
+        </div>
+        <div class="expression-body">
+          <div class="expression-variety">Koroneiki · Peloponnese</div>
+          <h3 class="expression-name">ΠΡΩΤΗ — Prima</h3>
+          <ul class="expression-specs">
+            <li><span>Altitude</span><span>320m</span></li>
+            <li><span>Polyphenols</span><span>642 mg/kg</span></li>
+            <li><span>Acidity</span><span>0.14%</span></li>
+            <li><span>Character</span><span>Peppery · Green Almond · Artichoke</span></li>
+          </ul>
+          <a href="#amphora" class="expression-cta">Reserve</a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="expression-card reveal-item">
+        <div class="expression-img-wrap">
+          <img src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Arbequina Expression" loading="lazy" />
+          <div class="expression-badge">Limited Edition</div>
+        </div>
+        <div class="expression-body">
+          <div class="expression-variety">Manaki · Crete</div>
+          <h3 class="expression-name">ΔΕΥΤΕΡΗ — Secunda</h3>
+          <ul class="expression-specs">
+            <li><span>Altitude</span><span>280m</span></li>
+            <li><span>Polyphenols</span><span>488 mg/kg</span></li>
+            <li><span>Acidity</span><span>0.18%</span></li>
+            <li><span>Character</span><span>Fruity · Ripe Tomato · Herbs</span></li>
+          </ul>
+          <a href="#amphora" class="expression-cta">Reserve</a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="expression-card reveal-item">
+        <div class="expression-img-wrap">
+          <img src="https://images.unsplash.com/photo-1450338872a20bc3e124e4decc87a96?w=800&q=80&auto=format&fit=crop" alt="Picual Expression" loading="lazy" />
+        </div>
+        <div class="expression-body">
+          <div class="expression-variety">Athinolia · Laconia</div>
+          <h3 class="expression-name">ΤΡΙΤΗ — Tertia</h3>
+          <ul class="expression-specs">
+            <li><span>Altitude</span><span>350m</span></li>
+            <li><span>Polyphenols</span><span>710 mg/kg</span></li>
+            <li><span>Acidity</span><span>0.11%</span></li>
+            <li><span>Character</span><span>Intense · Pine · Sun-dried Fig</span></li>
+          </ul>
+          <a href="#amphora" class="expression-cta">Reserve</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THE GROVE — immersive ===== -->
+  <section class="grove-section" id="grove">
+    <div class="grove-visual" id="groveVisual"></div>
+    <div class="grove-overlay"></div>
+    <div class="grove-content">
+      <div class="section-label reveal-item">Est. 1724</div>
+      <p class="grove-history reveal-item">
+        The first pressing at Athenaion was recorded in the winter of 1724. The grove passed through eight generations of a single family before it was understood that <strong>the oil was the estate's true language</strong> — not the stone buildings, not the herds, but the trees.
+        <br/><br/>
+        Today, 1,200 trees cover 18 hectares of Laconian limestone. The oldest survive earthquakes. They outlast empires. <strong>They press the same oil they have always pressed.</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== HARVEST JOURNAL ===== -->
+  <section class="journal-section" id="journal">
+    <div class="section-label reveal-item">Harvest Journal</div>
+    <h2 class="section-heading reveal-item">Field <em>Notes</em></h2>
+
+    <div class="journal-grid">
+      <article class="journal-card reveal-item">
+        <div class="journal-img-wrap">
+          <img src="https://images.unsplash.com/photo-1536152470836-b943b246224c?w=800&q=80&auto=format&fit=crop" alt="Harvest Journal" loading="lazy" />
+        </div>
+        <div class="journal-category">Harvest</div>
+        <h3 class="journal-title">On the Day We Begin to Hate the Olives</h3>
+        <p class="journal-excerpt">Day twelve of picking. The hands that raised them for a year must now strip them. There is a violence in harvest that most people prefer not to know about.</p>
+        <div class="journal-date">November 14, 2025</div>
+      </article>
+
+      <article class="journal-card reveal-item">
+        <div class="journal-img-wrap">
+          <img src="https://images.unsplash.com/photo-1557591584-5547af40e6d0?w=800&q=80&auto=format&fit=crop" alt="Press Journal" loading="lazy" />
+        </div>
+        <div class="journal-category">Press</div>
+        <h3 class="journal-title">What the Cold Press Remembers</h3>
+        <p class="journal-excerpt">At 27°C, the oil releases its first green wave. Lower, and the fruit never opens. Higher, and the phenolics scatter. There is one temperature at which everything is true.</p>
+        <div class="journal-date">November 22, 2025</div>
+      </article>
+
+      <article class="journal-card reveal-item">
+        <div class="journal-img-wrap">
+          <img src="https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Terroir Journal" loading="lazy" />
+        </div>
+        <div class="journal-category">Terroir</div>
+        <h3 class="journal-title">Why Limestone Tastes Like Stone</h3>
+        <p class="journal-excerpt">The roots reach 12 metres into calcareous bedrock. Every mineral the tree encounters becomes part of the oil. Limestone is not metaphor here — it is ingredient.</p>
+        <div class="journal-date">December 3, 2025</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== THE AMPHORA ===== -->
+  <section class="amphora-section" id="amphora">
+    <div class="amphora-visual reveal-item">
+      <div class="amphora-img-outer">
+        <img src="https://images.pexels.com/photos/842571/pexels-photo-842571.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Reserve This Harvest" />
+        <div class="amphora-ornament">2025<br/>Harvest</div>
+      </div>
+    </div>
+
+    <div class="amphora-content">
+      <div class="section-label reveal-item">Reserve</div>
+      <h2 class="section-heading reveal-item">
+        The 2025<br/><em>Harvest</em>
+      </h2>
+      <p class="section-body reveal-item" style="margin-top:20px">
+        Production is limited to 4,800 bottles per expression. Each bottle is numbered, dated, and traceable to a specific grove section by GPS coordinates. No retail. Reserve only.
+      </p>
+
+      <div class="amphora-price-block reveal-item">
+        <div class="amphora-price-label">Starting from</div>
+        <div class="amphora-price"><sup>€</sup>120</div>
+        <div class="amphora-price-sub">per 500ml · Free shipping within the EU</div>
+      </div>
+
+      <ul class="amphora-features reveal-item">
+        <li>Cold-pressed within 4 hours of harvest</li>
+        <li>Polyphenol content certified by third-party lab</li>
+        <li>Numbered bottles — estate origin GPS on label</li>
+        <li>Delivered in signature stone-finished case</li>
+      </ul>
+
+      <a href="#" class="btn-primary reveal-item">Reserve This Harvest →</a>
+    </div>
+  </section>
+
+  <!-- ===== PROVENANCE MAP ===== -->
+  <section class="map-section" id="map">
+    <div class="map-header">
+      <div class="section-label reveal-item" style="justify-content:center">Provenance</div>
+      <h2 class="section-heading reveal-item" style="text-align:center">The Estate<br/><em>Location</em></h2>
+    </div>
+
+    <div class="map-visual reveal-item">
+      <!-- Antique SVG map of the Peloponnese -->
+      <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1200" height="480" fill="#1A2210"/>
+
+        <!-- Engraving texture lines -->
+        <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8">
+          <line x1="0" y1="8" x2="8" y2="0" stroke="#2A3418" stroke-width="0.5" opacity="0.6"/>
+        </pattern>
+        <rect width="1200" height="480" fill="url(#hatch)" opacity="0.4"/>
+
+        <!-- Sea areas -->
+        <path d="M0,200 Q200,180 400,220 Q600,260 800,240 Q1000,220 1200,250 L1200,480 L0,480Z"
+              fill="#172010" opacity="0.6"/>
+
+        <!-- Landmass — stylised Peloponnese -->
+        <path d="M200,80 Q280,60 380,70 Q500,80 580,120 Q640,150 700,140 Q760,130 820,160 Q900,200 880,260 Q860,300 820,320 Q780,340 760,380 Q740,410 720,440 L700,460 Q680,440 700,400 Q700,370 680,350 Q660,330 640,300 Q620,270 600,260 Q580,280 560,300 Q540,330 520,310 Q500,290 480,270 Q460,250 440,240 Q420,260 400,280 Q380,300 360,290 Q340,280 320,260 Q300,240 280,230 Q260,220 240,200 Q220,180 200,160 Q180,140 190,100 Q195,85 200,80Z"
+              fill="#212D14" stroke="#2A3418" stroke-width="1.5"/>
+
+        <!-- Estate grove area highlight -->
+        <circle cx="680" cy="200" r="28" fill="rgba(184,150,30,0.12)" stroke="rgba(184,150,30,0.4)" stroke-width="1"/>
+        <circle cx="680" cy="200" r="6" fill="#B8961E"/>
+
+        <!-- Grid lines -->
+        <line x1="0" y1="160" x2="1200" y2="160" stroke="#2A3418" stroke-width="0.5" opacity="0.5"/>
+        <line x1="0" y1="320" x2="1200" y2="320" stroke="#2A3418" stroke-width="0.5" opacity="0.5"/>
+        <line x1="300" y1="0" x2="300" y2="480" stroke="#2A3418" stroke-width="0.5" opacity="0.5"/>
+        <line x1="600" y1="0" x2="600" y2="480" stroke="#2A3418" stroke-width="0.5" opacity="0.5"/>
+        <line x1="900" y1="0" x2="900" y2="480" stroke="#2A3418" stroke-width="0.5" opacity="0.5"/>
+
+        <!-- Labels -->
+        <text x="680" y="170" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" fill="#B8961E" letter-spacing="2">ATHENAION ESTATE</text>
+        <text x="680" y="184" text-anchor="middle" font-family="Courier New, monospace" font-size="9" fill="#4A6B2A" letter-spacing="1">37.8°N · 22.4°E · 320m</text>
+
+        <text x="200" y="350" font-family="Cormorant Garamond, serif" font-size="13" fill="#4A6B2A" font-style="italic" opacity="0.7">Ionian Sea</text>
+        <text x="820" y="420" font-family="Cormorant Garamond, serif" font-size="13" fill="#4A6B2A" font-style="italic" opacity="0.7">Aegean Sea</text>
+        <text x="420" y="130" font-family="Cormorant Garamond, serif" font-size="10" fill="#8A8070" letter-spacing="3" opacity="0.6">PELOPONNESE</text>
+
+        <!-- Compass rose -->
+        <g transform="translate(1100,80)">
+          <circle r="28" fill="none" stroke="#2A3418" stroke-width="1"/>
+          <line x1="0" y1="-22" x2="0" y2="22" stroke="#4A4438" stroke-width="0.8"/>
+          <line x1="-22" y1="0" x2="22" y2="0" stroke="#4A4438" stroke-width="0.8"/>
+          <polygon points="0,-22 4,-8 -4,-8" fill="#B8961E" opacity="0.8"/>
+          <text x="0" y="-28" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#8A8070">N</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">ATHENAION ESTATE</div>
+        <p class="footer-brand-desc">
+          Single-estate ultra-premium olive oil pressed from three-hundred-year-old Koroneiki groves on the Laconian plateau of the Peloponnese. One harvest. One expression. Since 1724.
+        </p>
+        <div class="footer-coords">37.8125°N · 22.4003°E · Alt. 320m</div>
+      </div>
+
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">The Estate</div>
+        <ul>
+          <li><a href="#age">The Grove</a></li>
+          <li><a href="#expressions">Expressions</a></li>
+          <li><a href="#grove">History</a></li>
+          <li><a href="#map">Provenance</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Journal</div>
+        <ul>
+          <li><a href="#journal">Harvest Notes</a></li>
+          <li><a href="#">Pressing Reports</a></li>
+          <li><a href="#">Terroir Archives</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Reserve</div>
+        <ul>
+          <li><a href="#amphora">2025 Harvest</a></li>
+          <li><a href="#">Collector's Allocation</a></li>
+          <li><a href="#">Estate Visits</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2025 ATHENAION ESTATE. All rights reserved.</span>
+      <span class="footer-since">Single Estate, Single Harvest, Since 1724.</span>
+    </div>
+  </footer>
+
+  <script>
+    /* ============================================================
+       REGISTER GSAP PLUGINS
+    ============================================================ */
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    /* ============================================================
+       CUSTOM CURSOR
+    ============================================================ */
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      gsap.to(dot,  { x: mx, y: my, duration: 0.05, ease: 'none' });
+      gsap.to(ring, { x: mx, y: my, duration: 0.35, ease: 'power2.out' });
+    });
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () =>
+        gsap.to(ring, { width: 56, height: 56, borderColor: 'rgba(184,150,30,0.9)', duration: 1.0 }));
+      el.addEventListener('mouseleave', () =>
+        gsap.to(ring, { width: 36, height: 36, borderColor: 'rgba(184,150,30,0.5)', duration: 1.0 }));
+    });
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    window.addEventListener('load', () => {
+      gsap.to('#preloader', {
+        opacity: 0,
+        duration: 0.8,
+        delay: 2.6,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          document.getElementById('preloader').style.display = 'none';
+          document.body.classList.remove('locked');
+          initAnimations();
+        }
+      });
+    });
+
+    /* ============================================================
+       NAVBAR SCROLL
+    ============================================================ */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ============================================================
+       MOBILE MENU
+    ============================================================ */
+    const menuBtn    = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      document.body.classList.toggle('locked', menuOpen);
+      const spans = menuBtn.querySelectorAll('span');
+      if (menuOpen) {
+        gsap.to(spans[0], { rotate: 45,  y: 6,  duration: 1.0 });
+        gsap.to(spans[1], { opacity: 0,        duration: 1.0 });
+        gsap.to(spans[2], { rotate: -45, y: -6, duration: 1.0 });
+      } else {
+        gsap.to(spans,    { rotate: 0, y: 0, opacity: 1, duration: 1.0 });
+      }
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('open');
+        document.body.classList.remove('locked');
+        gsap.to(menuBtn.querySelectorAll('span'), { rotate: 0, y: 0, opacity: 1, duration: 1.0 });
+      });
+    });
+
+    /* ============================================================
+       HERO MOUSEMOVE PARALLAX — Type B
+    ============================================================ */
+    document.querySelector('.hero').addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth  - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      gsap.to('#pLayer1', { x: x * -12, y: y * -8,  duration: 1.5, ease: 'power2.out' });
+      gsap.to('#pLayer2', { x: x * -24, y: y * -16, duration: 1.2, ease: 'power2.out' });
+      gsap.to('#pLayer3', { x: x * -40, y: y * -28, duration: 0.9, ease: 'power2.out' });
+    });
+
+    /* ============================================================
+       COUNTDOWN TIMER
+    ============================================================ */
+    function updateCountdown() {
+      const target = new Date('2025-11-01T06:00:00');
+      const now    = new Date();
+      let diff     = Math.max(0, target - now);
+
+      const days  = Math.floor(diff / 86400000);         diff %= 86400000;
+      const hours = Math.floor(diff / 3600000);          diff %= 3600000;
+      const mins  = Math.floor(diff / 60000);            diff %= 60000;
+      const secs  = Math.floor(diff / 1000);
+
+      document.getElementById('cd-days').textContent  = String(days).padStart(3,'0');
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+      document.getElementById('cd-mins').textContent  = String(mins).padStart(2,'0');
+      document.getElementById('cd-secs').textContent  = String(secs).padStart(2,'0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    /* ============================================================
+       ALL SCROLL ANIMATIONS (init after preloader)
+    ============================================================ */
+    function initAnimations() {
+
+      /* --- Hero entrance --- */
+      const heroTl = gsap.timeline();
+      heroTl
+        .from('.hero-eyebrow',  { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false })
+        .from('.hero-title',    { y: 24, opacity: 0, duration: 1.0, ease: 'power2.out', immediateRender: false }, '-=0.4')
+        .from('.hero-tagline',  { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false }, '-=0.5')
+        .from('.hero-actions',  { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false }, '-=0.4')
+        .from('.hero-float',    { scale: 0.8, opacity: 0, duration: 1.0, ease: 'back.out(1.5)', immediateRender: false }, '-=0.6')
+        .from('.hero-scroll',   { opacity: 0, duration: 1.0, ease: 'power2.out', immediateRender: false }, '-=0.3');
+
+      /* --- Age numeral scroll fill --- */
+      gsap.to('#ageNumeralFill', {
+        clipPath: 'inset(0 0% 0 0)',
+        duration: 1.6,
+        ease: 'power2.out',
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '.age-section',
+          start: 'top 60%',
+          toggleActions: 'play none none none'
+        }
+      });
+
+      /* --- Grove parallax on scroll --- */
+      gsap.to('#groveVisual', {
+        yPercent: -20,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '.grove-section',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      /* --- Generic reveal items --- */
+      document.querySelectorAll('.reveal-item').forEach((el, i) => {
+        gsap.from(el, {
+          y: 36,
+          opacity: 0,
+          duration: 0.9,
+          ease: 'power2.out',
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          },
+          delay: (i % 4) * 0.07
+        });
+      });
+
+      /* --- Hero parallax layers on scroll --- */
+      gsap.to('#pLayer1', {
+        yPercent: 12,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+      gsap.to('#pLayer2', {
+        yPercent: 20,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+      gsap.to('#pLayer3', {
+        yPercent: 30,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+    }
+  </script>
+</body>
+</html>

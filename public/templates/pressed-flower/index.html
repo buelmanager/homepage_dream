@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HERBA CARTA — Each Specimen, Once Living. Now Eternal.</title>
+  <meta name="description" content="HERBA CARTA. Botanical preservation atelier. Pressed flowers treated as specimens — collected at the peak of their living moment, preserved at the intersection of science and art." />
+
+  <!-- Fonts: Gilda Display + Jost -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- GSAP 3.12 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+/* SplitText polyfill — replaces Club GSAP premium plugin (not on CDN) */
+class SplitText {
+  constructor(target, opts = {}) {
+    const el = typeof target === 'string'
+      ? document.querySelector(target)
+      : (target instanceof Element ? target : null);
+    this.chars = []; this.words = []; this.lines = [];
+    if (!el) return;
+    this._el = el;
+    const type = (opts.type || 'chars,words').toLowerCase();
+    const original = el.textContent;
+    el.setAttribute('data-split-orig', original);
+    if (type.includes('chars')) {
+      el.innerHTML = original.split('').map(c =>
+        c === ' '
+          ? '<span class="char" style="display:inline-block">&nbsp;</span>'
+          : `<span class="char" style="display:inline-block">${c}</span>`
+      ).join('');
+      this.chars = Array.from(el.querySelectorAll('.char'));
+    } else if (type.includes('words')) {
+      el.innerHTML = original.split(/\s+/).filter(Boolean).map(w =>
+        `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`
+      ).join('');
+      this.words = Array.from(el.querySelectorAll('.word'));
+    }
+    this.lines = [el];
+  }
+  revert() {
+    if (this._el) {
+      const orig = this._el.getAttribute('data-split-orig');
+      if (orig) this._el.textContent = orig;
+    }
+  }
+}
+</script>
+
+  <!-- Swiper 11 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    /* ================================================================
+       DESIGN TOKENS — all avg(R+G+B)/3 >= 20
+    ================================================================ */
+    :root {
+      --bg:            #1E1614;  /* 30+22+20/3=24.0 ✅ */
+      --surface:       #261C18;  /* 38+28+24/3=30.0 ✅ */
+      --surface2:      #221814;  /* 34+24+20/3=26.0 ✅ */
+      --rose:          #B87A6A;  /* dried rose, muted terracotta */
+      --sage:          #6A8A6A;  /* pressed leaf, aged sage */
+      --parchment:     #E8D8C0;  /* aged paper */
+      --ivory:         #EDE4D4;  /* warm off-white */
+      --stone:         #A09080;  /* ink on aged paper tone */
+      --smoke:         #7A6858;
+      --muted:         #584840;
+      --border:        #2E2018;
+      --border2:       #3A2A1C;
+      --font-serif:    'Gilda Display', 'IM Fell English', Georgia, serif;
+      --font-sans:     'Jost', sans-serif;
+      --font-mono:     'Courier New', Courier, monospace;
+    }
+
+    /* ================================================================
+       RESET / BASE
+    ================================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--rose) var(--bg);
+    }
+    html::-webkit-scrollbar { width: 4px; }
+    html::-webkit-scrollbar-track { background: var(--bg); }
+    html::-webkit-scrollbar-thumb { background: var(--rose); opacity: 0.6; border-radius: 2px; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    body.locked { overflow: hidden; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ================================================================
+       PRELOADER
+    ================================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .pre-botanical {
+      width: 80px;
+      height: 80px;
+    }
+
+    .pre-leaf-path {
+      stroke-dasharray: 300;
+      stroke-dashoffset: 300;
+      animation: botanicalDraw 2s 0.3s ease forwards;
+    }
+    @keyframes botanicalDraw { to { stroke-dashoffset: 0; } }
+
+    .pre-wordmark {
+      font-family: var(--font-serif);
+      font-size: 14px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--rose);
+      opacity: 0;
+      animation: fadeUp 0.8s 2.0s ease forwards;
+    }
+    .pre-specimen {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--stone);
+      letter-spacing: 0.1em;
+      opacity: 0;
+      animation: fadeUp 0.8s 2.3s ease forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ================================================================
+       CUSTOM CURSOR
+    ================================================================ */
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      border-radius: 50%;
+    }
+    .cursor-dot {
+      width: 5px; height: 5px;
+      background: var(--rose);
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid rgba(184,122,106,0.45);
+      transform: translate(-50%, -50%);
+    }
+    @media (hover: none) { .cursor-dot, .cursor-ring { display: none; } }
+
+    /* ================================================================
+       NAVBAR
+    ================================================================ */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      transition: background 0.4s, padding 0.4s;
+    }
+
+    #navbar.scrolled {
+      background: rgba(30,22,20,0.93);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ivory);
+    }
+    .nav-logo span { color: var(--rose); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--stone);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--ivory); }
+
+    .nav-cta {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 10px 28px;
+      border: 1px solid rgba(184,122,106,0.4);
+      color: var(--rose);
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-cta:hover { background: var(--rose); color: var(--bg); }
+
+    .nav-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none; border: none; padding: 4px;
+    }
+    .nav-menu-btn span {
+      display: block;
+      width: 24px; height: 1px;
+      background: var(--ivory);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 498;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      transform: translateX(100%);
+      transition: transform 0.5s cubic-bezier(0.76,0,0.24,1);
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      color: var(--ivory);
+    }
+
+    /* ================================================================
+       HERO TYPE B — BOTANICAL ILLUSTRATION PARALLAX
+    ================================================================ */
+    .hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .parallax-layer {
+      position: absolute;
+      inset: -8%;
+      width: 116%;
+      height: 116%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    /* Layer 1: parchment/paper background */
+    .layer-1 {
+      background-image: url('https://images.unsplash.com/photo-1458819714733-e5ab3d536722?w=1920&q=80&auto=format&fit=crop');
+      filter: brightness(0.28) saturate(0.5) sepia(0.4);
+    }
+    /* Layer 2: botanical mid ground */
+    .layer-2 {
+      background-image: url('https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1920&q=80&auto=format&fit=crop');
+      filter: brightness(0.22) saturate(0.45) sepia(0.3);
+      opacity: 0.7;
+    }
+    /* Layer 3: foreground flowers */
+    .layer-3 {
+      background-image: url('https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80');
+      filter: brightness(0.20) saturate(0.4) sepia(0.5);
+      opacity: 0.45;
+    }
+
+    /* Botanical line drawing layer (SVG overlay) */
+    .hero-botanical-svg {
+      position: absolute;
+      inset: -8%;
+      width: 116%;
+      height: 116%;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0.06;
+      will-change: transform;
+    }
+
+    /* Particle canvas for petal fragments */
+    #heroPetals {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(30,22,20,0.30) 0%,
+        rgba(30,22,20,0.05) 40%,
+        rgba(30,22,20,0.78) 100%
+      );
+      z-index: 5;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 7;
+      text-align: center;
+      max-width: 820px;
+      padding: 0 24px;
+    }
+
+    .hero-specimen-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: var(--rose);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .hero-specimen-label::before, .hero-specimen-label::after {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: rgba(184,122,106,0.4);
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(48px, 8vw, 100px);
+      font-weight: 400;
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--ivory);
+      margin-bottom: 10px;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--parchment);
+      display: block;
+      opacity: 0.85;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(14px, 1.8vw, 20px);
+      color: var(--stone);
+      margin-bottom: 52px;
+      letter-spacing: 0.06em;
+    }
+
+    /* Specimen card overlay on hero */
+    .hero-specimen-card {
+      position: absolute;
+      bottom: 40px;
+      left: 60px;
+      z-index: 7;
+      background: rgba(30,22,20,0.85);
+      border: 1px solid var(--border2);
+      padding: 20px 24px;
+      max-width: 280px;
+    }
+
+    .specimen-card-no {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--rose);
+      margin-bottom: 8px;
+    }
+    .specimen-card-latin {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 16px;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+    .specimen-card-meta {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      background: var(--rose);
+      color: var(--bg);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-primary:hover { background: #D0907E; transform: translateY(-2px); }
+
+    .btn-ghost {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      border: 1px solid rgba(232,216,192,0.2);
+      color: var(--ivory);
+      transition: border-color 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--parchment); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      right: 60px;
+      z-index: 7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(184,122,106,0.6), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .scroll-label {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* ================================================================
+       SECTION BASE
+    ================================================================ */
+    .section-label {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: rgba(184,122,106,0.4);
+    }
+
+    .section-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 4vw, 52px);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--ivory);
+    }
+    .section-heading em { font-style: italic; color: var(--parchment); }
+
+    .section-body {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--stone);
+      max-width: 520px;
+    }
+
+    .reveal-item { will-change: transform; }
+
+    /* ================================================================
+       THE COLLECTION — specimen cards
+    ================================================================ */
+    .collection-section {
+      background: var(--surface);
+      padding: 120px 80px;
+    }
+
+    .collection-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 64px;
+      gap: 40px;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      overflow: visible;
+    }
+
+    .specimen-card {
+      background: var(--bg);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s cubic-bezier(0.25,0.1,0.25,1);
+    }
+    .specimen-card:hover { transform: translateY(-10px); }
+
+    .specimen-img-wrap {
+      height: 320px;
+      overflow: hidden;
+      position: relative;
+      background: var(--surface2);
+    }
+    .specimen-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.65) sepia(0.2);
+      transition: transform 0.6s ease, filter 0.5s;
+    }
+    .specimen-card:hover .specimen-img-wrap img {
+      transform: scale(1.05);
+      filter: saturate(0.9) sepia(0.1);
+    }
+
+    /* Price visible only on hover */
+    .specimen-price {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      padding: 6px 12px;
+      font-family: var(--font-serif);
+      font-size: 16px;
+      color: var(--ivory);
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .specimen-card:hover .specimen-price { opacity: 1; transform: translateY(0); }
+
+    .specimen-body {
+      padding: 24px 20px 28px;
+      border: 1px solid var(--border);
+      border-top: none;
+    }
+
+    .specimen-no {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--rose);
+      margin-bottom: 6px;
+    }
+
+    .specimen-latin {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 19px;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+
+    .specimen-common {
+      font-size: 11px;
+      color: var(--stone);
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .specimen-meta {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    /* ================================================================
+       THE ATELIER — process
+    ================================================================ */
+    .atelier-section {
+      background: var(--bg);
+      padding: 120px 80px;
+    }
+
+    .atelier-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+    }
+
+    .atelier-step {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .atelier-img {
+      height: 260px;
+      overflow: hidden;
+    }
+    .atelier-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(0.25) saturate(0.7) brightness(0.75);
+      transition: filter 0.5s, transform 0.6s;
+    }
+    .atelier-step:hover .atelier-img img {
+      filter: sepia(0.1) saturate(0.9) brightness(0.9);
+      transform: scale(1.04);
+    }
+
+    .atelier-body { padding: 28px 24px 32px; }
+
+    .atelier-step-num {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--rose);
+      margin-bottom: 10px;
+    }
+
+    .atelier-step-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+
+    .atelier-step-note {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--stone);
+      line-height: 1.75;
+      font-style: italic;
+    }
+
+    /* ================================================================
+       SEASONAL ARCHIVE
+    ================================================================ */
+    .archive-section {
+      background: var(--surface);
+      padding: 120px 80px;
+      overflow: hidden;
+    }
+
+    .archive-header {
+      margin-bottom: 64px;
+    }
+
+    .seasons-scroll-wrap {
+      overflow-x: auto;
+      cursor: grab;
+      user-select: none;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .seasons-scroll-wrap::-webkit-scrollbar { display: none; }
+    .seasons-scroll-wrap:active { cursor: grabbing; }
+
+    .seasons-track {
+      display: flex;
+      gap: 2px;
+      width: max-content;
+    }
+
+    .season-panel {
+      width: 360px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .season-img-wrap {
+      height: 480px;
+      overflow: hidden;
+      position: relative;
+    }
+    .season-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter 0.5s, transform 0.6s;
+    }
+    .season-panel:hover .season-img-wrap img {
+      transform: scale(1.04);
+    }
+
+    .season-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 36px 28px;
+      background: linear-gradient(to top, rgba(30,22,20,0.9), transparent 50%);
+      transition: background 0.4s;
+    }
+
+    .season-name {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 28px;
+      color: var(--ivory);
+      margin-bottom: 6px;
+    }
+    .season-period {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--rose);
+      margin-bottom: 12px;
+    }
+    .season-desc {
+      font-size: 13px;
+      color: var(--stone);
+      line-height: 1.6;
+    }
+
+    /* Season-specific palette tints */
+    .season-spring .season-img-wrap img { filter: saturate(0.75) hue-rotate(-10deg) brightness(0.7); }
+    .season-summer .season-img-wrap img { filter: saturate(0.8) brightness(0.75); }
+    .season-autumn .season-img-wrap img { filter: saturate(0.7) sepia(0.3) brightness(0.65); }
+    .season-winter .season-img-wrap img { filter: saturate(0.5) brightness(0.6) hue-rotate(10deg); }
+
+    /* ================================================================
+       COMMISSION
+    ================================================================ */
+    .commission-section {
+      background: var(--bg);
+      padding: 120px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .commission-img-wrap {
+      position: relative;
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+    .commission-img-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border: 1px solid var(--border2);
+    }
+    .commission-img-wrap img {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      filter: sepia(0.2) saturate(0.75) brightness(0.8);
+    }
+
+    .commission-form { display: flex; flex-direction: column; gap: 0; }
+
+    .form-row { margin-bottom: 20px; }
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--rose);
+    }
+    .form-select { cursor: pointer; appearance: none; }
+    .form-textarea { resize: vertical; min-height: 120px; }
+
+    /* ================================================================
+       THE LIBRARY — blog
+    ================================================================ */
+    .library-section {
+      background: var(--surface);
+      padding: 120px 80px;
+    }
+
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 64px;
+    }
+
+    .journal-entry {
+      cursor: pointer;
+    }
+
+    .journal-img-wrap {
+      height: 200px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .journal-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(0.2) saturate(0.7) brightness(0.8);
+      transition: transform 0.6s ease, filter 0.4s;
+    }
+    .journal-entry:hover .journal-img-wrap img {
+      transform: scale(1.04);
+      filter: sepia(0.1) saturate(0.9) brightness(0.9);
+    }
+
+    .journal-specimen-ref {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      color: var(--rose);
+      margin-bottom: 10px;
+    }
+
+    .journal-title {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 21px;
+      color: var(--ivory);
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+
+    .journal-excerpt {
+      font-size: 13px;
+      color: var(--stone);
+      line-height: 1.75;
+    }
+
+    .journal-date {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+
+    /* ================================================================
+       CORRESPONDENCE — newsletter
+    ================================================================ */
+    .correspondence-section {
+      background: var(--bg);
+      padding: 120px 80px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .correspondence-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .correspondence-inner .section-heading { margin-bottom: 20px; }
+
+    .correspondence-form {
+      display: flex;
+      gap: 0;
+      max-width: 460px;
+      margin: 40px auto 0;
+    }
+
+    .corr-input {
+      flex: 1;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-right: none;
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      outline: none;
+    }
+    .corr-input::placeholder { color: var(--muted); }
+    .corr-input:focus { border-color: var(--rose); }
+
+    .corr-submit {
+      padding: 16px 28px;
+      background: var(--rose);
+      border: 1px solid var(--rose);
+      color: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .corr-submit:hover { background: #D0907E; }
+
+    /* ================================================================
+       LIVE SPECIMENS — available works
+    ================================================================ */
+    .available-section {
+      background: var(--surface);
+      padding: 120px 80px;
+    }
+
+    .available-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+      overflow: visible;
+    }
+
+    .available-work {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .available-img {
+      height: 420px;
+      overflow: hidden;
+    }
+    .available-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(0.3) saturate(0.65) brightness(0.7);
+      transition: filter 0.5s, transform 0.6s;
+    }
+    .available-work:hover .available-img img {
+      filter: sepia(0.1) saturate(0.9) brightness(0.85);
+      transform: scale(1.04);
+    }
+
+    .available-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(30,22,20,0.92), transparent 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px 24px;
+    }
+
+    .available-edition {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      color: var(--rose);
+      margin-bottom: 8px;
+    }
+    .available-title {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 22px;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+    .available-dims {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--stone);
+    }
+
+    /* Price: hover-only */
+    .available-price {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      color: var(--parchment);
+      margin-top: 12px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .available-work:hover .available-price { opacity: 1; transform: translateY(0); }
+
+    /* ================================================================
+       FOOTER
+    ================================================================ */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 80px 48px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 64px;
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--ivory);
+      letter-spacing: 0.12em;
+      margin-bottom: 16px;
+    }
+    .footer-brand-name span { color: var(--rose); font-style: italic; }
+
+    .footer-brand-desc {
+      font-size: 13px;
+      color: var(--stone);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .footer-studio {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      line-height: 1.8;
+    }
+
+    .footer-col-title {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-col ul li a {
+      font-size: 13px;
+      color: var(--stone);
+      transition: color 0.3s;
+    }
+    .footer-col ul li a:hover { color: var(--ivory); }
+
+    .footer-bottom {
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-copy {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+
+    .footer-glyph {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--smoke);
+    }
+
+    /* ================================================================
+       RESPONSIVE
+    ================================================================ */
+    @media (max-width: 1200px) {
+      .collection-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 1024px) {
+      .collection-grid { grid-template-columns: 1fr 1fr; }
+      .atelier-grid { grid-template-columns: 1fr 1fr; }
+      .library-grid { grid-template-columns: 1fr 1fr; }
+      .commission-section { grid-template-columns: 1fr; gap: 48px; }
+      .available-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+
+      .collection-section, .atelier-section, .archive-section,
+      .commission-section, .library-section, .correspondence-section,
+      .available-section { padding: 80px 40px; }
+    }
+
+    @media (max-width: 768px) {
+      #navbar { padding: 20px 24px; }
+      #navbar.scrolled { padding: 14px 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-menu-btn { display: flex; }
+      .hero-specimen-card { display: none; }
+      .hero-scroll { right: 24px; }
+
+      .collection-grid { grid-template-columns: 1fr; }
+      .atelier-grid { grid-template-columns: 1fr; }
+      .library-grid { grid-template-columns: 1fr; }
+      .available-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      footer { padding: 64px 24px 40px; }
+
+      .collection-section, .atelier-section, .archive-section,
+      .commission-section, .library-section, .correspondence-section,
+      .available-section { padding: 80px 24px; }
+    }
+</style>
+</head>
+<body class="locked">
+
+  <!-- ===== CURSOR ===== -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ===== PRELOADER ===== -->
+  <div id="preloader">
+    <svg class="pre-botanical" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="40" r="36" stroke="#B87A6A" stroke-width="0.5" opacity="0.4"/>
+      <!-- Botanical stem + leaves -->
+      <path class="pre-leaf-path"
+        d="M40 65 L40 30 M40 50 C34 44 28 38 30 30 C35 36 40 40 40 50 M40 42 C46 36 52 30 50 22 C45 28 40 34 40 42"
+        stroke="#B87A6A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <path class="pre-leaf-path"
+        d="M40 20 C38 16 36 10 40 8 C42 12 42 16 40 20Z"
+        stroke="#6A8A6A" stroke-width="1" fill="none"/>
+    </svg>
+    <div class="pre-wordmark">HERBA CARTA</div>
+    <div class="pre-specimen">Specimen No. 001 — Rosa Centifolia</div>
+  </div>
+
+  <!-- ===== MOBILE MENU ===== -->
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="#collection">Collection</a>
+    <a href="#atelier">The Atelier</a>
+    <a href="#commission">Commission</a>
+    <a href="#available">Available</a>
+  </nav>
+
+  <!-- ===== NAVBAR ===== -->
+  <header id="navbar">
+    <div class="nav-logo"><span>HERBA</span> CARTA</div>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Botanicals</a></li>
+      <li><a href="process.html">Pressing</a></li>
+      <li><a href="contact.html">Commission</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Commission</a>
+    <button class="nav-menu-btn" id="menuBtn" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ===== HERO TYPE B — BOTANICAL PARALLAX ===== -->
+  <section class="hero" id="hero">
+    <div class="parallax-layer layer-1" id="pLayer1"></div>
+    <div class="parallax-layer layer-2" id="pLayer2"></div>
+    <div class="parallax-layer layer-3" id="pLayer3"></div>
+
+    <!-- Botanical line drawing SVG layer -->
+    <svg class="hero-botanical-svg" id="botanicalSvg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <!-- Large botanical line drawings at low opacity -->
+      <g stroke="#E8D8C0" stroke-width="1.5" fill="none" stroke-linecap="round">
+        <!-- Botanical branch 1 -->
+        <path d="M200 1080 C220 900 240 700 280 500 M280 500 C260 460 230 440 210 400 M280 500 C300 460 320 440 310 400 M280 500 C240 480 220 450 200 420 M240 600 C220 570 200 550 180 520 M240 600 C260 570 280 550 270 520"/>
+        <!-- Botanical branch 2 -->
+        <path d="M1600 1080 C1580 850 1560 680 1520 480 M1520 480 C1540 440 1570 420 1590 380 M1520 480 C1500 440 1480 420 1490 380 M1560 600 C1580 560 1610 540 1630 500"/>
+        <!-- Flower top-left -->
+        <path d="M400 200 C390 180 380 160 395 145 C410 160 405 180 400 200Z M400 200 C415 185 425 165 415 148 C402 165 400 185 400 200Z M400 200 C420 195 435 180 428 160 C415 175 408 192 400 200Z"/>
+        <!-- Flower top-right -->
+        <path d="M1520 300 C1510 278 1500 256 1515 240 C1530 256 1525 278 1520 300Z M1520 300 C1535 284 1545 264 1535 247 C1522 264 1520 284 1520 300Z"/>
+        <!-- Stem + leaf mid -->
+        <path d="M900 800 C910 700 920 580 940 440 M940 440 C920 408 895 395 880 365 M940 440 C958 408 975 395 968 365 M940 530 C918 510 900 492 888 465 M940 530 C962 510 978 492 974 465"/>
+      </g>
+    </svg>
+
+    <!-- Petal particle canvas -->
+    <canvas id="heroPetals"></canvas>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <div class="hero-specimen-label">Botanical Preservation Atelier · Est. 2018</div>
+      <h1 class="hero-title">
+        Herba
+        <em>Carta</em>
+      </h1>
+      <p class="hero-tagline">Each Specimen, Once Living. Now Eternal.</p>
+      <div class="hero-actions">
+        <a href="#collection" class="btn-primary">View Collection</a>
+        <a href="#commission" class="btn-ghost">Commission a Piece</a>
+      </div>
+    </div>
+
+    <!-- Specimen card overlay -->
+    <div class="hero-specimen-card">
+      <div class="specimen-card-no">Specimen No. 001</div>
+      <div class="specimen-card-latin">Rosa Centifolia</div>
+      <div class="specimen-card-meta">
+        Collected: May 14, 2024<br/>
+        Location: Grasse, Provence<br/>
+        Press duration: 21 days<br/>
+        Archival board: 300gsm
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span class="scroll-label">Scroll</span>
+    </div>
+  </section>
+
+  <!-- ===== THE COLLECTION ===== -->
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <div class="section-label reveal-item">The Collection</div>
+        <h2 class="section-heading reveal-item">The Specimen<br/><em>Cabinet</em></h2>
+      </div>
+      <p class="section-body reveal-item" style="max-width:320px">
+        Each piece is catalogued with Latin name, collection location, press date, and specimen number — the language of natural history museums applied to living beauty.
+      </p>
+    </div>
+
+    <div class="collection-grid">
+      <div class="specimen-card reveal-item">
+        <div class="specimen-img-wrap">
+          <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="Rosa Centifolia" loading="lazy" />
+          <div class="specimen-price">€ 380</div>
+        </div>
+        <div class="specimen-body">
+          <div class="specimen-no">Specimen No. 001</div>
+          <div class="specimen-latin">Rosa Centifolia</div>
+          <div class="specimen-common">Cabbage Rose</div>
+          <div class="specimen-meta">
+            Collected: May 2024 · Grasse, FR<br/>
+            Dimensions: 42 × 29.7 cm<br/>
+            Edition: 3 of 3
+          </div>
+        </div>
+      </div>
+
+      <div class="specimen-card reveal-item">
+        <div class="specimen-img-wrap">
+          <img src="https://images.unsplash.com/photo-1458819714733-e5ab3d536722?w=800&q=80&auto=format&fit=crop" alt="Anemone coronaria" loading="lazy" />
+          <div class="specimen-price">€ 290</div>
+        </div>
+        <div class="specimen-body">
+          <div class="specimen-no">Specimen No. 007</div>
+          <div class="specimen-latin">Anemone coronaria</div>
+          <div class="specimen-common">Crown Anemone</div>
+          <div class="specimen-meta">
+            Collected: March 2024 · Bath, UK<br/>
+            Dimensions: 29.7 × 21 cm<br/>
+            Edition: 1 of 5
+          </div>
+        </div>
+      </div>
+
+      <div class="specimen-card reveal-item">
+        <div class="specimen-img-wrap">
+          <img src="https://images.pexels.com/photos/1279813/pexels-photo-1279813.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Hydrangea paniculata" loading="lazy" />
+          <div class="specimen-price">€ 420</div>
+        </div>
+        <div class="specimen-body">
+          <div class="specimen-no">Specimen No. 014</div>
+          <div class="specimen-latin">Hydrangea paniculata</div>
+          <div class="specimen-common">Panicle Hydrangea</div>
+          <div class="specimen-meta">
+            Collected: Aug 2024 · Cornwall, UK<br/>
+            Dimensions: 60 × 42 cm<br/>
+            Edition: 2 of 2
+          </div>
+        </div>
+      </div>
+
+      <div class="specimen-card reveal-item">
+        <div class="specimen-img-wrap">
+          <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Paeonia lactiflora" loading="lazy" />
+          <div class="specimen-price">€ 460</div>
+        </div>
+        <div class="specimen-body">
+          <div class="specimen-no">Specimen No. 022</div>
+          <div class="specimen-latin">Paeonia lactiflora</div>
+          <div class="specimen-common">Chinese Peony</div>
+          <div class="specimen-meta">
+            Collected: June 2024 · Kyoto, JP<br/>
+            Dimensions: 50 × 35 cm<br/>
+            Edition: 1 of 1
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THE ATELIER ===== -->
+  <section class="atelier-section" id="atelier">
+    <div class="section-label reveal-item">The Atelier</div>
+    <h2 class="section-heading reveal-item">Four Stages of<br/><em>Preservation</em></h2>
+
+    <div class="atelier-grid">
+      <div class="atelier-step reveal-item sr">
+        <div class="atelier-img sr">
+          <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="Collection in field" loading="lazy" />
+        </div>
+        <div class="atelier-body">
+          <div class="atelier-step-num sr">Stage 01 — Collection</div>
+          <h3 class="atelier-step-title sr">In the Field</h3>
+          <p class="atelier-step-note sr">"Every specimen is collected with permission — from gardens, from growers, from the wild with care. The moment of collection is always noted. The light that day. The hour."</p>
+        </div>
+      </div>
+
+      <div class="atelier-step reveal-item sr">
+        <div class="atelier-img sr">
+          <img src="https://images.unsplash.com/photo-1458819714733-e5ab3d536722?w=800&q=80&auto=format&fit=crop" alt="Arranging on parchment" loading="lazy" />
+        </div>
+        <div class="atelier-body">
+          <div class="atelier-step-num sr">Stage 02 — Arrangement</div>
+          <h3 class="atelier-step-title sr">On Parchment</h3>
+          <p class="atelier-step-note sr">"The arrangement is the art. I spend hours with tweezers deciding how the petals will rest. This is the decision that can never be undone."</p>
+        </div>
+      </div>
+
+      <div class="atelier-step reveal-item sr">
+        <div class="atelier-img sr">
+          <img src="https://images.pexels.com/photos/1279813/pexels-photo-1279813.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Pressing under weight" loading="lazy" />
+        </div>
+        <div class="atelier-body">
+          <div class="atelier-step-num sr">Stage 03 — Pressing</div>
+          <h3 class="atelier-step-title sr">Under Weight</h3>
+          <p class="atelier-step-note sr">"The press applies 40kg of even pressure for 21 days minimum. During this time, the specimen is completely inaccessible. It either survives or it does not."</p>
+        </div>
+      </div>
+
+      <div class="atelier-step reveal-item sr">
+        <div class="atelier-img sr">
+          <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Mounting on archival board" loading="lazy" />
+        </div>
+        <div class="atelier-body">
+          <div class="atelier-step-num sr">Stage 04 — Mounting</div>
+          <h3 class="atelier-step-title sr">On Archival Board</h3>
+          <p class="atelier-step-note sr">"300gsm archival-grade board. Conservation adhesive. Museum glass. Acid-free backing. The specimen is now permanent. It will outlast everyone who touches it."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SEASONAL ARCHIVE ===== -->
+  <section class="archive-section" id="archive">
+    <div class="archive-header">
+      <div class="section-label reveal-item">Seasonal Archive</div>
+      <h2 class="section-heading reveal-item">Specimens by<br/><em>Collection Season</em></h2>
+    </div>
+
+    <div class="seasons-scroll-wrap reveal-item" id="seasonsScroll">
+      <div class="seasons-track">
+        <div class="season-panel season-spring">
+          <div class="season-img-wrap">
+            <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="Spring specimens" loading="lazy" />
+          </div>
+          <div class="season-overlay">
+            <div class="season-name">Spring</div>
+            <div class="season-period">March — May</div>
+            <p class="season-desc">Anemone, tulip, cherry blossom, narcissus. The urgency of spring collection — everything blooms at once and nothing waits.</p>
+          </div>
+        </div>
+
+        <div class="season-panel season-summer">
+          <div class="season-img-wrap">
+            <img src="https://images.unsplash.com/photo-1458819714733-e5ab3d536722?w=800&q=80&auto=format&fit=crop" alt="Summer specimens" loading="lazy" />
+          </div>
+          <div class="season-overlay">
+            <div class="season-name">Summer</div>
+            <div class="season-period">June — August</div>
+            <p class="season-desc">Rose, peony, lavender, hydrangea. The long light of midsummer makes for specimens with exceptional colour retention.</p>
+          </div>
+        </div>
+
+        <div class="season-panel season-autumn">
+          <div class="season-img-wrap">
+            <img src="https://images.pexels.com/photos/1279813/pexels-photo-1279813.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Autumn specimens" loading="lazy" />
+          </div>
+          <div class="season-overlay">
+            <div class="season-name">Autumn</div>
+            <div class="season-period">September — November</div>
+            <p class="season-desc">Dahlia, cosmos, late rose, red maple leaf. Autumn specimens carry the patina of time already visible in their living colour.</p>
+          </div>
+        </div>
+
+        <div class="season-panel season-winter">
+          <div class="season-img-wrap">
+            <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Winter specimens" loading="lazy" />
+          </div>
+          <div class="season-overlay">
+            <div class="season-name">Winter</div>
+            <div class="season-period">December — February</div>
+            <p class="season-desc">Hellebore, snowdrop, dried seed heads, winter bark. Scarcity season — each winter piece is among the rarest in the collection.</p>
+          </div>
+        </div>
+
+        <div class="season-panel season-spring">
+          <div class="season-img-wrap">
+            <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="2023 archive" loading="lazy" />
+          </div>
+          <div class="season-overlay">
+            <div class="season-name">Archive 2023</div>
+            <div class="season-period">Complete Year</div>
+            <p class="season-desc">The full 2023 collection archive. 68 specimens across all four seasons. Select sold out; selected works still available.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COMMISSION ===== -->
+  <section class="commission-section" id="commission">
+    <div class="commission-img-wrap reveal-item">
+      <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="Commission a piece" />
+    </div>
+
+    <div class="commission-content">
+      <div class="section-label reveal-item">Commission</div>
+      <h2 class="section-heading reveal-item">We Will Press<br/><em>Your Flowers</em></h2>
+      <p class="section-body reveal-item" style="margin-top:20px;margin-bottom:40px">
+        Wedding bouquet preservation. Memorial collection. Garden archive from a childhood home. We receive your flowers and return a permanent specimen — a record of the moment that cannot decay.
+      </p>
+
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-row reveal-item">
+          <label class="form-label" for="commName">Collector's Name</label>
+          <input class="form-input" id="commName" type="text" placeholder="Your full name" />
+        </div>
+        <div class="form-row reveal-item">
+          <label class="form-label" for="commEmail">Correspondence Address</label>
+          <input class="form-input" id="commEmail" type="email" placeholder="your@email.com" />
+        </div>
+        <div class="form-row reveal-item">
+          <label class="form-label" for="commType">Commission Type</label>
+          <select class="form-select" id="commType">
+            <option value="">Select occasion —</option>
+            <option>Wedding Bouquet Preservation</option>
+            <option>Memorial Collection</option>
+            <option>Garden Archive</option>
+            <option>Personal Commission</option>
+          </select>
+        </div>
+        <div class="form-row reveal-item">
+          <label class="form-label" for="commNotes">Specimen Notes</label>
+          <textarea class="form-textarea" id="commNotes" placeholder="Describe the flowers, their origin, the occasion. The more you tell us, the better we can serve the specimen..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary reveal-item">Submit Intake Form →</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== THE LIBRARY ===== -->
+  <section class="library-section" id="library">
+    <div class="section-label reveal-item">The Library</div>
+    <h2 class="section-heading reveal-item">Field Journal<br/><em>Entries</em></h2>
+
+    <div class="library-grid">
+      <article class="journal-entry reveal-item">
+        <div class="journal-img-wrap">
+          <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="Hydrangea journal" loading="lazy" />
+        </div>
+        <div class="journal-specimen-ref">Specimen No. 014 · Field Note</div>
+        <h3 class="journal-title">On the Light in a Dried Hydrangea</h3>
+        <p class="journal-excerpt">The pressed hydrangea retains a translucency that fresh flowers do not have. When backlit, the veins of each floret become visible in a way they never are when the flower is alive.</p>
+        <div class="journal-date">August 19, 2024</div>
+      </article>
+
+      <article class="journal-entry reveal-item">
+        <div class="journal-img-wrap">
+          <img src="https://images.unsplash.com/photo-1458819714733-e5ab3d536722?w=800&q=80&auto=format&fit=crop" alt="Peony journal" loading="lazy" />
+        </div>
+        <div class="journal-specimen-ref">Specimen No. 022 · Field Note</div>
+        <h3 class="journal-title">What Pressing a Peony Teaches About Time</h3>
+        <p class="journal-excerpt">You must decide which layer of the peony to preserve before the press closes. The outer petals or the centre? You cannot have both. The choice is always about what you are willing to lose.</p>
+        <div class="journal-date">June 7, 2024</div>
+      </article>
+
+      <article class="journal-entry reveal-item">
+        <div class="journal-img-wrap">
+          <img src="https://images.pexels.com/photos/1279813/pexels-photo-1279813.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Rose journal" loading="lazy" />
+        </div>
+        <div class="journal-specimen-ref">Specimen No. 001 · Field Note</div>
+        <h3 class="journal-title">Why the Rosa Centifolia Is Not Pretty</h3>
+        <p class="journal-excerpt">The centifolia rose is not designed for visual pleasure — it is designed to produce fragrance. Pressing it removes the purpose it was built for. What remains is only structure. Structure is enough.</p>
+        <div class="journal-date">May 14, 2024</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== LIVE SPECIMENS ===== -->
+  <section class="available-section" id="available">
+    <div class="section-label reveal-item">Available Works</div>
+    <h2 class="section-heading reveal-item">Current <em>Specimens</em></h2>
+
+    <div class="available-grid">
+      <div class="available-work reveal-item">
+        <div class="available-img">
+          <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="Rosa Centifolia specimen" loading="lazy" />
+        </div>
+        <div class="available-overlay">
+          <div class="available-edition">Ed. 3 / 3 · Available</div>
+          <div class="available-title">Rosa Centifolia — Grasse</div>
+          <div class="available-dims">42 × 29.7 cm · Archival frame</div>
+          <div class="available-price">€ 380</div>
+        </div>
+      </div>
+
+      <div class="available-work reveal-item">
+        <div class="available-img">
+          <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Paeonia lactiflora" loading="lazy" />
+        </div>
+        <div class="available-overlay">
+          <div class="available-edition">Ed. 1 / 1 · Last piece</div>
+          <div class="available-title">Paeonia lactiflora — Kyoto</div>
+          <div class="available-dims">50 × 35 cm · Oak shadowbox</div>
+          <div class="available-price">€ 460</div>
+        </div>
+      </div>
+
+      <div class="available-work reveal-item">
+        <div class="available-img">
+          <img src="https://images.unsplash.com/photo-1458819714733-e5ab3d536722?w=800&q=80&auto=format&fit=crop" alt="Anemone coronaria" loading="lazy" />
+        </div>
+        <div class="available-overlay">
+          <div class="available-edition">Ed. 2 / 5 · Available</div>
+          <div class="available-title">Anemone coronaria — Bath</div>
+          <div class="available-dims">29.7 × 21 cm · Linen mount</div>
+          <div class="available-price">€ 290</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CORRESPONDENCE ===== -->
+  <section class="correspondence-section" id="correspondence">
+    <div class="correspondence-inner">
+      <div class="section-label reveal-item" style="justify-content:center">Correspondence</div>
+      <h2 class="section-heading reveal-item">Join the<br/><em>Botanical Record</em></h2>
+      <p class="section-body reveal-item" style="margin:20px auto;text-align:center">
+        Monthly field notes from the collection season. Specimen releases announced first to the Record. No catalogue — only letters.
+      </p>
+      <form class="correspondence-form" onsubmit="return false;">
+        <input class="corr-input" type="email" placeholder="your@correspondence.com" aria-label="Email for the Botanical Record" />
+        <button class="corr-submit" type="submit">Enrol</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name"><span>HERBA</span> CARTA</div>
+        <p class="footer-brand-desc">
+          Botanical preservation atelier. We treat pressed flowers not as craft objects but as specimens — collected at the peak of their living moment, preserved at the intersection of science and art. Bath, Somerset.
+        </p>
+        <div class="footer-studio">
+          Studio: Bath, Somerset, UK<br/>
+          Founded: 2018<br/>
+          Inquiry: hello@herbacarta.com
+        </div>
+      </div>
+
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Collection</div>
+        <ul>
+          <li><a href="#collection">Specimens</a></li>
+          <li><a href="#archive">Seasonal Archive</a></li>
+          <li><a href="#available">Available Works</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Atelier</div>
+        <ul>
+          <li><a href="#atelier">Process</a></li>
+          <li><a href="#commission">Commission</a></li>
+          <li><a href="#library">Field Journal</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Connect</div>
+        <ul>
+          <li><a href="#correspondence">Botanical Record</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Inquiry</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2025 HERBA CARTA. Botanical Preservation Atelier.</span>
+      <span class="footer-glyph">Each Specimen, Once Living. Now Eternal.</span>
+    </div>
+  </footer>
+
+  <script>
+    /* ============================================================
+       REGISTER GSAP PLUGINS
+    ============================================================ */
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    /* ============================================================
+       CUSTOM CURSOR
+    ============================================================ */
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+
+    document.addEventListener('mousemove', e => {
+      gsap.to(dot,  { x: e.clientX, y: e.clientY, duration: 0.05, ease: 'none' });
+      gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.35, ease: 'power2.out' });
+    });
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () =>
+        gsap.to(ring, { width: 48, height: 48, borderColor: 'rgba(184,122,106,0.8)', duration: 1.0 }));
+      el.addEventListener('mouseleave', () =>
+        gsap.to(ring, { width: 32, height: 32, borderColor: 'rgba(184,122,106,0.45)', duration: 1.0 }));
+    });
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    window.addEventListener('load', () => {
+      gsap.to('#preloader', {
+        opacity: 0,
+        duration: 0.8,
+        delay: 2.8,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          document.getElementById('preloader').style.display = 'none';
+          document.body.classList.remove('locked');
+          initAnimations();
+          initPetals();
+        }
+      });
+    });
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ============================================================
+       MOBILE MENU
+    ============================================================ */
+    const menuBtn    = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      document.body.classList.toggle('locked', menuOpen);
+      const spans = menuBtn.querySelectorAll('span');
+      if (menuOpen) {
+        gsap.to(spans[0], { rotate: 45,  y: 6,  duration: 1.0 });
+        gsap.to(spans[1], { opacity: 0,        duration: 1.0 });
+        gsap.to(spans[2], { rotate: -45, y: -6, duration: 1.0 });
+      } else {
+        gsap.to(spans,    { rotate: 0, y: 0, opacity: 1, duration: 1.0 });
+      }
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('open');
+        document.body.classList.remove('locked');
+        gsap.to(menuBtn.querySelectorAll('span'), { rotate: 0, y: 0, opacity: 1, duration: 1.0 });
+      });
+    });
+
+    /* ============================================================
+       HERO MOUSEMOVE PARALLAX — Type B
+    ============================================================ */
+    document.querySelector('.hero').addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth  - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      gsap.to('#pLayer1',     { x: x * -12, y: y * -8,  duration: 1.5, ease: 'power2.out' });
+      gsap.to('#pLayer2',     { x: x * -24, y: y * -16, duration: 1.2, ease: 'power2.out' });
+      gsap.to('#pLayer3',     { x: x * -40, y: y * -28, duration: 0.9, ease: 'power2.out' });
+      gsap.to('#botanicalSvg',{ x: x * -16, y: y * -10, duration: 2.0, ease: 'power1.out' });
+    });
+
+    /* ============================================================
+       PETAL PARTICLE SYSTEM — gentle gravity drift
+    ============================================================ */
+    function initPetals() {
+      const canvas = document.getElementById('heroPetals');
+      const ctx    = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width  = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize, { passive: true });
+
+      const COUNT = 45;
+      const particles = Array.from({ length: COUNT }, () => makeParticle(true));
+
+      const COLORS = [
+        'rgba(184,122,106,',  /* dried rose */
+        'rgba(106,138,106,',  /* pressed sage */
+        'rgba(232,216,192,',  /* parchment */
+        'rgba(160,144,128,',  /* stone */
+      ];
+
+      function makeParticle(randomY) {
+        return {
+          x:     Math.random() * canvas.width,
+          y:     randomY ? Math.random() * canvas.height : -10,
+          size:  Math.random() * 5 + 2,        /* petal fragment size */
+          vy:    Math.random() * 0.4 + 0.15,   /* gentle downward drift */
+          vx:    (Math.random() - 0.5) * 0.3,
+          rot:   Math.random() * Math.PI * 2,
+          rotV:  (Math.random() - 0.5) * 0.02,
+          alpha: Math.random() * 0.35 + 0.1,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          life:  1.0,
+          decay: Math.random() * 0.001 + 0.0005,
+        };
+      }
+
+      function tick() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p, i) => {
+          p.x   += p.vx;
+          p.y   += p.vy;
+          p.rot += p.rotV;
+          p.life -= p.decay;
+
+          if (p.y > canvas.height + 10 || p.life <= 0) {
+            particles[i] = makeParticle(false);
+            return;
+          }
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.globalAlpha = p.alpha * p.life;
+
+          /* Petal shape: ellipse */
+          ctx.beginPath();
+          ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
+          ctx.fillStyle = `${p.color}${p.alpha * p.life})`;
+          ctx.fill();
+
+          ctx.restore();
+        });
+
+        requestAnimationFrame(tick);
+      }
+      tick();
+    }
+
+    /* ============================================================
+       SEASONS DRAG SCROLL
+    ============================================================ */
+    const seasonsWrap = document.getElementById('seasonsScroll');
+    let isDown = false, startX = 0, scrollLeft = 0;
+
+    seasonsWrap.addEventListener('mousedown', e => {
+      isDown = true;
+      startX = e.pageX - seasonsWrap.offsetLeft;
+      scrollLeft = seasonsWrap.scrollLeft;
+    });
+    document.addEventListener('mouseup', () => { isDown = false; });
+    seasonsWrap.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - seasonsWrap.offsetLeft;
+      seasonsWrap.scrollLeft = scrollLeft - (x - startX);
+    });
+
+    /* ============================================================
+       SCROLL ANIMATIONS
+    ============================================================ */
+    function initAnimations() {
+
+      /* --- Hero entrance --- */
+      const heroTl = gsap.timeline();
+      heroTl
+        .from('.hero-specimen-label', { y: 16, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false })
+        .from('.hero-title',          { y: 24, opacity: 0, duration: 1.0, ease: 'power2.out', immediateRender: false }, '-=0.4')
+        .from('.hero-tagline',        { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false }, '-=0.5')
+        .from('.hero-actions',        { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false }, '-=0.4')
+        .from('.hero-specimen-card',  { x: -20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false }, '-=0.5')
+        .from('.hero-scroll',         { opacity: 0, duration: 1.0, ease: 'power2.out', immediateRender: false }, '-=0.3');
+
+      /* --- Hero layers scroll parallax --- */
+      gsap.to('#pLayer1', {
+        yPercent: 12,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+      gsap.to('#pLayer2', {
+        yPercent: 20,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+      gsap.to('#pLayer3', {
+        yPercent: 30,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+      gsap.to('#botanicalSvg', {
+        yPercent: 8,
+        ease: 'none',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+
+      /* --- Generic reveal items --- */
+      document.querySelectorAll('.reveal-item').forEach((el, i) => {
+        gsap.from(el, {
+          y: 36,
+          opacity: 0,
+          duration: 0.9,
+          ease: 'power2.out',
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          },
+          delay: (i % 4) * 0.07
+        });
+      });
+    }
+  </script>
+</body>
+</html>

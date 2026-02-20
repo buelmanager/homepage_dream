@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAFFRANIA — Since the First Caravan.</title>
+  <meta name="description" content="SAFFRANIA: rare spices as time-collapsed geography. Saffron, sumac, cardamom — each a trade route three centuries old." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700&family=Jost:wght@200;300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Swiper -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    /* ─── CSS VARIABLES ─────────────────────────────────────────── */
+    :root {
+      --bg:           #28180E;   /* avg: (40+24+14)/3 = 26.0 ✅ */
+      --bg-mid:       #341F11;   /* avg: (52+31+17)/3 = 33.3 ✅ */
+      --bg-surface:   #3F2616;   /* avg: (63+38+22)/3 = 41.0 ✅ */
+      --saffron:      #C8760A;   /* avg: (200+118+10)/3 = 109.3 ✅ */
+      --red:          #8B2E1A;   /* avg: (139+46+26)/3 = 70.3 ✅ */
+      --gold:         #D9A63C;   /* avg: (217+166+60)/3 = 147.7 ✅ */
+      --parchment:    #F2E8D5;   /* avg: (242+232+213)/3 = 229.0 ✅ */
+      --muted:        #9A7455;   /* avg: (154+116+85)/3 = 118.3 ✅ */
+      --font-serif:   'Playfair Display', serif;
+      --font-sans:    'Jost', sans-serif;
+      --font-mono:    'IBM Plex Mono', monospace;
+    }
+
+    /* ─── RESET ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--parchment);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── NAV ────────────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.8rem 4rem;
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--parchment);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--parchment);
+      opacity: 0.65;
+      transition: opacity 0.3s;
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    .nav-cta {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid rgba(200,118,10,0.5);
+      padding: 0.6rem 1.5rem;
+      color: var(--saffron);
+      transition: all 0.3s;
+    }
+    .nav-cta:hover { background: var(--saffron); color: var(--bg); border-color: var(--saffron); }
+
+    /* ─── HERO TYPE G ─────────────────────────────────────────── */
+    .hero { height: 200vh; position: relative; }
+
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Subtle parchment texture overlay */
+    .hero-texture {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        radial-gradient(ellipse 120% 80% at 50% 50%, rgba(200,118,10,0.06) 0%, transparent 70%);
+    }
+
+    .hero-text-wrap {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      line-height: 0.82;
+    }
+
+    .hero-word-1 {
+      font-family: var(--font-serif);
+      font-size: clamp(5rem, 14vw, 14rem);
+      line-height: 0.85;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      color: var(--parchment);
+      will-change: transform;
+      display: block;
+    }
+
+    .hero-word-2 {
+      font-family: var(--font-serif);
+      font-size: clamp(5rem, 14vw, 14rem);
+      line-height: 0.85;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      color: var(--saffron);
+      will-change: transform;
+      display: block;
+    }
+
+    .hero-tagline {
+      position: absolute;
+      bottom: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--parchment);
+      opacity: 0.55;
+      white-space: nowrap;
+      z-index: 3;
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hero-scroll-hint span {
+      font-size: 0.55rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      color: var(--parchment);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--saffron), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+
+    /* ─── SECTION UTILITIES ─────────────────────────────────────── */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--saffron);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      color: var(--parchment);
+      line-height: 1.1;
+    }
+
+    /* ─── ORIGIN INTRO ──────────────────────────────────────────── */
+    .origin-intro {
+      background: var(--bg-mid);
+      padding: 8rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: center;
+    }
+
+    .origin-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--parchment);
+    }
+
+    .origin-quote em {
+      color: var(--saffron);
+      font-style: normal;
+    }
+
+    .origin-text {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .origin-text p + p { margin-top: 1.2rem; }
+
+    .origin-founding {
+      margin-top: 2rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    /* ─── THE TWELVE ─────────────────────────────────────────────── */
+    .twelve {
+      padding: 10rem 4rem;
+      background: var(--bg);
+    }
+
+    .twelve-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      overflow: visible;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .spice-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .spice-card-img {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+    }
+
+    .spice-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      filter: saturate(0.8);
+    }
+
+    .spice-card:hover .spice-card-img img {
+      transform: scale(1.06);
+      filter: saturate(1.1);
+    }
+
+    .spice-card-info {
+      padding: 1.5rem 1.2rem;
+      background: var(--bg-mid);
+    }
+
+    .spice-latin {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: var(--saffron);
+      opacity: 0.7;
+      margin-bottom: 0.3rem;
+      font-style: italic;
+    }
+
+    .spice-name {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--parchment);
+      margin-bottom: 0.4rem;
+    }
+
+    .spice-origin {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .spice-year {
+      margin-top: 0.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    /* ─── HARVEST JOURNAL (Swiper) ──────────────────────────────── */
+    .harvest {
+      padding: 10rem 0 10rem 4rem;
+      background: var(--bg-mid);
+      overflow: hidden;
+    }
+
+    .harvest-header {
+      margin-bottom: 4rem;
+      padding-right: 4rem;
+    }
+
+    .swiper-harvest {
+      overflow: visible;
+      padding-right: 4rem;
+    }
+
+    .swiper-harvest .swiper-slide {
+      width: 520px;
+      flex-shrink: 0;
+    }
+
+    .harvest-spread {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .harvest-img {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+    }
+
+    .harvest-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .harvest-spread:hover .harvest-img img { transform: scale(1.04); }
+
+    .harvest-text-panel {
+      background: var(--bg-surface);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .harvest-issue {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--saffron);
+      margin-bottom: 1rem;
+    }
+
+    .harvest-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--parchment);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .harvest-body {
+      font-size: 0.78rem;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .harvest-data {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .harvest-data-item {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--gold);
+      opacity: 0.7;
+      letter-spacing: 0.15em;
+    }
+
+    /* ─── ATELIER BLENDING ──────────────────────────────────────── */
+    .blending {
+      position: relative;
+      height: 85vh;
+      overflow: hidden;
+    }
+
+    .blending-img {
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      position: absolute;
+      top: -10%;
+      left: 0;
+    }
+
+    .blending-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(40,24,14,0.92) 0%, rgba(40,24,14,0.5) 60%, rgba(40,24,14,0.2) 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 6rem;
+    }
+
+    .blending-content { max-width: 600px; }
+
+    .blending-stat {
+      font-family: var(--font-mono);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      color: var(--saffron);
+      margin-bottom: 1rem;
+      line-height: 1;
+    }
+
+    .blending-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      font-weight: 400;
+      color: var(--parchment);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .blending-text {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    /* ─── THE COLLECTION ─────────────────────────────────────────── */
+    .collection {
+      padding: 10rem 4rem;
+      background: var(--bg);
+    }
+
+    .collection-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .product-img-wrap {
+      aspect-ratio: 1;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      position: relative;
+      background: var(--bg-mid);
+    }
+
+    .product-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .product-card:hover .product-img-wrap img { transform: scale(1.05); }
+
+    .product-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--saffron);
+      color: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      padding: 0.3rem 0.6rem;
+      text-transform: uppercase;
+    }
+
+    .product-name {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--parchment);
+      margin-bottom: 0.3rem;
+    }
+
+    .product-origin {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .product-price-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .product-price {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--gold);
+    }
+
+    .product-price-hint {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      visibility: hidden;
+      transition: visibility 0s 0.3s, color 0.3s;
+    }
+
+    .product-card:hover .product-price-hint {
+      visibility: visible;
+      transition-delay: 0s;
+      color: var(--saffron);
+    }
+
+    /* ─── CARAVAN DISPATCH ──────────────────────────────────────── */
+    .caravan {
+      padding: 10rem 4rem;
+      background: var(--bg-mid);
+    }
+
+    .caravan-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .caravan-ornament {
+      width: 60px;
+      height: 1px;
+      background: var(--saffron);
+      margin: 0 auto 3rem;
+    }
+
+    .caravan-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 400;
+      color: var(--parchment);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .caravan-text {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+
+    .caravan-form {
+      display: flex;
+      gap: 0;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .caravan-input {
+      flex: 1;
+      background: rgba(40,24,14,0.9);
+      border: 1px solid rgba(200,118,10,0.35);
+      border-right: none;
+      color: var(--parchment);
+      padding: 0.9rem 1.2rem;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .caravan-input::placeholder { color: var(--muted); opacity: 0.5; }
+    .caravan-input:focus { border-color: var(--saffron); }
+
+    .caravan-submit {
+      background: var(--saffron);
+      color: var(--bg);
+      border: 1px solid var(--saffron);
+      padding: 0.9rem 1.6rem;
+      font-family: var(--font-sans);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .caravan-submit:hover { background: var(--gold); border-color: var(--gold); }
+
+    .caravan-note {
+      margin-top: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      opacity: 0.5;
+    }
+
+    /* ─── FOOTER ────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg);
+      padding: 6rem 4rem 3rem;
+      border-top: 1px solid rgba(200,118,10,0.2);
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 5rem;
+    }
+
+    .footer-brand {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--parchment);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-est {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--saffron);
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-tagline {
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 250px;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--saffron);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-col-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .footer-col-list a {
+      font-size: 0.8rem;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+
+    .footer-col-list a:hover { color: var(--parchment); }
+
+    .footer-address {
+      font-size: 0.75rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .footer-coords {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: var(--saffron);
+      margin-top: 0.6rem;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(200,118,10,0.12);
+    }
+
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      opacity: 0.55;
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-socials a {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+
+    .footer-socials a:hover { color: var(--saffron); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .product-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      .nav { padding: 1.4rem 2rem; }
+      .nav-links { display: none; }
+      .origin-intro { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .blending-overlay { padding: 0 2rem; }
+      .harvest { padding-left: 2rem; }
+    }
+
+    @media (max-width: 600px) {
+      .product-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="#" class="nav-logo">Saffrania</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Spices</a></li>
+      <li><a href="process.html">Sourcing</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="collection.html" class="nav-cta">The Collection</a>
+  </nav>
+
+  <!-- HERO TYPE G -->
+  <section class="hero" id="hero">
+    <div class="hero-sticky">
+      <canvas id="hero-canvas"></canvas>
+      <div class="hero-texture"></div>
+
+      <div class="hero-text-wrap">
+        <span class="hero-word-1">SPICE</span>
+        <span class="hero-word-2">HOUSE</span>
+      </div>
+
+      <p class="hero-tagline">Since the First Caravan.</p>
+
+      <div class="hero-scroll-hint">
+        <span>Discover</span>
+        <div class="scroll-line"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORIGIN INTRO -->
+  <section class="origin-intro">
+    <div>
+      <p class="origin-quote">
+        When you open a jar of <em>SAFFRANIA</em> saffron, you open a trade route three centuries old. The spice IS the story.
+      </p>
+    </div>
+    <div>
+      <span class="section-label">Our Philosophy</span>
+      <div class="origin-text">
+        <p>Rare spices as time-collapsed geography. Each filament of saffron, each dried sumac berry, each green cardamom pod carries the coordinates of its origin in its chemistry.</p>
+        <p>We do not merely source ingredients. We translate ancient trade routes into vessels you can open at a kitchen counter in the twenty-first century.</p>
+      </div>
+      <div class="origin-founding">Est. MMXVII — The Spice Quarter, London</div>
+    </div>
+  </section>
+
+  <!-- THE TWELVE -->
+  <section class="twelve" id="spices">
+    <div class="twelve-header">
+      <span class="section-label">Materia Aromatica</span>
+      <h2 class="section-title">The Twelve</h2>
+    </div>
+    <div class="collection-grid">
+      <div class="spice-card">
+        <div class="spice-card-img">
+          <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&q=80&auto=format&fit=crop" alt="Saffron threads" loading="lazy" />
+        </div>
+        <div class="spice-card-info">
+          <div class="spice-latin">Crocus sativus</div>
+          <div class="spice-name">Saffron</div>
+          <div class="spice-origin">Khorasan, Iran · 2,400m</div>
+          <div class="spice-year">Harvest 2024 · ISO 3632 Grade A</div>
+        </div>
+      </div>
+      <div class="spice-card">
+        <div class="spice-card-img">
+          <img src="https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&q=80&auto=format&fit=crop" alt="Sumac berries" loading="lazy" />
+        </div>
+        <div class="spice-card-info">
+          <div class="spice-latin">Rhus coriaria</div>
+          <div class="spice-name">Sumac</div>
+          <div class="spice-origin">Gaziantep, Turkey · 850m</div>
+          <div class="spice-year">Harvest 2024 · Hand-dried</div>
+        </div>
+      </div>
+      <div class="spice-card">
+        <div class="spice-card-img">
+          <img src="https://images.unsplash.com/photo-1465343161283-c1959138ddaa?w=800&q=80&auto=format&fit=crop" alt="Cardamom pods" loading="lazy" />
+        </div>
+        <div class="spice-card-info">
+          <div class="spice-latin">Elettaria cardamomum</div>
+          <div class="spice-name">Cardamom</div>
+          <div class="spice-origin">Idukki, Kerala · 1,200m</div>
+          <div class="spice-year">Harvest 2024 · Green Grade 1</div>
+        </div>
+      </div>
+      <div class="spice-card">
+        <div class="spice-card-img">
+          <img src="https://images.unsplash.com/photo-1493238792000-8113da705763?w=800&q=80&auto=format&fit=crop" alt="Black pepper" loading="lazy" />
+        </div>
+        <div class="spice-card-info">
+          <div class="spice-latin">Piper nigrum</div>
+          <div class="spice-name">Black Pepper</div>
+          <div class="spice-origin">Kampot, Cambodia · 50m</div>
+          <div class="spice-year">Harvest 2024 · PGI Protected</div>
+        </div>
+      </div>
+      <div class="spice-card">
+        <div class="spice-card-img">
+          <img src="https://images.pexels.com/photos/2467287/pexels-photo-2467287.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Star anise" loading="lazy" />
+        </div>
+        <div class="spice-card-info">
+          <div class="spice-latin">Illicium verum</div>
+          <div class="spice-name">Star Anise</div>
+          <div class="spice-origin">Guangxi, China · 600m</div>
+          <div class="spice-year">Harvest 2024 · Whole pod</div>
+        </div>
+      </div>
+      <div class="spice-card">
+        <div class="spice-card-img">
+          <img src="https://images.pexels.com/photos/1546036/pexels-photo-1546036.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Turmeric root" loading="lazy" />
+        </div>
+        <div class="spice-card-info">
+          <div class="spice-latin">Curcuma longa</div>
+          <div class="spice-name">Turmeric</div>
+          <div class="spice-origin">Erode, Tamil Nadu · 300m</div>
+          <div class="spice-year">Harvest 2024 · 6.2% curcumin</div>
+        </div>
+      </div>
+      <div class="spice-card">
+        <div class="spice-card-img">
+          <img src="https://images.pexels.com/photos/1537635/pexels-photo-1537635.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Cinnamon bark" loading="lazy" />
+        </div>
+        <div class="spice-card-info">
+          <div class="spice-latin">Cinnamomum verum</div>
+          <div class="spice-name">Ceylon Cinnamon</div>
+          <div class="spice-origin">Matara, Sri Lanka · 40m</div>
+          <div class="spice-year">Harvest 2024 · Alba grade</div>
+        </div>
+      </div>
+      <div class="spice-card">
+        <div class="spice-card-img">
+          <img src="https://images.unsplash.com/photo-1504198266287-1659872e6590?w=800&q=80&auto=format&fit=crop" alt="Cloves" loading="lazy" />
+        </div>
+        <div class="spice-card-info">
+          <div class="spice-latin">Syzygium aromaticum</div>
+          <div class="spice-name">Cloves</div>
+          <div class="spice-origin">Zanzibar, Tanzania · 20m</div>
+          <div class="spice-year">Harvest 2024 · Whole dried</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HARVEST JOURNAL -->
+  <section class="harvest" id="harvest">
+    <div class="harvest-header">
+      <span class="section-label">Field Dispatches</span>
+      <h2 class="section-title">Harvest Journal</h2>
+    </div>
+    <div class="swiper swiper-harvest">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="harvest-spread">
+            <div class="harvest-img">
+              <img src="https://images.unsplash.com/photo-1448932223592-d1fc686e76ea?w=800&q=80&auto=format&fit=crop" alt="Saffron harvest Iran" loading="lazy" />
+            </div>
+            <div class="harvest-text-panel">
+              <div class="harvest-issue">Issue 07 · Oct 2024</div>
+              <div class="harvest-title">Dawn in Khorasan</div>
+              <p class="harvest-body">The crocuses open for exactly two hours at first light. Every thread is cut by hand, never by tool. Two hundred thousand flowers to yield one kilogram.</p>
+              <div class="harvest-data">
+                <div class="harvest-data-item">Origin: 35.68° N, 59.22° E</div>
+                <div class="harvest-data-item">Altitude: 2,400 m</div>
+                <div class="harvest-data-item">Window: Oct 15–Nov 3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="harvest-spread">
+            <div class="harvest-img">
+              <img src="https://images.unsplash.com/photo-1519340241574-2cec6aef0c01?w=800&q=80&auto=format&fit=crop" alt="Sumac harvest Turkey" loading="lazy" />
+            </div>
+            <div class="harvest-text-panel">
+              <div class="harvest-issue">Issue 08 · Sep 2024</div>
+              <div class="harvest-title">Red Dust of Gaziantep</div>
+              <p class="harvest-body">Sumac berries harvested before full ripeness. The tartness is at its peak between deep red and burgundy. Dried in shade for twelve days.</p>
+              <div class="harvest-data">
+                <div class="harvest-data-item">Origin: 37.06° N, 37.38° E</div>
+                <div class="harvest-data-item">Altitude: 850 m</div>
+                <div class="harvest-data-item">Window: Aug 20–Sep 15</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="harvest-spread">
+            <div class="harvest-img">
+              <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80&auto=format&fit=crop" alt="Cardamom harvest Kerala" loading="lazy" />
+            </div>
+            <div class="harvest-text-panel">
+              <div class="harvest-issue">Issue 09 · Dec 2024</div>
+              <div class="harvest-title">The Cardamom Hills</div>
+              <p class="harvest-body">Western Ghats cardamom picked at precisely 75% ripeness for maximum aromatic oil content. Each pod inspected individually before curing.</p>
+              <div class="harvest-data">
+                <div class="harvest-data-item">Origin: 9.91° N, 77.10° E</div>
+                <div class="harvest-data-item">Altitude: 1,200 m</div>
+                <div class="harvest-data-item">Window: Nov 10–Jan 5</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="harvest-spread">
+            <div class="harvest-img">
+              <img src="https://images.pexels.com/photos/1229861/pexels-photo-1229861.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Kampot pepper Cambodia" loading="lazy" />
+            </div>
+            <div class="harvest-text-panel">
+              <div class="harvest-issue">Issue 10 · Mar 2024</div>
+              <div class="harvest-title">Kampot at Low Tide</div>
+              <p class="harvest-body">The finest Kampot black pepper grows in the shadow of Bokor Mountain. Hand-harvested when only 10% of the cluster is ripe — the precise window for PGI status.</p>
+              <div class="harvest-data">
+                <div class="harvest-data-item">Origin: 10.61° N, 104.16° E</div>
+                <div class="harvest-data-item">Altitude: 50 m</div>
+                <div class="harvest-data-item">Window: Mar 1–Apr 10</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER BLENDING -->
+  <section class="blending" id="blending">
+    <img
+      class="blending-img"
+      id="blending-parallax"
+      src="https://images.pexels.com/photos/313707/pexels-photo-313707.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80"
+      alt="Blending atelier — antique brass scales"
+    />
+    <div class="blending-overlay">
+      <div class="blending-content">
+        <div class="blending-stat">1:400</div>
+        <h2 class="blending-title">The Philosophy of Ratios</h2>
+        <p class="blending-text">
+          Every SAFFRANIA blend is composed by weight to the gram. The ratio of dominant note to accent to undertone: always 1:4:0 parts. Ancient Persian blending mathematics, encoded in every jar.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE COLLECTION -->
+  <section class="collection" id="collection">
+    <div class="collection-header">
+      <span class="section-label">Artifact Series</span>
+      <h2 class="section-title">The Collection</h2>
+    </div>
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <img src="https://images.pexels.com/photos/696218/pexels-photo-696218.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Saffron tin" loading="lazy" />
+          <span class="product-badge">Limited</span>
+        </div>
+        <div class="product-name">Khorasan Saffron</div>
+        <div class="product-origin">Iran · 2024 Harvest · 2g</div>
+        <div class="product-price-wrap">
+          <span class="product-price">£ 86.00</span>
+          <span class="product-price-hint">Add to collection →</span>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <img src="https://images.pexels.com/photos/1181695/pexels-photo-1181695.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Spice blend tin" loading="lazy" />
+          <span class="product-badge">Signature</span>
+        </div>
+        <div class="product-name">Caravan Blend No.3</div>
+        <div class="product-origin">Multi-origin · Master blend · 80g</div>
+        <div class="product-price-wrap">
+          <span class="product-price">£ 52.00</span>
+          <span class="product-price-hint">Add to collection →</span>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <img src="https://images.pexels.com/photos/1619854/pexels-photo-1619854.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Premium spice set" loading="lazy" />
+          <span class="product-badge">Archive</span>
+        </div>
+        <div class="product-name">The Twelve Archive</div>
+        <div class="product-origin">12 origins · Complete series · 2024</div>
+        <div class="product-price-wrap">
+          <span class="product-price">£ 340.00</span>
+          <span class="product-price-hint">Add to collection →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARAVAN DISPATCH -->
+  <section class="caravan" id="caravan">
+    <div class="caravan-inner">
+      <div class="caravan-ornament"></div>
+      <span class="section-label">Join the Caravan</span>
+      <h2 class="caravan-title">The Caravan's Dispatch</h2>
+      <p class="caravan-text">
+        Weekly correspondence from the spice road. Harvest windows, origin stories, new arrivals. Forty-three words or fewer — the original telegram brevity.
+      </p>
+      <form class="caravan-form" onsubmit="return false;">
+        <input class="caravan-input" type="email" placeholder="Your address" />
+        <button class="caravan-submit">Join</button>
+      </form>
+      <div class="caravan-note">One dispatch per week. No commerce. Only stories.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Saffrania</div>
+        <div class="footer-est">Est. MMXVII</div>
+        <p class="footer-tagline">Rare spices as time-collapsed geography. Since the First Caravan.</p>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Navigate</div>
+        <ul class="footer-col-list sr">
+          <li><a href="#">The Twelve</a></li>
+          <li><a href="#">Harvest Journal</a></li>
+          <li><a href="#">The Collection</a></li>
+          <li><a href="#">Our Story</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Atelier</div>
+        <div class="footer-address">
+          12 Bermondsey Street<br/>
+          London, SE1 3XE<br/><br/>
+          Mon–Sat: 10:00–18:00<br/>
+          Visits by appointment
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Trade Enquiries</div>
+        <div class="footer-address">
+          atelier@saffrania.co<br/><br/>
+          +44 (0)20 7403 XXXX<br/>
+          Wholesale available
+        </div>
+        <div class="footer-coords">51.5011° N, 0.0796° W</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© MMXXIV SAFFRANIA · All harvests documented.</span>
+      <div class="footer-socials">
+        <a href="#">IG</a>
+        <a href="#">FB</a>
+        <a href="#">PI</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger);
+
+    // ─── WARM GOLD PARTICLE CANVAS ───────────────────────────────
+    (function() {
+      const canvas = document.getElementById('hero-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [];
+
+      function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function Particle() { this.reset(); }
+      Particle.prototype.reset = function() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H + H; // start below
+        this.r = Math.random() * 2 + 0.5;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = -(Math.random() * 0.6 + 0.2); // drift upward
+        this.alpha = Math.random() * 0.45 + 0.08;
+        const hue = Math.random() * 25 + 28; // 28-53 saffron-gold
+        this.color = `hsla(${hue}, 80%, 55%, ${this.alpha})`;
+        this.life = 0;
+        this.maxLife = Math.random() * 200 + 100;
+      };
+      Particle.prototype.update = function() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life++;
+        if (this.life > this.maxLife || this.y < -20) this.reset();
+      };
+
+      for (let i = 0; i < 100; i++) {
+        const p = new Particle();
+        p.y = Math.random() * H; // distribute initially
+        particles.push(p);
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+          p.update();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
+    // ─── HERO TYPE G — SCROLL SPLIT ─────────────────────────────
+    gsap.to('.hero-word-1', {
+      x: '-25vw',
+      opacity: 0.3,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.hero',
+        start: 'top top',
+        end: '60% top',
+        scrub: 1.5
+      }
+    });
+
+    gsap.to('.hero-word-2', {
+      x: '25vw',
+      opacity: 0.3,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.hero',
+        start: 'top top',
+        end: '60% top',
+        scrub: 1.5
+      }
+    });
+
+    gsap.from('.hero-tagline', {
+      opacity: 0,
+      y: 20,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.hero',
+        start: '20% top',
+        end: '40% top',
+        scrub: 1
+      }
+    });
+
+    // ─── ORIGIN INTRO REVEAL ─────────────────────────────────────
+    gsap.from('.origin-quote', {
+      opacity: 0,
+      x: -40,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.origin-intro',
+        start: 'top 80%',
+        end: 'top 40%',
+        scrub: 1
+      }
+    });
+
+    gsap.from('.origin-text', {
+      opacity: 0,
+      x: 40,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.origin-intro',
+        start: 'top 75%',
+        end: 'top 35%',
+        scrub: 1
+      }
+    });
+
+    // ─── SPICE CARDS STAGGER ─────────────────────────────────────
+    gsap.from('.spice-card', {
+      opacity: 0,
+      y: 24,
+      stagger: 0.1,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.collection-grid',
+        start: 'top 85%',
+        end: 'top 30%',
+        scrub: 1
+      }
+    });
+
+    // ─── BLENDING PARALLAX ───────────────────────────────────────
+    gsap.to('#blending-parallax', {
+      yPercent: 15,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.blending',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5
+      }
+    });
+
+    // ─── PRODUCTS REVEAL ─────────────────────────────────────────
+    gsap.from('.product-card', {
+      opacity: 0,
+      y: 24,
+      stagger: 0.15,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.product-grid',
+        start: 'top 80%',
+        end: 'top 40%',
+        scrub: 1
+      }
+    });
+
+    // ─── CARAVAN CARD ────────────────────────────────────────────
+    gsap.from('.caravan-inner', {
+      opacity: 0,
+      y: 30,
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.caravan',
+        start: 'top 80%',
+        end: 'top 50%',
+        scrub: 1
+      }
+    });
+
+    // ─── SWIPER HARVEST ──────────────────────────────────────────
+    new Swiper('.swiper-harvest', {
+      slidesPerView: 'auto',
+      spaceBetween: 24,
+      freeMode: true,
+      grabCursor: true,
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurea Mellis — Liquid Gold From the Wild Hive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+/* SplitText polyfill — CDN version 404s, use inline */
+class SplitText {
+  constructor(target, opts = {}) {
+    const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+    this.chars = []; this.words = []; this.lines = [];
+    if (!el) return; this._el = el;
+    const type = (opts.type || 'chars,words').toLowerCase();
+    const original = el.textContent;
+    el.setAttribute('data-split-orig', original);
+    if (type.includes('chars')) {
+      el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+      this.chars = Array.from(el.querySelectorAll('.char'));
+    } else if (type.includes('words')) {
+      el.innerHTML = original.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+      this.words = Array.from(el.querySelectorAll('.word'));
+    }
+    this.lines = [el];
+  }
+  revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+:root {
+  --bg: #1E1A14;
+  --surface: #2A2318;
+  --surface-2: #352D1E;
+  --gold: #C9A84C;
+  --gold-light: #E8C87A;
+  --amber: #B5742A;
+  --cream: #F0E8D8;
+  --muted: #8A7D68;
+  --deep: #140F09;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-title: 'Cinzel', serif;
+  --font-sans: 'Inter', sans-serif;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Cursor ── */
+#cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--gold); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.15s ease;
+}
+#cursor-ring {
+  position: fixed; width: 36px; height: 36px;
+  border: 1px solid rgba(201,168,76,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.35s ease, width 0.3s, height 0.3s;
+}
+
+/* ── Preloader ── */
+#preloader {
+  position: fixed; inset: 0;
+  background: var(--deep);
+  z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 2rem;
+}
+.pre-hex {
+  width: 60px; height: 70px;
+  background: var(--gold);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  animation: hexPulse 1.4s ease-in-out infinite;
+}
+@keyframes hexPulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.8); opacity: 0.5; }
+}
+.pre-text {
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.pre-bar {
+  width: 200px; height: 1px;
+  background: rgba(201,168,76,0.2);
+  position: relative; overflow: hidden;
+}
+.pre-bar-fill {
+  position: absolute; left: 0; top: 0;
+  height: 100%; width: 0;
+  background: var(--gold);
+  transition: width 1.8s ease;
+}
+
+/* ── Scroll Indicator ── */
+#scroll-indicator {
+  position: fixed; right: 2rem; top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.5rem;
+}
+.scroll-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.25);
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+.scroll-dot.active {
+  background: var(--gold);
+  transform: scale(1.4);
+}
+
+/* ── Navbar ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 500;
+  padding: 1.5rem 4rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background 0.4s, padding 0.4s;
+}
+nav.scrolled {
+  background: rgba(20,15,9,0.92);
+  backdrop-filter: blur(12px);
+  padding: 1rem 4rem;
+}
+.nav-logo {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  text-decoration: none;
+}
+.nav-logo span {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.nav-links {
+  display: flex; gap: 2.5rem;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--cream); }
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--gold);
+  border: none;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+.nav-cta:hover { background: var(--gold-light); }
+
+/* ── Hero — Type B: Parallax Layers ── */
+#hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-layer {
+  position: absolute; inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=1920&q=80&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  will-change: transform;
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(20,15,9,0.45) 0%,
+    rgba(20,15,9,0.3) 40%,
+    rgba(20,15,9,0.55) 80%,
+    rgba(20,15,9,0.75) 100%
+  );
+}
+.hero-content {
+  position: relative; z-index: 2;
+  text-align: center;
+  max-width: 900px;
+  padding: 0 2rem;
+}
+.hero-overline {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 2rem;
+  display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+}
+.hero-overline::before, .hero-overline::after {
+  content: '';
+  display: block;
+  width: 40px; height: 1px;
+  background: var(--gold);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 300;
+  line-height: 1.0;
+  color: var(--cream);
+  margin-bottom: 1.5rem;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+.hero-sub {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(240,232,216,0.75);
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+.hero-actions {
+  display: flex; gap: 1.5rem; justify-content: center; align-items: center;
+}
+.btn-primary {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 1rem 2.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-primary:hover {
+  background: transparent;
+  color: var(--gold);
+}
+.btn-ghost {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cream);
+  background: transparent;
+  border: 1px solid rgba(240,232,216,0.3);
+  padding: 1rem 2.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.hero-scroll-hint {
+  position: absolute; bottom: 3rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  z-index: 2;
+}
+.hero-scroll-hint span {
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.scroll-line {
+  width: 1px; height: 60px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollDrop 2s ease-in-out infinite;
+}
+@keyframes scrollDrop {
+  0% { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ── Stats Strip ── */
+#stats {
+  background: var(--surface);
+  border-top: 1px solid rgba(201,168,76,0.15);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  padding: 3rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+.stat-item {
+  text-align: center;
+  border-right: 1px solid rgba(201,168,76,0.1);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  display: block;
+}
+.stat-unit {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+.stat-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* ── Philosophy ── */
+#philosophy {
+  padding: 8rem 4rem;
+  background: var(--bg);
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+.section-overline {
+  font-size: 0.6rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 300;
+  color: var(--cream);
+  line-height: 1.2;
+}
+.section-title em { font-style: italic; color: var(--gold-light); }
+.section-rule {
+  width: 60px; height: 1px;
+  background: var(--gold);
+  margin: 2rem auto 0;
+}
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+}
+.phil-card {
+  background: var(--surface);
+  border: 1px solid rgba(201,168,76,0.1);
+  padding: 3rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.phil-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  transform: scaleX(0);
+  transition: transform 0.5s;
+}
+.phil-card:hover { border-color: rgba(201,168,76,0.3); }
+.phil-card:hover::before { transform: scaleX(1); }
+.phil-num {
+  font-family: var(--font-display);
+  font-size: 4rem;
+  color: rgba(201,168,76,0.1);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  font-weight: 300;
+}
+.phil-icon {
+  width: 48px; height: 48px;
+  margin-bottom: 1.5rem;
+}
+.phil-icon svg { fill: var(--gold); }
+.phil-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 1rem;
+}
+.phil-text {
+  font-size: 0.8rem;
+  line-height: 1.9;
+  color: var(--muted);
+}
+
+/* ── Collection Grid ── */
+#collection {
+  padding: 8rem 4rem;
+  background: var(--surface);
+  overflow: visible;
+}
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  overflow: visible;
+}
+.collect-card {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4/5;
+  cursor: pointer;
+}
+.collect-card img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.collect-card:hover img { transform: scale(1.05); }
+.collect-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(20,15,9,0.85) 0%, transparent 55%);
+  pointer-events: none;
+}
+.collect-info {
+  position: absolute; bottom: 2rem; left: 2rem; right: 2rem;
+}
+.collect-tag {
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.collect-name {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--cream);
+  line-height: 1.2;
+}
+.collect-origin {
+  font-size: 0.7rem;
+  color: rgba(240,232,216,0.6);
+  margin-top: 0.4rem;
+}
+.collect-card-large {
+  aspect-ratio: 1;
+}
+
+/* ── Atelier ── */
+#atelier {
+  padding: 8rem 4rem;
+  background: var(--bg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+.atelier-image {
+  position: relative;
+  overflow: hidden;
+}
+.atelier-image img {
+  width: 100%; height: 600px;
+  object-fit: cover;
+  display: block;
+}
+.atelier-image-accent {
+  position: absolute;
+  bottom: -2rem; right: -2rem;
+  width: 200px; height: 200px;
+  border: 1px solid rgba(201,168,76,0.3);
+  pointer-events: none;
+}
+.atelier-content {}
+.atelier-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 1.5rem;
+}
+.atelier-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 300;
+  color: var(--cream);
+  line-height: 1.25;
+  margin-bottom: 2rem;
+}
+.atelier-title em { font-style: italic; color: var(--gold-light); }
+.atelier-text {
+  font-size: 0.82rem;
+  line-height: 2;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+.atelier-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+}
+.spec-item {}
+.spec-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.spec-val {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--cream);
+}
+
+/* ── Process Timeline ── */
+#process {
+  padding: 8rem 4rem;
+  background: var(--surface);
+}
+.process-timeline {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.process-timeline::before {
+  content: '';
+  position: absolute;
+  left: 28px; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--gold) 10%, var(--gold) 90%, transparent);
+}
+.process-step {
+  display: flex; gap: 3rem;
+  padding-bottom: 4rem;
+  position: relative;
+}
+.process-step:last-child { padding-bottom: 0; }
+.step-marker {
+  flex-shrink: 0;
+  width: 56px; height: 56px;
+  background: var(--bg);
+  border: 1px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  color: var(--gold);
+  position: relative; z-index: 1;
+}
+.step-body {}
+.step-num {
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.step-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 0.75rem;
+}
+.step-text {
+  font-size: 0.78rem;
+  line-height: 1.9;
+  color: var(--muted);
+}
+
+/* ── Heritage ── */
+#heritage {
+  position: relative;
+  height: 70vh;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.heritage-bg {
+  position: absolute; inset: 0;
+  background-image: url('https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+.heritage-overlay {
+  position: absolute; inset: 0;
+  background: rgba(20,15,9,0.6);
+}
+.heritage-content {
+  position: relative; z-index: 2;
+  text-align: center;
+  max-width: 800px;
+  padding: 0 2rem;
+}
+.heritage-quote {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--cream);
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+.heritage-attr {
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ── Press (Swiper) ── */
+#press {
+  padding: 6rem 4rem;
+  background: var(--bg);
+  overflow: hidden;
+}
+.press-swiper {
+  padding: 1rem 0;
+}
+.press-slide {
+  background: var(--surface);
+  border: 1px solid rgba(201,168,76,0.1);
+  padding: 2.5rem;
+  text-align: center;
+}
+.press-logo {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+.press-quote {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--cream);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.press-stars {
+  color: var(--gold);
+  letter-spacing: 0.15em;
+}
+
+/* ── Form ── */
+#contact {
+  padding: 8rem 4rem;
+  background: var(--surface);
+}
+.contact-inner {
+  max-width: 700px;
+  margin: 0 auto;
+}
+.form-group {
+  margin-bottom: 2rem;
+}
+.form-label {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid rgba(201,168,76,0.2);
+  color: var(--cream);
+  padding: 1rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.3s;
+  -webkit-appearance: none;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--gold);
+}
+.form-textarea { min-height: 140px; resize: vertical; }
+.form-select option { background: var(--surface); }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.btn-submit {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-submit:hover {
+  background: transparent;
+  color: var(--gold);
+}
+
+/* ── Footer ── */
+footer {
+  background: var(--bg);
+  border-top: 1px solid rgba(201,168,76,0.15);
+  padding: 5rem 4rem 3rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 4rem;
+  margin-bottom: 4rem;
+}
+.footer-brand {}
+.footer-logo {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 1rem;
+}
+.footer-tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+.footer-col-title {
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  display: block;
+}
+.footer-links {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
+.footer-links a {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--cream); }
+.footer-bottom {
+  border-top: 1px solid rgba(201,168,76,0.1);
+  padding-top: 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-copy {
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ── Utility ── */
+.container { max-width: 1280px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="pre-hex"></div>
+  <div class="pre-bar"><div class="pre-bar-fill" id="preBarFill"></div></div>
+  <div class="pre-text">Aurea Mellis — Est. MMXIV</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="scroll-dot active" data-section="0"></div>
+  <div class="scroll-dot" data-section="1"></div>
+  <div class="scroll-dot" data-section="2"></div>
+  <div class="scroll-dot" data-section="3"></div>
+  <div class="scroll-dot" data-section="4"></div>
+  <div class="scroll-dot" data-section="5"></div>
+  <div class="scroll-dot" data-section="6"></div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">
+    AUREA MELLIS
+    <span>Single-Origin Raw Honey</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Collection</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="collection.html" class="nav-cta">Shop Collection</a>
+</nav>
+
+<!-- Hero -->
+<section id="hero" data-section="0">
+  <div class="hero-layer"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-overline">Single-Origin &bull; Unfiltered &bull; Wild-Sourced</div>
+    <h1 class="hero-title" id="heroTitle">
+      Liquid <em>Gold</em><br>From the Wild Hive
+    </h1>
+    <p class="hero-sub">
+      Not all honey is equal. Ours is gathered once a year<br>
+      from mountain meadows untouched by modernity.
+    </p>
+    <div class="hero-actions">
+      <a href="collection.html" class="btn-primary">Discover the Reserve</a>
+      <a href="process.html" class="btn-ghost">Our Process</a>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section id="stats" data-section="1">
+  <div class="stat-item">
+    <span class="stat-num" data-count="12">0</span>
+    <span class="stat-unit">+</span>
+    <span class="stat-label">Floral Origins</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-count="2400">0</span>
+    <span class="stat-unit">m</span>
+    <span class="stat-label">Avg. Hive Altitude</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-count="48">0</span>
+    <span class="stat-unit">h</span>
+    <span class="stat-label">Cold-Extraction Window</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-count="100">0</span>
+    <span class="stat-unit">%</span>
+    <span class="stat-label">Unheated, Unfiltered</span>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section id="philosophy" data-section="2">
+  <div class="section-header">
+    <span class="section-overline">Our Philosophy</span>
+    <h2 class="section-title">Three Laws of <em>Pure Craft</em></h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="philosophy-grid">
+    <div class="phil-card sr">
+      <div class="phil-num">I</div>
+      <h3 class="phil-title">Terroir Above All</h3>
+      <p class="phil-text">Every jar carries the precise botanical fingerprint of its origin — the wildflowers, altitude, and season fused into a single irreproducible taste. We never blend across regions. We never compromise provenance.</p>
+    </div>
+    <div class="phil-card sr">
+      <div class="phil-num">II</div>
+      <h3 class="phil-title">Cold, Slow, Once</h3>
+      <p class="phil-text">Our honey is extracted at ambient temperature — never heated above 35°C — preserving every enzyme, pollen grain, and aromatic compound. A single annual harvest. No shortcuts. No second passes.</p>
+    </div>
+    <div class="phil-card sr">
+      <div class="phil-num">III</div>
+      <h3 class="phil-title">The Hive Decides</h3>
+      <p class="phil-text">We follow the bees, not the market. Production volume is determined entirely by what the colony can sustainably provide. Some years yield abundant reserves. Some years, very little. We accept both with equal reverence.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Collection Grid -->
+<section id="collection" data-section="3">
+  <div class="section-header">
+    <span class="section-overline">The Reserve Collection</span>
+    <h2 class="section-title">Four <em>Expressions</em> of Origin</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="collection-grid">
+    <div class="collect-card">
+      <img src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=800&q=80&auto=format&fit=crop" alt="Alpine Meadow Reserve" loading="lazy">
+      <div class="collect-overlay"></div>
+      <div class="collect-info">
+        <span class="collect-tag">Limited · 340 Jars</span>
+        <h3 class="collect-name">Alpine Meadow Reserve</h3>
+        <p class="collect-origin">Haute Savoie, 2,200m — Summer Harvest</p>
+      </div>
+    </div>
+    <div class="collect-card">
+      <img src="https://images.unsplash.com/photo-1485182708500-e8f1f318ba72?w=800&q=80&auto=format&fit=crop" alt="Dark Forest Comb" loading="lazy">
+      <div class="collect-overlay"></div>
+      <div class="collect-info">
+        <span class="collect-tag">Exclusive · 120 Jars</span>
+        <h3 class="collect-name">Dark Forest Comb</h3>
+        <p class="collect-origin">Black Forest, Germany — Late Autumn</p>
+      </div>
+    </div>
+    <div class="collect-card">
+      <img src="https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Wildflower Accord" loading="lazy">
+      <div class="collect-overlay"></div>
+      <div class="collect-info">
+        <span class="collect-tag">Signature · 600 Jars</span>
+        <h3 class="collect-name">Wildflower Accord</h3>
+        <p class="collect-origin">Tuscan Maremma, Italy — Spring Bloom</p>
+      </div>
+    </div>
+    <div class="collect-card">
+      <img src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Heather Mist" loading="lazy">
+      <div class="collect-overlay"></div>
+      <div class="collect-info">
+        <span class="collect-tag">Rare · 85 Jars</span>
+        <h3 class="collect-name">Heather Mist</h3>
+        <p class="collect-origin">Scottish Highlands — August Peak</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Atelier -->
+<section id="atelier" data-section="4">
+  <div class="atelier-image">
+    <img src="https://images.pexels.com/photos/2835436/pexels-photo-2835436.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="The Aurea Atelier">
+    <div class="atelier-image-accent"></div>
+  </div>
+  <div class="atelier-content sr">
+    <span class="atelier-label">The Aurea Atelier</span>
+    <h2 class="atelier-title">Where Science Meets the <em>Ancient Art</em> of Apiculture</h2>
+    <p class="atelier-text sr">Our stone atelier in the Provençal foothills houses the most sensitive cold-extraction equipment in private apiculture — not to industrialize the process, but to protect its integrity with surgical precision.</p>
+    <p class="atelier-text sr">Each batch is analyzed in our on-site laboratory: diastase activity, hydroxymethylfurfural levels, moisture content, and pollen spectrum mapping. The data informs, but never overrides, the beekeeper's judgment.</p>
+    <div class="atelier-specs">
+      <div class="spec-item">
+        <span class="spec-label">Extraction Method</span>
+        <span class="spec-val">Cold-radial, sub-35°C</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">Filtration</span>
+        <span class="spec-val">Gravity mesh only</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">Packaging</span>
+        <span class="spec-val">Hand-filled, wax-sealed</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">Traceability</span>
+        <span class="spec-val">Hive-to-jar batch code</span>
+      </div>
+    </div>
+    <a href="about.html" class="btn-primary">Meet the Atelier</a>
+  </div>
+</section>
+
+<!-- Process Timeline -->
+<section id="process" data-section="5">
+  <div class="section-header">
+    <span class="section-overline">From Hive to Jar</span>
+    <h2 class="section-title">The <em>Five Moments</em> of Transformation</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="process-timeline">
+    <div class="process-step sr">
+      <div class="step-marker sr">I</div>
+      <div class="step-body sr">
+        <span class="step-num sr">Step One</span>
+        <h3 class="step-title sr">Wild Foraging & Bloom Mapping</h3>
+        <p class="step-text sr">Before a single frame is removed, our apiarists survey a 3km radius from each hive site, identifying dominant floral sources and documenting the bloom calendar. This terroir map guides the harvest timing with botanical precision.</p>
+      </div>
+    </div>
+    <div class="process-step sr">
+      <div class="step-marker sr">II</div>
+      <div class="step-body sr">
+        <span class="step-num sr">Step Two</span>
+        <h3 class="step-title sr">Ethical Frame Selection</h3>
+        <p class="step-text sr">Only fully capped frames — a sign of complete enzymatic conversion — are selected. A minimum 30% honey surplus remains untouched within each hive, ensuring the colony's winter reserves are never compromised.</p>
+      </div>
+    </div>
+    <div class="process-step sr">
+      <div class="step-marker sr">III</div>
+      <div class="step-body sr">
+        <span class="step-num sr">Step Three</span>
+        <h3 class="step-title sr">Cold-Radial Extraction</h3>
+        <p class="step-text sr">Frames are transported to the atelier within four hours of removal and spun in temperature-controlled stainless centrifuges. The room is kept at 22°C maximum. No heat, no pressure assistance — only time and gentle centrifugal force.</p>
+      </div>
+    </div>
+    <div class="process-step sr">
+      <div class="step-marker sr">IV</div>
+      <div class="step-body sr">
+        <span class="step-num sr">Step Four</span>
+        <h3 class="step-title sr">Gravity Settling & Analysis</h3>
+        <p class="step-text sr">Extracted honey settles for 48–72 hours in sealed tanks, allowing air bubbles and wax particles to rise naturally. No filtering — only a coarse mesh removes structural wax. Laboratory analysis then documents the batch's biochemical profile.</p>
+      </div>
+    </div>
+    <div class="process-step sr">
+      <div class="step-marker sr">V</div>
+      <div class="step-body sr">
+        <span class="step-num sr">Step Five</span>
+        <h3 class="step-title sr">Hand-Fill & Wax Sealing</h3>
+        <p class="step-text sr">Each jar is filled, weighed, and sealed by hand. The cork is dipped in our signature beeswax blend, embossed with the batch number and hive coordinates. Every jar is a numbered statement of provenance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Heritage -->
+<section id="heritage">
+  <div class="heritage-bg"></div>
+  <div class="heritage-overlay"></div>
+  <div class="heritage-content">
+    <p class="heritage-quote">"The hive does not produce honey. It transforms the landscape into honey — and then, through our restraint, we simply carry it to your table."</p>
+    <span class="heritage-attr">— Édouard Varin, Founder & Master Apiarist</span>
+  </div>
+</section>
+
+<!-- Press -->
+<section id="press">
+  <div class="section-header">
+    <span class="section-overline">As Seen In</span>
+    <h2 class="section-title">The <em>World Notices</em></h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="swiper press-swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide press-slide">
+        <span class="press-logo">The Gourmand Quarterly</span>
+        <p class="press-quote">"Aurea Mellis does not merely sell honey — it sells time, geology, and the whisper of ten thousand wings. The Alpine Meadow Reserve is unlike anything we have tasted."</p>
+        <div class="press-stars">★★★★★</div>
+      </div>
+      <div class="swiper-slide press-slide">
+        <span class="press-logo">Luxury Provisions Magazine</span>
+        <p class="press-quote">"A revelation. The pollen spectrum analysis provided with each jar transforms a condiment into a scientific artifact of extraordinary beauty."</p>
+        <div class="press-stars">★★★★★</div>
+      </div>
+      <div class="swiper-slide press-slide">
+        <span class="press-logo">Palate & Provenance</span>
+        <p class="press-quote">"Édouard Varin has created something that feels less like a product and more like a privilege. The Dark Forest Comb is brooding, complex, irreplaceable."</p>
+        <div class="press-stars">★★★★★</div>
+      </div>
+      <div class="swiper-slide press-slide">
+        <span class="press-logo">Fine Harvest Review</span>
+        <p class="press-quote">"We awarded it our Exceptional Provenance distinction — the first honey to receive this honor in fifteen years of publishing. A genuine masterwork of apiculture."</p>
+        <div class="press-stars">★★★★★</div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- Form -->
+<section id="contact" data-section="6">
+  <div class="section-header">
+    <span class="section-overline">Private Allocation</span>
+    <h2 class="section-title">Reserve <em>Your Jars</em> Before the Harvest</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="contact-inner">
+    <form>
+      <div class="form-row">
+        <div class="form-group sr">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input" placeholder="Édouard">
+        </div>
+        <div class="form-group sr">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input" placeholder="Varin">
+        </div>
+      </div>
+      <div class="form-group sr">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="you@domain.com">
+      </div>
+      <div class="form-group sr">
+        <label class="form-label">Preferred Expression</label>
+        <select class="form-select">
+          <option value="">Select a Reserve</option>
+          <option>Alpine Meadow Reserve</option>
+          <option>Dark Forest Comb</option>
+          <option>Wildflower Accord</option>
+          <option>Heather Mist</option>
+          <option>Mixed Curator's Selection</option>
+        </select>
+      </div>
+      <div class="form-group sr">
+        <label class="form-label">Message (Optional)</label>
+        <textarea class="form-textarea" placeholder="Tell us how you discovered Aurea Mellis, or ask about gifting and custom allocations..."></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Submit Allocation Request</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="footer-logo">AUREA MELLIS</span>
+      <p class="footer-tagline">Single-origin raw honey gathered once a year from wild mountain apiaries across Europe. Unheated, unfiltered, irreproducible.</p>
+    </div>
+    <div>
+      <span class="footer-col-title sr">Navigate</span>
+      <ul class="footer-links">
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="collection.html">The Collection</a></li>
+        <li><a href="process.html">Our Process</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-title sr">Collection</span>
+      <ul class="footer-links">
+        <li><a href="collection.html">Alpine Reserve</a></li>
+        <li><a href="collection.html">Dark Forest</a></li>
+        <li><a href="collection.html">Wildflower Accord</a></li>
+        <li><a href="collection.html">Heather Mist</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-title sr">Contact</span>
+      <ul class="footer-links">
+        <li><a href="#">Provence, France</a></li>
+        <li><a href="mailto:reserve@auramellis.com">reserve@auramellis.com</a></li>
+        <li><a href="#">+33 4 90 XX XX XX</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2024 Aurea Mellis. All rights reserved. A fictional luxury brand.</span>
+    <span class="footer-copy">Crafted with reverence for the hive.</span>
+  </div>
+</footer>
+
+<script>
+
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger);
+
+// Cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  gsap.set(cursor, { x: e.clientX, y: e.clientY });
+  gsap.to(ring, { duration: 1.0, x: e.clientX, y: e.clientY });
+});
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => gsap.to(ring, { scale: 2, duration: 1.0 }));
+  el.addEventListener('mouseleave', () => gsap.to(ring, { scale: 1, duration: 1.0 }));
+});
+
+// Preloader
+window.addEventListener('load', () => {
+  const fill = document.getElementById('preBarFill');
+  fill.style.width = '100%';
+  setTimeout(() => {
+    gsap.to('#preloader', {
+      duration: 0.8, opacity: 0, pointerEvents: 'none',
+      onComplete: () => { document.getElementById('preloader').style.display = 'none'; }
+    });
+    // Hero animation
+    const split = new SplitText('#heroTitle', { type: 'words' });
+    gsap.from(split.words, {
+      duration: 1.2, y: 24, opacity: 0, stagger: 0.08,
+      ease: 'power2.out', delay: 0.2, immediateRender: false
+    });
+    gsap.from('.hero-overline', { duration: 1, y: 20, opacity: 0, delay: 0.5, immediateRender: false });
+    gsap.from('.hero-sub', { duration: 1, y: 20, opacity: 0, delay: 0.7, immediateRender: false });
+    gsap.from('.hero-actions', { duration: 1, y: 20, opacity: 0, delay: 0.9, immediateRender: false });
+  }, 2000);
+});
+
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 80);
+});
+
+// Stats counter
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = parseInt(el.dataset.count);
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 80%',
+    onEnter: () => {
+      gsap.from({ val: 0 }, {
+        val: target, duration: 2, ease: 'power2.out',
+        immediateRender: false,
+        onUpdate: function() { el.textContent = Math.round(this.targets()[0].val); }
+      });
+    }, once: true
+  });
+});
+
+// Philosophy cards
+gsap.from('.phil-card', {
+  scrollTrigger: { trigger: '#philosophy', start: 'top 70%' },
+  duration: 0.8, y: 24, opacity: 0, stagger: 0.15,
+  ease: 'power2.out', immediateRender: false
+});
+
+// Collection grid
+gsap.from('.collect-card', {
+  scrollTrigger: { trigger: '#collection', start: 'top 70%' },
+  duration: 0.9, y: 24, opacity: 0, stagger: 0.12,
+  ease: 'power2.out', immediateRender: false
+});
+
+// Atelier
+gsap.from('.atelier-image', {
+  scrollTrigger: { trigger: '#atelier', start: 'top 70%' },
+  duration: 1, x: -50, opacity: 0,
+  ease: 'power2.out', immediateRender: false
+});
+gsap.from('.atelier-content', {
+  scrollTrigger: { trigger: '#atelier', start: 'top 70%' },
+  duration: 1, x: 50, opacity: 0,
+  ease: 'power2.out', immediateRender: false
+});
+
+// Process steps
+gsap.from('.process-step', {
+  scrollTrigger: { trigger: '#process', start: 'top 70%' },
+  duration: 0.7, x: -30, opacity: 0, stagger: 0.15,
+  ease: 'power2.out', immediateRender: false
+});
+
+// Heritage parallax
+gsap.from('.heritage-content', {
+  scrollTrigger: { trigger: '#heritage', start: 'top 80%' },
+  duration: 1.2, y: 24, opacity: 0,
+  ease: 'power2.out', immediateRender: false
+});
+
+// Form
+gsap.from('.contact-inner', {
+  scrollTrigger: { trigger: '#contact', start: 'top 70%' },
+  duration: 1, y: 30, opacity: 0,
+  ease: 'power2.out', immediateRender: false
+});
+
+// Press Swiper
+new Swiper('.press-swiper', {
+  slidesPerView: 1,
+  spaceBetween: 30,
+  loop: true,
+  autoplay: { delay: 4000, disableOnInteraction: false },
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: {
+    768: { slidesPerView: 2 },
+    1024: { slidesPerView: 3 }
+  }
+});
+
+// Scroll indicator
+const sections = document.querySelectorAll('[data-section]');
+const dots = document.querySelectorAll('.scroll-dot');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = entry.target.dataset.section;
+      dots.forEach(d => d.classList.remove('active'));
+      if (dots[idx]) dots[idx].classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => observer.observe(s));
+
+dots.forEach((dot, i) => {
+  dot.addEventListener('click', () => {
+    sections[i]?.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>

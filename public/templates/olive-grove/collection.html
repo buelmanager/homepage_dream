@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harvest Selections — ATHENAION ESTATE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg:            #1A2210;
+      --surface:       #212D14;
+      --surface2:      #1E2812;
+      --grove:         #4A6B2A;
+      --gold:          #B8961E;
+      --gold-light:    #D4B040;
+      --gold-dark:     #7D6510;
+      --gold-pale:     rgba(184,150,30,0.10);
+      --stone:         #8A8070;
+      --ivory:         #F0EBD8;
+      --smoke:         #6A6458;
+      --muted:         #4A4438;
+      --border:        #2A3418;
+      --border2:       #38441E;
+      --font-serif:    'Cormorant Garamond', Georgia, serif;
+      --font-sans:     'Jost', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 24px 48px; transition: background 0.4s, padding 0.4s; }
+    #navbar.scrolled { background: rgba(26,34,16,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 16px 48px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 16px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--ivory); font-weight: 500; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 40px; list-style: none; }
+    .nav-links a { font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.25em; text-transform: uppercase; color: var(--stone); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ivory); }
+    .nav-cta { font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; padding: 10px 28px; border: 1px solid var(--gold-dark); color: var(--gold); transition: background 0.3s, color 0.3s; }
+    .nav-cta:hover { background: var(--gold); color: var(--bg); }
+
+    .page-banner { height: 50vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .page-banner-bg { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1536152470836-b943b246224c?w=1920&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; filter: brightness(0.32) saturate(0.65); }
+    .page-banner-overlay { position: absolute; inset: 0; background: rgba(26,34,16,0.60); }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; }
+    .page-banner-label { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; display: block; }
+    .page-banner-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 400; color: var(--ivory); font-style: italic; }
+
+    .section-label { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; display: block; }
+
+    /* INTRO */
+    .intro-section { background: var(--surface); padding: 7rem 4rem; }
+    .intro-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+    .intro-inner h2 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 400; color: var(--ivory); margin-bottom: 1.5rem; font-style: italic; }
+    .intro-inner p { font-size: 0.92rem; line-height: 2; color: var(--stone); max-width: 620px; margin: 0 auto; }
+
+    /* HARVEST GRID */
+    .grid-section { background: var(--bg); padding: 7rem 4rem; }
+    .grid-header { max-width: 1200px; margin: 0 auto 3rem; }
+    .harvest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; max-width: 1200px; margin: 0 auto; }
+    .harvest-card { background: var(--surface); border: 1px solid var(--border2); overflow: hidden; transition: border-color 0.3s; }
+    .harvest-card:hover { border-color: rgba(184,150,30,0.4); }
+    .harvest-card-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; }
+    .harvest-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .harvest-card:hover .harvest-card-img img { transform: scale(1.05); }
+    .harvest-card-body { padding: 2rem; }
+    .harvest-card-vintage { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.3em; color: var(--gold); margin-bottom: 0.5rem; text-transform: uppercase; }
+    .harvest-card-name { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 400; color: var(--ivory); margin-bottom: 0.6rem; font-style: italic; }
+    .harvest-card-desc { font-size: 0.82rem; line-height: 1.8; color: var(--stone); margin-bottom: 1.2rem; }
+    .harvest-card-spec { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.15em; color: var(--gold); opacity: 0.7; text-transform: uppercase; }
+
+    /* QUALITY */
+    .quality-section { background: var(--surface); padding: 9rem 4rem; }
+    .quality-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; max-width: 1200px; margin: 0 auto; align-items: center; }
+    .quality-img { aspect-ratio: 4/5; overflow: hidden; }
+    .quality-img img { width: 100%; height: 100%; object-fit: cover; }
+    .quality-content h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 400; color: var(--ivory); margin-bottom: 1.5rem; font-style: italic; }
+    .quality-content p { font-size: 0.88rem; line-height: 2; color: var(--stone); margin-bottom: 1.2rem; }
+    .quality-table { width: 100%; margin-top: 2rem; }
+    .q-row { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid var(--border); }
+    .q-label { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--stone); }
+    .q-value { font-family: var(--font-serif); font-size: 1rem; color: var(--gold); font-style: italic; }
+
+    /* CTA */
+    .cta-section { background: var(--bg); padding: 9rem 4rem; text-align: center; }
+    .cta-inner h2 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 400; color: var(--ivory); margin-bottom: 1.2rem; font-style: italic; }
+    .cta-inner p { font-size: 0.9rem; color: var(--stone); margin-bottom: 3rem; line-height: 1.9; }
+    .cta-btn { display: inline-block; font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; border: 1px solid var(--gold-dark); padding: 14px 40px; color: var(--gold); transition: background 0.3s, color 0.3s; }
+    .cta-btn:hover { background: var(--gold); color: var(--bg); }
+
+    footer { background: var(--bg); padding: 6rem 4rem 3rem; border-top: 1px solid var(--border); }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+    .footer-brand-name { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory); margin-bottom: 1rem; }
+    .footer-brand-desc { font-size: 0.8rem; line-height: 1.8; color: var(--stone); margin-bottom: 1rem; max-width: 260px; }
+    .footer-coords { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.2em; color: var(--gold); }
+    .footer-col .footer-col-title { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-col ul li a { font-size: 0.82rem; color: var(--stone); transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--ivory); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid var(--border); }
+    .footer-copy { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.18em; color: var(--smoke); }
+    .footer-since { font-family: var(--font-serif); font-size: 0.85rem; font-style: italic; color: var(--gold); opacity: 0.6; }
+
+    @media (max-width: 900px) {
+      #navbar { padding: 20px 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .harvest-grid { grid-template-columns: 1fr 1fr; }
+      .quality-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .harvest-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+  <header id="navbar">
+    <div class="nav-logo"><span>ATHENAION</span> ESTATE</div>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html" class="active">Harvest</a></li>
+      <li><a href="process.html">Grove to Table</a></li>
+      <li><a href="contact.html">Reserve</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Reserve Harvest</a>
+  </header>
+
+  <section class="page-banner">
+    <div class="page-banner-bg"></div>
+    <div class="page-banner-overlay"></div>
+    <div class="page-banner-content">
+      <span class="page-banner-label">Annual Harvest</span>
+      <h1 class="page-banner-title">Harvest Selections</h1>
+    </div>
+  </section>
+
+  <section class="intro-section">
+    <div class="intro-inner">
+      <span class="section-label">The Expressions</span>
+      <h2>One Estate, Three Expressions.</h2>
+      <p>The Athenaion grove is harvested in a single 14-day window each October. From that single harvest, we produce three expressions, differentiated only by the moment of picking within the window — early, peak, and late. Each captures a different profile from the same trees, the same soil, and the same season. No blending between expressions. No addition of other oils. The variety is produced by timing alone.</p>
+    </div>
+  </section>
+
+  <section class="grid-section">
+    <div class="grid-header">
+      <span class="section-label">2025 Harvest · Peloponnese</span>
+    </div>
+    <div class="harvest-grid">
+
+      <div class="harvest-card">
+        <div class="harvest-card-img">
+          <img src="https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?w=800&q=80&auto=format&fit=crop" alt="Early Harvest" loading="lazy" />
+        </div>
+        <div class="harvest-card-body">
+          <div class="harvest-card-vintage">Early Harvest · October 15–17</div>
+          <div class="harvest-card-name">Agros — The Field</div>
+          <div class="harvest-card-desc">Harvested at the opening of the window, when the olives are still deep green and the oil yield is at its lowest. Intensely grassy, with sharp pepper on the finish and a pronounced bitterness that mellows over 30 minutes. For those who want the most extreme expression of the Koroneiki character.</div>
+          <div class="harvest-card-spec">500ml · High Phenolic · Limited 200 bottles</div>
+        </div>
+      </div>
+
+      <div class="harvest-card">
+        <div class="harvest-card-img">
+          <img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&q=80&auto=format&fit=crop" alt="Peak Harvest" loading="lazy" />
+        </div>
+        <div class="harvest-card-body">
+          <div class="harvest-card-vintage">Peak Harvest · October 20–22</div>
+          <div class="harvest-card-name">Petra — The Stone</div>
+          <div class="harvest-card-desc">The centrepiece of the Athenaion range. Harvested at peak phenolic concentration — green-gold in colour, balanced between the bitterness of early harvest and the roundness that comes later. Artichoke, fresh herb, and a mineral finish that reflects the limestone geology of the grove. This is the expression we are best known for.</div>
+          <div class="harvest-card-spec">500ml · Signature Expression · 800 bottles</div>
+        </div>
+      </div>
+
+      <div class="harvest-card">
+        <div class="harvest-card-img">
+          <img src="https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Late Harvest" loading="lazy" />
+        </div>
+        <div class="harvest-card-body">
+          <div class="harvest-card-vintage">Late Harvest · October 26–28</div>
+          <div class="harvest-card-name">Chrysos — The Gold</div>
+          <div class="harvest-card-desc">The final picking of the season, when the fruit begins to turn from green to yellow-gold. The oil is softer, rounder, and more buttery than the earlier expressions. Lower in polyphenols but warmer and more approachable. Almond, ripe apple, and a long smooth finish. Exceptional for raw application over simple dishes.</div>
+          <div class="harvest-card-spec">500ml · Approachable · 400 bottles</div>
+        </div>
+      </div>
+
+      <div class="harvest-card">
+        <div class="harvest-card-img">
+          <img src="https://images.unsplash.com/photo-1536152470836-b943b246224c?w=800&q=80&auto=format&fit=crop" alt="Collector Set" loading="lazy" />
+        </div>
+        <div class="harvest-card-body">
+          <div class="harvest-card-vintage">Collector's Allocation · Full Season</div>
+          <div class="harvest-card-name">Tria — The Three</div>
+          <div class="harvest-card-desc">A wooden case containing one bottle of each of the three seasonal expressions, presented with harvest documentation including the pressing date, analysis report, and estate notes for the season. For collectors and those who wish to taste the progression of the harvest window.</div>
+          <div class="harvest-card-spec">3 × 500ml · Numbered Case · 80 sets</div>
+        </div>
+      </div>
+
+      <div class="harvest-card">
+        <div class="harvest-card-img">
+          <img src="https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=800&q=80&auto=format&fit=crop" alt="Estate Reserve" loading="lazy" />
+        </div>
+        <div class="harvest-card-body">
+          <div class="harvest-card-vintage">Estate Reserve · Select Trees</div>
+          <div class="harvest-card-name">Palaios — The Ancient</div>
+          <div class="harvest-card-desc">Oil pressed exclusively from the forty trees that remain from the original 1724 planting. The yield is extraordinarily small — fewer than 60 bottles annually. The flavour is unlike any other expression: deeper, earthier, with a resinous quality that comes from three centuries of root development in the same soil. Reserved for longstanding correspondence only.</div>
+          <div class="harvest-card-spec">250ml · Ancient Trees · Under 60 bottles</div>
+        </div>
+      </div>
+
+      <div class="harvest-card">
+        <div class="harvest-card-img">
+          <img src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Gift Edition" loading="lazy" />
+        </div>
+        <div class="harvest-card-body">
+          <div class="harvest-card-vintage">Gift Edition · Annual Release</div>
+          <div class="harvest-card-name">Doron — The Gift</div>
+          <div class="harvest-card-desc">The Petra expression in a ceramic vessel commissioned annually from a different Greek ceramicist, in collaboration with the estate. Each year's vessel design is informed by a different element of Peloponnesian culture — this year, a textured surface referencing the limestone formations of the Taygetos range. Includes certificate of authenticity.</div>
+          <div class="harvest-card-spec">500ml Ceramic · Numbered · 120 pieces</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="quality-section">
+    <div class="quality-grid">
+      <div class="quality-img">
+        <img src="https://images.unsplash.com/photo-1450338872a20bc3e124e4decc87a96?w=800&q=80&auto=format&fit=crop" alt="Quality" />
+      </div>
+      <div class="quality-content">
+        <span class="section-label">Quality Standards</span>
+        <h2>Measured. Documented. Uncompromised.</h2>
+        <p>Every harvest undergoes independent chemical analysis at a certified Athens laboratory before release. We publish the full analysis report for each expression alongside the relevant bottle. There is nothing to hide.</p>
+        <p>The figures below are drawn from the 2024 Petra expression and are representative of the peak harvest profile. Early harvest figures will differ: higher polyphenols, lower yield, more bitter character.</p>
+        <div class="quality-table">
+          <div class="q-row"><span class="q-label">Free Acidity (FFA)</span><span class="q-value">0.12% (max 0.8% for extra virgin)</span></div>
+          <div class="q-row"><span class="q-label">Peroxide Value</span><span class="q-value">4.2 meq O₂/kg</span></div>
+          <div class="q-row"><span class="q-label">Total Polyphenols</span><span class="q-value">612 mg/kg (Petra) · 890+ (Agros)</span></div>
+          <div class="q-row"><span class="q-label">Extraction Method</span><span class="q-value">Cold press, 27°C or below</span></div>
+          <div class="q-row"><span class="q-label">Harvest to Press</span><span class="q-value">Under 8 hours</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner">
+      <span class="section-label">Reserve Your Allocation</span>
+      <h2>The 2025 Harvest<br/>Is Now Available.</h2>
+      <p>Allocations are limited and fulfilled in order of correspondence. The Palaios and Tria expressions sell through within the first two weeks of release. We recommend contacting us directly to discuss your requirements.</p>
+      <a href="contact.html" class="cta-btn">Reserve Now</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">ATHENAION ESTATE</div>
+        <p class="footer-brand-desc">Single-estate ultra-premium olive oil pressed from three-hundred-year-old Koroneiki groves on the Laconian plateau of the Peloponnese. One harvest. One expression. Since 1724.</p>
+        <div class="footer-coords">37.8125°N · 22.4003°E · Alt. 320m</div>
+      </div>
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">The Estate</div>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="collection.html">Harvest</a></li>
+          <li><a href="process.html">Grove to Table</a></li>
+          <li><a href="contact.html">Reserve</a></li>
+        </ul>
+      </div>
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Journal</div>
+        <ul>
+          <li><a href="#">Harvest Notes</a></li>
+          <li><a href="#">Pressing Reports</a></li>
+          <li><a href="#">Terroir Archives</a></li>
+        </ul>
+      </div>
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Reserve</div>
+        <ul>
+          <li><a href="contact.html">2025 Harvest</a></li>
+          <li><a href="contact.html">Collector's Allocation</a></li>
+          <li><a href="contact.html">Estate Visits</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2025 ATHENAION ESTATE. All rights reserved.</span>
+      <span class="footer-since">Single Estate, Single Harvest, Since 1724.</span>
+    </div>
+  </footer>
+
+  <script>
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger);
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); }, { passive: true });
+    gsap.from('.intro-inner', { opacity: 0, y: 24, immediateRender: false, scrollTrigger: { trigger: '.intro-section', start: 'top 80%', once: true } });
+    gsap.from('.harvest-card', { opacity: 0, y: 24, stagger: 0.12, immediateRender: false, scrollTrigger: { trigger: '.harvest-grid', start: 'top 80%', once: true } });
+    gsap.from('.quality-img', { opacity: 0, x: -40, immediateRender: false, scrollTrigger: { trigger: '.quality-grid', start: 'top 80%', once: true } });
+    gsap.from('.quality-content', { opacity: 0, x: 40, immediateRender: false, scrollTrigger: { trigger: '.quality-grid', start: 'top 75%', once: true } });
+    gsap.from('.cta-inner', { opacity: 0, y: 24, immediateRender: false, scrollTrigger: { trigger: '.cta-section', start: 'top 80%', once: true } });
+  </script>
+</body>
+</html>

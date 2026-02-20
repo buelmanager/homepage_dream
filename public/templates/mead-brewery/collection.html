@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batches — Aurelum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1A1208; --bg-mid: #221A0A; --bg-surface: #2A200E; --bg-card: #302618;
+      --amber: #C8860A; --amber-light: #DFA030; --honey: #E8D5A0; --honey-dim: #C4AD78;
+      --text: #F2E8C8; --text-muted: #8C7A52;
+      --border: rgba(200,134,10,0.3); --border-subtle: rgba(242,232,200,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 24px 48px; background: rgba(26,18,8,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; letter-spacing: 0.22em; color: var(--honey); text-decoration: none; }
+    .nav-logo em { font-style: italic; color: var(--amber); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--honey-dim); text-decoration: none; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--honey); }
+    .nav-cta { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bg); background: var(--amber); padding: 10px 24px; text-decoration: none; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--amber-light); }
+
+    .page-banner { height: 50vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .page-banner-bg { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; opacity: 0.35; filter: sepia(0.3); }
+    .page-banner-overlay { position: absolute; inset: 0; background: rgba(26,18,8,0.62); }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; padding: 0 24px; }
+    .page-banner-label { font-size: 11px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--amber); margin-bottom: 16px; display: block; }
+    .page-banner-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 6vw, 72px); font-weight: 300; color: var(--honey); }
+
+    section { padding: 100px 0; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+    .section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--amber); margin-bottom: 16px; display: block; }
+
+    .intro { background: var(--bg-surface); text-align: center; }
+    .intro p { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: var(--honey-dim); line-height: 1.8; max-width: 600px; margin: 0 auto; }
+
+    .batches { background: var(--bg); }
+    .batches-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 60px; }
+    .batch-card { background: var(--bg-card); border: 1px solid var(--border-subtle); overflow: hidden; transition: border-color 0.3s; }
+    .batch-card:hover { border-color: var(--border); }
+    .batch-img { width: 100%; height: 240px; object-fit: cover; display: block; filter: sepia(0.15) saturate(0.85); transition: filter 0.4s; }
+    .batch-img-wrap { overflow: hidden; }
+    .batch-card:hover .batch-img { filter: sepia(0) saturate(1); }
+    .batch-body { padding: 28px; }
+    .batch-vintage { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+    .batch-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--honey); margin-bottom: 4px; }
+    .batch-origin { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+    .batch-desc { font-size: 13px; color: var(--honey-dim); line-height: 1.65; margin-bottom: 12px; }
+    .batch-abv { font-size: 11px; letter-spacing: 0.18em; color: var(--amber); }
+
+    .quality { background: var(--bg-surface); }
+    .quality-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .quality-img { aspect-ratio: 4/3; overflow: hidden; }
+    .quality-img img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.15) saturate(0.85); }
+    .quality-text h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.5vw, 44px); font-weight: 300; color: var(--honey); margin-bottom: 24px; }
+    .quality-text p { font-size: 15px; line-height: 1.9; color: var(--honey-dim); margin-bottom: 16px; }
+
+    .cta-section { background: var(--bg-mid); text-align: center; padding: 100px 48px; }
+    .cta-section h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 4vw, 52px); font-style: italic; font-weight: 300; color: var(--honey); margin-bottom: 20px; }
+    .cta-section p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: var(--honey-dim); max-width: 480px; margin: 0 auto 36px; line-height: 1.7; }
+    .btn-primary { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--bg); background: var(--amber); padding: 14px 36px; text-decoration: none; transition: background 0.3s; }
+    .btn-primary:hover { background: var(--amber-light); }
+
+    footer { background: var(--bg); border-top: 1px solid var(--border-subtle); padding: 64px 48px 40px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 56px; margin-bottom: 48px; }
+    .footer-col h4 { font-size: 10px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--amber); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--honey); }
+    .footer-brand-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; letter-spacing: 0.22em; color: var(--honey); display: block; margin-bottom: 16px; text-decoration: none; }
+    .footer-brand p { font-size: 13px; color: var(--text-muted); line-height: 1.65; max-width: 260px; }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; }
+    .footer-copy { font-size: 11px; color: var(--text-muted); }
+
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; } .nav-links { display: none; }
+      .container { padding: 0 24px; } section { padding: 60px 0; }
+      .batches-grid { grid-template-columns: 1fr; }
+      .quality-inner { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">AUREL<em>UM</em></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html" class="active">Batches</a></li>
+      <li><a href="process.html">Craft</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Book a Tasting</a>
+  </nav>
+
+  <div class="page-banner">
+    <div class="page-banner-bg"></div>
+    <div class="page-banner-overlay"></div>
+    <div class="page-banner-content">
+      <span class="page-banner-label">Current and Archive Releases</span>
+      <h1 class="page-banner-title">Batches</h1>
+    </div>
+  </div>
+
+  <section class="intro">
+    <div class="container">
+      <span class="section-label">The Releases</span>
+      <p>Each Aurelum batch is a single honey varietal from a single named apiary — fermented once, aged without rush, bottled by hand. No two batches share the same character.</p>
+    </div>
+  </section>
+
+  <section class="batches">
+    <div class="container">
+      <div class="batches-grid">
+        <div class="batch-card">
+          <div class="batch-img-wrap">
+            <img class="batch-img" src="https://images.pexels.com/photos/3769747/pexels-photo-3769747.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Traditional 2022" loading="lazy" />
+          </div>
+          <div class="batch-body">
+            <div class="batch-vintage">Traditional · 2022 · Available</div>
+            <div class="batch-name">Timeless</div>
+            <div class="batch-origin">Clos des Abeilles · Provence, France</div>
+            <p class="batch-desc">Pure wildflower honey — no additions. Lavender-dominant with stone fruit and dry herb. 18 months in neutral French oak.</p>
+            <div class="batch-abv">12.5% ABV · 18 months aged</div>
+          </div>
+        </div>
+        <div class="batch-card">
+          <div class="batch-img-wrap">
+            <img class="batch-img" src="https://images.pexels.com/photos/1267697/pexels-photo-1267697.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Botanical 2023" loading="lazy" />
+          </div>
+          <div class="batch-body">
+            <div class="batch-vintage">Botanical · 2023 · Available</div>
+            <div class="batch-name">Verdant</div>
+            <div class="batch-origin">Biała Akacja · Małopolska, Poland</div>
+            <p class="batch-desc">Acacia honey with elderflower and lemon verbena added cold in muslin sachets post-fermentation. Light, bright, and impossibly floral.</p>
+            <div class="batch-abv">11% ABV · 12 months aged</div>
+          </div>
+        </div>
+        <div class="batch-card">
+          <div class="batch-img-wrap">
+            <img class="batch-img" src="https://images.pexels.com/photos/3756766/pexels-photo-3756766.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Reserve 2021" loading="lazy" />
+          </div>
+          <div class="batch-body">
+            <div class="batch-vintage">Reserve · 2021 · Limited</div>
+            <div class="batch-name">Austere</div>
+            <div class="batch-origin">Il Castagno · Tuscan Hills, Italy</div>
+            <p class="batch-desc">Dark amber chestnut honey. Tannin and tobacco on the nose. 24 months in Hungarian oak. The most complex mead we have ever produced.</p>
+            <div class="batch-abv">14% ABV · 24 months aged</div>
+          </div>
+        </div>
+        <div class="batch-card">
+          <div class="batch-img-wrap">
+            <img class="batch-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&auto=format&fit=crop" alt="Bochet 2022" loading="lazy" />
+          </div>
+          <div class="batch-body">
+            <div class="batch-vintage">Bochet · 2022 · Available</div>
+            <div class="batch-name">Incendiary</div>
+            <div class="batch-origin">Havre des Sarrasins · Brittany, France</div>
+            <p class="batch-desc">Buckwheat honey caramelised over direct heat for three hours before fermentation. The colour is almost black. The nose is molasses, tobacco, and dark chocolate.</p>
+            <div class="batch-abv">13.5% ABV · 16 months aged</div>
+          </div>
+        </div>
+        <div class="batch-card">
+          <div class="batch-img-wrap">
+            <img class="batch-img" src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=800&q=80&auto=format&fit=crop" alt="Highland 2023" loading="lazy" />
+          </div>
+          <div class="batch-body">
+            <div class="batch-vintage">Highland · 2023 · Limited</div>
+            <div class="batch-name">Resinous</div>
+            <div class="batch-origin">Loch Rannoch · Perthshire, Scotland</div>
+            <p class="batch-desc">Heather ling honey — thixotropic, gelatinous, pressed by hand. Floral-medicinal with deep resinous character. Our most unusual and rewarding botanical mead.</p>
+            <div class="batch-abv">12% ABV · 14 months aged</div>
+          </div>
+        </div>
+        <div class="batch-card">
+          <div class="batch-img-wrap">
+            <img class="batch-img" src="https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Metheglin 2024" loading="lazy" />
+          </div>
+          <div class="batch-body">
+            <div class="batch-vintage">Metheglin · 2024 · Upcoming</div>
+            <div class="batch-name">Winter</div>
+            <div class="batch-origin">Biała Akacja · Małopolska × Multiple</div>
+            <p class="batch-desc">A winter-spiced metheglin currently aging. Cinnamon, clove, and cardamom added cold post-fermentation. Expected bottling: February 2025. Allocation list open.</p>
+            <div class="batch-abv">Estimated 12.5% ABV · Release Feb 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quality">
+    <div class="container">
+      <div class="quality-inner">
+        <div class="quality-img">
+          <img src="https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="The cellar" loading="lazy" />
+        </div>
+        <div class="quality-text">
+          <span class="section-label">The Cellar Standard</span>
+          <h2>Every Batch Earns Its Release</h2>
+          <p>No Aurelum batch is released before it is ready. The minimum aging period is 12 months — but some expressions spend two years in the cellar before Marco considers them complete. There is no external pressure on the release schedule.</p>
+          <p>Every batch is tasted blind against the archive before bottling. If a batch does not meet the standard set by the previous year's equivalent expression, it is held and given additional time. Aurelum has never released a batch that was not ready.</p>
+          <p>The cellar was built in 1887. It has never been modernised. The temperature has not varied by more than two degrees in a decade. The stone walls are the instrument. We are simply the caretakers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <span class="section-label" style="text-align:center;">Reserve</span>
+      <h2>Join the Allocation List</h2>
+      <p>No social proof. No countdown timers. When a vintage is ready, registered members are contacted in order — first come, first served, limited to one case per household.</p>
+      <a href="contact.html" class="btn-primary">Register for Allocations</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand footer-col sr">
+        <a href="index.html" class="footer-brand-name">AURELUM</a>
+        <p>Luxury mead from single-source apiaries. Aged in stone cellars. Released by allocation only.</p>
+      </div>
+      <div class="footer-col sr">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="collection.html">Batches</a></li>
+          <li><a href="process.html">Craft</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col sr">
+        <h4>Visit</h4>
+        <ul>
+          <li><a href="contact.html">Tasting Room</a></li>
+          <li><a href="contact.html">Allocations</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">Founded 2011 · 44.2321° N, 6.1842° E</div>
+      <div class="footer-copy">© 2024 Aurelum. Drink in moderation.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.page-banner-content', { opacity: 0, y: 24, duration: 1.2, ease: 'power2.out', immediateRender: false, delay: 0.3 });
+    gsap.from('.intro p', { opacity: 0, y: 30, duration: 1, immediateRender: false, scrollTrigger: { trigger: '.intro', start: 'top 80%', once: true } });
+    gsap.from('.batch-card', { opacity: 0, y: 24, stagger: 0.12, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '.batches-grid', start: 'top 80%', once: true } });
+    gsap.from('.quality-img', { opacity: 0, x: -40, duration: 1, immediateRender: false, scrollTrigger: { trigger: '.quality-inner', start: 'top 80%', once: true } });
+    gsap.from('.quality-text', { opacity: 0, x: 40, duration: 1, immediateRender: false, scrollTrigger: { trigger: '.quality-inner', start: 'top 80%', once: true } });
+    gsap.from('.cta-section > .container > *', { opacity: 0, y: 30, stagger: 0.1, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '.cta-section', start: 'top 80%', once: true } });
+  </script>
+</body>
+</html>

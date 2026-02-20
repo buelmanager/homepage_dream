@@ -15,6 +15,14 @@ export async function POST(request: Request) {
       );
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (typeof email !== "string" || !emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: "Invalid email address" },
+        { status: 400 }
+      );
+    }
+
     if (typeof password !== "string" || password.length < 6) {
       return NextResponse.json(
         { error: "Password must be at least 6 characters" },

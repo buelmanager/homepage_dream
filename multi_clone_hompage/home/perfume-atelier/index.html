@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SÈVE — Parfums d'Exception</title>
+  <meta name="description" content="SÈVE Parfums d'Exception — Where Memory Becomes Scent. Bespoke fragrance atelier crafting olfactory signatures. Paris · New York · Tokyo." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@200;300;400;500&family=Cormorant:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+
+  <!-- Swiper 11 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --bg:          #181412;
+      --surface:     #1E1917;
+      --surface2:    #231F1C;
+      --accent:      #C9A96E;
+      --accent2:     #8B5E3C;
+      --gold:        #C9A96E;
+      --gold-light:  #E2C898;
+      --gold-dark:   #7A5A2A;
+      --ivory:       #EDE8DC;
+      --smoke:       #9A9490;
+      --muted:       #5A5250;
+      --border:      #1E1814;
+      --border2:     #2A2218;
+      --font-serif:  'Playfair Display', Georgia, serif;
+      --font-sans:   'Inter', sans-serif;
+      --font-italic: 'Cormorant', Georgia, serif;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    body.locked { overflow: hidden; }
+    img { display: block; width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+
+    .pre-svg {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+    }
+    .pre-circle {
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 1;
+      stroke-dasharray: 220;
+      stroke-dashoffset: 220;
+      animation: pre-draw 1.6s ease forwards;
+    }
+    @keyframes pre-draw {
+      to { stroke-dashoffset: 0; }
+    }
+    .pre-brand {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--ivory);
+      opacity: 0;
+      animation: pre-fade 0.8s ease 1.2s forwards;
+    }
+    .pre-sub {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 200;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      margin-top: 6px;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: pre-fade 0.8s ease 1.6s forwards;
+    }
+    @keyframes pre-fade { to { opacity: 1; } }
+
+    /* ============================================================
+       SCROLL INDICATOR
+    ============================================================ */
+    #scroll-indicator {
+      position: fixed;
+      left: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .si-label {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+    .si-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      position: relative;
+      overflow: hidden;
+    }
+    .si-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--ivory);
+      animation: si-scroll 2s ease-in-out infinite;
+    }
+    @keyframes si-scroll {
+      0% { top: -100%; }
+      100% { top: 200%; }
+    }
+    .si-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+    .si-progress {
+      width: 1px;
+      height: 40px;
+      background: var(--border2);
+      position: relative;
+    }
+    .si-progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: var(--gold);
+      transition: height 0.1s linear;
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(14, 11, 10, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 16px 48px;
+      border-bottom: 1px solid var(--border2);
+    }
+    .nav-brand {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+    }
+    .nav-brand span { color: var(--gold); }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-cta {
+      padding: 10px 24px;
+      border: 1px solid var(--gold);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold) !important;
+      transition: background 0.3s ease, color 0.3s ease !important;
+    }
+    .nav-cta:hover { background: var(--gold) !important; color: var(--bg) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* ============================================================
+       HERO — Type F: Mousemove Depth Parallax
+    ============================================================ */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-layer {
+      position: absolute;
+      inset: -5%;
+      will-change: transform;
+    }
+    .hero-layer-1 {
+      background-image: url('https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+    }
+    .hero-layer-2 {
+      z-index: 2;
+      pointer-events: none;
+    }
+    .hero-layer-2 img {
+      position: absolute;
+      bottom: 10%;
+      right: 15%;
+      width: 320px;
+      opacity: 0.7;
+      mix-blend-mode: luminosity;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(14,11,10,0.60) 0%, rgba(14,11,10,0.40) 50%, rgba(14,11,10,0.55) 100%);
+      z-index: 3;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 4;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 40px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 200;
+      letter-spacing: 0.6em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: block;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      font-weight: 300;
+      line-height: 0.95;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+    .hero-sub {
+      font-family: var(--font-italic);
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--smoke);
+      margin: 20px auto 40px;
+      max-width: 500px;
+      letter-spacing: 0.05em;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+    }
+    .btn-primary {
+      padding: 16px 40px;
+      background: var(--gold);
+      color: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-ghost {
+      padding: 15px 40px;
+      border: 1px solid rgba(237,232,220,0.4);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.5;
+    }
+    .hero-scroll-hint span {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .hero-scroll-arrow {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: bounce-arrow 1.5s ease-in-out infinite;
+    }
+    @keyframes bounce-arrow {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(1.3); }
+    }
+
+    /* ============================================================
+       STATS STRIP
+    ============================================================ */
+    #stats {
+      background: var(--surface2);
+      border-top: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2);
+      padding: 60px 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 0 20px;
+      border-right: 1px solid var(--border2);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      display: block;
+    }
+    .stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 8px;
+      display: block;
+    }
+
+    /* ============================================================
+       PHILOSOPHY
+    ============================================================ */
+    #philosophy {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.2;
+      margin-bottom: 60px;
+    }
+    .section-title em { font-style: italic; color: var(--gold-light); }
+    .philosophy-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .philosophy-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 60px;
+    }
+    .phil-card {
+      border-top: 1px solid var(--border2);
+      padding-top: 32px;
+    }
+    .phil-number {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--border2);
+      line-height: 1;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .phil-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .phil-text {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* ============================================================
+       COLLECTION GRID
+    ============================================================ */
+    #collection {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+    .collection-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .collection-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 60px;
+    }
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      overflow: visible;
+    }
+    .coll-item {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .coll-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .coll-item:hover img { transform: scale(1.05); }
+    .coll-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(14,11,10,0.85) 0%, transparent 50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+    }
+    .coll-family {
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .coll-name {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+    .coll-desc { font-size: 0.75rem; color: var(--smoke); font-weight: 300; }
+    .view-all-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border-bottom: 1px solid var(--gold);
+      padding-bottom: 4px;
+      transition: gap 0.3s ease;
+    }
+    .view-all-link:hover { gap: 16px; }
+
+    /* ============================================================
+       ATELIER — 2-col image+text parallax
+    ============================================================ */
+    #atelier {
+      padding: 140px 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .atelier-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .atelier-image-wrap {
+      position: relative;
+      height: 600px;
+      overflow: hidden;
+    }
+    .atelier-image-wrap img {
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      will-change: transform;
+    }
+    .atelier-gold-frame {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      right: -24px;
+      bottom: -24px;
+      border: 1px solid var(--gold-dark);
+      z-index: -1;
+    }
+    .atelier-text {}
+    .atelier-text blockquote {
+      font-family: var(--font-italic);
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--gold-light);
+      line-height: 1.4;
+      border-left: 2px solid var(--gold);
+      padding-left: 24px;
+      margin: 32px 0;
+    }
+    .atelier-text p {
+      font-size: 0.875rem;
+      color: var(--smoke);
+      line-height: 1.9;
+      margin-bottom: 16px;
+    }
+
+    /* ============================================================
+       PROCESS — vertical timeline
+    ============================================================ */
+    #process {
+      padding: 140px 0;
+      background: var(--surface2);
+    }
+    .process-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .process-header { text-align: center; margin-bottom: 80px; }
+    .timeline {
+      position: relative;
+      padding-left: 60px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+    }
+    .tl-item {
+      position: relative;
+      padding-bottom: 60px;
+    }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-dot {
+      position: absolute;
+      left: -48px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid var(--gold);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tl-dot::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+    .tl-step {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .tl-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 10px;
+    }
+    .tl-desc { font-size: 0.85rem; color: var(--smoke); line-height: 1.8; }
+
+    /* ============================================================
+       HERITAGE
+    ============================================================ */
+    #heritage {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+    .heritage-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .heritage-header { text-align: center; margin-bottom: 80px; }
+    .milestones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+    }
+    .milestone {
+      border-top: 1px solid var(--border2);
+      padding-top: 24px;
+    }
+    .ms-year {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .ms-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 8px;
+    }
+    .ms-desc { font-size: 0.78rem; color: var(--smoke); line-height: 1.7; }
+
+    /* ============================================================
+       PRESS — Swiper carousel
+    ============================================================ */
+    #press {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+    .press-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .press-header { text-align: center; margin-bottom: 60px; }
+    .press-swiper { padding: 20px 0 60px; }
+    .press-slide {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      padding: 48px;
+      text-align: center;
+    }
+    .press-quote {
+      font-family: var(--font-italic);
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .press-quote::before { content: '\201C'; color: var(--gold); margin-right: 2px; }
+    .press-quote::after  { content: '\201D'; color: var(--gold); margin-left: 2px; }
+    .press-publication {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+    }
+    .swiper-pagination-bullet { background: var(--smoke); }
+    .swiper-pagination-bullet-active { background: var(--gold); }
+
+    /* ============================================================
+       COMMISSION FORM
+    ============================================================ */
+    #commission {
+      padding: 140px 0;
+      background: var(--surface2);
+    }
+    .commission-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .commission-info h2 { margin-bottom: 20px; }
+    .commission-info p {
+      font-size: 0.875rem;
+      color: var(--smoke);
+      line-height: 1.9;
+      margin-bottom: 12px;
+    }
+    .commission-contact {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .cc-item {
+      display: flex;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--smoke);
+    }
+    .cc-item strong { color: var(--gold); font-weight: 400; min-width: 60px; }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border2);
+      padding: 12px 0;
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.3s ease;
+      -webkit-appearance: none;
+    }
+    .form-group select option { background: var(--surface2); }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-bottom-color: var(--gold); }
+    .form-group textarea { resize: none; height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-submit {
+      margin-top: 12px;
+      padding: 16px 40px;
+      background: var(--gold);
+      color: var(--bg);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      width: 100%;
+    }
+    .form-submit:hover { background: var(--gold-light); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border2);
+      padding: 80px 60px 40px;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-brand-col .footer-logo {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .footer-brand-col p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--smoke);
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    .footer-social a:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-col h4 {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      font-size: 0.8rem;
+      color: var(--muted);
+      transition: color 0.3s ease;
+    }
+    .footer-col ul li a:hover { color: var(--ivory); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-bottom p { font-size: 0.72rem; color: var(--muted); }
+    .footer-bottom a { color: var(--gold); }
+
+    /* ============================================================
+       SECTION UTILITIES
+    ============================================================ */
+    .text-gold { color: var(--gold); }
+    .text-center { text-align: center; }
+</style>
+</head>
+<body class="locked">
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="pre-svg" viewBox="0 0 100 100">
+      <circle class="pre-circle" cx="50" cy="50" r="35" />
+      <text x="50" y="54" text-anchor="middle" font-family="'Playfair Display', serif" font-size="18" fill="#C9A96E" font-weight="300">S</text>
+    </svg>
+    <span class="pre-brand">SÈVE</span>
+    <span class="pre-sub">Parfums d'Exception</span>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <span class="si-label">Scroll</span>
+    <div class="si-line"></div>
+    <div class="si-dot"></div>
+    <div class="si-progress">
+      <div class="si-progress-fill" id="si-fill"></div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-brand">SÈVE<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">Maison</a></li>
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="process.html">Craft</a></li>
+      <li><a href="contact.html" class="nav-cta">Commission</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO — Type F: Mousemove Depth Parallax -->
+  <section id="hero">
+    <div class="hero-layer hero-layer-1" id="hero-bg"></div>
+    <div class="hero-layer hero-layer-2" id="hero-mid">
+      <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Fragrance bottle" />
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content" id="hero-fg">
+      <span class="hero-eyebrow">Paris · Est. 2008</span>
+      <h1 class="hero-title" id="hero-title">
+        Where <em>Memory</em><br>Becomes Scent
+      </h1>
+      <p class="hero-sub">Olfactory signatures crafted for those who refuse the ordinary</p>
+      <div class="hero-actions">
+        <a href="collection.html" class="btn-primary">Explore Collection</a>
+        <a href="contact.html" class="btn-ghost">Commission a Fragrance</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <div class="hero-scroll-arrow"></div>
+      <span>Descend</span>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section id="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number" data-target="847">0</span>
+        <span class="stat-label">Bespoke Commissions</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="12">0</span>
+        <span class="stat-label">Master Perfumers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="340">0</span>
+        <span class="stat-label">Rare Ingredients</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="16">0</span>
+        <span class="stat-label">Years of Excellence</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section id="philosophy">
+    <div class="philosophy-inner">
+      <div class="philosophy-header">
+        <span class="section-label">Our Philosophy</span>
+        <h2 class="section-title">The Art of <em>Olfactory</em><br>Storytelling</h2>
+        <p style="max-width:560px;margin:0 auto;font-size:0.875rem;color:var(--smoke);line-height:1.9;">
+          At SÈVE, we believe fragrance is the most intimate form of self-expression. Each composition is a narrative — a map of emotions, places, and memories distilled into something eternal.
+        </p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="phil-card sr">
+          <span class="phil-number">01</span>
+          <h3 class="phil-title">Raw Materiality</h3>
+          <p class="phil-text">We source only from trusted growers who share our obsession with purity. Oud from Assam, rose absolute from Grasse, ambergris aged for decades — materiality is our foundation.</p>
+        </div>
+        <div class="phil-card sr">
+          <span class="phil-number">02</span>
+          <h3 class="phil-title">Time as Ingredient</h3>
+          <p class="phil-text">Great fragrance cannot be rushed. Our macerations age in silence for months. Our perfumers iterate across seasons until the composition reveals its true character.</p>
+        </div>
+        <div class="phil-card sr">
+          <span class="phil-number">03</span>
+          <h3 class="phil-title">Personal Mythology</h3>
+          <p class="phil-text">Every bespoke commission begins with a deep consultation — your childhood landscapes, your most vivid memories, your aspirational self — transformed into a scent that is irrevocably yours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section id="collection">
+    <div class="collection-inner">
+      <div class="collection-header">
+        <div>
+          <span class="section-label">Les Collections</span>
+          <h2 class="section-title" style="margin-bottom:0;">Signature <em>Écrins</em></h2>
+        </div>
+        <a href="collection.html" class="view-all-link">View All <span>→</span></a>
+      </div>
+      <div class="collection-grid">
+        <div class="coll-item">
+          <img src="https://images.pexels.com/photos/2775196/pexels-photo-2775196.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Nocturne Profond" loading="lazy" />
+          <div class="coll-overlay">
+            <span class="coll-family">Oriental · Woody</span>
+            <div class="coll-name">Nocturne Profond</div>
+            <p class="coll-desc">Dark oud, smoked benzoin, vetiver</p>
+          </div>
+        </div>
+        <div class="coll-item">
+          <img src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Aurore Blanche" loading="lazy" />
+          <div class="coll-overlay">
+            <span class="coll-family">Floral · Powdery</span>
+            <div class="coll-name">Aurore Blanche</div>
+            <p class="coll-desc">Iris absolute, white musk, sandalwood</p>
+          </div>
+        </div>
+        <div class="coll-item">
+          <img src="https://images.pexels.com/photos/811838/pexels-photo-811838.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Sel de Mer" loading="lazy" />
+          <div class="coll-overlay">
+            <span class="coll-family">Aquatic · Citrus</span>
+            <div class="coll-name">Sel de Mer</div>
+            <p class="coll-desc">Sea salt, bergamot, ambergris</p>
+          </div>
+        </div>
+        <div class="coll-item">
+          <img src="https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=800&q=80&auto=format&fit=crop" alt="Forêt Noire" loading="lazy" />
+          <div class="coll-overlay">
+            <span class="coll-family">Chypre · Mossy</span>
+            <div class="coll-name">Forêt Noire</div>
+            <p class="coll-desc">Oakmoss, labdanum, cedar, black pepper</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-image-wrap">
+        <img src="https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800&q=80&auto=format&fit=crop" alt="SÈVE Atelier" id="atelier-img" loading="lazy" />
+        <div class="atelier-gold-frame"></div>
+      </div>
+      <div class="atelier-text sr">
+        <span class="section-label">The Atelier</span>
+        <h2 class="section-title">A Laboratory of<br><em>Sensory Alchemy</em></h2>
+        <blockquote>
+          "We do not create perfume. We excavate it — from the deepest layers of what it means to be alive."
+        </blockquote>
+        <p>
+          Nestled in the 6th arrondissement of Paris, our atelier is a sanctuary of concentration and craft. Twenty-two perfumers work in silence among hundreds of raw materials — each one catalogued, tested, and understood intimately before it touches a composition.
+        </p>
+        <p>
+          The space itself is designed to eliminate distraction: natural stone, diffused northern light, and an air kept at a precise 18°C to preserve the integrity of volatile compounds. Here, time is the most important tool.
+        </p>
+        <a href="about.html" class="view-all-link" style="margin-top:24px;">Discover Our Maison <span>→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="process-inner">
+      <div class="process-header">
+        <span class="section-label">The Process</span>
+        <h2 class="section-title">From Source to<br><em>Signature</em></h2>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-step sr">Step 01</span>
+          <h3 class="tl-title">The Consultation</h3>
+          <p class="tl-desc">A two-hour private session in our atelier. We explore your landscape of memory, emotion, and aspiration through structured olfactory tests and deep conversation. The brief is written in sensation, not words.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-step sr">Step 02</span>
+          <h3 class="tl-title">Material Selection</h3>
+          <p class="tl-desc">Our master perfumer selects from over 340 curated ingredients. Each material is evaluated fresh and aged — understanding how time changes its character is essential to lasting compositions.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-step sr">Step 03</span>
+          <h3 class="tl-title">Accord Building</h3>
+          <p class="tl-desc">Three to five preliminary accords are developed, aged for a minimum of eight weeks, and evaluated across morning, midday, and evening — fragrance behaves differently in different light.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-step sr">Step 04</span>
+          <h3 class="tl-title">Refinement Sessions</h3>
+          <p class="tl-desc">You return to evaluate the accords on your skin. Your feedback — however intuitive — guides successive refinements. This dialogue can span several months until the composition is undeniably right.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-step sr">Step 05</span>
+          <h3 class="tl-title">Final Bottling</h3>
+          <p class="tl-desc">Your fragrance is macerated for a final 12 weeks before filtration and cold-pressing into hand-blown glass vessels. A sealed certificate of exclusivity accompanies each commission. The formula remains yours alone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section id="heritage">
+    <div class="heritage-inner">
+      <div class="heritage-header">
+        <span class="section-label">Our Heritage</span>
+        <h2 class="section-title">Sixteen Years of<br><em>Olfactory Mastery</em></h2>
+      </div>
+      <div class="milestones">
+        <div class="milestone sr">
+          <span class="ms-year">2008</span>
+          <h4 class="ms-title">Founding in Paris</h4>
+          <p class="ms-desc">Eloise Marchais opens the first SÈVE atelier on Rue de Buci, working with four perfumers and a curated palette of 60 materials.</p>
+        </div>
+        <div class="milestone sr">
+          <span class="ms-year">2012</span>
+          <h4 class="ms-title">New York Expansion</h4>
+          <p class="ms-desc">A consultation salon opens in the West Village, bringing bespoke fragrance to an American audience for the first time.</p>
+        </div>
+        <div class="milestone sr">
+          <span class="ms-year">2017</span>
+          <h4 class="ms-title">Tokyo Atelier</h4>
+          <p class="ms-desc">Collaboration with Japanese material specialists opens new access to rare agarwood and hinoki from the Kiso Valley.</p>
+        </div>
+        <div class="milestone sr">
+          <span class="ms-year">2024</span>
+          <h4 class="ms-title">Archive Collection</h4>
+          <p class="ms-desc">100 of our most celebrated bespoke commissions are re-edited as a limited archive series — each available in an edition of ten.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section id="press">
+    <div class="press-inner">
+      <div class="press-header">
+        <span class="section-label">Press</span>
+        <h2 class="section-title" style="margin-bottom:0;">Words About<br><em>Our Work</em></h2>
+      </div>
+      <div class="swiper press-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">SÈVE occupies a singular position in contemporary perfumery — technically rigorous yet deeply poetic. The compositions linger not just on skin but in the mind for days.</p>
+            <span class="press-publication">Vogue Paris — Fragrance Special</span>
+          </div>
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">There is something almost archaeological about a SÈVE fragrance. You sense layers being revealed across hours — top, heart, and base each more surprising than the last.</p>
+            <span class="press-publication">The Financial Times — How to Spend It</span>
+          </div>
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">Eloise Marchais has created something rare: a house that treats fragrance as fine art without losing its intimate connection to the body. SÈVE belongs to no category but its own.</p>
+            <span class="press-publication">Wallpaper* — The Senses Issue</span>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMISSION FORM -->
+  <section id="commission">
+    <div class="commission-inner">
+      <div class="commission-info">
+        <span class="section-label">Begin Your Commission</span>
+        <h2 class="section-title">Your Scent,<br><em>Exclusively Yours</em></h2>
+        <p>A bespoke SÈVE commission is a deeply personal journey that begins with a single conversation. We accept a limited number of commissions each season to ensure the full attention of our master perfumers.</p>
+        <p>Each fragrance is created in absolute exclusivity — your formula will never be reproduced for another client.</p>
+        <div class="commission-contact">
+          <div class="cc-item"><strong>Paris</strong><span>6 Rue de Buci, 75006</span></div>
+          <div class="cc-item"><strong>Email</strong><span>commission@seve-parfums.com</span></div>
+          <div class="cc-item"><strong>Atelier</strong><span>By appointment only</span></div>
+        </div>
+      </div>
+      <form class="commission-form">
+        <div class="form-row">
+          <div class="form-group sr">
+            <label>First Name</label>
+            <input type="text" placeholder="Eloise" />
+          </div>
+          <div class="form-group sr">
+            <label>Last Name</label>
+            <input type="text" placeholder="Marchais" />
+          </div>
+        </div>
+        <div class="form-group sr">
+          <label>Email Address</label>
+          <input type="email" placeholder="eloise@example.com" />
+        </div>
+        <div class="form-group sr">
+          <label>Commission Type</label>
+          <select>
+            <option value="">Select your interest</option>
+            <option>Personal Bespoke Fragrance</option>
+            <option>Signature Scent for a Space</option>
+            <option>Gift Commission</option>
+            <option>Limited Edition Collaboration</option>
+          </select>
+        </div>
+        <div class="form-group sr">
+          <label>Olfactory Preference</label>
+          <select>
+            <option value="">Describe your direction</option>
+            <option>Oriental & Woody</option>
+            <option>Fresh & Aquatic</option>
+            <option>Floral & Powdery</option>
+            <option>Chypre & Mossy</option>
+            <option>I need guidance</option>
+          </select>
+        </div>
+        <div class="form-group sr">
+          <label>Tell Us Your Story</label>
+          <textarea placeholder="Share a memory, a place, a feeling — anything that might inspire your fragrance..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Request an Appointment</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <span class="footer-logo">SÈVE</span>
+          <p>Parfums d'Exception. Bespoke fragrance atelier founded in Paris, 2008. Every composition is an act of intimate craftsmanship.</p>
+          <div class="footer-social">
+            <a href="#">In</a>
+            <a href="#">Ig</a>
+            <a href="#">Pt</a>
+          </div>
+        </div>
+        <div class="footer-col sr">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">Our Maison</a></li>
+            <li><a href="collection.html">Collections</a></li>
+            <li><a href="process.html">Our Craft</a></li>
+          </ul>
+        </div>
+        <div class="footer-col sr">
+          <h4>Ateliers</h4>
+          <ul>
+            <li><a href="#">Paris</a></li>
+            <li><a href="#">New York</a></li>
+            <li><a href="#">Tokyo</a></li>
+            <li><a href="#">Private Visits</a></li>
+          </ul>
+        </div>
+        <div class="footer-col sr">
+          <h4>Commission</h4>
+          <ul>
+            <li><a href="contact.html">Begin a Commission</a></li>
+            <li><a href="#">Gift Certificates</a></li>
+            <li><a href="#">Archive Series</a></li>
+            <li><a href="#">Press Inquiries</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 SÈVE Parfums d'Exception. All rights reserved.</p>
+        <p><a href="#">Privacy</a> · <a href="#">Terms</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+  class SplitText {
+    constructor(target, opts = {}) {
+      const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+      this.chars = []; this.words = []; this.lines = [];
+      if (!el) return;
+      this._el = el;
+      const type = (opts.type || 'chars,words').toLowerCase();
+      const original = el.textContent;
+      el.setAttribute('data-split-orig', original);
+      if (type.includes('chars')) {
+        el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+        this.chars = Array.from(el.querySelectorAll('.char'));
+      } else if (type.includes('words')) {
+        el.innerHTML = original.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+        this.words = Array.from(el.querySelectorAll('.word'));
+      }
+      this.lines = [el];
+    }
+    revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger);
+
+    // ── PRELOADER ──
+    window.addEventListener('load', () => {
+      const pre = document.getElementById('preloader');
+      gsap.to(pre, {
+        opacity: 0,
+        duration: 0.8,
+        delay: 2.2,
+        onComplete: () => {
+          pre.classList.add('hidden');
+          document.body.classList.remove('locked');
+          // Add scroll indicator visible
+          document.getElementById('scroll-indicator').classList.add('visible');
+        }
+      });
+    });
+    // Fallback
+    setTimeout(() => {
+      const pre = document.getElementById('preloader');
+      pre.style.opacity = '0';
+      pre.style.visibility = 'hidden';
+      document.body.classList.remove('locked');
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }, 4000);
+
+    // ── SCROLL INDICATOR PROGRESS ──
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      document.getElementById('si-fill').style.height = (pct * 100) + '%';
+    });
+
+    // ── NAVBAR SCROLL ──
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── HERO MOUSEMOVE PARALLAX ──
+    const heroBg  = document.getElementById('hero-bg');
+    const heroMid = document.getElementById('hero-mid');
+    const heroFg  = document.getElementById('hero-fg');
+    document.getElementById('hero').addEventListener('mousemove', (e) => {
+      const { clientX, clientY } = e;
+      const cx = (clientX / window.innerWidth  - 0.5) * 2;
+      const cy = (clientY / window.innerHeight - 0.5) * 2;
+      gsap.to(heroBg,  { x: cx * -25, y: cy * -15, duration: 1.2, ease: 'power2.out' });
+      gsap.to(heroMid, { x: cx * -15, y: cy * -10, duration: 1.0, ease: 'power2.out' });
+      gsap.to(heroFg,  { x: cx *   6, y: cy *   4, duration: 0.8, ease: 'power2.out' });
+    });
+
+    // ── HERO ENTRANCE ──
+    const heroTl = gsap.timeline({ delay: 2.4 });
+    heroTl
+      .from('.hero-eyebrow', { opacity: 0, y: 20, duration: 0.8, immediateRender: false })
+      .from('#hero-title .char', {
+        opacity: 0, y: 24, stagger: 0.03, duration: 1.0, immediateRender: false
+      }, '-=0.4')
+      .from('.hero-sub', { opacity: 0, y: 20, duration: 0.7, immediateRender: false }, '-=0.3')
+      .from('.hero-actions', { opacity: 0, y: 20, duration: 0.7, immediateRender: false }, '-=0.4');
+
+    // ── SPLIT HERO TITLE ──
+    window.addEventListener('DOMContentLoaded', () => {
+      new SplitText('#hero-title', { type: 'chars' });
+    });
+
+    // ── STATS COUNTER ──
+    document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+      gsap.from(el, {
+        textContent: 0,
+        duration: 2,
+        ease: 'power2.out',
+        immediateRender: false,
+        snap: { textContent: 1 },
+        scrollTrigger: {
+          trigger: '#stats',
+          start: 'top 80%',
+          once: true
+        },
+        onUpdate: function() {
+          el.textContent = Math.round(parseFloat(el.textContent)).toLocaleString();
+        }
+      });
+      gsap.to(el, {
+        textContent: el.dataset.target,
+        duration: 2,
+        ease: 'power2.out',
+        snap: { textContent: 1 },
+        scrollTrigger: { trigger: '#stats', start: 'top 80%', once: true },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)).toLocaleString(); }
+      });
+    });
+
+    // ── PHILOSOPHY STAGGER ──
+    gsap.from('.phil-card', {
+      opacity: 0,
+      y: 24,
+      stagger: 0.1,
+      duration: 0.9,
+      immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy .philosophy-grid', start: 'top 80%', once: true }
+    });
+    gsap.from('.philosophy-header', {
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy', start: 'top 75%', once: true }
+    });
+
+    // ── COLLECTION ──
+    gsap.from('.coll-item', {
+      opacity: 0,
+      y: 24,
+      stagger: 0.15,
+      duration: 0.9,
+      immediateRender: false,
+      scrollTrigger: { trigger: '#collection .collection-grid', start: 'top 80%', once: true }
+    });
+
+    // ── ATELIER PARALLAX ──
+    gsap.to('#atelier-img', {
+      yPercent: -15,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#atelier',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+    gsap.from('.atelier-text', {
+      opacity: 0,
+      x: 60,
+      duration: 1,
+      immediateRender: false,
+      scrollTrigger: { trigger: '#atelier', start: 'top 75%', once: true }
+    });
+
+    // ── TIMELINE ITEMS ──
+    gsap.from('.tl-item', {
+      opacity: 0,
+      x: -40,
+      stagger: 0.1,
+      duration: 0.8,
+      immediateRender: false,
+      scrollTrigger: { trigger: '#process .timeline', start: 'top 80%', once: true }
+    });
+
+    // ── HERITAGE ──
+    gsap.from('.milestone', {
+      opacity: 0,
+      y: 24,
+      stagger: 0.15,
+      duration: 0.8,
+      immediateRender: false,
+      scrollTrigger: { trigger: '#heritage .milestones', start: 'top 80%', once: true }
+    });
+
+    // ── PRESS ──
+    new Swiper('.press-swiper', {
+      loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      speed: 800
+    });
+
+    // ── COMMISSION FORM ──
+    gsap.from('.commission-info', {
+      opacity: 0,
+      x: -50,
+      duration: 1,
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true }
+    });
+    gsap.from('.commission-form', {
+      opacity: 0,
+      x: 50,
+      duration: 1,
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true }
+    });
+
+    // ── FOOTER ──
+    gsap.from('footer .footer-top', {
+      opacity: 0,
+      y: 30,
+      duration: 0.9,
+      immediateRender: false,
+      scrollTrigger: { trigger: 'footer', start: 'top 90%', once: true }
+    });
+  </script>
+</body>
+</html>

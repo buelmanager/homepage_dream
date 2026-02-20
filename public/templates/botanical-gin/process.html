@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distillation — Silvardin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1C2414; --bg-mid: #222B18; --bg-surface: #283020; --bg-card: #2E381E;
+      --copper: #B87333; --copper-light: #D4935A; --cream: #F0EBD8; --cream-dim: #C8C0A8;
+      --text: #E8E0CC; --text-muted: #A09880;
+      --border: rgba(184,115,51,0.25); --border-subtle: rgba(240,235,216,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; background: rgba(28,36,20,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; letter-spacing: 0.12em; color: var(--cream); text-decoration: none; }
+    .nav-logo span { color: var(--copper); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 12px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream-dim); text-decoration: none; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--cream); }
+    .nav-cta { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bg); background: var(--copper); padding: 10px 24px; text-decoration: none; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--copper-light); }
+
+    .page-banner { height: 50vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .page-banner-bg { position: absolute; inset: 0; background-image: url('https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80'); background-size: cover; background-position: center; opacity: 0.4; }
+    .page-banner-overlay { position: absolute; inset: 0; background: rgba(28,36,20,0.6); }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; padding: 0 24px; }
+    .page-banner-label { font-size: 11px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--copper); margin-bottom: 16px; display: block; }
+    .page-banner-title { font-family: 'Playfair Display', serif; font-size: clamp(36px, 6vw, 72px); font-weight: 400; color: var(--cream); }
+
+    section { padding: 100px 0; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+    .section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--copper); margin-bottom: 20px; display: block; }
+
+    .intro { background: var(--bg-surface); }
+    .intro p { font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; color: var(--cream-dim); line-height: 1.8; max-width: 660px; }
+
+    .timeline-section { background: var(--bg); }
+    .process-timeline { max-width: 800px; margin: 60px auto 0; position: relative; }
+    .process-timeline::before { content: ''; position: absolute; left: 30px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: flex; gap: 40px; margin-bottom: 60px; align-items: flex-start; }
+    .step-num { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 400; color: var(--copper); background: var(--bg); border: 1px solid var(--border); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; z-index: 1; }
+    .step-body { flex: 1; padding-top: 8px; }
+    .step-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--cream); margin-bottom: 10px; }
+    .step-desc { font-size: 14px; color: var(--cream-dim); line-height: 1.9; }
+
+    .materials-section { background: var(--bg-card); }
+    .materials-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .materials-list { margin-top: 24px; display: grid; gap: 2px; }
+    .material-item { background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 24px 28px; transition: border-color 0.3s; }
+    .material-item:hover { border-color: var(--border); }
+    .material-name { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--cream); margin-bottom: 4px; }
+    .material-latin { font-style: italic; font-size: 12px; color: var(--copper); margin-bottom: 8px; letter-spacing: 0.06em; }
+    .material-desc { font-size: 13px; color: var(--cream-dim); line-height: 1.7; }
+    .materials-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3vw, 42px); font-weight: 400; color: var(--cream); margin-bottom: 24px; }
+    .materials-text p { font-size: 15px; line-height: 1.9; color: var(--cream-dim); margin-bottom: 16px; }
+
+    .gallery { background: var(--bg); }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+    .gallery-img { aspect-ratio: 1; overflow: hidden; }
+    .gallery-img img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.15) saturate(0.8); transition: filter 0.4s, transform 0.4s; display: block; }
+    .gallery-img:hover img { filter: sepia(0) saturate(1); transform: scale(1.04); }
+
+    .cta-section { background: var(--bg-surface); text-align: center; padding: 100px 48px; }
+    .cta-section h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 52px); font-style: italic; font-weight: 400; color: var(--cream); margin-bottom: 20px; }
+    .cta-section p { font-size: 15px; color: var(--cream-dim); max-width: 480px; margin: 0 auto 36px; line-height: 1.7; }
+    .btn-primary { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--bg); background: var(--cream); padding: 14px 36px; text-decoration: none; transition: background 0.3s; }
+    .btn-primary:hover { background: var(--copper); }
+
+    footer { background: var(--bg); border-top: 1px solid var(--border-subtle); padding: 60px 48px 40px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-col h4 { font-size: 10px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--copper); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--cream); }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; }
+    .footer-copy { font-size: 11px; color: var(--text-muted); }
+
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; } .nav-links { display: none; }
+      .container { padding: 0 24px; } section { padding: 60px 0; }
+      .materials-inner { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">SILVAR<span>DIN</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Expressions</a></li>
+      <li><a href="process.html" class="active">Distillation</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="collection.html" class="nav-cta">Acquire</a>
+  </nav>
+
+  <div class="page-banner">
+    <div class="page-banner-bg"></div>
+    <div class="page-banner-overlay"></div>
+    <div class="page-banner-content">
+      <span class="page-banner-label">Seven Hours in Copper</span>
+      <h1 class="page-banner-title">Distillation</h1>
+    </div>
+  </div>
+
+  <section class="intro">
+    <div class="container">
+      <span class="section-label">The Method</span>
+      <p>One distillation per year. One copper pot still. Seven hours from first vapour to final cut. Nothing blended. Nothing adjusted. The gin is what the autumn gave us, rendered honest through copper.</p>
+    </div>
+  </section>
+
+  <section class="timeline-section">
+    <div class="container">
+      <span class="section-label">The Process</span>
+      <div class="process-timeline">
+        <div class="process-step sr">
+          <div class="step-num sr">01</div>
+          <div class="step-body sr">
+            <div class="step-title sr">The Foraging Window</div>
+            <p class="step-desc sr">Between the first morning frost and the autumn equinox, a team of six foragers walks the Silvardin Reserve. Juniper is taken from the north-facing ridge where oil concentration peaks at first frost. Elderflower from the loch margin at dawn. Each botanical has a precise window, measured in days, sometimes hours.</p>
+          </div>
+        </div>
+        <div class="process-step sr">
+          <div class="step-num sr">02</div>
+          <div class="step-body sr">
+            <div class="step-title sr">Sorting and Assessment</div>
+            <p class="step-desc sr">Every botanical is hand-sorted on arrival at the distillery. Damaged or under-ripe material is discarded. Each botanical is assessed for aromatic density by crushing and smelling — no instruments, just the distiller's nose, trained across twelve harvests. Only material at peak aromatic density enters the still.</p>
+          </div>
+        </div>
+        <div class="process-step sr">
+          <div class="step-num sr">03</div>
+          <div class="step-body sr">
+            <div class="step-title sr">Maceration</div>
+            <p class="step-desc sr">Botanicals are macerated overnight in neutral grain spirit in the copper alembic. The maceration period is determined by the botanical composition of each year — heavier floral years require less contact time. The contact duration is not fixed in any recipe. It is decided each year by tasting.</p>
+          </div>
+        </div>
+        <div class="process-step sr">
+          <div class="step-num sr">04</div>
+          <div class="step-body sr">
+            <div class="step-title sr">The Seven-Hour Run</div>
+            <p class="step-desc sr">The 250-litre Portuguese copper alembic runs once. The distillation takes seven hours from flame to final drop. The heads are discarded. The tails are set aside for further analysis. The heart — the two-hour window that constitutes the finished gin — is collected by Ailsa alone. No assistant handles the cut.</p>
+          </div>
+        </div>
+        <div class="process-step sr">
+          <div class="step-num sr">05</div>
+          <div class="step-body sr">
+            <div class="step-title sr">Rest and Bottling</div>
+            <p class="step-desc sr">The heart rests for three weeks in glass demijohns at cellar temperature. It is tasted blind against previous harvests on day 21. If approved, it is diluted to 44% ABV with local spring water and bottled by hand — 312 bottles, each numbered by hand, each carrying the harvest coordinates and the date of distillation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="materials-section">
+    <div class="container">
+      <div class="materials-inner">
+        <div>
+          <span class="section-label">The Seven Botanicals</span>
+          <div class="materials-list">
+            <div class="material-item">
+              <div class="material-name">Juniper</div>
+              <div class="material-latin">Juniperus communis · Highland Ridge · 57.24°N</div>
+              <p class="material-desc">The spine. Foraged at first frost from the north-facing slope where oil peaks. Resinous and bright.</p>
+            </div>
+            <div class="material-item">
+              <div class="material-name">Coriander Seed</div>
+              <div class="material-latin">Coriandrum sativum · Bulgarian Highlands</div>
+              <p class="material-desc">Warm, earthy, anchoring. The only non-local botanical. Sourced from a single farm in the Rhodope mountains.</p>
+            </div>
+            <div class="material-item">
+              <div class="material-name">Elderflower</div>
+              <div class="material-latin">Sambucus nigra · Loch Margin · 57.19°N</div>
+              <p class="material-desc">Picked at dawn before the dew lifts. Soft, muscat-floral. The gin's exhale.</p>
+            </div>
+            <div class="material-item">
+              <div class="material-name">Cucumber Peel</div>
+              <div class="material-latin">Cucumis sativus · Distillery Garden</div>
+              <p class="material-desc">Grown in the distillery garden. A breath of cool water that prevents the juniper from closing in.</p>
+            </div>
+            <div class="material-item">
+              <div class="material-name">Green Cardamom</div>
+              <div class="material-latin">Elettaria cardamomum · Kerala Spice Coast</div>
+              <p class="material-desc">The deep note that lingers. Camphor-eucalyptus over warm pepper. Only reveals itself on the finish.</p>
+            </div>
+          </div>
+        </div>
+        <div class="materials-text">
+          <span class="section-label">The Still</span>
+          <h2>A 250-Litre Portuguese Alembic</h2>
+          <p>The Silvardin still was installed in 2017 and has never been replaced. It is a traditional alembic — a pot still with a copper swan neck and a hand-beaten copper onion head. The shape of the still determines the character of the distillate. This still produces a round, full spirit with exceptional floral retention.</p>
+          <p>The conversation between botanical vapour and copper is chemistry. Copper ions react with sulphur compounds, removing harsh notes that would otherwise survive into the gin. The seven-hour run is not theatrical — it is the minimum time required for the botanicals to fully surrender their character to the spirit.</p>
+          <p>The still runs once per year. In the twelve months between distillations, it is cleaned, inspected, and left in silence. Ready for the next autumn.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery">
+    <div class="container">
+      <span class="section-label">The Distillery</span>
+      <div class="gallery-grid">
+        <div class="gallery-img">
+          <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&auto=format&fit=crop" alt="Distillery 1" loading="lazy" />
+        </div>
+        <div class="gallery-img">
+          <img src="https://images.unsplash.com/photo-1504198266287-1659872e6590?w=800&q=80&auto=format&fit=crop" alt="Distillery 2" loading="lazy" />
+        </div>
+        <div class="gallery-img">
+          <img src="https://images.pexels.com/photos/299347/pexels-photo-299347.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Distillery 3" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <span class="section-label" style="text-align:center;">Acquire</span>
+      <h2>Join the 2025 Harvest List</h2>
+      <p>Registration opens in June. The 2025 distillation runs in October. Members are contacted in order of registration when the harvest is bottled.</p>
+      <a href="contact.html" class="btn-primary">Register for 2025</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-col sr">
+        <h4>Silvardin</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="collection.html">Expressions</a></li>
+          <li><a href="process.html">Distillation</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col sr">
+        <h4>Distillery</h4>
+        <ul>
+          <li><a href="#">57.2441° N, 5.8374° W</a></li>
+          <li><a href="#">Scottish Highlands</a></li>
+          <li><a href="#">Est. 2011</a></li>
+        </ul>
+      </div>
+      <div class="footer-col sr">
+        <h4>Acquire</h4>
+        <ul>
+          <li><a href="contact.html">Harvest List</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">57.2441° N, 5.8374° W — Silvardin Distillery</div>
+      <div class="footer-copy">© 2024 Silvardin. Drink responsibly.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.page-banner-content', { opacity: 0, y: 24, duration: 1.2, ease: 'power2.out', immediateRender: false, delay: 0.3 });
+    gsap.from('.intro p', { opacity: 0, y: 30, duration: 1, immediateRender: false, scrollTrigger: { trigger: '.intro', start: 'top 80%', once: true } });
+    gsap.from('.process-step', { opacity: 0, x: -30, stagger: 0.15, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '.process-timeline', start: 'top 80%', once: true } });
+    gsap.from('.material-item', { opacity: 0, y: 20, stagger: 0.1, duration: 0.7, immediateRender: false, scrollTrigger: { trigger: '.materials-list', start: 'top 80%', once: true } });
+    gsap.from('.materials-text', { opacity: 0, x: 40, duration: 1, immediateRender: false, scrollTrigger: { trigger: '.materials-inner', start: 'top 80%', once: true } });
+    gsap.from('.gallery-img', { opacity: 0, y: 30, stagger: 0.12, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '.gallery-grid', start: 'top 80%', once: true } });
+    gsap.from('.cta-section > .container > *', { opacity: 0, y: 30, stagger: 0.1, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '.cta-section', start: 'top 80%', once: true } });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MERIDIAN — Precision Micro-Roastery</title>
+  <meta name="description" content="MERIDIAN Micro-Roastery — Coffee as a Discipline. Single-origin specialty coffee roasted with obsessive precision. Copenhagen · London · New York." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Swiper 11 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — Editorial, Burgundy+Cobalt editorial palette
+    ============================================================ */
+    :root {
+      --bg:          #141210;
+      --surface:     #1A1714;
+      --surface2:    #201C18;
+      --accent:      #C4884A;
+      --accent2:     #8B4513;
+      --cobalt:      #3A4E6A;
+      --burgundy:    #6B2737;
+      --ivory:       #EAE5DA;
+      --smoke:       #8C8880;
+      --muted:       #585450;
+      --border:      #201C18;
+      --border2:     #2C2720;
+      --font-serif:  'Libre Baskerville', Georgia, serif;
+      --font-sans:   'Space Grotesk', sans-serif;
+      --font-mono:   'Space Mono', monospace;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    body.locked { overflow: hidden; }
+    img { display: block; width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+    .pre-mono {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: pre-fade 0.6s ease 0.3s forwards;
+    }
+    @keyframes pre-fade { to { opacity: 1; } }
+    .pre-brand {
+      font-family: var(--font-serif);
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: pre-fade 0.7s ease 0.8s forwards;
+    }
+    .pre-tagline {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.4em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      margin-top: 10px;
+      opacity: 0;
+      animation: pre-fade 0.7s ease 1.2s forwards;
+    }
+    .pre-progress {
+      width: 120px;
+      height: 1px;
+      background: var(--border2);
+      margin-top: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pre-progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+      animation: pre-progress 1.8s ease 1s forwards;
+    }
+    @keyframes pre-progress { to { width: 100%; } }
+
+    /* ============================================================
+       SCROLL INDICATOR
+    ============================================================ */
+    #scroll-indicator {
+      position: fixed;
+      left: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .si-label { font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg); }
+    .si-line { width: 1px; height: 60px; background: linear-gradient(to bottom, var(--accent), transparent); position: relative; overflow: hidden; }
+    .si-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--ivory); animation: si-flow 2s ease-in-out infinite; }
+    @keyframes si-flow { 0% { top: -100%; } 100% { top: 200%; } }
+    .si-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .si-progress { width: 1px; height: 36px; background: var(--border2); position: relative; }
+    .si-progress-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); transition: height 0.1s linear; }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(20,18,16,0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 16px 48px;
+      border-bottom: 1px solid var(--border2);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand-word {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+    }
+    .nav-brand-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .nav-links { display: flex; gap: 36px; align-items: center; }
+    .nav-links a { font-family: var(--font-sans); font-size: 0.68rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s ease; position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s ease; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-cta { padding: 10px 24px !important; border: 1px solid var(--accent); color: var(--accent) !important; font-family: var(--font-mono) !important; font-size: 0.6rem !important; letter-spacing: 0.1em !important; }
+    .nav-cta:hover { background: var(--accent) !important; color: var(--bg) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* ============================================================
+       HERO — Type G: Text-Driven (full typography, minimal images)
+    ============================================================ */
+    #hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 160px 60px 100px;
+      overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-serif);
+      font-size: 28vw;
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--border2);
+      text-stroke: 1px var(--border2);
+      white-space: nowrap;
+      line-height: 1;
+      user-select: none;
+      z-index: 0;
+      letter-spacing: -0.02em;
+    }
+    .hero-data-bar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+    .hero-data-item {
+      border-top: 1px solid var(--accent);
+      padding-top: 12px;
+    }
+    .hero-data-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .hero-data-value {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--smoke);
+    }
+    .hero-main {
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(4rem, 10vw, 11rem);
+      font-weight: 700;
+      line-height: 0.9;
+      color: var(--ivory);
+      letter-spacing: -0.02em;
+      margin-bottom: 40px;
+    }
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+    .hero-lower {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 60px;
+      align-items: end;
+    }
+    .hero-desc {
+      font-family: var(--font-sans);
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+    .hero-actions { display: flex; gap: 16px; align-items: center; flex-shrink: 0; }
+    .btn-primary {
+      padding: 14px 36px;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--ivory); }
+    .btn-ghost {
+      padding: 13px 36px;
+      border: 1px solid var(--border2);
+      color: var(--smoke);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+    }
+    .hero-scroll-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
+    .hero-scroll span { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+
+    /* ============================================================
+       STATS STRIP
+    ============================================================ */
+    #stats {
+      background: var(--surface2);
+      border-top: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2);
+      padding: 64px 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .stat-item { text-align: center; padding: 0 20px; border-right: 1px solid var(--border2); }
+    .stat-item:last-child { border-right: none; }
+    .stat-number { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; color: var(--accent); line-height: 1; display: block; }
+    .stat-label { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+    /* ============================================================
+       PHILOSOPHY
+    ============================================================ */
+    #philosophy {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      color: var(--ivory);
+      line-height: 1.15;
+      margin-bottom: 60px;
+      letter-spacing: -0.01em;
+    }
+    .section-title em { font-weight: 400; font-style: italic; color: var(--accent); }
+    .philosophy-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; }
+    .philosophy-header { text-align: center; margin-bottom: 80px; }
+    .philosophy-header p { font-size: 0.875rem; color: var(--smoke); max-width: 520px; margin: 0 auto; line-height: 1.9; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border2); }
+    .phil-card {
+      padding: 48px 40px;
+      background: var(--bg);
+    }
+    .phil-number {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 20px;
+    }
+    .phil-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; color: var(--ivory); margin-bottom: 12px; }
+    .phil-text { font-size: 0.83rem; color: var(--smoke); line-height: 1.8; }
+
+    /* ============================================================
+       COLLECTION GRID — Origin Selection
+    ============================================================ */
+    #collection {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+    .collection-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; }
+    .collection-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 60px; }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; overflow: visible; }
+    .origin-item { position: relative; aspect-ratio: 4/3; overflow: hidden; cursor: pointer; }
+    .origin-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; filter: saturate(0.7) brightness(0.9); }
+    .origin-item:hover img { transform: scale(1.04); filter: saturate(1) brightness(1); }
+    .origin-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,18,16,0.92) 0%, transparent 55%); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; }
+    .origin-code { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .origin-name { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--ivory); margin-bottom: 4px; }
+    .origin-profile { font-family: var(--font-mono); font-size: 0.65rem; color: var(--smoke); }
+    .view-all-link { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 4px; transition: gap 0.3s ease; }
+    .view-all-link:hover { gap: 16px; }
+
+    /* ============================================================
+       ATELIER — Roastery
+    ============================================================ */
+    #atelier {
+      padding: 140px 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .atelier-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-image-wrap { position: relative; height: 560px; overflow: hidden; }
+    .atelier-image-wrap img { width: 100%; height: 120%; object-fit: cover; will-change: transform; filter: saturate(0.75); }
+    .atelier-tag {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      padding: 12px 20px;
+    }
+    .atelier-tag span { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; display: block; }
+    .atelier-tag strong { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700; color: var(--ivory); display: block; margin-top: 2px; }
+    .atelier-text blockquote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--accent);
+      border-left: 2px solid var(--accent);
+      padding-left: 20px;
+      margin: 28px 0;
+      line-height: 1.5;
+    }
+    .atelier-text p { font-size: 0.875rem; color: var(--smoke); line-height: 1.9; margin-bottom: 14px; }
+    .atelier-specs { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+    .spec-row { display: flex; gap: 16px; }
+    .spec-key { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); min-width: 120px; padding-top: 2px; }
+    .spec-val { font-size: 0.83rem; color: var(--ivory); }
+
+    /* ============================================================
+       PROCESS — Roast Stages
+    ============================================================ */
+    #process {
+      padding: 140px 0;
+      background: var(--surface2);
+    }
+    .process-inner { max-width: 900px; margin: 0 auto; padding: 0 60px; }
+    .process-header { text-align: center; margin-bottom: 80px; }
+    .roast-timeline { position: relative; padding-left: 60px; }
+    .roast-timeline::before { content: ''; position: absolute; left: 18px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--accent), transparent); }
+    .rt-item { position: relative; padding-bottom: 60px; }
+    .rt-item:last-child { padding-bottom: 0; }
+    .rt-dot { position: absolute; left: -48px; top: 4px; width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--accent); background: var(--surface2); }
+    .rt-step { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 8px; }
+    .rt-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; color: var(--ivory); margin-bottom: 10px; }
+    .rt-desc { font-size: 0.83rem; color: var(--smoke); line-height: 1.8; }
+
+    /* ============================================================
+       HERITAGE
+    ============================================================ */
+    #heritage {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+    .heritage-inner { max-width: 1100px; margin: 0 auto; padding: 0 60px; }
+    .heritage-header { text-align: center; margin-bottom: 80px; }
+    .milestones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .milestone { border-top: 1px solid var(--border2); padding-top: 24px; }
+    .ms-year { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 700; color: var(--accent); display: block; margin-bottom: 8px; }
+    .ms-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--ivory); margin-bottom: 8px; }
+    .ms-desc { font-size: 0.78rem; color: var(--smoke); line-height: 1.7; }
+
+    /* ============================================================
+       PRESS
+    ============================================================ */
+    #press { padding: 120px 0; background: var(--surface); }
+    .press-inner { max-width: 900px; margin: 0 auto; padding: 0 60px; }
+    .press-header { text-align: center; margin-bottom: 60px; }
+    .press-swiper { padding: 20px 0 60px; }
+    .press-slide { background: var(--surface2); border: 1px solid var(--border2); padding: 48px; }
+    .press-quote { font-family: var(--font-serif); font-size: clamp(1rem, 2vw, 1.3rem); font-weight: 400; font-style: italic; color: var(--ivory); line-height: 1.7; margin-bottom: 24px; }
+    .press-quote::before { content: '\201C'; color: var(--accent); }
+    .press-quote::after { content: '\201D'; color: var(--accent); }
+    .press-publication { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); display: block; }
+    .swiper-pagination-bullet { background: var(--smoke); }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ============================================================
+       COMMISSION FORM — Wholesale/Direct
+    ============================================================ */
+    #commission { padding: 140px 0; background: var(--surface2); }
+    .commission-inner { max-width: 1100px; margin: 0 auto; padding: 0 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .commission-info h2 { margin-bottom: 20px; }
+    .commission-info p { font-size: 0.875rem; color: var(--smoke); line-height: 1.9; margin-bottom: 12px; }
+    .commission-contact { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
+    .cc-item { display: flex; gap: 12px; font-size: 0.8rem; color: var(--smoke); }
+    .cc-item strong { color: var(--accent); font-weight: 400; min-width: 80px; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-family: var(--font-mono); font-size: 0.55rem; font-weight: 400; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border2); padding: 12px 0; color: var(--ivory); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 300; outline: none; transition: border-color 0.3s ease; -webkit-appearance: none; }
+    .form-group select option { background: var(--surface2); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-bottom-color: var(--accent); }
+    .form-group textarea { resize: none; height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-submit { margin-top: 12px; padding: 14px 40px; background: var(--accent); color: var(--bg); border: none; font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.3s ease; width: 100%; }
+    .form-submit:hover { background: var(--ivory); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border2);
+      padding: 80px 60px 40px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand-col .footer-logo { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 700; letter-spacing: 0.15em; color: var(--ivory); margin-bottom: 8px; display: block; }
+    .footer-mono { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 16px; }
+    .footer-brand-col p { font-size: 0.8rem; color: var(--muted); line-height: 1.8; }
+    .footer-col h4 { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 400; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 0.8rem; color: var(--muted); transition: color 0.3s ease; }
+    .footer-col ul li a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-bottom p { font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); }
+    .footer-bottom a { color: var(--accent); }
+</style>
+</head>
+<body class="locked">
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <span class="pre-mono">// loading origin data</span>
+    <span class="pre-brand">MERIDIAN</span>
+    <span class="pre-tagline">Precision Micro-Roastery</span>
+    <div class="pre-progress"><div class="pre-progress-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <span class="si-label">Scroll</span>
+    <div class="si-line"></div>
+    <div class="si-dot"></div>
+    <div class="si-progress">
+      <div class="si-progress-fill" id="si-fill"></div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-brand-word">MERIDIAN</span>
+      <div class="nav-brand-dot"></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="about.html">Roastery</a></li>
+      <li><a href="collection.html">Origins</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html" class="nav-cta">Order</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO — Type G: Text-Driven -->
+  <section id="hero">
+    <span class="hero-bg-text" aria-hidden="true">M</span>
+    <div class="hero-data-bar">
+      <div class="hero-data-item">
+        <span class="hero-data-label">Founded</span>
+        <span class="hero-data-value">Copenhagen, 2014</span>
+      </div>
+      <div class="hero-data-item">
+        <span class="hero-data-label">Current Roast</span>
+        <span class="hero-data-value">Ethiopian Yirgacheffe</span>
+      </div>
+      <div class="hero-data-item">
+        <span class="hero-data-label">Altitude</span>
+        <span class="hero-data-value">1,950m above sea level</span>
+      </div>
+      <div class="hero-data-item">
+        <span class="hero-data-label">Harvest</span>
+        <span class="hero-data-value">Winter 2024</span>
+      </div>
+    </div>
+    <div class="hero-main">
+      <span class="hero-eyebrow">// Coffee as a Discipline</span>
+      <h1 class="hero-title" id="hero-title">
+        Coffee<br>is <em>Data</em>,<br>Not Myth.
+      </h1>
+      <div class="hero-lower">
+        <p class="hero-desc">We source single-origin lots with the precision of a laboratory and the sensitivity of a composer. Every roast is a scientific hypothesis, tested against the evidence of your palate.</p>
+        <div class="hero-actions">
+          <a href="collection.html" class="btn-primary">Shop Origins</a>
+          <a href="about.html" class="btn-ghost">Our Method</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-dot"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section id="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number" data-target="28">0</span>
+        <span class="stat-label">Origins Sourced</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="14">0</span>
+        <span class="stat-label">Countries</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="9">0</span>
+        <span class="stat-label">Years of Roasting</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="4200">0</span>
+        <span class="stat-label">Kilos/Month</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section id="philosophy">
+    <div class="philosophy-inner">
+      <div class="philosophy-header">
+        <span class="section-label">// philosophy.md</span>
+        <h2 class="section-title">Three Principles of<br><em>Obsessive Craft</em></h2>
+        <p>We treat coffee not as a commodity but as a precision discipline — where sourcing, roasting, and brewing are interconnected sciences, each one capable of destroying or revealing the potential of a perfect bean.</p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="phil-card sr">
+          <span class="phil-number">// 01</span>
+          <h3 class="phil-title">Provenance Above All</h3>
+          <p class="phil-text">Every MERIDIAN lot is traceable to a single farm, cooperative, or lot number. We visit our producers annually, cup alongside them, and publish our sourcing data openly. Transparency is not a marketing claim — it is a technical requirement.</p>
+        </div>
+        <div class="phil-card sr">
+          <span class="phil-number">// 02</span>
+          <h3 class="phil-title">Roast as Translation</h3>
+          <p class="phil-text">Our roasters translate, not transform. The goal is never to impose a house character on a coffee but to reveal, as precisely as possible, what the producer has already achieved in the field. We roast on modified Loring equipment with 0.5°C temperature resolution.</p>
+        </div>
+        <div class="phil-card sr">
+          <span class="phil-number">// 03</span>
+          <h3 class="phil-title">Rest Before Shipping</h3>
+          <p class="phil-text">We enforce a minimum 7-day resting period post-roast before any coffee ships. CO₂ degassing during this window is not an inconvenience — it is the final stage of the roasting process, and it cannot be skipped without compromising cup quality.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section id="collection">
+    <div class="collection-inner">
+      <div class="collection-header">
+        <div>
+          <span class="section-label">// current_origins.json</span>
+          <h2 class="section-title" style="margin-bottom:0;">Featured <em>Origins</em></h2>
+        </div>
+        <a href="collection.html" class="view-all-link">All Lots <span>→</span></a>
+      </div>
+      <div class="collection-grid">
+        <div class="origin-item">
+          <img src="https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Ethiopian Yirgacheffe" loading="lazy" />
+          <div class="origin-overlay">
+            <span class="origin-code">ETH-YRG-2024-03</span>
+            <div class="origin-name">Yirgacheffe Natural</div>
+            <p class="origin-profile">Jasmine · Blueberry · Lychee · 95.5 SCA</p>
+          </div>
+        </div>
+        <div class="origin-item">
+          <img src="https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=800&q=80&auto=format&fit=crop" alt="Colombian Gesha" loading="lazy" />
+          <div class="origin-overlay">
+            <span class="origin-code">COL-GES-2024-01</span>
+            <div class="origin-name">Colombian Gesha Washed</div>
+            <p class="origin-profile">Bergamot · White Peach · Honey · 93.5 SCA</p>
+          </div>
+        </div>
+        <div class="origin-item">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80&auto=format&fit=crop" alt="Kenyan AB" loading="lazy" />
+          <div class="origin-overlay">
+            <span class="origin-code">KEN-AB-2024-08</span>
+            <div class="origin-name">Kenya AB Washed</div>
+            <p class="origin-profile">Blackcurrant · Tomato · Brown Sugar · 92 SCA</p>
+          </div>
+        </div>
+        <div class="origin-item">
+          <img src="https://images.unsplash.com/photo-1519608425089-7f3bfa6f6bb8?w=800&q=80&auto=format&fit=crop" alt="Panama Gesha" loading="lazy" />
+          <div class="origin-overlay">
+            <span class="origin-code">PAN-GES-2024-02</span>
+            <div class="origin-name">Panama Gesha Natural</div>
+            <p class="origin-profile">Tropical fruit · Rose · Vanilla · 96 SCA</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER — Roastery -->
+  <section id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-image-wrap">
+        <img src="https://images.pexels.com/photos/1329711/pexels-photo-1329711.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="MERIDIAN Roastery" id="atelier-img" loading="lazy" />
+        <div class="atelier-tag">
+          <span>Roasting Since</span>
+          <strong>2014</strong>
+        </div>
+      </div>
+      <div class="atelier-text sr">
+        <span class="section-label">// roastery.txt</span>
+        <h2 class="section-title">Where Data Meets<br><em>Instinct</em></h2>
+        <blockquote>"A great roast curve is like a great sentence: every inflection point has a reason, and nothing is there by accident."</blockquote>
+        <p>The MERIDIAN roastery in Copenhagen's Nørrebro district houses three modified Loring Smart Roasters — each calibrated to 0.5°C precision and connected to our proprietary Roast Analytics platform, which logs every variable across every roast and surfaces patterns invisible to human observation alone.</p>
+        <p>But the final decision on any roast curve is always made by a human: our Head Roaster, who has evaluated over 40,000 individual roasts and developed an instinct that no algorithm can replicate.</p>
+        <div class="atelier-specs">
+          <div class="spec-row"><span class="spec-key">Equipment</span><span class="spec-val">Loring Smart Roaster S15 (×3)</span></div>
+          <div class="spec-row"><span class="spec-key">Temp resolution</span><span class="spec-val">0.5°C</span></div>
+          <div class="spec-row"><span class="spec-key">Data points</span><span class="spec-val">12,000 per roast session</span></div>
+          <div class="spec-row"><span class="spec-key">Rest period</span><span class="spec-val">Minimum 7 days</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="process-inner">
+      <div class="process-header">
+        <span class="section-label">// process_flow.md</span>
+        <h2 class="section-title">From Farm to<br><em>Extraction</em></h2>
+      </div>
+      <div class="roast-timeline">
+        <div class="rt-item"><div class="rt-dot"></div><span class="rt-step sr">// 01 — Sourcing</span><h3 class="rt-title">Direct-Trade Procurement</h3><p class="rt-desc">We visit every producer we work with. Annual travel to Ethiopia, Colombia, Kenya, Panama, and Japan enables us to cup alongside growers, understand their seasonal challenges, and build the relationships that guarantee allocation of exceptional lots.</p></div>
+        <div class="rt-item"><div class="rt-dot"></div><span class="rt-step sr">// 02 — Green Analysis</span><h3 class="rt-title">Arrival & Cupping</h3><p class="rt-desc">Every new-season lot is cupped blind against our existing stock and scored on the SCA 100-point scale. No coffee scoring below 88 enters our roastery. We publish every cupping score publicly — winners and rejections alike.</p></div>
+        <div class="rt-item"><div class="rt-dot"></div><span class="rt-step sr">// 03 — Profile Development</span><h3 class="rt-title">Roast Curve Mapping</h3><p class="rt-desc">Each lot receives a bespoke roast profile developed across a minimum of 12 sample roasts. We target specific acidity levels, body weights, and finish lengths using moisture content, density, and altitude data to inform our approach.</p></div>
+        <div class="rt-item"><div class="rt-dot"></div><span class="rt-step sr">// 04 — Production Roasting</span><h3 class="rt-title">Precision Batch Execution</h3><p class="rt-desc">Production roasts follow the approved profile within 0.5°C tolerance at every control point. Post-roast, batches are tagged, rested at 18°C for a minimum of 7 days before packaging or shipping.</p></div>
+        <div class="rt-item"><div class="rt-dot"></div><span class="rt-step sr">// 05 — Dispatch & Support</span><h3 class="rt-title">Delivery & Ongoing Guidance</h3><p class="rt-desc">Every subscription includes our recommended brew parameters — updated per batch as the coffee's degassing and aging alter its extraction behaviour. We are reachable post-dispatch if you cannot replicate our tasting notes.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section id="heritage">
+    <div class="heritage-inner">
+      <div class="heritage-header">
+        <span class="section-label">// timeline.md</span>
+        <h2 class="section-title">Nine Years of<br><em>Radical Transparency</em></h2>
+      </div>
+      <div class="milestones">
+        <div class="milestone sr"><span class="ms-year">2014</span><h4 class="ms-title">Founded in Copenhagen</h4><p class="ms-desc">MERIDIAN opens with a single Loring roaster, three origins, and a commitment to publishing every cupping score — unprecedented at the time.</p></div>
+        <div class="milestone sr"><span class="ms-year">2017</span><h4 class="ms-title">Direct Trade Program</h4><p class="ms-desc">First direct-trade agreements with producers in Ethiopia and Colombia. Pre-harvest pricing locks in fair compensation before crop is assessed.</p></div>
+        <div class="milestone sr"><span class="ms-year">2020</span><h4 class="ms-title">Roast Analytics Platform</h4><p class="ms-desc">In-house software begins logging 12,000 data points per session — the first roastery in the Nordics to build proprietary roast intelligence infrastructure.</p></div>
+        <div class="milestone sr"><span class="ms-year">2024</span><h4 class="ms-title">London & New York</h4><p class="ms-desc">Wholesale presence established in London and New York with a combined 60 accounts — all required to maintain precise brew parameters for MERIDIAN quality standards.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section id="press">
+    <div class="press-inner">
+      <div class="press-header">
+        <span class="section-label">// press_mentions.md</span>
+        <h2 class="section-title" style="margin-bottom:0;">What They<br><em>Write About Us</em></h2>
+      </div>
+      <div class="swiper press-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">MERIDIAN is the most rigorous roastery operating in Europe today. Their data transparency, sourcing relationships, and cup quality are all operating at a level that embarrasses most specialty coffee brands — including some far better known.</p>
+            <span class="press-publication">Sprudge Magazine — Annual Roastery Rankings</span>
+          </div>
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">There is a particular kind of humility in MERIDIAN's approach — the humility of scientists who know they don't fully understand the system they're studying, and who respond not with false confidence but with better measurement.</p>
+            <span class="press-publication">The Times Saturday Magazine</span>
+          </div>
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">The Yirgacheffe Natural from MERIDIAN's 2024 harvest is the most startlingly complete coffee I've tasted this year. The fruit is vivid without being confected; the finish is interminable and clean. This is what precision tastes like.</p>
+            <span class="press-publication">Standart Magazine — Issue 22</span>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORDER / COMMISSION FORM -->
+  <section id="commission">
+    <div class="commission-inner">
+      <div class="commission-info">
+        <span class="section-label">// order_inquiry.md</span>
+        <h2 class="section-title">Order or<br><em>Subscribe</em></h2>
+        <p>MERIDIAN ships directly to consumers and works with wholesale accounts that maintain our precision brewing standards. Subscriptions receive each new-season lot at peak rest, with full brew parameters and cupping notes.</p>
+        <p>Wholesale inquiries are evaluated on a case-by-case basis — we work only with accounts that share our commitment to precision extraction.</p>
+        <div class="commission-contact">
+          <div class="cc-item"><strong>Copenhagen</strong><span>Ravnsborggade 12, Nørrebro 2200</span></div>
+          <div class="cc-item"><strong>Email</strong><span>hello@meridian-roastery.com</span></div>
+          <div class="cc-item"><strong>Wholesale</strong><span>wholesale@meridian-roastery.com</span></div>
+        </div>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group sr"><label>First Name</label><input type="text" placeholder="Lars" /></div>
+          <div class="form-group sr"><label>Last Name</label><input type="text" placeholder="Nørgaard" /></div>
+        </div>
+        <div class="form-group sr"><label>Email</label><input type="email" placeholder="lars@example.com" /></div>
+        <div class="form-group sr"><label>Inquiry Type</label>
+          <select>
+            <option value="">Select</option>
+            <option>Personal Subscription</option>
+            <option>Gift Subscription</option>
+            <option>Wholesale Account</option>
+            <option>Press / Media</option>
+          </select>
+        </div>
+        <div class="form-group sr"><label>Preferred Origin Family</label>
+          <select>
+            <option value="">Select</option>
+            <option>African (Floral/Fruity)</option>
+            <option>Central American (Balanced)</option>
+            <option>South American (Chocolatey)</option>
+            <option>Asian/Pacific (Earthy)</option>
+            <option>Send me whatever scores highest</option>
+          </select>
+        </div>
+        <div class="form-group sr"><label>Brewing Method</label>
+          <select>
+            <option value="">Your method</option>
+            <option>Filter / V60 / Chemex</option>
+            <option>Espresso / Lever</option>
+            <option>AeroPress</option>
+            <option>Cold Brew</option>
+          </select>
+        </div>
+        <div class="form-group sr"><label>Notes</label><textarea placeholder="Tell us about your setup, preferences, or any questions about our lots..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Inquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <span class="footer-logo">MERIDIAN</span>
+          <span class="footer-mono">// precision micro-roastery</span>
+          <p>Founded in Copenhagen, 2014. Sourcing, roasting, and shipping exceptional single-origin coffee with radical transparency and scientific precision.</p>
+        </div>
+        <div class="footer-col sr">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">Roastery</a></li>
+            <li><a href="collection.html">Origins</a></li>
+            <li><a href="process.html">Process</a></li>
+          </ul>
+        </div>
+        <div class="footer-col sr">
+          <h4>Locations</h4>
+          <ul>
+            <li><a href="#">Copenhagen</a></li>
+            <li><a href="#">London</a></li>
+            <li><a href="#">New York</a></li>
+          </ul>
+        </div>
+        <div class="footer-col sr">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="contact.html">Subscriptions</a></li>
+            <li><a href="contact.html">Wholesale</a></li>
+            <li><a href="#">Brewing Equipment</a></li>
+            <li><a href="#">Press Inquiries</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 MERIDIAN Micro-Roastery. All rights reserved.</p>
+        <p><a href="#">Privacy</a> · <a href="#">Terms</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+  class SplitText {
+    constructor(target, opts = {}) {
+      const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+      this.chars = []; this.words = []; this.lines = [];
+      if (!el) return;
+      this._el = el;
+      const type = (opts.type || 'chars,words').toLowerCase();
+      const original = el.textContent;
+      el.setAttribute('data-split-orig', original);
+      if (type.includes('chars')) {
+        el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+        this.chars = Array.from(el.querySelectorAll('.char'));
+      } else if (type.includes('words')) {
+        el.innerHTML = original.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+        this.words = Array.from(el.querySelectorAll('.word'));
+      }
+      this.lines = [el];
+    }
+    revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+  gsap.registerPlugin(ScrollTrigger);
+
+    // ── PRELOADER ──
+    window.addEventListener('load', () => {
+      const pre = document.getElementById('preloader');
+      gsap.to(pre, {
+        opacity: 0, duration: 0.8, delay: 2.6,
+        onComplete: () => {
+          pre.classList.add('hidden');
+          document.body.classList.remove('locked');
+          document.getElementById('scroll-indicator').classList.add('visible');
+        }
+      });
+    });
+    setTimeout(() => {
+      const pre = document.getElementById('preloader');
+      pre.style.opacity = '0';
+      pre.style.visibility = 'hidden';
+      document.body.classList.remove('locked');
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }, 4000);
+
+    // ── SCROLL INDICATOR ──
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      document.getElementById('si-fill').style.height = (pct * 100) + '%';
+    });
+
+    // ── NAVBAR ──
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── HERO TEXT ENTRANCE ──
+    const heroTl = gsap.timeline({ delay: 2.8 });
+    heroTl
+      .from('.hero-data-bar', { opacity: 0, y: 20, duration: 0.8, immediateRender: false })
+      .from('.hero-eyebrow', { opacity: 0, y: 20, duration: 0.7, immediateRender: false }, '-=0.4')
+      .from('#hero-title', { opacity: 0, y: 24, duration: 1, ease: 'power3.out', immediateRender: false }, '-=0.3')
+      .from('.hero-desc', { opacity: 0, y: 20, duration: 0.7, immediateRender: false }, '-=0.4')
+      .from('.hero-actions', { opacity: 0, y: 20, duration: 0.7, immediateRender: false }, '-=0.4');
+
+    // ── HERO BG TEXT PARALLAX ──
+    gsap.to('.hero-bg-text', {
+      yPercent: 20,
+      ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 }
+    });
+
+    // ── STATS ──
+    document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+      gsap.to(el, {
+        textContent: el.dataset.target,
+        duration: 2.5,
+        ease: 'power2.out',
+        snap: { textContent: 1 },
+        scrollTrigger: { trigger: '#stats', start: 'top 80%', once: true },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)).toLocaleString(); }
+      });
+    });
+
+    // ── PHILOSOPHY ──
+    gsap.from('.philosophy-header', { opacity: 0, y: 24, duration: 0.9, immediateRender: false, scrollTrigger: { trigger: '#philosophy', start: 'top 75%', once: true } });
+    gsap.from('.phil-card', { opacity: 0, y: 24, stagger: 0.1, duration: 0.9, immediateRender: false, scrollTrigger: { trigger: '.philosophy-grid', start: 'top 80%', once: true } });
+
+    // ── COLLECTION ──
+    gsap.from('.origin-item', { opacity: 0, y: 24, stagger: 0.15, duration: 0.9, immediateRender: false, scrollTrigger: { trigger: '#collection .collection-grid', start: 'top 80%', once: true } });
+
+    // ── ATELIER PARALLAX ──
+    gsap.to('#atelier-img', {
+      yPercent: -15, ease: 'none',
+      scrollTrigger: { trigger: '#atelier', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+    gsap.from('.atelier-image-wrap', { opacity: 0, x: -60, duration: 1, immediateRender: false, scrollTrigger: { trigger: '#atelier', start: 'top 75%', once: true } });
+    gsap.from('.atelier-text', { opacity: 0, x: 60, duration: 1, immediateRender: false, scrollTrigger: { trigger: '#atelier', start: 'top 75%', once: true } });
+
+    // ── PROCESS ──
+    gsap.from('.rt-item', { opacity: 0, x: -40, stagger: 0.15, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '.roast-timeline', start: 'top 80%', once: true } });
+
+    // ── HERITAGE ──
+    gsap.from('.milestone', { opacity: 0, y: 24, stagger: 0.15, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '#heritage .milestones', start: 'top 80%', once: true } });
+
+    // ── PRESS ──
+    new Swiper('.press-swiper', {
+      loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      speed: 800
+    });
+
+    // ── FORM ──
+    gsap.from('.commission-info', { opacity: 0, x: -50, duration: 1, immediateRender: false, scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true } });
+    gsap.from('#commission form', { opacity: 0, x: 50, duration: 1, immediateRender: false, scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true } });
+  </script>
+</body>
+</html>

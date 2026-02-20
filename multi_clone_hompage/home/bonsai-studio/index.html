@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seimei-an — Shaped by Centuries. Alive in Your Hands.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+JP:wght@300;400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+/* SplitText polyfill — replaces Club GSAP premium plugin (not on CDN) */
+class SplitText {
+  constructor(target, opts = {}) {
+    const el = typeof target === 'string'
+      ? document.querySelector(target)
+      : (target instanceof Element ? target : null);
+    this.chars = []; this.words = []; this.lines = [];
+    if (!el) return;
+    this._el = el;
+    const type = (opts.type || 'chars,words').toLowerCase();
+    const original = el.textContent;
+    el.setAttribute('data-split-orig', original);
+    if (type.includes('chars')) {
+      el.innerHTML = original.split('').map(c =>
+        c === ' '
+          ? '<span class="char" style="display:inline-block">&nbsp;</span>'
+          : `<span class="char" style="display:inline-block">${c}</span>`
+      ).join('');
+      this.chars = Array.from(el.querySelectorAll('.char'));
+    } else if (type.includes('words')) {
+      el.innerHTML = original.split(/\s+/).filter(Boolean).map(w =>
+        `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`
+      ).join('');
+      this.words = Array.from(el.querySelectorAll('.word'));
+    }
+    this.lines = [el];
+  }
+  revert() {
+    if (this._el) {
+      const orig = this._el.getAttribute('data-split-orig');
+      if (orig) this._el.textContent = orig;
+    }
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+:root {
+  --bg: #2C2A27;
+  --surface: #3A3830;
+  --surface-2: #454239;
+  --brass: #B8A882;
+  --moss: #6B8C6E;
+  --washi: #E8E0D0;
+  --muted: #9A9080;
+  --deep: #1E1C1A;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-jp: 'Noto Serif JP', serif;
+  --font-sans: 'Inter', sans-serif;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--washi);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Cursor ── */
+#cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--brass); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+}
+#cursor-ring {
+  position: fixed; width: 28px; height: 28px;
+  border: 1px solid rgba(184,168,130,0.4); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all .1s;
+}
+
+/* ── Preloader ── */
+#preloader {
+  position: fixed; inset: 0;
+  background: #181614; z-index: 9000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+}
+#pre-kanji {
+  font-family: var(--font-jp); font-size: 52px;
+  color: var(--brass); opacity: 0; font-weight: 300;
+}
+#pre-brand {
+  font-family: var(--font-display); font-size: 18px;
+  letter-spacing: 0.35em; color: var(--washi); opacity: 0;
+  text-transform: uppercase;
+}
+#pre-sub {
+  font-family: var(--font-sans); font-size: 9px;
+  letter-spacing: 0.45em; color: var(--muted); opacity: 0;
+  text-transform: uppercase;
+}
+#pre-line {
+  width: 0; height: 1px;
+  background: var(--brass);
+}
+
+/* ── Scroll Indicator ── */
+#scroll-indicator {
+  position: fixed; left: 26px; top: 50%;
+  transform: translateY(-50%); z-index: 800;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0; transition: opacity .5s;
+}
+#scroll-indicator.visible { opacity: 1; }
+.si-dots { display: flex; flex-direction: column; gap: 9px; }
+.si-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--muted); cursor: pointer;
+  transition: background .3s, transform .3s;
+}
+.si-dot.active { background: var(--brass); transform: scale(1.8); }
+.si-line {
+  width: 1px; height: 56px;
+  background: rgba(154,144,128,0.2); position: relative; overflow: hidden;
+}
+.si-fill {
+  position: absolute; bottom: 0; left: 0; width: 100%;
+  background: var(--brass); height: 0%; transition: height .4s;
+}
+.si-lbl {
+  font-family: var(--font-sans); font-size: 8px;
+  letter-spacing: 0.25em; color: var(--muted);
+  writing-mode: vertical-lr; margin-top: 4px; text-transform: uppercase;
+}
+
+/* ── Navbar ── */
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 700;
+  padding: 22px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .4s, backdrop-filter .4s, padding .3s;
+}
+#navbar.scrolled {
+  background: rgba(44,42,39,0.9);
+  backdrop-filter: blur(14px); padding: 14px 52px;
+  border-bottom: 1px solid rgba(184,168,130,0.1);
+}
+.nav-logo {
+  font-family: var(--font-display); font-size: 16px;
+  letter-spacing: 0.3em; color: var(--washi); text-decoration: none;
+}
+.nav-logo span { font-family: var(--font-jp); font-size: 13px; color: var(--brass); margin-left: 8px; }
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-family: var(--font-sans); font-size: 10px;
+  letter-spacing: 0.3em; color: var(--muted); text-decoration: none;
+  text-transform: uppercase; transition: color .3s;
+}
+.nav-links a:hover { color: var(--brass); }
+.nav-commission {
+  font-family: var(--font-sans); font-size: 10px;
+  letter-spacing: 0.3em; color: var(--brass);
+  border: 1px solid rgba(184,168,130,0.3);
+  padding: 10px 20px; text-decoration: none; text-transform: uppercase;
+  transition: background .3s, color .3s;
+}
+.nav-commission:hover { background: var(--brass); color: var(--deep); }
+
+/* ── Hero ── */
+#hero {
+  height: 100vh; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background-image: url('https://images.pexels.com/photos/3756879/pexels-photo-3756879.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80');
+  background-size: cover; background-position: center;
+  transform: scale(1.07);
+  animation: kb 24s ease-in-out infinite alternate;
+  filter: saturate(0.5) brightness(0.55);
+}
+@keyframes kb {
+  0% { transform: scale(1.07); }
+  100% { transform: scale(1.11) translate(-0.8%,-0.5%); }
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(24,22,20,0.65) 0%, rgba(44,42,39,0.2) 45%, rgba(44,42,39,0.75) 85%, #2C2A27 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  text-align: center; max-width: 800px; padding: 0 40px;
+}
+.hero-kanji {
+  font-family: var(--font-jp); font-size: 32px;
+  color: var(--brass); letter-spacing: 0.3em;
+  margin-bottom: 28px; font-weight: 300;
+}
+.hero-title {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(52px, 9vw, 108px);
+  line-height: 1.05; font-weight: 300;
+  color: var(--washi); margin-bottom: 22px;
+}
+.hero-tagline {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(16px, 2.2vw, 21px); font-weight: 300;
+  color: var(--muted); letter-spacing: 0.06em; margin-bottom: 44px;
+}
+.hero-btns { display: flex; gap: 16px; justify-content: center; }
+.btn-brass {
+  font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.3em;
+  color: var(--deep); background: var(--brass);
+  padding: 14px 30px; text-decoration: none; text-transform: uppercase;
+  transition: background .3s;
+}
+.btn-brass:hover { background: var(--washi); }
+.btn-outline {
+  font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.3em;
+  color: var(--washi);
+  border: 1px solid rgba(232,224,208,0.2);
+  padding: 14px 30px; text-decoration: none; text-transform: uppercase;
+  transition: border-color .3s, color .3s;
+}
+.btn-outline:hover { border-color: var(--brass); color: var(--brass); }
+
+/* ── Philosophy ── */
+#philosophy {
+  padding: 120px 48px; background: var(--surface); text-align: center;
+}
+.phil-inner { max-width: 760px; margin: 0 auto; }
+.phil-kanji {
+  font-family: var(--font-jp); font-size: 64px;
+  color: rgba(184,168,130,0.18); line-height: 1; margin-bottom: 32px; font-weight: 300;
+}
+.section-eyebrow {
+  font-family: var(--font-sans); font-size: 9px;
+  letter-spacing: 0.5em; color: var(--brass); text-transform: uppercase; margin-bottom: 14px;
+}
+.section-title {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(28px, 4.5vw, 46px); font-weight: 300;
+  color: var(--washi); max-width: 480px;
+}
+.phil-text {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(20px, 2.5vw, 26px); font-weight: 300;
+  line-height: 1.7; color: var(--washi); margin-bottom: 20px;
+}
+.phil-sub {
+  font-family: var(--font-sans); font-size: 13px;
+  color: var(--muted); line-height: 1.9; font-weight: 300;
+}
+
+/* ── Stats ── */
+#stats {
+  background: var(--bg);
+  border-top: 1px solid rgba(184,168,130,0.1);
+  border-bottom: 1px solid rgba(184,168,130,0.1);
+}
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  max-width: 1100px; margin: 0 auto;
+}
+.stat-item {
+  padding: 44px 20px; text-align: center;
+  border-right: 1px solid rgba(184,168,130,0.08);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--font-display); font-size: clamp(34px,5vw,52px);
+  color: var(--brass); font-weight: 300; line-height: 1; margin-bottom: 10px;
+}
+.stat-lbl {
+  font-family: var(--font-sans); font-size: 9px;
+  letter-spacing: 0.35em; color: var(--muted); text-transform: uppercase;
+}
+
+/* ── Collection ── */
+#collection {
+  padding: 120px 48px; background: var(--surface);
+}
+.collection-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 24px; max-width: 1200px; margin: 48px auto 0;
+  overflow: visible;
+}
+.specimen-card {
+  background: var(--surface-2);
+  border: 1px solid rgba(184,168,130,0.1);
+  overflow: hidden; position: relative;
+  transition: border-color .4s;
+}
+.specimen-card:nth-child(even) { transform: translateY(28px); }
+.specimen-card:hover { border-color: rgba(184,168,130,0.3); }
+.specimen-img {
+  width: 100%; height: 280px; object-fit: cover; display: block;
+  filter: saturate(0.55) brightness(0.7);
+  transition: filter .5s, transform .6s;
+}
+.specimen-card:hover .specimen-img { filter: saturate(0.7) brightness(0.8); transform: scale(1.03); }
+.specimen-info { padding: 24px 20px; }
+.specimen-age {
+  font-family: var(--font-sans); font-size: 9px;
+  letter-spacing: 0.4em; color: var(--brass); text-transform: uppercase; margin-bottom: 6px;
+}
+.specimen-name {
+  font-family: var(--font-display); font-size: 20px;
+  font-style: italic; font-weight: 300; color: var(--washi); margin-bottom: 6px;
+}
+.specimen-species {
+  font-family: var(--font-sans); font-size: 11px;
+  color: var(--muted); font-weight: 300;
+}
+.specimen-overlay {
+  position: absolute; inset: 0;
+  background: rgba(24,22,20,0.93);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .4s; gap: 10px; padding: 28px; text-align: center;
+}
+.specimen-card:hover .specimen-overlay { opacity: 1; }
+.ov-lineage {
+  font-family: var(--font-sans); font-size: 9px;
+  letter-spacing: 0.35em; color: var(--brass); text-transform: uppercase;
+}
+.ov-desc {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 16px; color: var(--washi); line-height: 1.6; font-weight: 300;
+}
+.ov-status {
+  font-family: var(--font-sans); font-size: 10px;
+  color: var(--muted); font-weight: 300;
+}
+
+/* ── Age — single tree timeline ── */
+#age-tree {
+  padding: 120px 48px; background: var(--bg);
+}
+.age-inner { max-width: 1000px; margin: 0 auto; }
+.age-header { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 64px; }
+.age-img-wrap { height: 420px; overflow: hidden; }
+.age-img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(0.4) brightness(0.65);
+}
+.age-milestone-list { display: flex; flex-direction: column; gap: 0; }
+.age-milestone {
+  display: flex; gap: 24px; padding: 20px 0;
+  border-bottom: 1px solid rgba(184,168,130,0.08);
+}
+.age-milestone:last-child { border-bottom: none; }
+.age-year {
+  font-family: var(--font-display); font-size: 28px;
+  color: rgba(184,168,130,0.3); font-weight: 300;
+  flex-shrink: 0; width: 80px; line-height: 1;
+}
+.age-event {}
+.age-event-title {
+  font-family: var(--font-display); font-size: 16px;
+  color: var(--washi); font-style: italic; font-weight: 300; margin-bottom: 4px;
+}
+.age-event-text {
+  font-family: var(--font-sans); font-size: 12px;
+  color: var(--muted); line-height: 1.6; font-weight: 300;
+}
+
+/* ── Masters ── */
+#masters {
+  padding: 120px 48px; background: var(--surface);
+}
+.masters-inner { max-width: 1200px; margin: 0 auto; }
+.masters-header { margin-bottom: 56px; }
+.masters-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+.master-card {
+  border: 1px solid rgba(184,168,130,0.08);
+  overflow: hidden;
+}
+.master-img-wrap { height: 320px; overflow: hidden; }
+.master-img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(0.4) brightness(0.65);
+  transition: filter .5s;
+}
+.master-card:hover .master-img { filter: saturate(0.55) brightness(0.75); }
+.master-info { padding: 24px 20px; background: var(--surface-2); }
+.master-role {
+  font-family: var(--font-sans); font-size: 9px;
+  letter-spacing: 0.35em; color: var(--brass); text-transform: uppercase; margin-bottom: 6px;
+}
+.master-name {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 20px; font-weight: 300; color: var(--washi); margin-bottom: 8px;
+}
+.master-bio {
+  font-family: var(--font-sans); font-size: 12px;
+  color: var(--muted); line-height: 1.7; font-weight: 300;
+}
+
+/* ── Ceramics ── */
+#ceramics {
+  padding: 120px 48px; background: var(--bg);
+}
+.ceramics-inner { max-width: 1200px; margin: 0 auto; }
+.ceramics-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center; margin-top: 48px;
+}
+.ceramics-img-wrap { height: 520px; overflow: hidden; position: relative; }
+.ceramics-img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(0.45) brightness(0.65);
+}
+.ceramics-copy {}
+.ceramics-text {
+  font-family: var(--font-sans); font-size: 14px;
+  color: var(--muted); line-height: 1.9; font-weight: 300; margin-bottom: 24px;
+}
+.ceramics-types { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
+.clay-item {
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(184,168,130,0.08);
+}
+.clay-item:last-child { border-bottom: none; }
+.clay-name {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 18px; color: var(--washi); font-weight: 300; margin-bottom: 4px;
+}
+.clay-desc {
+  font-family: var(--font-sans); font-size: 12px;
+  color: var(--muted); font-weight: 300; line-height: 1.6;
+}
+
+/* ── Process Seasons ── */
+#process {
+  padding: 120px 48px; background: var(--surface);
+}
+.process-inner { max-width: 1200px; margin: 0 auto; }
+.seasons-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-top: 48px; }
+.season-card {
+  border: 1px solid rgba(184,168,130,0.1); overflow: hidden; position: relative;
+  height: 340px;
+}
+.season-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.45) brightness(0.6);
+  transition: filter .5s;
+}
+.season-card:hover .season-img { filter: saturate(0.6) brightness(0.7); }
+.season-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(24,22,20,0.9) 0%, transparent 60%);
+  display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 20px 18px;
+}
+.season-jp {
+  font-family: var(--font-jp); font-size: 22px;
+  color: var(--brass); font-weight: 300; margin-bottom: 6px;
+}
+.season-en {
+  font-family: var(--font-sans); font-size: 9px;
+  letter-spacing: 0.35em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px;
+}
+.season-text {
+  font-family: var(--font-sans); font-size: 11px;
+  color: var(--washi); line-height: 1.6; font-weight: 300;
+}
+
+/* ── Commission ── */
+#commission {
+  padding: 120px 48px; background: var(--bg); text-align: center;
+  border-top: 1px solid rgba(184,168,130,0.1);
+}
+.commission-inner { max-width: 580px; margin: 0 auto; }
+.commission-title {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(28px, 4.5vw, 48px); font-weight: 300;
+  color: var(--washi); margin-bottom: 20px;
+}
+.commission-text {
+  font-family: var(--font-sans); font-size: 14px;
+  color: var(--muted); line-height: 1.9; font-weight: 300; margin-bottom: 36px;
+}
+.commission-email {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 20px; color: var(--brass); text-decoration: none;
+  border-bottom: 1px solid rgba(184,168,130,0.3); padding-bottom: 3px;
+  transition: color .3s;
+}
+.commission-email:hover { color: var(--washi); }
+.commission-note {
+  font-family: var(--font-sans); font-size: 11px;
+  color: var(--muted); margin-top: 16px; font-weight: 300;
+}
+
+/* ── Footer ── */
+#footer {
+  background: var(--surface);
+  padding: 72px 48px 36px;
+  border-top: 1px solid rgba(184,168,130,0.1);
+}
+.footer-grid {
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 56px; max-width: 1200px; margin: 0 auto 48px;
+}
+.footer-brand {
+  font-family: var(--font-display); font-size: 18px;
+  letter-spacing: 0.2em; color: var(--washi); margin-bottom: 4px;
+}
+.footer-jp {
+  font-family: var(--font-jp); font-size: 13px;
+  color: var(--brass); margin-bottom: 12px;
+}
+.footer-about {
+  font-family: var(--font-sans); font-size: 12px;
+  color: var(--muted); line-height: 1.7; font-weight: 300;
+}
+.footer-col-title {
+  font-family: var(--font-sans); font-size: 9px;
+  letter-spacing: 0.4em; color: var(--brass); text-transform: uppercase; margin-bottom: 18px;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 8px; }
+.footer-links a {
+  font-family: var(--font-sans); font-size: 12px;
+  color: var(--muted); text-decoration: none; font-weight: 300; transition: color .3s;
+}
+.footer-links a:hover { color: var(--washi); }
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto;
+  border-top: 1px solid rgba(154,144,128,0.12); padding-top: 20px;
+  display: flex; justify-content: space-between;
+}
+.footer-legal {
+  font-family: var(--font-sans); font-size: 10px;
+  color: var(--muted); font-weight: 300;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .collection-grid { grid-template-columns: 1fr 1fr; }
+  .age-header { grid-template-columns: 1fr; }
+  .masters-grid { grid-template-columns: 1fr 1fr; }
+  .ceramics-grid { grid-template-columns: 1fr; gap: 40px; }
+  .ceramics-img-wrap { height: 320px; }
+  .seasons-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  #navbar { padding: 16px 24px; }
+  .nav-links { display: none; }
+  #philosophy, #collection, #age-tree, #masters, #ceramics, #process, #commission { padding: 80px 24px; }
+  .collection-grid, .masters-grid { grid-template-columns: 1fr; }
+  .specimen-card:nth-child(even) { transform: none; }
+  .seasons-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  #scroll-indicator { display: none; }
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg { animation: none; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div id="pre-kanji">静命</div>
+  <div id="pre-line"></div>
+  <div id="pre-brand">Seimei-an</div>
+  <div id="pre-sub">Bonsai Studio · Kyoto · Est. 1887</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="si-dots" id="si-dots"></div>
+  <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-lbl" id="si-lbl">GENESIS</div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">Seimei-an <span>静命庵</span></a>
+  <ul class="nav-links">
+    <li><a href="#collection">Collection</a></li>
+    <li><a href="#masters">Masters</a></li>
+    <li><a href="#ceramics">Ceramics</a></li>
+    <li><a href="#process">Seasons</a></li>
+  </ul>
+  <a class="nav-commission" href="#commission">Commission</a>
+</nav>
+
+<!-- Hero -->
+<section id="hero" data-section="GENESIS">
+  <div class="hero-bg" id="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-kanji">静命庵</div>
+    <h1 class="hero-title" id="hero-title">Seimei-an</h1>
+    <p class="hero-tagline" id="hero-tagline">Shaped by centuries. Alive in your hands.</p>
+    <div class="hero-btns" id="hero-btns">
+      <a class="btn-brass" href="#collection">The Collection</a>
+      <a class="btn-outline" href="#age-tree">One Tree</a>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section id="philosophy" data-section="PHILOSOPHY">
+  <div class="phil-inner">
+    <div class="phil-kanji">侘寂</div>
+    <div class="section-eyebrow">Wabi-Sabi</div>
+    <p class="phil-text" id="phil-text">
+      A bonsai is not a small tree. It is a conversation between a cultivator and an organism, conducted across generations in a language of wire, water, and restraint.
+    </p>
+    <p class="phil-sub">At Seimei-an, we do not grow trees. We hold them — passing the care of each specimen from one generation of hands to the next, across decades and centuries. The oldest tree in our care germinated in 1843. Three families have shaped it. None of them own it.</p>
+  </div>
+</section>
+
+<!-- Stats -->
+<section id="stats" data-section="FIGURES">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num">1887</div>
+      <div class="stat-lbl">Studio Founded</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">180 Yr</div>
+      <div class="stat-lbl">Oldest Specimen</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">47</div>
+      <div class="stat-lbl">Living Specimens</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">4 Gen</div>
+      <div class="stat-lbl">Artisan Lineage</div>
+    </div>
+  </div>
+</section>
+
+<!-- Collection -->
+<section id="collection" data-section="COLLECTION">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="section-eyebrow">The Specimens</div>
+    <h2 class="section-title">Living sculptures.<br>Centuries old.</h2>
+  </div>
+  <div class="collection-grid">
+    <div class="specimen-card">
+      <img class="specimen-img" src="https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&q=80&auto=format&fit=crop" alt="Pine">
+      <div class="specimen-info">
+        <div class="specimen-age">Est. 1843 · 180 Years</div>
+        <div class="specimen-name">The Patriarch Pine</div>
+        <div class="specimen-species">Pinus thunbergii · Shakan style</div>
+      </div>
+      <div class="specimen-overlay">
+        <div class="ov-lineage">Shimane Prefecture · Three Lineages of Care</div>
+        <div class="ov-desc">Germinated before the Meiji Restoration. Survived three generations of storms. Currently not available for commission.</div>
+        <div class="ov-status">Archive Specimen</div>
+      </div>
+    </div>
+    <div class="specimen-card">
+      <img class="specimen-img" src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800&q=80&auto=format&fit=crop" alt="Maple">
+      <div class="specimen-info">
+        <div class="specimen-age">Est. 1921 · 103 Years</div>
+        <div class="specimen-name">Autumn Maple</div>
+        <div class="specimen-species">Acer palmatum · Moyogi style</div>
+      </div>
+      <div class="specimen-overlay">
+        <div class="ov-lineage">Nara Prefecture · Two Generations</div>
+        <div class="ov-desc">Autumn crimson. The tree that decided it would be extraordinary without assistance. Still does.</div>
+        <div class="ov-status">Available for Commission Care</div>
+      </div>
+    </div>
+    <div class="specimen-card">
+      <img class="specimen-img" src="https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=800&q=80&auto=format&fit=crop" alt="Juniper">
+      <div class="specimen-info">
+        <div class="specimen-age">Est. 1956 · 68 Years</div>
+        <div class="specimen-name">Coast Juniper</div>
+        <div class="specimen-species">Juniperus chinensis · Cascade</div>
+      </div>
+      <div class="specimen-overlay">
+        <div class="ov-lineage">Collected Wild · Izumo Coast</div>
+        <div class="ov-desc">Wild-collected from coastal cliffs. The sea is visible in its lean. Currently in final shaping phase.</div>
+        <div class="ov-status">Commission Available — 2026</div>
+      </div>
+    </div>
+    <div class="specimen-card">
+      <img class="specimen-img" src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="Elm">
+      <div class="specimen-info">
+        <div class="specimen-age">Est. 1972 · 52 Years</div>
+        <div class="specimen-name">Chinese Elm</div>
+        <div class="specimen-species">Ulmus parvifolia · Broom style</div>
+      </div>
+      <div class="specimen-overlay">
+        <div class="ov-lineage">Beijing Origin · Single Lineage</div>
+        <div class="ov-desc">The finest broom form in the studio. A tree that chose symmetry and has never deviated from it.</div>
+        <div class="ov-status">Enquire for Details</div>
+      </div>
+    </div>
+    <div class="specimen-card">
+      <img class="specimen-img" src="https://images.unsplash.com/photo-1512438248247-f0f2a5a8b7f0?w=800&q=80&auto=format&fit=crop" alt="Ficus">
+      <div class="specimen-info">
+        <div class="specimen-age">Est. 1998 · 26 Years</div>
+        <div class="specimen-name">Banyan Ficus</div>
+        <div class="specimen-species">Ficus microcarpa · Aerial roots</div>
+      </div>
+      <div class="specimen-overlay">
+        <div class="ov-lineage">Okinawa Cultivated · Studio Origin</div>
+        <div class="ov-desc">Twenty-six years of coaxing roots toward an imagined shore. Available for private stewardship.</div>
+        <div class="ov-status">Available</div>
+      </div>
+    </div>
+    <div class="specimen-card">
+      <img class="specimen-img" src="https://images.pexels.com/photos/3769747/pexels-photo-3769747.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Commission">
+      <div class="specimen-info">
+        <div class="specimen-age">Your Commission · From First Wire</div>
+        <div class="specimen-name">Your Tree</div>
+        <div class="specimen-species">Species, style, vessel — your choice</div>
+      </div>
+      <div class="specimen-overlay">
+        <div class="ov-lineage">Bespoke Commission</div>
+        <div class="ov-desc">Begin from raw stock, or adopt a young specimen. We shape it. You name it. Decades later, you hold what patience made.</div>
+        <div class="ov-status">Begin a Conversation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Age — single tree ── -->
+<section id="age-tree" data-section="THE AGE">
+  <div class="age-inner">
+    <div class="section-eyebrow">One Tree · 180 Years</div>
+    <h2 class="section-title" style="margin-bottom:48px">The life of a pine.</h2>
+    <div class="age-header">
+      <div class="age-img-wrap">
+        <img class="age-img" id="age-img"
+          src="https://images.pexels.com/photos/1279813/pexels-photo-1279813.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Old pine">
+      </div>
+      <div class="age-milestone-list sr">
+        <div class="age-milestone sr">
+          <div class="age-year">1843</div>
+          <div class="age-event">
+            <div class="age-event-title">Germination</div>
+            <div class="age-event-text">A seed falls on the hillside above Shimane. No one plants it. It decides.</div>
+          </div>
+        </div>
+        <div class="age-milestone sr">
+          <div class="age-year">1891</div>
+          <div class="age-event">
+            <div class="age-event-title">First Collection</div>
+            <div class="age-event-text">Collected by Ito Fumio, founder's father. Placed in a wood tray. The first shaping begins.</div>
+          </div>
+        </div>
+        <div class="age-milestone sr">
+          <div class="age-year">1944</div>
+          <div class="age-event">
+            <div class="age-event-title">The Waiting</div>
+            <div class="age-event-text">Studio evacuated during wartime. The tree survives in a cellar, untended, for two years. It does not break.</div>
+          </div>
+        </div>
+        <div class="age-milestone sr">
+          <div class="age-year">1988</div>
+          <div class="age-event">
+            <div class="age-event-title">The Exhibition</div>
+            <div class="age-event-text">Displayed at the Kokufu Bonsai Exhibition, Tokyo. Receives the highest award. Refuses no comment.</div>
+          </div>
+        </div>
+        <div class="age-milestone sr">
+          <div class="age-year">2024</div>
+          <div class="age-event">
+            <div class="age-event-title">Present Day</div>
+            <div class="age-event-text">Still in care at Seimei-an. Shaped by seven pairs of hands across four generations. Not for sale. Never.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Masters -->
+<section id="masters" data-section="MASTERS">
+  <div class="masters-inner">
+    <div class="masters-header">
+      <div class="section-eyebrow">The Cultivators</div>
+      <h2 class="section-title">Four generations.<br>One discipline.</h2>
+    </div>
+    <div class="masters-grid">
+      <div class="master-card">
+        <div class="master-img-wrap">
+          <img class="master-img" src="https://images.pexels.com/photos/2122361/pexels-photo-2122361.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Master">
+        </div>
+        <div class="master-info">
+          <div class="master-role">Founding Master · 1887–1932</div>
+          <div class="master-name">Ito Seimei</div>
+          <p class="master-bio">Trained in the Meiji-era schools of Kyoto. Established the studio on the principle that a bonsai begins with listening, not shaping. He never held wire in his first year with any tree.</p>
+        </div>
+      </div>
+      <div class="master-card">
+        <div class="master-img-wrap">
+          <img class="master-img" src="https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=800&q=80&auto=format&fit=crop" alt="Master">
+        </div>
+        <div class="master-info">
+          <div class="master-role">Head Cultivator · Current</div>
+          <div class="master-name">Ito Kenji</div>
+          <p class="master-bio">Fourth generation. Spent three years studying in Saitama under the Omiya school before returning to Kyoto. His wire cuts are described as "the minimum necessary and no more."</p>
+        </div>
+      </div>
+      <div class="master-card">
+        <div class="master-img-wrap">
+          <img class="master-img" src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&q=80&auto=format&fit=crop" alt="Studio">
+        </div>
+        <div class="master-info">
+          <div class="master-role">The Studio · Kyoto</div>
+          <div class="master-name">Seimei-an Atelier</div>
+          <p class="master-bio">A 140-year-old wooden structure in the hills east of Kyoto. The studio floor is original. The tools hang in the order Ito Seimei placed them in 1887. Nothing has moved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Ceramics -->
+<section id="ceramics" data-section="CERAMICS">
+  <div class="ceramics-inner">
+    <div class="section-eyebrow">The Vessels</div>
+    <h2 class="section-title">The vessel is half<br>of the conversation.</h2>
+    <div class="ceramics-grid">
+      <div class="ceramics-img-wrap">
+        <img class="ceramics-img" id="ceramics-img"
+          src="https://images.pexels.com/photos/1785493/pexels-photo-1785493.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Ceramic vessel">
+      </div>
+      <div class="ceramics-copy">
+        <p class="ceramics-text">The pot is not a container. It is a statement about the tree — its age, its character, its relationship to formality. Seimei-an commissions all vessels from three Kyoto potters who have worked with the studio for over four decades. No pot is used for more than one tree.</p>
+        <div class="ceramics-types">
+          <div class="clay-item">
+            <div class="clay-name">Tokoname Stoneware</div>
+            <div class="clay-desc">Iron-rich clay from Aichi Prefecture. Develops a patina over decades. Used for the oldest, most formal specimens where the vessel must age alongside the tree.</div>
+          </div>
+          <div class="clay-item">
+            <div class="clay-name">Bizen Ware (Unglazed)</div>
+            <div class="clay-desc">Fire-marked, never glazed. Each piece bears the unique signature of its kiln placement. Reserved for informal, naturalistic styles where the vessel's imperfection complements the tree's wildness.</div>
+          </div>
+          <div class="clay-item">
+            <div class="clay-name">Shino Glaze</div>
+            <div class="clay-desc">Thick, cloud-white glaze with iron-fire markings. Used for flowering species — plum, quince — where the vessel grounds the seasonal drama of the tree above it.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process Seasons -->
+<section id="process" data-section="SEASONS">
+  <div class="process-inner">
+    <div class="section-eyebrow">The Discipline</div>
+    <h2 class="section-title">Work follows the seasons.<br>Never the schedule.</h2>
+    <div class="seasons-grid">
+      <div class="season-card">
+        <img class="season-img" src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80&auto=format&fit=crop" alt="Spring">
+        <div class="season-overlay">
+          <div class="season-jp">春</div>
+          <div class="season-en">Spring</div>
+          <div class="season-text">Repotting. Root pruning. The tree's one tolerance of radical intervention, permitted only while energy is rising toward the new shoots.</div>
+        </div>
+      </div>
+      <div class="season-card">
+        <img class="season-img" src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Summer">
+        <div class="season-overlay">
+          <div class="season-jp">夏</div>
+          <div class="season-en">Summer</div>
+          <div class="season-text">Wiring. Shaping. The long, deliberate conversations with the branch. The work that will take five seasons to show its results.</div>
+        </div>
+      </div>
+      <div class="season-card">
+        <img class="season-img" src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Autumn">
+        <div class="season-overlay">
+          <div class="season-jp">秋</div>
+          <div class="season-en">Autumn</div>
+          <div class="season-text">Wire removal before bark sets. Observation. The season of correction — most commonly of our own previous decisions.</div>
+        </div>
+      </div>
+      <div class="season-card">
+        <img class="season-img" src="https://images.pexels.com/photos/3769747/pexels-photo-3769747.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Winter">
+        <div class="season-overlay">
+          <div class="season-jp">冬</div>
+          <div class="season-en">Winter</div>
+          <div class="season-text">Dormancy. Structural assessment. The season that reveals the tree's true skeleton — and our previous year's quality of judgment.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Commission -->
+<section id="commission" data-section="COMMISSION">
+  <div class="commission-inner">
+    <div class="section-eyebrow" style="text-align:center">Private Commission</div>
+    <h2 class="commission-title">An invitation<br>to patience.</h2>
+    <p class="commission-text">Seimei-an accepts a maximum of five new commission partnerships per year. Each begins with a conversation about time — how much you are willing to give, what you hope to hold in ten or twenty years. We do not take commissions from those who are in a hurry.</p>
+    <a class="commission-email" href="mailto:commission@seimeian.jp">commission@seimeian.jp</a>
+    <p class="commission-note">We respond personally to every enquiry. Usually within the week.</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Seimei-an</div>
+      <div class="footer-jp">静命庵</div>
+      <p class="footer-about">Bonsai studio and living sculpture archive. Est. 1887, Kyoto. Four generations of the Ito family — all fictional. 47 specimens in active care — all imagined. A design demonstration, nothing more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title sr">The Collection</div>
+      <ul class="footer-links">
+        <li><a href="#">The Patriarch Pine · 180yr</a></li>
+        <li><a href="#">Autumn Maple · 103yr</a></li>
+        <li><a href="#">Coast Juniper · 68yr</a></li>
+        <li><a href="#">Chinese Elm · 52yr</a></li>
+        <li><a href="#">Banyan Ficus · 26yr</a></li>
+        <li><a href="#">Commission a Tree</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title sr">The Studio</div>
+      <ul class="footer-links">
+        <li><a href="#">The Discipline</a></li>
+        <li><a href="#">The Vessels</a></li>
+        <li><a href="#">The Masters</a></li>
+        <li><a href="#">The Journal</a></li>
+        <li><a href="#">Visit the Studio</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title sr">Locations</div>
+      <ul class="footer-links">
+        <li><a href="#">Kyoto — Main Studio</a></li>
+        <li><a href="#">Tokyo — Gallery</a></li>
+        <li><a href="#">London — Exhibition Space</a></li>
+        <li><a href="#">commission@seimeian.jp</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2024 Seimei-an. All rights reserved.</div>
+    <div class="footer-legal">A fictional bonsai studio for design purposes.</div>
+  </div>
+</footer>
+
+<script>
+  
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  const sections = [
+    { id: 'hero', label: 'GENESIS' }, { id: 'philosophy', label: 'WABI-SABI' },
+    { id: 'stats', label: 'FIGURES' }, { id: 'collection', label: 'COLLECTION' },
+    { id: 'age-tree', label: 'THE AGE' }, { id: 'masters', label: 'MASTERS' },
+    { id: 'ceramics', label: 'CERAMICS' }, { id: 'process', label: 'SEASONS' },
+    { id: 'commission', label: 'COMMISSION' }, { id: 'footer', label: 'CONTACT' },
+  ];
+
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function anim() {
+    rx += (mx - rx) * 0.1; ry += (my - ry) * 0.1;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px';
+    requestAnimationFrame(anim);
+  })();
+
+  // Hero parallax
+  const heroBg = document.getElementById('hero-bg');
+  document.addEventListener('mousemove', e => {
+    const dx = (e.clientX / window.innerWidth - 0.5) * 12;
+    const dy = (e.clientY / window.innerHeight - 0.5) * 7;
+    heroBg.style.transform = `scale(1.07) translate(${dx}px,${dy}px)`;
+  });
+
+  // Preloader
+  const preloader = document.getElementById('preloader');
+  const tlp = gsap.timeline({
+    onComplete: () => {
+      gsap.to(preloader, { opacity: 0, duration: 0.7, onComplete: () => {
+        preloader.style.display = 'none';
+        document.getElementById('scroll-indicator').classList.add('visible');
+        initPage();
+      }});
+    }
+  });
+  tlp.to('#pre-kanji', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' })
+     .to('#pre-line', { width: 120, duration: 1.0, ease: 'power2.inOut' }, '-=0.1')
+     .to('#pre-brand', { opacity: 1, duration: 1.0 }, '-=0.2')
+     .to('#pre-sub', { opacity: 1, duration: 1.0 }, '-=0.2')
+     .to({}, { duration: 0.8 });
+
+  setTimeout(() => {
+    if (preloader.style.display !== 'none') {
+      preloader.style.display = 'none';
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }
+  }, 4000);
+
+  // Scroll indicator
+  const siDotsEl = document.getElementById('si-dots');
+  const siFill = document.getElementById('si-fill');
+  const siLbl = document.getElementById('si-lbl');
+  const dots = sections.map((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'si-dot'; d.title = s.label;
+    d.addEventListener('click', () => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' }));
+    siDotsEl.appendChild(d); return d;
+  });
+  if (dots.length) dots[0].classList.add('active');
+  let cur = 0;
+  window.addEventListener('scroll', () => {
+    const prog = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    siFill.style.height = Math.min(prog * 100, 100) + '%';
+    let found = 0;
+    sections.forEach((s, i) => {
+      const el = document.getElementById(s.id);
+      if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.5) found = i;
+    });
+    if (found !== cur) {
+      cur = found;
+      dots.forEach((d, i) => d.classList.toggle('active', i === found));
+      siLbl.textContent = sections[found]?.label || '';
+    }
+  });
+
+  // Navbar
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  function initPage() {
+    gsap.from('#hero-title', { y: 24, opacity: 0, duration: 1.2, ease: 'power2.out', immediateRender: false, delay: 0.1 });
+    gsap.from('#hero-tagline', { y: 30, opacity: 0, duration: 1, ease: 'power2.out', immediateRender: false, delay: 0.4 });
+    gsap.from('#hero-btns', { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false, delay: 0.7 });
+
+    gsap.from('#phil-text, .phil-sub, .phil-kanji', {
+      y: 24, opacity: 0, stagger: 0.1, duration: 1, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy', start: 'top 75%', once: true }
+    });
+
+    gsap.from('.stat-item', {
+      y: 30, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#stats', start: 'top 80%', once: true }
+    });
+
+    gsap.from('.specimen-card', {
+      y: 24, opacity: 0, stagger: 0.1, duration: 0.9, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#collection', start: 'top 75%', once: true }
+    });
+
+    gsap.to('#age-img', {
+      yPercent: -8, ease: 'none', immediateRender: false,
+      scrollTrigger: { trigger: '#age-tree', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+    gsap.from('.age-milestone', {
+      x: 20, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#age-tree', start: 'top 75%', once: true }
+    });
+
+    gsap.from('.master-card', {
+      y: 24, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#masters', start: 'top 75%', once: true }
+    });
+
+    gsap.to('#ceramics-img', {
+      yPercent: -10, ease: 'none', immediateRender: false,
+      scrollTrigger: { trigger: '#ceramics', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+    gsap.from('.clay-item', {
+      y: 20, opacity: 0, stagger: 0.1, duration: 0.7, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#ceramics', start: 'top 75%', once: true }
+    });
+
+    gsap.from('.season-card', {
+      y: 24, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 75%', once: true }
+    });
+
+    gsap.from('.commission-inner > *', {
+      y: 30, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true }
+    });
+  }
+</script>
+</body>
+</html>

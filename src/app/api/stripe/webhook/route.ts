@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
       const invoiceId = String(invoice.id || "");
 
       if (stripeSubscriptionId && invoiceId) {
-        const { userId, plan, planConfig } = await upsertSubscriptionFromStripe(
+        const { userId, plan } = await upsertSubscriptionFromStripe(
           stripeSubscriptionId
         );
 

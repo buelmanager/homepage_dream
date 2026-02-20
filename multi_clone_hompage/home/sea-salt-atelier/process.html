@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Process — Salinae Atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:wght@200;300;400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  --bg: #151C22; --surface: #1D2830; --surface-2: #253340;
+  --tide: #4A8FA8; --tide-light: #7DBDD6; --salt: #E8EDF0;
+  --muted: #6A8496; --deep: #0D1318;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-heading: 'Raleway', sans-serif; --font-sans: 'Inter', sans-serif;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--salt); font-family: var(--font-sans); overflow-x: hidden; cursor: none; }
+#cursor { position: fixed; width: 8px; height: 8px; background: var(--tide-light); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); }
+#cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(74,143,168,0.45); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: transform 0.4s ease; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 1.5rem 4rem; display: flex; align-items: center; justify-content: space-between; background: rgba(13,19,24,0.92); backdrop-filter: blur(16px); }
+.nav-logo { font-family: var(--font-display); font-size: 1.3rem; font-style: italic; font-weight: 300; color: var(--salt); text-decoration: none; }
+.nav-logo sup { font-size: 0.5rem; font-style: normal; color: var(--tide); letter-spacing: 0.3em; font-family: var(--font-sans); text-transform: uppercase; vertical-align: super; margin-left: 4px; }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a { font-family: var(--font-heading); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 300; color: var(--muted); text-decoration: none; position: relative; transition: color 0.3s; }
+.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--tide-light); transition: width 0.3s; }
+.nav-links a:hover, .nav-links a.active { color: var(--salt); }
+.nav-links a.active::after, .nav-links a:hover::after { width: 100%; }
+.nav-cta { font-family: var(--font-heading); font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 300; color: var(--bg); background: var(--tide); border: none; padding: 0.65rem 1.6rem; cursor: pointer; text-decoration: none; transition: background 0.3s; }
+.nav-cta:hover { background: var(--tide-light); }
+
+.page-banner { position: relative; height: 50vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.banner-bg { position: absolute; inset: 0; background-image: url('https://images.pexels.com/photos/357573/pexels-photo-357573.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80'); background-size: cover; background-position: center; }
+.banner-overlay { position: absolute; inset: 0; background: rgba(13,19,24,0.58); }
+.banner-content { position: relative; z-index: 2; text-align: center; }
+.banner-overline { font-family: var(--font-heading); font-size: 0.6rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--tide); display: block; margin-bottom: 1rem; font-weight: 300; }
+.banner-title { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 300; font-style: italic; color: var(--salt); }
+.banner-title em { font-style: normal; color: var(--tide-light); }
+
+section { padding: 7rem 6rem; }
+.section-header { text-align: center; margin-bottom: 5rem; }
+.section-overline { font-family: var(--font-heading); font-size: 0.6rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--tide); display: block; margin-bottom: 1rem; font-weight: 300; }
+.section-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; color: var(--salt); }
+.section-title em { font-style: italic; color: var(--tide-light); }
+.section-rule { width: 60px; height: 1px; background: var(--tide); margin: 1.5rem auto 0; }
+
+#process-steps { background: var(--bg); }
+.steps-wrap { max-width: 800px; margin: 0 auto; position: relative; }
+.steps-wrap::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, var(--tide) 10%, var(--tide) 90%, transparent); }
+.step-row { display: flex; gap: 3rem; padding-bottom: 5rem; }
+.step-row:last-child { padding-bottom: 0; }
+.step-icon { flex-shrink: 0; width: 56px; height: 56px; background: var(--surface); border: 1px solid var(--tide); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.1rem; font-style: italic; color: var(--tide); position: relative; z-index: 1; font-weight: 300; }
+.step-info {}
+.step-label { font-family: var(--font-heading); font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--tide); display: block; margin-bottom: 0.5rem; font-weight: 300; }
+.step-name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 300; font-style: italic; color: var(--salt); margin-bottom: 0.75rem; }
+.step-desc { font-size: 0.8rem; line-height: 2; color: var(--muted); margin-bottom: 0.75rem; }
+.step-note { font-size: 0.72rem; color: rgba(74,143,168,0.7); font-style: italic; }
+
+#materials { background: var(--surface); }
+.mat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+.mat-card { border: 1px solid rgba(74,143,168,0.1); padding: 2rem; text-align: center; transition: border-color 0.3s; }
+.mat-card:hover { border-color: rgba(74,143,168,0.3); }
+.mat-glyph { font-family: var(--font-display); font-size: 2rem; font-style: italic; color: var(--tide); margin-bottom: 1rem; display: block; font-weight: 300; }
+.mat-name { font-family: var(--font-display); font-size: 1.05rem; font-style: italic; font-weight: 300; color: var(--salt); margin-bottom: 0.5rem; }
+.mat-desc { font-size: 0.72rem; line-height: 1.8; color: var(--muted); }
+
+#gallery { background: var(--bg); padding-bottom: 0; }
+.gallery-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 280px 280px; gap: 4px; }
+.gallery-item { overflow: hidden; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-item:first-child { grid-row: span 2; }
+
+#proc-cta { background: var(--surface); text-align: center; }
+.cta-text { font-family: var(--font-display); font-size: clamp(1.8rem,3vw,2.5rem); font-style: italic; font-weight: 300; color: var(--salt); max-width: 650px; margin: 0 auto 3rem; line-height: 1.6; }
+.cta-text em { font-style: normal; color: var(--tide-light); }
+.cta-actions { display: flex; gap: 1.5rem; justify-content: center; }
+.btn-primary { font-family: var(--font-heading); font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 300; color: var(--bg); background: var(--tide); border: 1px solid var(--tide); padding: 1rem 2.2rem; cursor: pointer; text-decoration: none; transition: all 0.3s; display: inline-block; }
+.btn-primary:hover { background: transparent; color: var(--tide); }
+.btn-ghost { font-family: var(--font-heading); font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 300; color: var(--salt); background: transparent; border: 1px solid rgba(232,237,240,0.25); padding: 1rem 2.2rem; cursor: pointer; text-decoration: none; transition: all 0.3s; display: inline-block; }
+.btn-ghost:hover { border-color: var(--tide-light); color: var(--tide-light); }
+
+footer { background: var(--bg); border-top: 1px solid rgba(74,143,168,0.12); padding: 3rem 6rem; display: flex; justify-content: space-between; align-items: center; }
+.footer-logo { font-family: var(--font-display); font-size: 1.1rem; font-style: italic; font-weight: 300; color: var(--salt); }
+.footer-copy { font-size: 0.65rem; color: var(--muted); }
+.footer-nav { display: flex; gap: 2rem; }
+.footer-nav a { font-family: var(--font-heading); font-size: 0.65rem; color: var(--muted); text-decoration: none; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; font-weight: 300; }
+.footer-nav a:hover { color: var(--salt); }
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<nav>
+  <a href="index.html" class="nav-logo">Salinae<sup>Atelier</sup></a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Collection</a></li>
+    <li><a href="process.html" class="active">Process</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="collection.html" class="nav-cta">Explore Collection</a>
+</nav>
+
+<div class="page-banner">
+  <div class="banner-bg"></div>
+  <div class="banner-overlay"></div>
+  <div class="banner-content">
+    <span class="banner-overline">The Method</span>
+    <h1 class="banner-title">Ocean to <em>Crystal</em> in Five Stages</h1>
+  </div>
+</div>
+
+<section id="process-steps">
+  <div class="section-header">
+    <span class="section-overline">The Gradient System</span>
+    <h2 class="section-title">Five Stages of <em>Tidal Alchemy</em></h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="steps-wrap">
+    <div class="step-row sr">
+      <div class="step-icon sr">1</div>
+      <div class="step-info sr">
+        <span class="step-label sr">Stage One — Spring Tide</span>
+        <h3 class="step-name sr">Deep Ocean Water Selection</h3>
+        <p class="step-desc sr">We intake seawater exclusively during spring tides — the highest tidal events of the lunar cycle — when ocean currents draw water up from deeper, more mineralically dense layers. At the Atlantic site, intake occurs at dawn on the three days of maximum spring tide, typically in June or July.</p>
+        <span class="step-note sr">Spring tides occur approximately twice per lunar month. We use only the highest 3 days per year.</span>
+      </div>
+    </div>
+    <div class="step-row sr">
+      <div class="step-icon sr">2</div>
+      <div class="step-info sr">
+        <span class="step-label sr">Stage Two — Weeks 1–3</span>
+        <h3 class="step-name sr">Sequential Twelve-Pond Concentration</h3>
+        <p class="step-desc sr">Water moves by gravity through twelve evaporation ponds, each maintained at a progressively higher salinity. Early ponds precipitate out calcium and magnesium carbonates — desirable removal. The remaining brine, by pond seven, has concentrated its sodium, potassium, and trace minerals into an increasingly saturated solution approaching 25% salinity.</p>
+        <span class="step-note sr">Typical progression time: 18–25 days, weather dependent</span>
+      </div>
+    </div>
+    <div class="step-row sr">
+      <div class="step-icon sr">3</div>
+      <div class="step-info sr">
+        <span class="step-label sr">Stage Three — The Wait</span>
+        <h3 class="step-name sr">Solar Crystallisation in the Final Pond</h3>
+        <p class="step-desc sr">When brine reaches 300g/L salinity in the final pond, crystallisation begins. We monitor the surface daily. Ideal conditions — temperature above 28°C, humidity below 65%, wind from the west — produce flat, pyramidal fleur de sel crystals on the surface. We do not intervene. We do not shade, fan, or heat the ponds. We wait.</p>
+        <span class="step-note sr">Crystallisation window: 7–21 days. Timing determined by crystal quality under hand lens, not calendar.</span>
+      </div>
+    </div>
+    <div class="step-row sr">
+      <div class="step-icon sr">4</div>
+      <div class="step-info sr">
+        <span class="step-label sr">Stage Four — Dawn Harvest</span>
+        <h3 class="step-name sr">Hand-Raking Before the Heat</h3>
+        <p class="step-desc sr">Harvest begins at 5:30am. The paludier enters the pond on wooden walkways and uses a 3-metre wooden rake to draw surface crystals towards a central collection point in a single, slow, even motion. The fleur de sel — the finest crystals from the very surface — is skimmed separately by hand using a traditional lousse, a flat wooden paddle. Each movement is unhurried. There is no quota.</p>
+        <span class="step-note sr">Harvest window: approximately 90 minutes per pond, per day</span>
+      </div>
+    </div>
+    <div class="step-row sr">
+      <div class="step-icon sr">5</div>
+      <div class="step-info sr">
+        <span class="step-label sr">Stage Five — Atelier</span>
+        <h3 class="step-name sr">Air Drying, Sorting, and Hand-Packing</h3>
+        <p class="step-desc sr">Harvested crystals are spread on slate drying beds in the open air for 24–48 hours. Sorting follows: each batch is examined under a 10x hand lens, with irregular formations removed and oversized clusters broken by hand. Porcelain vessels are filled on a precision scale, sealed with corks and natural resin, and labelled with the harvest date, pond number, and paludier's personal mark.</p>
+        <span class="step-note sr">Average per-vessel handling time: 6 minutes</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="materials">
+  <div class="section-header">
+    <span class="section-overline">Tools of the Paludier</span>
+    <h2 class="section-title">Instruments of <em>Restraint</em></h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="mat-grid">
+    <div class="mat-card">
+      <span class="mat-glyph">⊕</span>
+      <h3 class="mat-name">The Ladoue Rake</h3>
+      <p class="mat-desc">A 3-metre wooden rake with a flat, wide-toothed stainless head, used for drawing coarse salt from pond bottoms. Custom-made in our workshop to match the specific pond dimensions of each site.</p>
+    </div>
+    <div class="mat-card">
+      <span class="mat-glyph">◡</span>
+      <h3 class="mat-name">The Lousse</h3>
+      <p class="mat-desc">A flat, curved wooden paddle used exclusively for skimming fleur de sel from the water surface. Must be moved at 2cm per second maximum — any faster disturbs the surface and breaks the crystals.</p>
+    </div>
+    <div class="mat-card">
+      <span class="mat-glyph">▣</span>
+      <h3 class="mat-name">Slate Drying Beds</h3>
+      <p class="mat-desc">Traditional Breton slate tiles, slightly angled, on which freshly harvested crystals dry in the coastal breeze. Slate is chosen for its thermal neutrality — it neither heats nor cools the crystals during drying.</p>
+    </div>
+    <div class="mat-card">
+      <span class="mat-glyph">◎</span>
+      <h3 class="mat-name">Porcelain Vessels</h3>
+      <p class="mat-desc">Hand-thrown porcelain vessels, fired in Limoges, with a natural celadon interior glaze. Chosen for mineral neutrality — no lead, no barium. Salt stored in porcelain never tastes of its container.</p>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <img src="https://images.pexels.com/photos/949587/pexels-photo-949587.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Salt ponds">
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?w=800&q=80&auto=format&fit=crop" alt="Crystal harvest">
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.pexels.com/photos/357573/pexels-photo-357573.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Sorting">
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Bottling">
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1547136456-8b2e40f5e7b8?w=800&q=80&auto=format&fit=crop" alt="Final product">
+    </div>
+  </div>
+</section>
+
+<section id="proc-cta">
+  <p class="cta-text">Now that you understand the method, discover the result it produces.</p>
+  <div class="cta-actions">
+    <a href="collection.html" class="btn-primary">View the Collection</a>
+    <a href="contact.html" class="btn-ghost">Request an Enquiry</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">Salinae</span>
+  <nav class="footer-nav">
+    <a href="about.html">About</a>
+    <a href="collection.html">Collection</a>
+    <a href="process.html">Process</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <span class="footer-copy">&copy; 2024 Salinae Atelier</span>
+</footer>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  gsap.set(cursor, { x: e.clientX, y: e.clientY });
+  gsap.to(ring, { duration: 1.0, x: e.clientX, y: e.clientY });
+});
+gsap.from('.banner-content', { duration: 1.2, y: 24, opacity: 0, delay: 0.3, ease: 'power2.out', immediateRender: false });
+gsap.from('.step-row', { scrollTrigger: { trigger: '#process-steps', start: 'top 70%' }, duration: 0.7, x: -30, opacity: 0, stagger: 0.15, ease: 'power2.out', immediateRender: false });
+gsap.from('.mat-card', { scrollTrigger: { trigger: '#materials', start: 'top 70%' }, duration: 0.7, y: 30, opacity: 0, stagger: 0.12, ease: 'power2.out', immediateRender: false });
+gsap.from('.gallery-item', { scrollTrigger: { trigger: '#gallery', start: 'top 70%' }, duration: 0.8, scale: 0.95, opacity: 0, stagger: 0.1, ease: 'power2.out', immediateRender: false });
+gsap.from('.cta-text', { scrollTrigger: { trigger: '#proc-cta', start: 'top 70%' }, duration: 1, y: 30, opacity: 0, ease: 'power2.out', immediateRender: false });
+</script>
+</body>
+</html>

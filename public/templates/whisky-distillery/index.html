@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cragmòr — Born in Fire. Rested in Stone.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+/* SplitText polyfill — replaces Club GSAP premium plugin (not on CDN) */
+class SplitText {
+  constructor(target, opts = {}) {
+    const el = typeof target === 'string'
+      ? document.querySelector(target)
+      : (target instanceof Element ? target : null);
+    this.chars = []; this.words = []; this.lines = [];
+    if (!el) return;
+    this._el = el;
+    const type = (opts.type || 'chars,words').toLowerCase();
+    const original = el.textContent;
+    el.setAttribute('data-split-orig', original);
+    if (type.includes('chars')) {
+      el.innerHTML = original.split('').map(c =>
+        c === ' '
+          ? '<span class="char" style="display:inline-block">&nbsp;</span>'
+          : `<span class="char" style="display:inline-block">${c}</span>`
+      ).join('');
+      this.chars = Array.from(el.querySelectorAll('.char'));
+    } else if (type.includes('words')) {
+      el.innerHTML = original.split(/\s+/).filter(Boolean).map(w =>
+        `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`
+      ).join('');
+      this.words = Array.from(el.querySelectorAll('.word'));
+    }
+    this.lines = [el];
+  }
+  revert() {
+    if (this._el) {
+      const orig = this._el.getAttribute('data-split-orig');
+      if (orig) this._el.textContent = orig;
+    }
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<style>
+:root {
+  --bg: #221A13;
+  --surface: #2A2118;
+  --surface-2: #332719;
+  --copper: #B5702A;
+  --amber: #D4A240;
+  --parchment: #EDE0CA;
+  --ash: #6B5E52;
+  --stone: #3D3025;
+  --font-serif: 'EB Garamond', Georgia, serif;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--parchment);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Custom Cursor ── */
+#cursor {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: var(--amber);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, background .2s;
+  mix-blend-mode: difference;
+}
+#cursor-ring {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(212,162,64,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all .12s ease;
+}
+body:has(a:hover) #cursor, body:has(button:hover) #cursor {
+  width: 20px; height: 20px;
+}
+
+/* ── Preloader ── */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: #110D08;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+#preloader svg { width: 80px; height: 80px; }
+#preloader-brand {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 3vw, 32px);
+  letter-spacing: 0.35em;
+  color: var(--parchment);
+  opacity: 0;
+}
+#preloader-sub {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: var(--ash);
+  opacity: 0;
+  text-transform: uppercase;
+}
+
+/* ── Scroll Indicator ── */
+#scroll-indicator {
+  position: fixed;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity .5s;
+}
+#scroll-indicator.visible { opacity: 1; }
+.si-dots { display: flex; flex-direction: column; gap: 10px; }
+.si-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ash);
+  transition: background .3s, transform .3s;
+  cursor: pointer;
+}
+.si-dot.active { background: var(--amber); transform: scale(1.6); }
+.si-line {
+  width: 1px;
+  height: 60px;
+  background: rgba(107,94,82,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.si-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--amber);
+  height: 0%;
+  transition: height .4s;
+}
+.si-label {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--ash);
+  writing-mode: vertical-lr;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ── Navbar ── */
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 700;
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background .4s, backdrop-filter .4s, padding .3s;
+}
+#navbar.scrolled {
+  background: rgba(34,26,19,0.88);
+  backdrop-filter: blur(16px);
+  padding: 14px 48px;
+  border-bottom: 1px solid rgba(181,112,42,0.15);
+}
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  letter-spacing: 0.3em;
+  color: var(--parchment);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ash);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color .3s;
+}
+.nav-links a:hover { color: var(--amber); }
+.nav-cta {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--amber);
+  border: 1px solid rgba(181,112,42,0.5);
+  padding: 10px 22px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background .3s, color .3s;
+}
+.nav-cta:hover { background: var(--amber); color: #110D08; }
+
+/* ── Sections ── */
+section {
+  position: relative;
+  width: 100%;
+}
+
+/* ── Hero ── */
+#hero {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1560512823-829485b8bf24?w=1920&q=80&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.08);
+  animation: kenburns 18s ease-in-out infinite alternate;
+}
+@keyframes kenburns {
+  0% { transform: scale(1.08) translate(0, 0); }
+  100% { transform: scale(1.12) translate(-1.5%, -1%); }
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(17,13,8,0.6) 0%, rgba(34,26,19,0.3) 40%, rgba(34,26,19,0.7) 80%, #221A13 100%),
+    linear-gradient(to right, rgba(17,13,8,0.4) 0%, transparent 60%);
+}
+.hero-smoke {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 900px;
+  padding: 0 40px;
+}
+.hero-year {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.5em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(56px, 10vw, 120px);
+  line-height: 1;
+  letter-spacing: 0.15em;
+  color: var(--parchment);
+  margin-bottom: 24px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+.hero-title span { color: var(--amber); }
+.hero-sub {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(16px, 2.5vw, 22px);
+  color: var(--ash);
+  letter-spacing: 0.08em;
+  margin-bottom: 48px;
+}
+.hero-cta-group { display: flex; gap: 20px; justify-content: center; align-items: center; }
+.btn-primary {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: #110D08;
+  background: var(--amber);
+  padding: 16px 36px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background .3s;
+}
+.btn-primary:hover { background: var(--copper); }
+.btn-ghost {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--parchment);
+  border: 1px solid rgba(237,224,202,0.25);
+  padding: 16px 36px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: border-color .3s;
+}
+.btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
+
+/* ── Stats Strip ── */
+#stats {
+  background: var(--surface);
+  border-top: 1px solid rgba(181,112,42,0.2);
+  border-bottom: 1px solid rgba(181,112,42,0.2);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+.stat-item {
+  padding: 48px 32px;
+  text-align: center;
+  border-right: 1px solid rgba(181,112,42,0.12);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5vw, 56px);
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 10px;
+  font-weight: 400;
+}
+.stat-label {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--ash);
+  text-transform: uppercase;
+}
+
+/* ── Philosophy ── */
+#philosophy {
+  padding: 130px 48px;
+  background: var(--bg);
+}
+.section-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 400;
+  color: var(--parchment);
+  line-height: 1.15;
+  margin-bottom: 64px;
+  max-width: 560px;
+}
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.phil-card {
+  padding: 48px 36px;
+  border: 1px solid rgba(181,112,42,0.12);
+  background: var(--surface);
+  position: relative;
+}
+.phil-numeral {
+  font-family: var(--font-serif);
+  font-size: 72px;
+  color: rgba(181,112,42,0.15);
+  line-height: 1;
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-weight: 400;
+}
+.phil-icon {
+  width: 32px;
+  height: 2px;
+  background: var(--copper);
+  margin-bottom: 28px;
+}
+.phil-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--parchment);
+  margin-bottom: 16px;
+  font-weight: 400;
+}
+.phil-text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ash);
+  font-weight: 300;
+}
+
+/* ── Collection ── */
+#collection {
+  padding: 130px 48px;
+  background: var(--surface);
+}
+.collection-header {
+  max-width: 1200px;
+  margin: 0 auto 64px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: visible;
+}
+.bottle-card {
+  background: var(--surface-2);
+  border: 1px solid rgba(181,112,42,0.1);
+  overflow: hidden;
+  position: relative;
+  transition: border-color .4s;
+}
+.bottle-card:nth-child(even) { transform: translateY(32px); }
+.bottle-card:hover { border-color: rgba(212,162,64,0.35); }
+.bottle-img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.7) brightness(0.85);
+  transition: filter .5s;
+}
+.bottle-card:hover .bottle-img { filter: saturate(0.85) brightness(0.9); }
+.bottle-info {
+  padding: 28px 24px;
+}
+.bottle-age {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  color: var(--copper);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.bottle-name {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--parchment);
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.bottle-notes {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--ash);
+  line-height: 1.6;
+  font-weight: 300;
+}
+.bottle-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(34,26,19,0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity .4s;
+  padding: 24px;
+  text-align: center;
+}
+.bottle-card:hover .bottle-overlay { opacity: 1; }
+.overlay-cask {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--copper);
+  text-transform: uppercase;
+}
+.overlay-abv {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--amber);
+}
+.overlay-tasting {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--parchment);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ── Atelier ── */
+#atelier {
+  padding: 130px 48px;
+  background: var(--bg);
+}
+.atelier-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
+}
+.atelier-img-wrap {
+  position: relative;
+  overflow: hidden;
+  height: 600px;
+}
+.atelier-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.6) brightness(0.8);
+}
+.atelier-accent-line {
+  position: absolute;
+  left: -20px;
+  top: 40px;
+  bottom: 40px;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--copper), transparent);
+}
+.atelier-copy { padding: 0 20px; }
+.atelier-copy .section-eyebrow { margin-bottom: 12px; }
+.atelier-copy .section-title { max-width: 100%; }
+.atelier-text {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--ash);
+  font-weight: 300;
+  margin-bottom: 24px;
+}
+.atelier-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--parchment);
+  border-left: 2px solid var(--copper);
+  padding-left: 20px;
+  margin-bottom: 40px;
+}
+.atelier-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.detail-item {}
+.detail-label {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.detail-value {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--parchment);
+  font-weight: 400;
+}
+
+/* ── Process ── */
+#process {
+  padding: 130px 48px;
+  background: var(--surface);
+}
+.process-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.process-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+.process-timeline {
+  position: relative;
+}
+.process-spine {
+  position: absolute;
+  left: 30px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(181,112,42,0.15);
+  overflow: hidden;
+}
+.process-spine-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--copper);
+}
+.process-step {
+  display: flex;
+  gap: 60px;
+  margin-bottom: 64px;
+  padding-left: 80px;
+  position: relative;
+}
+.step-dot {
+  position: absolute;
+  left: 22px;
+  top: 6px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 1px solid var(--copper);
+  background: var(--surface);
+  z-index: 1;
+  transition: background .3s;
+}
+.step-number {
+  font-family: var(--font-serif);
+  font-size: 48px;
+  color: rgba(212,162,64,0.15);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 48px;
+  font-weight: 400;
+}
+.step-content {}
+.step-label {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.45em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.step-title {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  color: var(--parchment);
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+.step-text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ash);
+  font-weight: 300;
+}
+
+/* ── Heritage ── */
+#heritage {
+  padding: 130px 48px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.heritage-inner { max-width: 1200px; margin: 0 auto; }
+.heritage-header { margin-bottom: 80px; }
+.heritage-timeline {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  position: relative;
+}
+.heritage-timeline::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--copper), transparent);
+}
+.milestone {
+  text-align: center;
+  padding: 0 16px;
+  position: relative;
+}
+.milestone-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--copper);
+  background: var(--bg);
+  margin: 14px auto 24px;
+}
+.milestone-year {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--amber);
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.milestone-title {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--parchment);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.milestone-text {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--ash);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* ── Press ── */
+#press {
+  padding: 130px 48px;
+  background: var(--surface);
+}
+.press-inner { max-width: 1100px; margin: 0 auto; }
+.press-header { text-align: center; margin-bottom: 64px; }
+.swiper { overflow: hidden; }
+.swiper-slide { padding: 0 30px; }
+.press-card {
+  background: var(--surface-2);
+  border: 1px solid rgba(181,112,42,0.12);
+  padding: 48px;
+  text-align: center;
+}
+.press-quote-mark {
+  font-family: var(--font-serif);
+  font-size: 80px;
+  color: rgba(212,162,64,0.2);
+  line-height: 0.6;
+  margin-bottom: 24px;
+}
+.press-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--parchment);
+  line-height: 1.6;
+  margin-bottom: 28px;
+  font-weight: 400;
+}
+.press-source {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: var(--copper);
+  text-transform: uppercase;
+}
+.press-medal {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  color: var(--amber);
+  margin-top: 8px;
+}
+.swiper-pagination-bullet { background: var(--ash) !important; }
+.swiper-pagination-bullet-active { background: var(--amber) !important; }
+
+/* ── Commission ── */
+#commission {
+  padding: 130px 48px;
+  background: var(--bg);
+  border-top: 1px solid rgba(181,112,42,0.1);
+}
+.commission-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
+}
+.commission-copy {}
+.commission-copy .section-title { margin-bottom: 20px; }
+.commission-text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--ash);
+  font-weight: 300;
+  margin-bottom: 32px;
+}
+.commission-benefit {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.cb-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--copper);
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+.cb-text {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--parchment);
+  line-height: 1.6;
+  font-weight: 300;
+}
+.commission-form {}
+.form-group { margin-bottom: 20px; }
+.form-label {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: var(--copper);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid rgba(181,112,42,0.2);
+  color: var(--parchment);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 14px 18px;
+  outline: none;
+  transition: border-color .3s;
+  font-weight: 300;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: rgba(212,162,64,0.5);
+}
+.form-select { cursor: pointer; }
+.form-select option { background: var(--surface); }
+.form-textarea { resize: vertical; min-height: 110px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-submit {
+  width: 100%;
+  background: var(--amber);
+  color: #110D08;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 18px;
+  border: none;
+  cursor: pointer;
+  transition: background .3s;
+  margin-top: 8px;
+}
+.form-submit:hover { background: var(--copper); }
+
+/* ── Footer ── */
+#footer {
+  background: #2A2118;
+  padding: 80px 48px 40px;
+  border-top: 1px solid rgba(181,112,42,0.15);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 60px;
+  max-width: 1200px;
+  margin: 0 auto 64px;
+}
+.footer-brand-name {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  letter-spacing: 0.25em;
+  color: var(--parchment);
+  margin-bottom: 12px;
+}
+.footer-brand-tagline {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ash);
+  margin-bottom: 20px;
+}
+.footer-brand-text {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--ash);
+  line-height: 1.7;
+  font-weight: 300;
+}
+.footer-col-title {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 10px; }
+.footer-links a {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ash);
+  text-decoration: none;
+  font-weight: 300;
+  transition: color .3s;
+}
+.footer-links a:hover { color: var(--parchment); }
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(107,94,82,0.15);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-legal {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--ash);
+  font-weight: 300;
+}
+
+/* ── Section padding helpers ── */
+.section-inner { max-width: 1200px; margin: 0 auto; }
+
+/* ── Smoke particles canvas ── */
+#smoke-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .philosophy-grid { grid-template-columns: 1fr 1fr; }
+  .collection-grid { grid-template-columns: 1fr 1fr; }
+  .heritage-timeline { grid-template-columns: 1fr 1fr 1fr; }
+  .atelier-grid { grid-template-columns: 1fr; gap: 40px; }
+  .atelier-img-wrap { height: 400px; }
+  .commission-inner { grid-template-columns: 1fr; gap: 60px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  #navbar { padding: 16px 24px; }
+  #navbar.scrolled { padding: 12px 24px; }
+  .nav-links { display: none; }
+  section { padding-left: 24px; padding-right: 24px; }
+  #philosophy, #collection, #atelier, #process, #heritage, #press, #commission { padding: 80px 24px; }
+  .philosophy-grid { grid-template-columns: 1fr; }
+  .collection-grid { grid-template-columns: 1fr; }
+  .bottle-card:nth-child(even) { transform: none; }
+  .heritage-timeline { grid-template-columns: 1fr 1fr; }
+  .heritage-timeline::before { display: none; }
+  .process-step { padding-left: 60px; gap: 20px; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+  .scroll-indicator { display: none; }
+  #scroll-indicator { display: none; }
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg { animation: none; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Preloader -->
+<div id="preloader">
+  <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle id="pre-circle" cx="40" cy="40" r="35" stroke="#B5702A" stroke-width="0.8"
+      stroke-dasharray="220" stroke-dashoffset="220"/>
+    <path id="pre-flame" d="M40 60 C30 48 25 38 32 28 C34 34 37 36 40 32 C43 36 46 34 48 28 C55 38 50 48 40 60Z"
+      fill="none" stroke="#D4A240" stroke-width="1.2"
+      stroke-dasharray="100" stroke-dashoffset="100"/>
+  </svg>
+  <div id="preloader-brand">CRAGMÒR</div>
+  <div id="preloader-sub">Est. 1893 · Highland Single Malt</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="si-dots" id="si-dots"></div>
+  <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-label" id="si-label">HERO</div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">Cragmòr</a>
+  <ul class="nav-links">
+    <li><a href="#collection">Collection</a></li>
+    <li><a href="#atelier">Distillery</a></li>
+    <li><a href="#process">The Making</a></li>
+    <li><a href="#heritage">Heritage</a></li>
+  </ul>
+  <a class="nav-cta" href="#commission">Reserve a Cask</a>
+</nav>
+
+<!-- Hero -->
+<section id="hero" data-section="HERO">
+  <div class="hero-bg" id="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <canvas id="smoke-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-year">Est. 1893 · Caithness, Scotland</div>
+    <h1 class="hero-title" id="hero-title">CRAGM<span>Ò</span>R</h1>
+    <p class="hero-sub" id="hero-sub">Born in Fire. Rested in Stone.</p>
+    <div class="hero-cta-group" id="hero-ctas">
+      <a class="btn-primary" href="#collection">Explore Collection</a>
+      <a class="btn-ghost" href="#atelier">The Distillery</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section id="stats" data-section="STATS">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num" data-target="1893" data-suffix="">1893</div>
+      <div class="stat-label">Year Founded</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="21" data-suffix=" Yrs">21 Yrs</div>
+      <div class="stat-label">Minimum Age</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="68" data-suffix="%">68%</div>
+      <div class="stat-label">New Make ABV</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="10000" data-suffix=" Yrs">10,000 Yrs</div>
+      <div class="stat-label">Age of Our Peat</div>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section id="philosophy" data-section="CREDO">
+  <div class="section-inner">
+    <div class="section-eyebrow">The Cragmòr Credo</div>
+    <h2 class="section-title">Not distilled.<br>Extracted.</h2>
+    <div class="philosophy-grid">
+      <div class="phil-card sr">
+        <div class="phil-numeral">I</div>
+        <div class="phil-icon"></div>
+        <h3 class="phil-title">The Peat</h3>
+        <p class="phil-text">Our peat was living matter 10,000 years before the first barrel was laid. When we burn it, we do not add flavour — we summon it. Smoke is memory made material.</p>
+      </div>
+      <div class="phil-card sr">
+        <div class="phil-numeral">II</div>
+        <div class="phil-icon"></div>
+        <h3 class="phil-title">The Stone</h3>
+        <p class="phil-text">Our bonded warehouses rest upon bedrock laid in the Devonian period. The cask does not merely age here — it breathes in synchrony with the crag above it. Stone is patient. We learn from it.</p>
+      </div>
+      <div class="phil-card sr">
+        <div class="phil-numeral">III</div>
+        <div class="phil-icon"></div>
+        <h3 class="phil-title">The Interval</h3>
+        <p class="phil-text">Nothing of worth is rushed. Our youngest expression rests for 21 years. Our oldest, 40. We do not chase trends — we outlast them. The only timeline that matters is the one inside the cask.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Collection -->
+<section id="collection" data-section="COLLECTION">
+  <div class="collection-header">
+    <div>
+      <div class="section-eyebrow">The Expressions</div>
+      <h2 class="section-title" style="margin-bottom:0">Cragmòr Single Malt</h2>
+    </div>
+    <a class="btn-ghost" href="#commission">Private Cask Programme →</a>
+  </div>
+  <div class="collection-grid">
+    <div class="bottle-card">
+      <img class="bottle-img" src="https://images.unsplash.com/photo-1543512214-318c7553f230?w=800&q=80&auto=format&fit=crop" alt="Cragmòr 21">
+      <div class="bottle-info">
+        <div class="bottle-age">21 Year Old</div>
+        <div class="bottle-name">The Foundling</div>
+        <div class="bottle-notes">Sherried European oak · 46% ABV</div>
+      </div>
+      <div class="bottle-overlay">
+        <div class="overlay-cask">First-Fill Oloroso Sherry</div>
+        <div class="overlay-abv">46%</div>
+        <div class="overlay-tasting">Dark chocolate, dried fig, leather, a breath of sea air finishing long and peated.</div>
+      </div>
+    </div>
+    <div class="bottle-card">
+      <img class="bottle-img" src="https://images.unsplash.com/photo-1560448075-bb485b067938?w=800&q=80&auto=format&fit=crop" alt="Cragmòr 25">
+      <div class="bottle-info">
+        <div class="bottle-age">25 Year Old</div>
+        <div class="bottle-name">The Crag</div>
+        <div class="bottle-notes">Virgin American oak · 48.6% ABV</div>
+      </div>
+      <div class="bottle-overlay">
+        <div class="overlay-cask">Virgin American White Oak</div>
+        <div class="overlay-abv">48.6%</div>
+        <div class="overlay-tasting">Vanilla pod, toasted coconut, warm heather honey, deep smoke rising on the finish.</div>
+      </div>
+    </div>
+    <div class="bottle-card">
+      <img class="bottle-img" src="https://images.unsplash.com/photo-1504675099198-7023dd85f5a3?w=800&q=80&auto=format&fit=crop" alt="Cragmòr 30">
+      <div class="bottle-info">
+        <div class="bottle-age">30 Year Old</div>
+        <div class="bottle-name">The Peat Father</div>
+        <div class="bottle-notes">Refill hogshead · 56.2% cask strength</div>
+      </div>
+      <div class="bottle-overlay">
+        <div class="overlay-cask">Refill Scottish Hogshead</div>
+        <div class="overlay-abv">56.2%</div>
+        <div class="overlay-tasting">Iodine, brine, smoked almonds. A peat so dense it could be misread for ancient stone.</div>
+      </div>
+    </div>
+    <div class="bottle-card">
+      <img class="bottle-img" src="https://images.unsplash.com/photo-1567696153798-9111f9cd3d0d?w=800&q=80&auto=format&fit=crop" alt="Cragmòr Solera">
+      <div class="bottle-info">
+        <div class="bottle-age">Solera Reserve</div>
+        <div class="bottle-name">The Extraction</div>
+        <div class="bottle-notes">Continuous vatting since 1960 · 43% ABV</div>
+      </div>
+      <div class="bottle-overlay">
+        <div class="overlay-cask">Multi-Generation Solera</div>
+        <div class="overlay-abv">43%</div>
+        <div class="overlay-tasting">Every decade in one glass. Candied orange, teak, distant bonfire, an eternal exhale.</div>
+      </div>
+    </div>
+    <div class="bottle-card">
+      <img class="bottle-img" src="https://images.pexels.com/photos/313707/pexels-photo-313707.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Cragmòr Limited">
+      <div class="bottle-info">
+        <div class="bottle-age">Limited — 40 Year Old</div>
+        <div class="bottle-name">The Stone Archive</div>
+        <div class="bottle-notes">Single cask · 342 bottles · 42.8% ABV</div>
+      </div>
+      <div class="bottle-overlay">
+        <div class="overlay-cask">Single Refill Butt · Cask #112</div>
+        <div class="overlay-abv">42.8%</div>
+        <div class="overlay-tasting">Antique mahogany, wax, autumnal funghi, and a smoke that drifts rather than announces itself.</div>
+      </div>
+    </div>
+    <div class="bottle-card">
+      <img class="bottle-img" src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&q=80&auto=format&fit=crop" alt="Cragmòr Commission">
+      <div class="bottle-info">
+        <div class="bottle-age">Private Commission</div>
+        <div class="bottle-name">Your Cask</div>
+        <div class="bottle-notes">Select cask type · minimum 10 years</div>
+      </div>
+      <div class="bottle-overlay">
+        <div class="overlay-cask">Bespoke Cask Programme</div>
+        <div class="overlay-abv">TBD</div>
+        <div class="overlay-tasting">The only whisky in the world that belongs entirely to you — filled, sealed, and laid in stone on your behalf.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Atelier -->
+<section id="atelier" data-section="DISTILLERY">
+  <div class="atelier-grid">
+    <div class="atelier-img-wrap sr" id="atelier-img-wrap">
+      <img class="atelier-img sr" id="atelier-img"
+        src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=1200&q=80&auto=format&fit=crop"
+        alt="Cragmòr Distillery Interior">
+      <div class="atelier-accent-line"></div>
+    </div>
+    <div class="atelier-copy">
+      <div class="section-eyebrow">Copper &amp; Stone</div>
+      <h2 class="section-title">Built in 1893.<br>Unchanged by design.</h2>
+      <p class="atelier-text sr">Our pot stills have been cast from the same Cornish copper for five generations. The necks were shaped by William Macrae, master coppersmith, in 1893. We have never replaced their geometry — only honoured it.</p>
+      <p class="atelier-text sr">The distillery sits at 340 metres above sea level on the Caithness plateau. The air here is cold, the water from the Braeswick burn passes through granite and peat for eleven miles before reaching our mash tun.</p>
+      <blockquote class="atelier-quote">"The building does not merely house the process. The building is the process."</blockquote>
+      <div class="atelier-details">
+        <div class="detail-item">
+          <div class="detail-label">Altitude</div>
+          <div class="detail-value">340 m ASL</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Water Source</div>
+          <div class="detail-value">Braeswick Burn</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Wash Stills</div>
+          <div class="detail-value">2 × 12,000L</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Spirit Stills</div>
+          <div class="detail-value">2 × 8,000L</div>
+        </div>
+      </div>
+      <a class="btn-primary" href="#commission">Plan a Visit</a>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section id="process" data-section="THE MAKING">
+  <div class="process-inner">
+    <div class="process-header">
+      <div class="section-eyebrow">Extraction Method</div>
+      <h2 class="section-title" style="max-width:100%;text-align:center">Six Acts of Transformation</h2>
+    </div>
+    <div class="process-timeline">
+      <div class="process-spine">
+        <div class="process-spine-fill" id="spine-fill"></div>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr"></div>
+        <div class="step-number sr">01</div>
+        <div class="step-content sr">
+          <div class="step-label sr">Act I</div>
+          <h3 class="step-title sr">Malting</h3>
+          <p class="step-text sr">Caithness barley is hand-turned on our traditional floor maltings for six days. On the seventh, it meets the peat fire — 10,000-year-old fuel that imprints its geological memory into every grain before drying is complete.</p>
+        </div>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr"></div>
+        <div class="step-number sr">02</div>
+        <div class="step-content sr">
+          <div class="step-label sr">Act II</div>
+          <h3 class="step-title sr">Mashing</h3>
+          <p class="step-text sr">The malted grain is milled and infused with Braeswick water at three rising temperatures. The resulting wort carries the mineral signature of eleven miles of granite and living peat — a flavour no chemistry can replicate.</p>
+        </div>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr"></div>
+        <div class="step-number sr">03</div>
+        <div class="step-content sr">
+          <div class="step-label sr">Act III</div>
+          <h3 class="step-title sr">Fermentation</h3>
+          <p class="step-text sr">Slow fermentation in Oregon pine washbacks for 90 hours — far beyond the industry standard of 60. This extended interval builds the esters that become tomorrow's complexity. We are in no hurry.</p>
+        </div>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr"></div>
+        <div class="step-number sr">04</div>
+        <div class="step-content sr">
+          <div class="step-label sr">Act IV</div>
+          <h3 class="step-title sr">Distillation</h3>
+          <p class="step-text sr">Two distillations through our 1893 Cornish copper pot stills. The spirit cut is taken narrower than anywhere in Scotland — our stillmen discard the first 40 minutes of spirit and stop before the tails begin. Only the heart.</p>
+        </div>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr"></div>
+        <div class="step-number sr">05</div>
+        <div class="step-content sr">
+          <div class="step-label sr">Act V</div>
+          <h3 class="step-title sr">Maturation</h3>
+          <p class="step-text sr">Casks are filled at 63.5% and laid in our Devonian-bedrock warehouses. The breathing of Caithness — its humidity cycles, its cold, its mineral air — seeps through the cask wood for a minimum of 21 years before any discussion of bottling begins.</p>
+        </div>
+      </div>
+      <div class="process-step sr" style="margin-bottom:0">
+        <div class="step-dot sr"></div>
+        <div class="step-number sr">06</div>
+        <div class="step-content sr">
+          <div class="step-label sr">Act VI</div>
+          <h3 class="step-title sr">Bottling</h3>
+          <p class="step-text sr">Non-chill filtered. Natural colour. Each bottle is numbered by hand and sealed with wax drawn from the same formula used since 1927. The cork is compressed Scottish oak. Nothing decorative; everything intentional.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Heritage -->
+<section id="heritage" data-section="HERITAGE">
+  <div class="heritage-inner">
+    <div class="heritage-header">
+      <div class="section-eyebrow">The Lineage</div>
+      <h2 class="section-title">Five Generations, One Method</h2>
+    </div>
+    <div class="heritage-timeline">
+      <div class="milestone sr">
+        <div class="milestone-dot sr"></div>
+        <div class="milestone-year sr">1893</div>
+        <div class="milestone-title sr">The Foundation</div>
+        <p class="milestone-text sr">Alistair Macrae lays the first stone of the distillery on a peat bog above the Braeswick burn. The copper stills arrive from Truro six months later.</p>
+      </div>
+      <div class="milestone sr">
+        <div class="milestone-dot sr"></div>
+        <div class="milestone-year sr">1921</div>
+        <div class="milestone-title sr">The Silence</div>
+        <p class="milestone-text sr">Production halts for the Prohibition era. The Macrae family seal 240 casks in the lower bonded warehouse. They do not open them until 1934.</p>
+      </div>
+      <div class="milestone sr">
+        <div class="milestone-dot sr"></div>
+        <div class="milestone-year sr">1960</div>
+        <div class="milestone-title sr">The Solera</div>
+        <p class="milestone-text sr">James Macrae III initiates the continuous solera vatting system — a single vessel fed and partially drawn from every year since. It is never emptied.</p>
+      </div>
+      <div class="milestone sr">
+        <div class="milestone-dot sr"></div>
+        <div class="milestone-year sr">1993</div>
+        <div class="milestone-title sr">The Centenary</div>
+        <p class="milestone-text sr">The first public release of a 21-year-old expression. Whisky Magazine declares it "the most consequential debut of the decade." 1,893 bottles worldwide.</p>
+      </div>
+      <div class="milestone sr">
+        <div class="milestone-dot sr"></div>
+        <div class="milestone-year sr">2024</div>
+        <div class="milestone-title sr">The Programme</div>
+        <p class="milestone-text sr">The Private Cask Programme opens to a limited circle. Owners select grain lot, cask type, and retrieval year. Their name is painted on the stone above.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Press -->
+<section id="press" data-section="RECOGNITION">
+  <div class="press-inner">
+    <div class="press-header">
+      <div class="section-eyebrow">Critical Recognition</div>
+      <h2 class="section-title" style="max-width:100%;text-align:center">The World's Verdict</h2>
+    </div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-card sr">
+            <div class="press-quote-mark">"</div>
+            <p class="press-quote">There is smoke here, yes — but smoke as the Highland ancients understood it. Not flavour. Atmosphere. Cragmòr does not make whisky. It excavates time.</p>
+            <div class="press-source">Whisky Advocate — 97/100</div>
+            <div class="press-medal">Best Single Malt — World Whisky Awards 2023</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card sr">
+            <div class="press-quote-mark">"</div>
+            <p class="press-quote">The 30 Year Old Peat Father is the most geologically convincing whisky I have ever tasted. One sip and you understand that this spirit did not originate in a still. It originated in the earth.</p>
+            <div class="press-source">Jim Murray's Whisky Bible 2024 — 96.5 Points</div>
+            <div class="press-medal">Liquid Gold — Extraordinary</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card sr">
+            <div class="press-quote-mark">"</div>
+            <p class="press-quote">The Extraction Solera is a paradox: simultaneously the oldest whisky in Scotland and one you have never tasted before. Each bottle carries every year since 1960 in its arithmetic.</p>
+            <div class="press-source">The Spirits Business — Platinum Award</div>
+            <div class="press-medal">Heritage Distillery of the Year — 2024</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="position:relative;margin-top:32px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Commission -->
+<section id="commission" data-section="COMMISSION">
+  <div class="commission-inner">
+    <div class="commission-copy">
+      <div class="section-eyebrow">Private Cask Programme</div>
+      <h2 class="section-title">Reserve Your Cask.<br>Claim Your Stone.</h2>
+      <p class="commission-text">The ultimate act of patience: a cask filled with Cragmòr new make spirit, laid in our warehouse, and inscribed with your name on the stone above it. You select the grain lot, the cask wood, the resting duration. We do the rest. In a decade or four, you open it.</p>
+      <div class="commission-benefit">
+        <div class="cb-dot"></div>
+        <div class="cb-text">Annual progress reports with hydrometer readings and predicted tasting profile evolution</div>
+      </div>
+      <div class="commission-benefit">
+        <div class="cb-dot"></div>
+        <div class="cb-text">Unlimited private distillery visits during the maturation period</div>
+      </div>
+      <div class="commission-benefit">
+        <div class="cb-dot"></div>
+        <div class="cb-text">Custom label design with heraldic commission available</div>
+      </div>
+      <div class="commission-benefit">
+        <div class="cb-dot"></div>
+        <div class="cb-text">Certificate of ownership, transferable to beneficiaries</div>
+      </div>
+    </div>
+    <div class="commission-form">
+      <form onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group sr">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" placeholder="Alistair">
+          </div>
+          <div class="form-group sr">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" placeholder="Macrae">
+          </div>
+        </div>
+        <div class="form-group sr">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="your@address.com">
+        </div>
+        <div class="form-group sr">
+          <label class="form-label">Preferred Cask Type</label>
+          <select class="form-select">
+            <option>First-Fill Oloroso Sherry Butt</option>
+            <option>Virgin American Oak Hogshead</option>
+            <option>Refill Scottish Hogshead</option>
+            <option>Port Wine Pipe</option>
+            <option>Unsure — advise me</option>
+          </select>
+        </div>
+        <div class="form-group sr">
+          <label class="form-label">Intended Maturation Duration</label>
+          <select class="form-select">
+            <option>10–15 Years</option>
+            <option>15–20 Years</option>
+            <option>20–25 Years</option>
+            <option>25+ Years (Legacy Commission)</option>
+          </select>
+        </div>
+        <div class="form-group sr">
+          <label class="form-label">Message (Optional)</label>
+          <textarea class="form-textarea" placeholder="Tell us the occasion, recipient, or any specific requirements..."></textarea>
+        </div>
+        <button class="form-submit" type="submit">Submit Enquiry</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">CRAGMÒR</div>
+      <div class="footer-brand-tagline">Born in Fire. Rested in Stone.</div>
+      <p class="footer-brand-text">Established 1893. Caithness, Scotland. Single Malt Highland Whisky distilled by the Macrae family in continuous succession. Non-chill filtered. Natural colour. Cask strength and reduced expressions available.</p>
+    </div>
+    <div>
+      <div class="footer-col-title sr">The Distillery</div>
+      <ul class="footer-links">
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">The Making</a></li>
+        <li><a href="#">The Warehouse</a></li>
+        <li><a href="#">Plan a Visit</a></li>
+        <li><a href="#">Guided Tastings</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title sr">The Collection</div>
+      <ul class="footer-links">
+        <li><a href="#">The Foundling · 21yr</a></li>
+        <li><a href="#">The Crag · 25yr</a></li>
+        <li><a href="#">The Peat Father · 30yr</a></li>
+        <li><a href="#">The Extraction · Solera</a></li>
+        <li><a href="#">Stone Archive · 40yr</a></li>
+        <li><a href="#">Private Cask</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title sr">Contact</div>
+      <ul class="footer-links">
+        <li><a href="#">casks@cragmor.scot</a></li>
+        <li><a href="#">+44 1847 000 000</a></li>
+        <li><a href="#">Braeswick Road</a></li>
+        <li><a href="#">Caithness, KW14 7XX</a></li>
+        <li><a href="#">Scotland, UK</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2024 Cragmòr Distillery Ltd. All rights reserved. Drink responsibly. Alcohol is for adults only.</div>
+    <div class="footer-legal">Cragmòr is a fictional brand created for design purposes.</div>
+  </div>
+</footer>
+
+<script>
+  
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  // ── Sections ──
+  const sections = [
+    { id: 'hero', label: 'HERO' },
+    { id: 'stats', label: 'STATS' },
+    { id: 'philosophy', label: 'CREDO' },
+    { id: 'collection', label: 'COLLECTION' },
+    { id: 'atelier', label: 'DISTILLERY' },
+    { id: 'process', label: 'THE MAKING' },
+    { id: 'heritage', label: 'HERITAGE' },
+    { id: 'press', label: 'RECOGNITION' },
+    { id: 'commission', label: 'COMMISSION' },
+    { id: 'footer', label: 'CONTACT' },
+  ];
+
+  // ── Cursor ──
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function animCursor() {
+    rx += (mx - rx) * 0.14;
+    ry += (my - ry) * 0.14;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    cursorRing.style.left = rx + 'px';
+    cursorRing.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  })();
+
+  // ── Smoke Canvas ──
+  const canvas = document.getElementById('smoke-canvas');
+  const ctx = canvas.getContext('2d');
+  function resizeCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  const particles = Array.from({ length: 35 }, () => ({
+    x: Math.random() * canvas.width,
+    y: canvas.height + Math.random() * 100,
+    r: 30 + Math.random() * 60,
+    speed: 0.3 + Math.random() * 0.5,
+    alpha: 0.03 + Math.random() * 0.06,
+    drift: (Math.random() - 0.5) * 0.3,
+  }));
+  function drawSmoke() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+      grad.addColorStop(0, `rgba(200,180,160,${p.alpha})`);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      p.y -= p.speed;
+      p.x += p.drift;
+      p.alpha -= 0.00012;
+      if (p.y < -p.r || p.alpha <= 0) {
+        p.x = Math.random() * canvas.width;
+        p.y = canvas.height + 60;
+        p.alpha = 0.03 + Math.random() * 0.06;
+        p.speed = 0.3 + Math.random() * 0.5;
+        p.drift = (Math.random() - 0.5) * 0.3;
+      }
+    });
+    requestAnimationFrame(drawSmoke);
+  }
+  drawSmoke();
+
+  // ── Hero mousemove parallax ──
+  const heroBg = document.getElementById('hero-bg');
+  document.addEventListener('mousemove', e => {
+    const dx = (e.clientX / window.innerWidth - 0.5) * 18;
+    const dy = (e.clientY / window.innerHeight - 0.5) * 10;
+    heroBg.style.transform = `scale(1.08) translate(${dx}px, ${dy}px)`;
+  });
+
+  // ── Preloader ──
+  const preCircle = document.getElementById('pre-circle');
+  const preFlame = document.getElementById('pre-flame');
+  const preloaderBrand = document.getElementById('preloader-brand');
+  const preloaderSub = document.getElementById('preloader-sub');
+  const preloader = document.getElementById('preloader');
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      gsap.to(preloader, { opacity: 0, duration: 0.7, onComplete: () => {
+        preloader.style.display = 'none';
+        document.getElementById('scroll-indicator').classList.add('visible');
+        initPage();
+      }});
+    }
+  });
+  tl.to(preCircle, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' })
+    .to(preFlame, { strokeDashoffset: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
+    .to(preloaderBrand, { opacity: 1, duration: 0.8 }, '-=0.2')
+    .to(preloaderSub, { opacity: 1, duration: 1.0 }, '-=0.3')
+    .to({}, { duration: 0.8 });
+
+  // Fallback
+  setTimeout(() => {
+    if (preloader.style.display !== 'none') {
+      preloader.style.display = 'none';
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }
+  }, 4000);
+
+  // ── Scroll Indicator ──
+  const siDotsEl = document.getElementById('si-dots');
+  const siFill = document.getElementById('si-fill');
+  const siLabel = document.getElementById('si-label');
+  const dots = sections.map((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'si-dot';
+    d.title = s.label;
+    d.addEventListener('click', () => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' }));
+    siDotsEl.appendChild(d);
+    return d;
+  });
+
+  let currentSection = 0;
+  function updateIndicator(idx) {
+    if (idx === currentSection) return;
+    currentSection = idx;
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    siLabel.textContent = sections[idx]?.label || '';
+  }
+  window.addEventListener('scroll', () => {
+    const progress = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    siFill.style.height = Math.min(progress * 100, 100) + '%';
+    let found = 0;
+    sections.forEach((s, i) => {
+      const el = document.getElementById(s.id);
+      if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.5) found = i;
+    });
+    updateIndicator(found);
+  });
+
+  // ── Navbar scroll ──
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ── initPage (GSAP animations after preloader) ──
+  function initPage() {
+    // Hero reveal
+    gsap.from('#hero-title', {
+      y: 24, opacity: 0, duration: 1.2, ease: 'power2.out', immediateRender: false,
+      delay: 0.1
+    });
+    gsap.from('#hero-sub', {
+      y: 30, opacity: 0, duration: 1, ease: 'power2.out', immediateRender: false,
+      delay: 0.4
+    });
+    gsap.from('#hero-ctas', {
+      y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      delay: 0.7
+    });
+    gsap.from('.hero-year', {
+      y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      delay: 0.2
+    });
+
+    // Stats counter
+    gsap.from('.stat-item', {
+      y: 24, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#stats', start: 'top 80%', once: true }
+    });
+
+    // Philosophy
+    gsap.from('.phil-card', {
+      y: 24, opacity: 0, stagger: 0.15, duration: 0.9, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy', start: 'top 75%', once: true }
+    });
+    gsap.from('#philosophy .section-eyebrow, #philosophy .section-title', {
+      y: 30, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy', start: 'top 80%', once: true }
+    });
+
+    // Collection
+    gsap.from('.bottle-card', {
+      y: 24, opacity: 0, stagger: 0.1, duration: 0.9, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#collection', start: 'top 75%', once: true }
+    });
+
+    // Atelier parallax
+    gsap.to('#atelier-img', {
+      yPercent: -12,
+      ease: 'none',
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#atelier-img-wrap',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+    gsap.from('.atelier-copy > *', {
+      y: 24, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#atelier', start: 'top 75%', once: true }
+    });
+
+    // Process spine draw + steps
+    gsap.to('#spine-fill', {
+      height: '100%', duration: 1.5, ease: 'none',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 70%', end: 'bottom 80%', scrub: 1 }
+    });
+    gsap.from('.process-step', {
+      x: 30, opacity: 0, stagger: 0.15, duration: 0.8, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 75%', once: true }
+    });
+
+    // Heritage
+    gsap.from('.milestone', {
+      y: 24, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#heritage', start: 'top 75%', once: true }
+    });
+
+    // Press
+    gsap.from('#press .press-inner > *', {
+      y: 30, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#press', start: 'top 80%', once: true }
+    });
+
+    // Commission
+    gsap.from('.commission-copy > *', {
+      y: 24, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true }
+    });
+    gsap.from('.commission-form', {
+      y: 24, opacity: 0, duration: 0.9, ease: 'power2.out',
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true }
+    });
+  }
+
+  // Dots initial
+  if (dots.length) dots[0].classList.add('active');
+
+  // ── Swiper ──
+  new Swiper('.press-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 0,
+    loop: true,
+    autoplay: { delay: 5000 },
+    pagination: { el: '.swiper-pagination', clickable: true },
+  });
+</script>
+</body>
+</html>

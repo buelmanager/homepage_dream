@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu — Verdigris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg:           #221510;
+      --bg-mid:       #3D2218;
+      --bg-surface:   #4A2B1E;
+      --copper:       #B06A2F;
+      --gold:         #E8A84C;
+      --cream:        #F5EDE0;
+      --muted:        #9A7A5E;
+      --font-serif:   'Cormorant Garamond', serif;
+      --font-sans:    'Jost', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--cream); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 4rem; background: rgba(34,21,16,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(176,106,47,0.15); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 500; letter-spacing: 0.35em; text-transform: uppercase; color: var(--cream); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--cream); opacity: 0.7; transition: opacity 0.3s; }
+    .nav-links a:hover, .nav-links a.active { opacity: 1; }
+    .nav-reserve { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; border: 1px solid rgba(176,106,47,0.6); padding: 0.6rem 1.5rem; color: var(--copper); transition: all 0.3s; }
+    .nav-reserve:hover { background: var(--copper); color: var(--bg); border-color: var(--copper); }
+
+    .page-banner { height: 50vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .page-banner-bg { position: absolute; inset: 0; background-image: url('https://images.pexels.com/photos/2291599/pexels-photo-2291599.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80'); background-size: cover; background-position: center; opacity: 0.32; }
+    .page-banner-overlay { position: absolute; inset: 0; background: rgba(34,21,16,0.65); }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; padding: 0 2rem; }
+    .page-banner-label { font-size: 0.6rem; letter-spacing: 0.38em; text-transform: uppercase; color: var(--copper); margin-bottom: 1rem; display: block; }
+    .page-banner-title { font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 7rem); font-weight: 300; color: var(--cream); letter-spacing: 0.05em; }
+
+    section { padding: 7rem 0; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 4rem; }
+    .section-label { font-size: 0.6rem; letter-spacing: 0.38em; text-transform: uppercase; color: var(--copper); display: block; margin-bottom: 1.5rem; }
+
+    .menu-intro { background: var(--bg); }
+    .menu-intro-inner { max-width: 700px; }
+    .menu-intro-inner h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 400; color: var(--cream); margin-bottom: 1.2rem; }
+    .menu-intro-inner p { font-size: 0.9rem; color: var(--muted); line-height: 1.9; }
+
+    .menu-grid-section { background: var(--bg-mid); }
+    .menu-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+    .menu-card { background: var(--bg-surface); border-top: 2px solid rgba(176,106,47,0.5); overflow: hidden; }
+    .menu-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; filter: saturate(0.85); transition: transform 0.5s; }
+    .menu-card:hover .menu-img { transform: scale(1.03); }
+    .menu-card-body { padding: 1.8rem; }
+    .menu-tag { font-size: 0.58rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--copper); margin-bottom: 0.6rem; }
+    .menu-name { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 500; color: var(--cream); margin-bottom: 0.6rem; }
+    .menu-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .menu-ingredients { font-size: 0.7rem; letter-spacing: 0.08em; color: var(--copper); opacity: 0.8; font-style: italic; padding-top: 0.8rem; border-top: 1px solid rgba(176,106,47,0.2); }
+
+    .quality-section { background: var(--bg); }
+    .quality-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    .quality-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+    .quality-text h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 400; color: var(--cream); margin-bottom: 1.5rem; }
+    .quality-text p { font-size: 0.85rem; color: var(--muted); line-height: 1.9; margin-bottom: 1.2rem; }
+    .quality-note { font-size: 0.75rem; color: var(--copper); font-style: italic; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(176,106,47,0.25); }
+
+    .cta-section { background: var(--bg-surface); text-align: center; }
+    .cta-section h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 300; font-style: italic; color: var(--cream); margin-bottom: 1rem; }
+    .cta-section p { font-size: 0.9rem; color: var(--muted); max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.8; }
+    .cta-link { display: inline-block; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; border: 1px solid rgba(176,106,47,0.6); padding: 0.9rem 2.8rem; color: var(--copper); transition: all 0.3s; }
+    .cta-link:hover { background: var(--copper); color: var(--bg); border-color: var(--copper); }
+
+    footer { background: var(--bg); padding: 6rem 4rem 3rem; border-top: 1px solid rgba(176,106,47,0.2); }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 5rem; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream); margin-bottom: 1.2rem; }
+    .footer-tagline { font-size: 0.75rem; line-height: 1.7; color: var(--muted); max-width: 260px; }
+    .footer-col-title { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--copper); margin-bottom: 1.5rem; }
+    .footer-col-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+    .footer-col-list a { font-size: 0.8rem; color: var(--muted); transition: color 0.3s; }
+    .footer-col-list a:hover { color: var(--cream); }
+    .footer-address { font-size: 0.75rem; line-height: 1.9; color: var(--muted); }
+    .footer-coords { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--copper); margin-top: 0.5rem; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid rgba(176,106,47,0.15); }
+    .footer-copy { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--muted); opacity: 0.6; }
+    .footer-socials { display: flex; gap: 1.5rem; }
+    .footer-socials a { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); transition: color 0.3s; }
+    .footer-socials a:hover { color: var(--copper); }
+
+    @media (max-width: 900px) {
+      .nav { padding: 1.4rem 2rem; } .nav-links { display: none; }
+      .container { padding: 0 2rem; } section { padding: 4rem 0; }
+      .menu-grid { grid-template-columns: 1fr 1fr; }
+      .quality-inner { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .menu-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Verdigris</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html" class="active">Menu</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-reserve">Reserve</a>
+  </nav>
+
+  <div class="page-banner">
+    <div class="page-banner-bg"></div>
+    <div class="page-banner-overlay"></div>
+    <div class="page-banner-content">
+      <span class="page-banner-label">Current Quarter · Winter 2024</span>
+      <h1 class="page-banner-title">Menu</h1>
+    </div>
+  </div>
+
+  <section class="menu-intro">
+    <div class="container">
+      <div class="menu-intro-inner">
+        <span class="section-label">The Current Programme</span>
+        <h2>The winter menu.<br>Renewed quarterly.</h2>
+        <p>Verdigris's cocktail programme is reviewed and rebuilt four times a year. No drink shown here is guaranteed to be on the menu on your next visit. This is not an oversight. It is the central commitment of the bar: if the best available ingredients have changed, the drinks change with them. What follows is the current winter menu, correct as of this publication. Prices are not listed. The experience is fixed-format; reservation includes all service.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="menu-grid-section">
+    <div class="container">
+      <span class="section-label">Winter Programme 2024 · Six Signatures</span>
+      <div class="menu-grid">
+
+        <div class="menu-card">
+          <div style="overflow:hidden">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1482245294234-b3f2f8d5f1a4?w=800&q=80&auto=format&fit=crop" alt="Verdigris Negroni" loading="lazy">
+          </div>
+          <div class="menu-card-body">
+            <div class="menu-tag">Copper Series · No. 01</div>
+            <div class="menu-name">The Patina</div>
+            <div class="menu-desc">Verdigris house gin — copper-pot distilled, botanicals selected for reactivity — with dry vermouth that has been rested in a copper flask for seventy-two hours. Served over a single cast ice sphere in a copper cup. The drink changes slightly over the twenty minutes of service.</div>
+            <div class="menu-ingredients">House gin · Copper-rested vermouth · Lemon oil · Cast ice</div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div style="overflow:hidden">
+            <img class="menu-img" src="https://images.pexels.com/photos/3910073/pexels-photo-3910073.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Reduction cocktail" loading="lazy">
+          </div>
+          <div class="menu-card-body">
+            <div class="menu-tag">Reduction Series · No. 02</div>
+            <div class="menu-name">Sulphate</div>
+            <div class="menu-desc">A sour built around copper sulphate's role in wine production. White Burgundy, copper-distilled pear brandy, and a citric acid solution calibrated to 2.4 pH. Finished with an egg white foam stabilised with locust bean gum. The blue tint in the base is natural and harmless.</div>
+            <div class="menu-ingredients">White Burgundy · Pear brandy · Citric solution · Egg white · LBG foam</div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div style="overflow:hidden">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&q=80&auto=format&fit=crop" alt="Aged cocktail" loading="lazy">
+          </div>
+          <div class="menu-card-body">
+            <div class="menu-tag">Cellar Series · No. 03</div>
+            <div class="menu-name">Roquefort</div>
+            <div class="menu-desc">A savoury cocktail designed around oxidative aging. Manzanilla sherry, twelve-year Speyside Scotch, a fat-washed butter clarified in a copper pan at 160°C, and a reduction of late-harvest Sauternes. Named not for the cheese but for the cave — the darkness and the patience.</div>
+            <div class="menu-ingredients">Manzanilla · 12yr Speyside · Copper-clarified butter · Sauternes reduction</div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div style="overflow:hidden">
+            <img class="menu-img" src="https://images.pexels.com/photos/3965557/pexels-photo-3965557.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Citrus cocktail" loading="lazy">
+          </div>
+          <div class="menu-card-body">
+            <div class="menu-tag">Acid Series · No. 04</div>
+            <div class="menu-name">Verdigris Sling</div>
+            <div class="menu-desc">The bar's most approachable drink. House gin, clarified lime juice, a sugar syrup made with copper-filtered water, and still water from the bar's reverse-osmosis system. Long, cold, and technically complex despite appearing simple. The complexity is in the water.</div>
+            <div class="menu-ingredients">House gin · Clarified lime · Copper-water syrup · Still water</div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div style="overflow:hidden">
+            <img class="menu-img" src="https://images.pexels.com/photos/4226896/pexels-photo-4226896.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Botanical cocktail" loading="lazy">
+          </div>
+          <div class="menu-card-body">
+            <div class="menu-tag">Botanical Series · No. 05</div>
+            <div class="menu-name">Corroded Garden</div>
+            <div class="menu-desc">A botanical drink exploring the copper-tannin reaction. Cold-infused green tea, Darjeeling first flush, a tannin-heavy biodynamic Cabernet reduction, and a copper-distilled tequila from a single agave producer in Oaxaca. Served at 8°C in a terracotta cup treated with copper oxide.</div>
+            <div class="menu-ingredients">Oaxaca copper-still tequila · Darjeeling infusion · Cabernet reduction · Terracotta service</div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div style="overflow:hidden">
+            <img class="menu-img" src="https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=800&q=80&auto=format&fit=crop" alt="Winter cocktail" loading="lazy">
+          </div>
+          <div class="menu-card-body">
+            <div class="menu-tag">Winter Series · No. 06</div>
+            <div class="menu-name">The Long Oxidation</div>
+            <div class="menu-desc">A dessert drink served as the final course of the evening. A Calvados aged in copper-lined casks for eleven years, blended with a pear eau-de-vie distilled in-house, and a honey sourced from a beekeeper whose hives are sited near copper-rich soils in the Loire. The last drink of the night, and the one most people remember.</div>
+            <div class="menu-ingredients">11yr copper-cask Calvados · House pear eau-de-vie · Loire copper-soil honey</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="quality-section">
+    <div class="container">
+      <div class="quality-inner">
+        <img class="quality-img" src="https://images.pexels.com/photos/1181291/pexels-photo-1181291.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Bar service" loading="lazy">
+        <div class="quality-text">
+          <span class="section-label">The Format</span>
+          <h2>Fixed format.<br>No exceptions.</h2>
+          <p>Verdigris operates on a fixed-format service. All reservations include six drinks — the full current menu — served across approximately two and a half hours. There is no à la carte selection. You will drink what is on the menu in the order it is designed to be drunk.</p>
+          <p>This is not inflexibility. It is the only way to serve a programme designed around chemical progression. The evening is structured as a narrative: the first drink is an aperient; the last is a conclusion. Drinking out of sequence would be like reading a book backwards.</p>
+          <p>Dietary requirements and alcohol restrictions are accommodated with notice at the time of reservation. Non-alcoholic pairings for each course are available and designed with equal seriousness to the cocktail programme.</p>
+          <div class="quality-note">Service: Wednesday–Saturday · 18:00–02:00 · Last seating 23:30 · Reservations required</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <h2>The table is set</h2>
+      <p>Reservations are required for all seatings. We accept a maximum of fourteen guests per evening, across two seatings. Tables are held for fifteen minutes.</p>
+      <a href="contact.html" class="cta-link">Reserve a Table</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Verdigris</div>
+        <p class="footer-tagline">Forged in Copper. Aged in Silence. Every cocktail is a material process; chemistry is craft.</p>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Experience</div>
+        <ul class="footer-col-list sr">
+          <li><a href="about.html">About</a></li>
+          <li><a href="collection.html">Menu</a></li>
+          <li><a href="process.html">Process</a></li>
+          <li><a href="contact.html">The Atelier</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Service begins</div>
+        <div class="footer-address">
+          Wednesday — Saturday<br/>
+          18:00 — 02:00<br/><br/>
+          Last seating: 23:30<br/>
+          Reservations required
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title sr">Location</div>
+        <div class="footer-address">
+          47 Meatpacking District<br/>
+          New York, NY 10014<br/>
+        </div>
+        <div class="footer-coords">40.7403° N, 74.0054° W</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2024 Verdigris. All experiments reserved.</span>
+      <div class="footer-socials">
+        <a href="#">IG</a>
+        <a href="#">FB</a>
+        <a href="#">RV</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    
+  /* Smooth fade-in: pre-hide below-fold elements before GSAP runs */
+  gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.page-banner-content', { opacity: 0, y: 24, duration: 1.2, ease: 'power2.out', immediateRender: false, delay: 0.3 });
+    gsap.from('.menu-intro-inner', { opacity: 0, y: 24, duration: 1, immediateRender: false, scrollTrigger: { trigger: '.menu-intro', start: 'top 80%', once: true } });
+    gsap.utils.toArray('.menu-card').forEach((card, i) => {
+      gsap.from(card, { opacity: 0, y: 24, duration: 0.8, delay: i * 0.08, immediateRender: false, scrollTrigger: { trigger: '.menu-grid', start: 'top 80%', once: true } });
+    });
+    gsap.from('.quality-img', { opacity: 0, x: -40, duration: 1, immediateRender: false, scrollTrigger: { trigger: '.quality-inner', start: 'top 80%', once: true } });
+    gsap.from('.quality-text', { opacity: 0, x: 40, duration: 1, immediateRender: false, scrollTrigger: { trigger: '.quality-inner', start: 'top 80%', once: true } });
+    gsap.from('.cta-section h2, .cta-section p, .cta-link', { opacity: 0, y: 30, duration: 0.9, stagger: 0.12, immediateRender: false, scrollTrigger: { trigger: '.cta-section', start: 'top 80%', once: true } });
+  </script>
+</body>
+</html>

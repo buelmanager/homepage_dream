@@ -1,4 +1,4 @@
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, Account, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -10,24 +10,98 @@ import { getDefaultSignupCredits } from "@/lib/app-settings";
 const hasGitHubOAuth = !!process.env.GITHUB_ID && !!process.env.GITHUB_SECRET;
 const hasGoogleOAuth = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 
-function createRequestId() {
+export function createRequestId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function redactEmail(email: string | null | undefined) {
+export function redactEmail(email: string | null | undefined) {
   if (!email) return null;
   const at = email.indexOf("@");
   if (at <= 1) return "***";
   return `${email.slice(0, 2)}***${email.slice(at)}`;
 }
 
-function logAuth(level: "info" | "warn" | "error", message: string, meta?: any) {
-  // Never log secrets/passwords; keep meta shallow.
+function logAuth(level: "info" | "warn" | "error", message: string, meta?: Record<string, unknown>) {
   const payload = meta ? { ...meta } : undefined;
   const line = payload ? `[auth] ${message} ${JSON.stringify(payload)}` : `[auth] ${message}`;
   if (level === "error") console.error(line);
   else if (level === "warn") console.warn(line);
   else console.log(line);
+}
+
+/** Find an existing user or create a new one for an OAuth sign-in. */
+async function resolveOAuthUser(user: User) {
+  const existingUser = await prisma.user.findUnique({
+    where: { email: user.email! },
+  });
+
+  if (existingUser) {
+    logAuth("info", "callback.signIn.oauth_existing_user", {
+      userId: existingUser.id,
+      email: redactEmail(existingUser.email),
+      credits: existingUser.credits,
+    });
+    return existingUser;
+  }
+
+  const signupCredits = await getDefaultSignupCredits();
+  const newUser = await prisma.user.create({
+    data: {
+      email: user.email!,
+      name: user.name,
+      image: user.image,
+      credits: signupCredits,
+      role: "USER",
+    },
+  });
+  await prisma.creditTransaction.create({
+    data: {
+      userId: newUser.id,
+      amount: signupCredits,
+      type: "SIGNUP_BONUS",
+      description: `Welcome bonus credits (${signupCredits})`,
+    },
+  });
+
+  logAuth("info", "callback.signIn.oauth_created_user", {
+    userId: newUser.id,
+    email: redactEmail(newUser.email),
+    credits: signupCredits,
+  });
+
+  return newUser;
+}
+
+/** Link an OAuth account to a user if not already linked. */
+async function ensureOAuthAccountLinked(userId: string, account: Account) {
+  const existingAccount = await prisma.account.findFirst({
+    where: {
+      provider: account.provider,
+      providerAccountId: account.providerAccountId,
+    },
+  });
+
+  if (existingAccount) return;
+
+  await prisma.account.create({
+    data: {
+      userId,
+      type: account.type,
+      provider: account.provider,
+      providerAccountId: account.providerAccountId,
+      access_token: account.access_token,
+      refresh_token: account.refresh_token,
+      expires_at: account.expires_at,
+      token_type: account.token_type,
+      scope: account.scope,
+      id_token: account.id_token,
+    },
+  });
+
+  logAuth("info", "callback.signIn.oauth_account_linked", {
+    userId,
+    provider: account.provider,
+  });
 }
 
 export const authOptions: NextAuthOptions = {
@@ -54,9 +128,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        const user = await prisma.user.findUnique({ where: { email } });
         logAuth("info", "credentials.authorize.user_lookup", {
           rid,
           email: redactEmail(email),
@@ -79,17 +151,11 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!isValid) {
-          logAuth("warn", "credentials.authorize.invalid_password", {
-            rid,
-            userId: user.id,
-          });
+          logAuth("warn", "credentials.authorize.invalid_password", { rid, userId: user.id });
           return null;
         }
 
-        logAuth("info", "credentials.authorize.success", {
-          rid,
-          userId: user.id,
-        });
+        logAuth("info", "credentials.authorize.success", { rid, userId: user.id });
 
         return {
           id: user.id,
@@ -118,18 +184,18 @@ export const authOptions: NextAuthOptions = {
         ]
       : []),
   ],
-  debug: true,
+  debug: process.env.NODE_ENV !== "production",
   session: { strategy: "jwt" },
   pages: { signIn: "/signin" },
   logger: {
     error(code, metadata) {
-      logAuth("error", "nextauth.logger.error", { code, metadata });
+      logAuth("error", "nextauth.logger.error", { code: String(code), metadata: String(metadata) });
     },
     warn(code) {
       logAuth("warn", "nextauth.logger.warn", { code });
     },
     debug(code, metadata) {
-      logAuth("info", "nextauth.logger.debug", { code, metadata });
+      logAuth("info", "nextauth.logger.debug", { code: String(code), metadata: String(metadata) });
     },
   },
   events: {
@@ -160,81 +226,18 @@ export const authOptions: NextAuthOptions = {
         email: redactEmail(user?.email),
       });
 
-      if ((account?.provider === "github" || account?.provider === "google") && user.email) {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email },
-        });
+      const isOAuth =
+        (account?.provider === "github" || account?.provider === "google") && user.email;
 
-        if (!existingUser) {
-          const signupCredits = await getDefaultSignupCredits();
-          const newUser = await prisma.user.create({
-            data: {
-              email: user.email,
-              name: user.name,
-              image: user.image,
-              credits: signupCredits,
-              role: "USER",
-            },
-          });
-          await prisma.creditTransaction.create({
-            data: {
-              userId: newUser.id,
-              amount: signupCredits,
-              type: "SIGNUP_BONUS",
-              description: `Welcome bonus credits (${signupCredits})`,
-            },
-          });
+      if (!isOAuth || !account) return true;
 
-          logAuth("info", "callback.signIn.oauth_created_user", {
-            userId: newUser.id,
-            email: redactEmail(newUser.email),
-            credits: signupCredits,
-          });
+      const dbUser = await resolveOAuthUser(user);
 
-          (user as any).id = newUser.id;
-          (user as any).role = newUser.role;
-          (user as any).credits = newUser.credits;
-        } else {
-          (user as any).id = existingUser.id;
-          (user as any).role = existingUser.role;
-          (user as any).credits = existingUser.credits;
+      (user as any).id = dbUser.id;
+      (user as any).role = dbUser.role;
+      (user as any).credits = dbUser.credits;
 
-          logAuth("info", "callback.signIn.oauth_existing_user", {
-            userId: existingUser.id,
-            email: redactEmail(existingUser.email),
-            credits: existingUser.credits,
-          });
-        }
-
-        const existingAccount = await prisma.account.findFirst({
-          where: {
-            provider: account.provider,
-            providerAccountId: account.providerAccountId,
-          },
-        });
-
-        if (!existingAccount) {
-          await prisma.account.create({
-            data: {
-              userId: (user as any).id,
-              type: account.type,
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-              access_token: account.access_token,
-              refresh_token: account.refresh_token,
-              expires_at: account.expires_at,
-              token_type: account.token_type,
-              scope: account.scope,
-              id_token: account.id_token,
-            },
-          });
-
-          logAuth("info", "callback.signIn.oauth_account_linked", {
-            userId: (user as any).id,
-            provider: account.provider,
-          });
-        }
-      }
+      await ensureOAuthAccountLinked(dbUser.id, account);
 
       return true;
     },

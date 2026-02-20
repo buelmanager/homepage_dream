@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KIRI — Japanese Sake Experience</title>
+  <meta name="description" content="KIRI Sake Bar — Where Ceremony Meets Complexity. A curated experience of Japan's finest nihonshu, served in rituals of stillness. London · Paris · New York." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=DM+Sans:wght@200;300;400;500&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet" />
+
+  <!-- Swiper 11 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — Wabi-sabi minimal, Japanese earth tones
+    ============================================================ */
+    :root {
+      --bg:          #181A19;
+      --surface:     #1E2120;
+      --surface2:    #222623;
+      --accent:      #B8A882;
+      --accent2:     #7A6E5A;
+      --sage:        #6B7B6A;
+      --rust:        #8B5A3A;
+      --ivory:       #E8E4D8;
+      --smoke:       #8E9290;
+      --muted:       #545854;
+      --border:      #1A1D1C;
+      --border2:     #242820;
+      --font-serif:  'Shippori Mincho', 'Noto Serif JP', Georgia, serif;
+      --font-sans:   'DM Sans', sans-serif;
+      --font-jp:     'Noto Serif JP', serif;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    body.locked { overflow: hidden; }
+    img { display: block; width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+    .pre-kanji {
+      font-family: var(--font-jp);
+      font-size: 4rem;
+      font-weight: 300;
+      color: var(--accent);
+      opacity: 0;
+      animation: pre-kanji-fade 1s ease 0.4s forwards;
+      letter-spacing: 0.2em;
+    }
+    @keyframes pre-kanji-fade { to { opacity: 1; } }
+    .pre-line {
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      margin: 20px 0;
+      animation: pre-line-grow 0.8s ease 1s forwards;
+    }
+    @keyframes pre-line-grow { to { width: 80px; } }
+    .pre-brand {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      font-weight: 200;
+      letter-spacing: 0.8em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: pre-brand-fade 0.8s ease 1.4s forwards;
+    }
+    @keyframes pre-brand-fade { to { opacity: 1; } }
+    .pre-sub {
+      font-size: 0.6rem;
+      font-weight: 200;
+      letter-spacing: 0.5em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      margin-top: 6px;
+      opacity: 0;
+      animation: pre-brand-fade 0.8s ease 1.7s forwards;
+    }
+
+    /* ============================================================
+       SCROLL INDICATOR
+    ============================================================ */
+    #scroll-indicator {
+      position: fixed;
+      left: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .si-label {
+      font-family: var(--font-sans);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+    .si-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      position: relative;
+      overflow: hidden;
+    }
+    .si-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--ivory);
+      animation: si-flow 2s ease-in-out infinite;
+    }
+    @keyframes si-flow { 0% { top: -100%; } 100% { top: 200%; } }
+    .si-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .si-progress { width: 1px; height: 36px; background: var(--border2); position: relative; }
+    .si-progress-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); transition: height 0.1s linear; }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(12,14,13,0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 16px 48px;
+      border-bottom: 1px solid var(--border2);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-brand-text {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--ivory);
+    }
+    .nav-brand-jp {
+      font-family: var(--font-jp);
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      border-left: 1px solid var(--border2);
+      padding-left: 12px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-cta {
+      padding: 10px 24px !important;
+      border: 1px solid var(--accent);
+      color: var(--accent) !important;
+    }
+    .nav-cta:hover { background: var(--accent) !important; color: var(--bg) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* ============================================================
+       HERO — Type C: Diagonal Split (clip-path polygon)
+    ============================================================ */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+    .hero-left {
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+      overflow: hidden;
+    }
+    .hero-left img {
+      width: 115%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-left-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(12,14,13,0.55) 0%, rgba(12,14,13,0.20) 100%);
+    }
+    .hero-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 80px 0 100px;
+      background: var(--bg);
+      z-index: 2;
+    }
+    .hero-content {}
+    .hero-jp-char {
+      font-family: var(--font-jp);
+      font-size: 6rem;
+      font-weight: 300;
+      color: var(--border2);
+      display: block;
+      line-height: 1;
+      margin-bottom: 24px;
+      letter-spacing: -0.05em;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      font-weight: 200;
+      letter-spacing: 0.5em;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--ivory);
+      margin-bottom: 20px;
+    }
+    .hero-title em {
+      display: block;
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-divider {
+      width: 48px;
+      height: 1px;
+      background: var(--accent);
+      margin: 24px 0;
+    }
+    .hero-sub {
+      font-size: 0.875rem;
+      color: var(--smoke);
+      line-height: 1.8;
+      max-width: 340px;
+      margin-bottom: 40px;
+    }
+    .hero-actions { display: flex; gap: 16px; align-items: center; }
+    .btn-primary {
+      padding: 14px 36px;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--ivory); }
+    .btn-ghost {
+      padding: 13px 36px;
+      border: 1px solid var(--border2);
+      color: var(--smoke);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      right: 80px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .hero-scroll-line { width: 40px; height: 1px; background: var(--accent); }
+
+    /* ============================================================
+       STATS STRIP
+    ============================================================ */
+    #stats {
+      background: var(--surface2);
+      border-top: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2);
+      padding: 64px 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 0 20px;
+      border-right: 1px solid var(--border2);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 400;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+    }
+    .stat-suffix { font-size: 1.5rem; }
+    .stat-label {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 8px;
+      display: block;
+    }
+
+    /* ============================================================
+       PHILOSOPHY
+    ============================================================ */
+    #philosophy {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      color: var(--ivory);
+      line-height: 1.25;
+      margin-bottom: 60px;
+    }
+    .section-title em { font-style: italic; color: var(--accent); }
+    .philosophy-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .philosophy-header { text-align: center; margin-bottom: 80px; }
+    .philosophy-header p {
+      font-size: 0.875rem;
+      color: var(--smoke);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.9;
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .phil-card {
+      padding: 48px 40px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      position: relative;
+      overflow: hidden;
+    }
+    .phil-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent), transparent);
+    }
+    .phil-jp {
+      font-family: var(--font-jp);
+      font-size: 2.5rem;
+      color: var(--border2);
+      display: block;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .phil-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .phil-text { font-size: 0.83rem; color: var(--smoke); line-height: 1.8; }
+
+    /* ============================================================
+       COLLECTION GRID — Sake Menu
+    ============================================================ */
+    #collection {
+      padding: 120px 0;
+      background: var(--surface2);
+    }
+    .collection-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .collection-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 60px;
+    }
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      overflow: visible;
+    }
+    .sake-item {
+      position: relative;
+      aspect-ratio: 5/4;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .sake-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);
+      filter: saturate(0.85);
+    }
+    .sake-item:hover img { transform: scale(1.04); filter: saturate(1); }
+    .sake-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(12,14,13,0.9) 0%, transparent 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 36px;
+    }
+    .sake-region {
+      font-size: 0.55rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .sake-name {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+    .sake-style { font-size: 0.75rem; color: var(--smoke); }
+    .view-all-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 4px;
+      transition: gap 0.3s ease;
+    }
+    .view-all-link:hover { gap: 16px; }
+
+    /* ============================================================
+       ATELIER — Bar Interior
+    ============================================================ */
+    #atelier {
+      padding: 140px 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .atelier-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .atelier-text { order: -1; }
+    .atelier-text blockquote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--accent);
+      line-height: 1.5;
+      border-left: 2px solid var(--accent);
+      padding-left: 24px;
+      margin: 28px 0;
+    }
+    .atelier-text p { font-size: 0.875rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .atelier-image-wrap { position: relative; height: 580px; overflow: hidden; }
+    .atelier-image-wrap img { width: 100%; height: 120%; object-fit: cover; will-change: transform; }
+    .atelier-accent-bar {
+      position: absolute;
+      top: 40px;
+      right: -16px;
+      width: 3px;
+      height: 160px;
+      background: var(--accent);
+    }
+
+    /* ============================================================
+       PROCESS — Ritual Steps
+    ============================================================ */
+    #process {
+      padding: 140px 0;
+      background: var(--surface);
+    }
+    .process-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .process-header { text-align: center; margin-bottom: 80px; }
+    .ritual-timeline {
+      position: relative;
+      padding-left: 60px;
+    }
+    .ritual-timeline::before {
+      content: '';
+      position: absolute;
+      left: 18px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .rt-item { position: relative; padding-bottom: 60px; }
+    .rt-item:last-child { padding-bottom: 0; }
+    .rt-dot {
+      position: absolute;
+      left: -48px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      background: var(--surface);
+    }
+    .rt-step { font-size: 0.58rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 8px; }
+    .rt-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 400; color: var(--ivory); margin-bottom: 10px; }
+    .rt-desc { font-size: 0.83rem; color: var(--smoke); line-height: 1.8; }
+
+    /* ============================================================
+       HERITAGE
+    ============================================================ */
+    #heritage {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+    .heritage-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .heritage-header { text-align: center; margin-bottom: 80px; }
+    .milestones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+    }
+    .milestone {
+      border-top: 1px solid var(--border2);
+      padding-top: 24px;
+    }
+    .ms-year {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .ms-title { font-family: var(--font-serif); font-size: 0.95rem; font-weight: 400; color: var(--ivory); margin-bottom: 8px; }
+    .ms-desc { font-size: 0.78rem; color: var(--smoke); line-height: 1.7; }
+
+    /* ============================================================
+       PRESS
+    ============================================================ */
+    #press {
+      padding: 120px 0;
+      background: var(--surface2);
+    }
+    .press-inner { max-width: 900px; margin: 0 auto; padding: 0 60px; }
+    .press-header { text-align: center; margin-bottom: 60px; }
+    .press-swiper { padding: 20px 0 60px; }
+    .press-slide {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      padding: 48px;
+      text-align: center;
+    }
+    .press-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .press-quote::before { content: '\201C'; color: var(--accent); }
+    .press-quote::after  { content: '\201D'; color: var(--accent); }
+    .press-publication {
+      font-size: 0.62rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .swiper-pagination-bullet { background: var(--smoke); }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ============================================================
+       RESERVATION FORM
+    ============================================================ */
+    #commission {
+      padding: 140px 0;
+      background: var(--surface);
+    }
+    .commission-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .commission-info h2 { margin-bottom: 20px; }
+    .commission-info p { font-size: 0.875rem; color: var(--smoke); line-height: 1.9; margin-bottom: 12px; }
+    .commission-contact { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
+    .cc-item { display: flex; gap: 12px; font-size: 0.8rem; color: var(--smoke); }
+    .cc-item strong { color: var(--accent); font-weight: 400; min-width: 70px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.58rem; font-weight: 300; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border2); padding: 12px 0; color: var(--ivory); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 300; outline: none; transition: border-color 0.3s ease; -webkit-appearance: none; }
+    .form-group select option { background: var(--surface); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-bottom-color: var(--accent); }
+    .form-group textarea { resize: none; height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-submit { margin-top: 12px; padding: 16px 40px; background: var(--accent); color: var(--bg); border: none; font-family: var(--font-sans); font-size: 0.68rem; font-weight: 400; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; transition: background 0.3s ease; width: 100%; }
+    .form-submit:hover { background: var(--ivory); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border2);
+      padding: 80px 60px 40px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-brand-col .footer-logo {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--ivory);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .footer-brand-jp {
+      font-family: var(--font-jp);
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .footer-brand-col p { font-size: 0.8rem; color: var(--muted); line-height: 1.8; margin-bottom: 24px; }
+    .footer-col h4 { font-size: 0.58rem; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 0.8rem; color: var(--muted); transition: color 0.3s ease; }
+    .footer-col ul li a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-bottom p { font-size: 0.72rem; color: var(--muted); }
+    .footer-bottom a { color: var(--accent); }
+</style>
+</head>
+<body class="locked">
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <span class="pre-kanji">霧</span>
+    <div class="pre-line"></div>
+    <span class="pre-brand">KIRI</span>
+    <span class="pre-sub">Japanese Sake Experience</span>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <span class="si-label">Scroll</span>
+    <div class="si-line"></div>
+    <div class="si-dot"></div>
+    <div class="si-progress">
+      <div class="si-progress-fill" id="si-fill"></div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-brand-text">KIRI</span>
+      <span class="nav-brand-jp">霧</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="about.html">Maison</a></li>
+      <li><a href="collection.html">The Menu</a></li>
+      <li><a href="process.html">Ritual</a></li>
+      <li><a href="contact.html" class="nav-cta">Reserve</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO — Type C: Diagonal Split -->
+  <section id="hero">
+    <div class="hero-left">
+      <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="KIRI Sake Bar Interior" />
+      <div class="hero-left-overlay"></div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-content">
+        <span class="hero-jp-char">間</span>
+        <span class="hero-eyebrow">London · Est. 2015</span>
+        <h1 class="hero-title" id="hero-title">
+          Where Ceremony<br><em>Meets Complexity</em>
+        </h1>
+        <div class="hero-divider"></div>
+        <p class="hero-sub">A curated sanctuary of Japan's finest nihonshu — poured in rituals of silence, precision, and deep time.</p>
+        <div class="hero-actions">
+          <a href="contact.html" class="btn-primary">Reserve a Table</a>
+          <a href="collection.html" class="btn-ghost">Explore the Menu</a>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <div class="hero-scroll-line"></div>
+        <span>Descend</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section id="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number" data-target="240">0</span>
+        <span class="stat-label">Sake Labels</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="38">0</span>
+        <span class="stat-label">Prefectures Represented</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="9">0</span>
+        <span class="stat-label">Years of Curation</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="4">0</span>
+        <span class="stat-label">Tasting Formats</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section id="philosophy">
+    <div class="philosophy-inner">
+      <div class="philosophy-header">
+        <span class="section-label">Our Philosophy</span>
+        <h2 class="section-title">Stillness as<br><em>Sophistication</em></h2>
+        <p>At KIRI, we believe the highest form of drinking is listening — to the sake, to the season, to the moment. We do not pour drinks. We conduct quiet ceremonies of attention.</p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="phil-card sr">
+          <span class="phil-jp">間</span>
+          <h3 class="phil-title">Ma — Negative Space</h3>
+          <p class="phil-text">The Japanese concept of ma — the meaningful pause between notes — governs our service rhythm. Silence between pours is as important as the pour itself. We train our staff in the art of unhurried presence.</p>
+        </div>
+        <div class="phil-card sr">
+          <span class="phil-jp">旨</span>
+          <h3 class="phil-title">Umami — Depth of Flavor</h3>
+          <p class="phil-text">We seek sake with structural depth — not sweetness for its own sake, but complexity that rewards sustained attention. Each label is selected for its ability to tell a story across 20 minutes in the glass.</p>
+        </div>
+        <div class="phil-card sr">
+          <span class="phil-jp">里</span>
+          <h3 class="phil-title">Satoyama — Terroir</h3>
+          <p class="phil-text">Every sake carries the landscape of its origin. Our menu is organized by region, water source, and rice variety — a map of Japan through its most ancient fermented craft. Geography is the first ingredient.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section id="collection">
+    <div class="collection-inner">
+      <div class="collection-header">
+        <div>
+          <span class="section-label">The Selection</span>
+          <h2 class="section-title" style="margin-bottom:0;">Featured <em>Nihonshu</em></h2>
+        </div>
+        <a href="collection.html" class="view-all-link">Full Menu <span>→</span></a>
+      </div>
+      <div class="collection-grid">
+        <div class="sake-item">
+          <img src="https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Junmai Daiginjo" loading="lazy" />
+          <div class="sake-overlay">
+            <span class="sake-region">Niigata · Junmai Daiginjo</span>
+            <div class="sake-name">Echigo no Yuki</div>
+            <p class="sake-style">Floral, melon, faint mineral — cold mountain water</p>
+          </div>
+        </div>
+        <div class="sake-item">
+          <img src="https://images.pexels.com/photos/1785493/pexels-photo-1785493.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Yamahai" loading="lazy" />
+          <div class="sake-overlay">
+            <span class="sake-region">Kyoto · Yamahai Junmai</span>
+            <div class="sake-name">Kyō no Akikazari</div>
+            <p class="sake-style">Earthy, lactic, persistent — autumnal complexity</p>
+          </div>
+        </div>
+        <div class="sake-item">
+          <img src="https://images.pexels.com/photos/3735218/pexels-photo-3735218.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Aged Koshu" loading="lazy" />
+          <div class="sake-overlay">
+            <span class="sake-region">Nara · Koshu Aged 10 Years</span>
+            <div class="sake-name">Nara Kofuku</div>
+            <p class="sake-style">Amber, caramel, dry fig — extraordinary depth</p>
+          </div>
+        </div>
+        <div class="sake-item">
+          <img src="https://images.pexels.com/photos/3338497/pexels-photo-3338497.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Sparkling Nigori" loading="lazy" />
+          <div class="sake-overlay">
+            <span class="sake-region">Hiroshima · Sparkling Nigori</span>
+            <div class="sake-name">Hana no Awa</div>
+            <p class="sake-style">Cloudy, effervescent, rice-forward — celebratory</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER — Bar Space -->
+  <section id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-text sr">
+        <span class="section-label">The Space</span>
+        <h2 class="section-title">A Sanctuary of<br><em>Quiet Attention</em></h2>
+        <blockquote>"We built KIRI for people who know the difference between drinking and tasting — and who understand that the greatest sake asks something of you."</blockquote>
+        <p>Nestled in the Georgian townhouses of Fitzrovia, KIRI seats 28 guests across a single curved counter and four private tatami rooms. The interior — raw plaster, reclaimed hinoki wood, and Japanese river stones — creates a space designed to slow perception.</p>
+        <p>Temperature control is precise: 14°C in the cellar where 3,000 bottles rest in darkness, 18°C in the tasting rooms where temperature influences every nuance of what you experience in the glass.</p>
+        <a href="about.html" class="view-all-link" style="margin-top:24px;">Discover Our Space <span>→</span></a>
+      </div>
+      <div class="atelier-image-wrap">
+        <img src="https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="KIRI Interior" id="atelier-img" loading="lazy" />
+        <div class="atelier-accent-bar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS — Ritual -->
+  <section id="process">
+    <div class="process-inner">
+      <div class="process-header">
+        <span class="section-label">The Ritual</span>
+        <h2 class="section-title">From Cellar<br><em>to Ceremony</em></h2>
+      </div>
+      <div class="ritual-timeline">
+        <div class="rt-item">
+          <div class="rt-dot"></div>
+          <span class="rt-step sr">Step 01</span>
+          <h3 class="rt-title">The Arrival</h3>
+          <p class="rt-desc">You are greeted in silence — no menus, no rush. A brief conversation with your Sakagura guide establishes your palate preferences, the occasion, and how deep you wish to go. This takes as long as it takes.</p>
+        </div>
+        <div class="rt-item">
+          <div class="rt-dot"></div>
+          <span class="rt-step sr">Step 02</span>
+          <h3 class="rt-title">The First Pour</h3>
+          <p class="rt-desc">Your guide selects an opening sake — always something delicate, always cold — to calibrate the session. The first pour is a question: where are you this evening?</p>
+        </div>
+        <div class="rt-item">
+          <div class="rt-dot"></div>
+          <span class="rt-step sr">Step 03</span>
+          <h3 class="rt-title">The Journey</h3>
+          <p class="rt-desc">Across four to six pours, you travel geographically and stylistically: from clean ginjo to complex yamahai, from chilled to ambient, from new-season to aged koshu. Each transition is deliberate.</p>
+        </div>
+        <div class="rt-item">
+          <div class="rt-dot"></div>
+          <span class="rt-step sr">Step 04</span>
+          <h3 class="rt-title">The Pairing</h3>
+          <p class="rt-desc">Seasonal Japanese food — prepared by our kitchen — is offered between pours. Not to fill the appetite but to extend the conversation between sake and season.</p>
+        </div>
+        <div class="rt-item">
+          <div class="rt-dot"></div>
+          <span class="rt-step sr">Step 05</span>
+          <h3 class="rt-title">The Close</h3>
+          <p class="rt-desc">The final pour is always ambient-temperature and weighty — a sake of great age and presence that lingers. The meal is closed with green tea in silence. You leave knowing something you did not before.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section id="heritage">
+    <div class="heritage-inner">
+      <div class="heritage-header">
+        <span class="section-label">Our Heritage</span>
+        <h2 class="section-title">Nine Years of<br><em>Devoted Curation</em></h2>
+      </div>
+      <div class="milestones">
+        <div class="milestone sr">
+          <span class="ms-year">2015</span>
+          <h4 class="ms-title">Opening in Fitzrovia</h4>
+          <p class="ms-desc">KIRI opens with 80 labels and a 14-seat counter in London's Fitzrovia — the first dedicated sake bar in the city.</p>
+        </div>
+        <div class="milestone sr">
+          <span class="ms-year">2017</span>
+          <h4 class="ms-title">Paris Salon</h4>
+          <p class="ms-desc">A small tasting room opens in the Marais, introducing Parisian palates to Yamahai and Kimoto sake traditions.</p>
+        </div>
+        <div class="milestone sr">
+          <span class="ms-year">2020</span>
+          <h4 class="ms-title">Brewery Partnerships</h4>
+          <p class="ms-desc">Direct partnerships established with 12 small-scale kura across Japan — giving KIRI access to exclusive import allocations.</p>
+        </div>
+        <div class="milestone sr">
+          <span class="ms-year">2024</span>
+          <h4 class="ms-title">The Archive</h4>
+          <p class="ms-desc">KIRI opens a vertical archive of aged koshu, allowing guests to taste sake across multiple vintages for the first time in Europe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section id="press">
+    <div class="press-inner">
+      <div class="press-header">
+        <span class="section-label">Press</span>
+        <h2 class="section-title" style="margin-bottom:0;">Written About<br><em>KIRI</em></h2>
+      </div>
+      <div class="swiper press-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">KIRI is what London's dining scene has needed for years — a place that treats sake with the same intellectual seriousness that the best wine bars afford Burgundy. The service is impeccable, the knowledge extraordinary.</p>
+            <span class="press-publication">The Guardian — Restaurant of the Year Longlist</span>
+          </div>
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">There is something in the pacing of a KIRI tasting session that resembles a form of meditation. You arrive eager; you leave composed. The sake is the vehicle, but the experience is the destination.</p>
+            <span class="press-publication">Financial Times Weekend — The Table</span>
+          </div>
+          <div class="swiper-slide press-slide">
+            <p class="press-quote">The aged koshu selection at KIRI should not be possible outside of Japan. That it exists in Fitzrovia, poured by people who understand it as deeply as any Tokyo sommelier, is remarkable.</p>
+            <span class="press-publication">Decanter — Sake Special</span>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESERVATION FORM -->
+  <section id="commission">
+    <div class="commission-inner">
+      <div class="commission-info">
+        <span class="section-label">Make a Reservation</span>
+        <h2 class="section-title">Reserve Your<br><em>Evening</em></h2>
+        <p>KIRI operates by reservation only. We accept a maximum of 28 guests per service — ensuring that every table receives the full attention of our Sakagura team.</p>
+        <p>Private tatami rooms are available for groups of 4–8. The Omakase Sake Experience is available on Friday and Saturday evenings only.</p>
+        <div class="commission-contact">
+          <div class="cc-item"><strong>London</strong><span>22 Goodge Street, Fitzrovia W1T 2QA</span></div>
+          <div class="cc-item"><strong>Paris</strong><span>14 Rue des Tournelles, 75004</span></div>
+          <div class="cc-item"><strong>Hours</strong><span>Tue–Sun, 18:00–23:30</span></div>
+        </div>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group sr"><label>First Name</label><input type="text" placeholder="Aiko" /></div>
+          <div class="form-group sr"><label>Last Name</label><input type="text" placeholder="Tanaka" /></div>
+        </div>
+        <div class="form-group sr"><label>Email</label><input type="email" placeholder="aiko@example.com" /></div>
+        <div class="form-row">
+          <div class="form-group sr"><label>Date</label><input type="date" /></div>
+          <div class="form-group sr"><label>Guests</label>
+            <select>
+              <option>1 guest</option>
+              <option>2 guests</option>
+              <option>3 guests</option>
+              <option>4–6 guests (Private Room)</option>
+              <option>7–8 guests (Private Room)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group sr"><label>Experience</label>
+          <select>
+            <option>Counter Tasting (4 pours)</option>
+            <option>Omakase Experience (6 pours + food)</option>
+            <option>Private Room — Standard</option>
+            <option>Private Room — Full Omakase</option>
+          </select>
+        </div>
+        <div class="form-group sr"><label>Dietary Notes</label><textarea placeholder="Allergies, dietary preferences, or a special occasion we should know about..."></textarea></div>
+        <button type="submit" class="form-submit">Request a Table</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <span class="footer-logo">KIRI</span>
+          <span class="footer-brand-jp">霧 — Japanese Sake Experience</span>
+          <p>Founded in 2015 in Fitzrovia, London. A sanctuary of Japanese sake culture, curated with the patience and precision the craft deserves.</p>
+        </div>
+        <div class="footer-col sr">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">Our Maison</a></li>
+            <li><a href="collection.html">The Menu</a></li>
+            <li><a href="process.html">The Ritual</a></li>
+          </ul>
+        </div>
+        <div class="footer-col sr">
+          <h4>Locations</h4>
+          <ul>
+            <li><a href="#">London — Fitzrovia</a></li>
+            <li><a href="#">Paris — Marais</a></li>
+            <li><a href="#">Private Events</a></li>
+          </ul>
+        </div>
+        <div class="footer-col sr">
+          <h4>Reserve</h4>
+          <ul>
+            <li><a href="contact.html">Make a Reservation</a></li>
+            <li><a href="#">Gift Certificates</a></li>
+            <li><a href="#">Press Inquiries</a></li>
+            <li><a href="#">Sake Education</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 KIRI — Japanese Sake Experience. All rights reserved.</p>
+        <p><a href="#">Privacy</a> · <a href="#">Terms</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+  class SplitText {
+    constructor(target, opts = {}) {
+      const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+      this.chars = []; this.words = []; this.lines = [];
+      if (!el) return;
+      this._el = el;
+      const type = (opts.type || 'chars,words').toLowerCase();
+      const original = el.textContent;
+      el.setAttribute('data-split-orig', original);
+      if (type.includes('chars')) {
+        el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+        this.chars = Array.from(el.querySelectorAll('.char'));
+      } else if (type.includes('words')) {
+        el.innerHTML = original.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+        this.words = Array.from(el.querySelectorAll('.word'));
+      }
+      this.lines = [el];
+    }
+    revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+  gsap.registerPlugin(ScrollTrigger);
+
+    // ── PRELOADER ──
+    window.addEventListener('load', () => {
+      const pre = document.getElementById('preloader');
+      gsap.to(pre, {
+        opacity: 0, duration: 0.8, delay: 2.4,
+        onComplete: () => {
+          pre.classList.add('hidden');
+          document.body.classList.remove('locked');
+          document.getElementById('scroll-indicator').classList.add('visible');
+        }
+      });
+    });
+    setTimeout(() => {
+      const pre = document.getElementById('preloader');
+      pre.style.opacity = '0';
+      pre.style.visibility = 'hidden';
+      document.body.classList.remove('locked');
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }, 4000);
+
+    // ── SCROLL INDICATOR ──
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      document.getElementById('si-fill').style.height = (pct * 100) + '%';
+    });
+
+    // ── NAVBAR ──
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── HERO ENTRANCE ──
+    const heroTl = gsap.timeline({ delay: 2.6 });
+    heroTl
+      .from('.hero-left', { x: -60, opacity: 0, duration: 1.2, ease: 'power3.out', immediateRender: false })
+      .from('.hero-jp-char', { opacity: 0, y: 30, duration: 0.8, immediateRender: false }, '-=0.6')
+      .from('.hero-eyebrow', { opacity: 0, y: 20, duration: 0.7, immediateRender: false }, '-=0.5')
+      .from('.hero-title', { opacity: 0, y: 30, duration: 0.8, immediateRender: false }, '-=0.4')
+      .from('.hero-divider', { scaleX: 0, transformOrigin: 'left', duration: 1.0, immediateRender: false }, '-=0.4')
+      .from('.hero-sub', { opacity: 0, y: 20, duration: 0.7, immediateRender: false }, '-=0.4')
+      .from('.hero-actions', { opacity: 0, y: 20, duration: 0.7, immediateRender: false }, '-=0.4');
+
+    // ── STATS COUNTER ──
+    document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+      gsap.to(el, {
+        textContent: el.dataset.target,
+        duration: 2.5,
+        ease: 'power2.out',
+        snap: { textContent: 1 },
+        scrollTrigger: { trigger: '#stats', start: 'top 80%', once: true },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)).toLocaleString(); }
+      });
+    });
+
+    // ── PHILOSOPHY ──
+    gsap.from('.philosophy-header', { opacity: 0, y: 24, duration: 0.9, immediateRender: false, scrollTrigger: { trigger: '#philosophy', start: 'top 75%', once: true } });
+    gsap.from('.phil-card', { opacity: 0, y: 24, stagger: 0.1, duration: 0.9, immediateRender: false, scrollTrigger: { trigger: '.philosophy-grid', start: 'top 80%', once: true } });
+
+    // ── COLLECTION ──
+    gsap.from('.sake-item', { opacity: 0, y: 24, stagger: 0.15, duration: 0.9, immediateRender: false, scrollTrigger: { trigger: '#collection .collection-grid', start: 'top 80%', once: true } });
+
+    // ── ATELIER ──
+    gsap.to('#atelier-img', {
+      yPercent: -15, ease: 'none',
+      scrollTrigger: { trigger: '#atelier', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+    gsap.from('.atelier-text', { opacity: 0, x: -60, duration: 1, immediateRender: false, scrollTrigger: { trigger: '#atelier', start: 'top 75%', once: true } });
+    gsap.from('.atelier-image-wrap', { opacity: 0, x: 60, duration: 1, immediateRender: false, scrollTrigger: { trigger: '#atelier', start: 'top 75%', once: true } });
+
+    // ── RITUAL ──
+    gsap.from('.rt-item', { opacity: 0, x: -40, stagger: 0.1, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '.ritual-timeline', start: 'top 80%', once: true } });
+
+    // ── HERITAGE ──
+    gsap.from('.milestone', { opacity: 0, y: 24, stagger: 0.15, duration: 0.8, immediateRender: false, scrollTrigger: { trigger: '#heritage .milestones', start: 'top 80%', once: true } });
+
+    // ── PRESS ──
+    new Swiper('.press-swiper', {
+      loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      speed: 800
+    });
+
+    // ── FORM ──
+    gsap.from('.commission-info', { opacity: 0, x: -50, duration: 1, immediateRender: false, scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true } });
+    gsap.from('#commission form', { opacity: 0, x: 50, duration: 1, immediateRender: false, scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true } });
+  </script>
+</body>
+</html>

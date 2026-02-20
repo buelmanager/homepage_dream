@@ -12,22 +12,18 @@ type PlanKey = keyof typeof SUBSCRIPTION_PLANS;
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("[API /api/subscription POST] Request started");
     const session = await auth();
 
     if (!session?.user?.id) {
-      console.log("[API /api/subscription POST] Unauthorized - no user ID");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { plan } = await request.json();
-    console.log("[API /api/subscription POST] Plan requested:", plan);
 
     if (!plan || !SUBSCRIPTION_PLANS[plan as PlanKey]) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
-    console.log("[API /api/subscription POST] Finding user:", session.user.id);
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
     });
@@ -154,18 +150,15 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    console.log("[API /api/subscription GET] Request started");
     const session = await auth();
 
     if (!session?.user?.id) {
-      console.log("[API /api/subscription GET] Unauthorized - no user ID");
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    console.log("[API /api/subscription GET] Finding user:", session.user.id);
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {

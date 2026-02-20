@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Process — Umbra Cacao</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Jost:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #221510;
+      --surface: #2A1C12;
+      --surface-2: #32211A;
+      --accent: #C49A3C;
+      --accent-dim: #8A6B28;
+      --ivory: #F5EDD6;
+      --text: #F0E6D0;
+      --text-dim: #A08060;
+      --border: rgba(196,154,60,0.15);
+      --border-warm: rgba(196,154,60,0.25);
+      --font-display: 'Playfair Display', serif;
+      --font-serif: 'Libre Baskerville', serif;
+      --font-body: 'Jost', sans-serif;
+      --font-mono: 'Courier New', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      background: rgba(34,21,16,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 18px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      font-style: italic;
+    }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 10px 24px;
+      transition: background 0.3s;
+    }
+    .nav-cta:hover { background: var(--accent-dim); color: var(--ivory); }
+
+    /* BANNER */
+    .banner {
+      height: 50vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=1920&q=80&auto=format&fit=crop') center/cover no-repeat;
+    }
+    .banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(34,21,16,0.62);
+    }
+    .banner-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    .banner-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .banner-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      font-style: italic;
+      color: var(--ivory);
+      letter-spacing: 0.06em;
+    }
+
+    /* INTRO */
+    .intro {
+      padding: 100px 0 60px;
+    }
+    .intro-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .intro-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .intro-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-style: italic;
+      color: var(--ivory);
+      margin-bottom: 28px;
+    }
+    .intro-body {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.9;
+    }
+
+    /* TIMELINE */
+    .process-section {
+      padding: 60px 0 100px;
+    }
+    .process-timeline {
+      position: relative;
+      max-width: 840px;
+      margin: 0 auto;
+    }
+    .process-timeline::before {
+      content: '';
+      position: absolute;
+      left: 44px;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+    .process-step {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 40px;
+      margin-bottom: 64px;
+      align-items: start;
+    }
+    .process-step:last-child { margin-bottom: 0; }
+    .step-num-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding-top: 4px;
+    }
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border-warm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      position: relative;
+      z-index: 1;
+    }
+    .step-content { padding-top: 4px; }
+    .step-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .step-title {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--ivory);
+      margin-bottom: 14px;
+    }
+    .step-desc {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.9;
+    }
+
+    /* TOOLS */
+    .tools {
+      padding: 100px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .tools-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .tools-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .tools-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+    .tools-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .tools-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+    .tools-list li:first-child { border-top: 1px solid var(--border); }
+    .tool-name {
+      font-family: var(--font-serif);
+      font-size: 0.88rem;
+      color: var(--ivory);
+      min-width: 160px;
+    }
+    .tools-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      filter: sepia(0.2) contrast(1.05);
+    }
+
+    /* GALLERY */
+    .gallery {
+      padding: 100px 0;
+    }
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .gallery-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .gallery-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-style: italic;
+      color: var(--ivory);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    .gallery-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+      filter: sepia(0.15) contrast(1.05);
+    }
+
+    /* CTA */
+    .cta-bar {
+      padding: 100px 0;
+      text-align: center;
+    }
+    .cta-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-style: italic;
+      color: var(--ivory);
+      margin-bottom: 20px;
+    }
+    .cta-body {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin-bottom: 40px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.8;
+    }
+    .cta-btn {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 18px 48px;
+      transition: background 0.3s;
+    }
+    .cta-btn:hover { background: var(--accent-dim); color: var(--ivory); }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 60px 0;
+    }
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-style: italic;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .footer-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .footer-coord {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      line-height: 2;
+    }
+    .footer-col-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a {
+      font-size: 13px;
+      color: var(--text-dim);
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-bottom {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+    }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 1024px) {
+      .tools-inner { grid-template-columns: 1fr; gap: 48px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .container { padding: 0 24px; }
+      .process-step { grid-template-columns: 60px 1fr; gap: 24px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+  <nav id="nav">
+    <a href="index.html" class="nav-logo">Umbra Cacao</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Creations</a></li>
+      <li><a href="process.html" class="active">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Enter Atelier</a>
+  </nav>
+
+  <section class="banner">
+    <div class="banner-content">
+      <span class="banner-label">Bean to Bar</span>
+      <h1 class="banner-title">The Craft</h1>
+    </div>
+  </section>
+
+  <section class="intro">
+    <div class="container">
+      <div class="intro-inner">
+        <p class="intro-eyebrow">How We Work</p>
+        <h2 class="intro-title">From Origin to Edition</h2>
+        <p class="intro-body">Each Umbra bar is the product of decisions made at every stage from seed to wrapper — most of them made in correspondence with a farmer we know by name. The process below is the same for every origin, adjusted only in time and temperature to reveal what is already present in the bean.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="process-section">
+    <div class="container">
+      <div class="process-timeline">
+
+        <div class="process-step sr">
+          <div class="step-num-wrap sr">
+            <div class="step-num sr">01</div>
+          </div>
+          <div class="step-content sr">
+            <p class="step-label sr">Stage One</p>
+            <h3 class="step-title sr">Origin Selection & Sourcing</h3>
+            <p class="step-desc sr">The process begins up to two years before a bar reaches a client. Elena visits each origin personally at least once before committing to a sourcing relationship. Selection criteria include varietal genetics, fermentation infrastructure, altitude, and the farmer's willingness to share detailed harvest data. No broker intermediaries. No spot-market purchases.</p>
+          </div>
+        </div>
+
+        <div class="process-step sr">
+          <div class="step-num-wrap sr">
+            <div class="step-num sr">02</div>
+          </div>
+          <div class="step-content sr">
+            <p class="step-label sr">Stage Two</p>
+            <h3 class="step-title sr">Reception & Sorting</h3>
+            <p class="step-desc sr">Beans arrive at the Zug atelier in hermetically sealed jute-and-foil sacks, accompanied by harvest and fermentation documentation. Each batch undergoes cut test and moisture analysis before acceptance. Any batch with fermentation irregularities above tolerance is returned. Passed beans are sorted by hand for size uniformity before roasting.</p>
+          </div>
+        </div>
+
+        <div class="process-step sr">
+          <div class="step-num-wrap sr">
+            <div class="step-num sr">03</div>
+          </div>
+          <div class="step-content sr">
+            <p class="step-label sr">Stage Three</p>
+            <h3 class="step-title sr">Roasting</h3>
+            <p class="step-desc sr">Each origin is roasted on a Probat drum roaster at a profile developed through cupping trials specific to the varietal and fermentation character. Typical profiles range from 138°C for twelve minutes on delicate Criollos to 156°C for sixteen minutes on robust Forasteros. The objective is development of flavour precursors while preserving the volatile aromatics that distinguish the origin.</p>
+          </div>
+        </div>
+
+        <div class="process-step sr">
+          <div class="step-num-wrap sr">
+            <div class="step-num sr">04</div>
+          </div>
+          <div class="step-content sr">
+            <p class="step-label sr">Stage Four</p>
+            <h3 class="step-title sr">Grinding & Conching</h3>
+            <p class="step-desc sr">Roasted beans are cracked, winnowed to remove husk, then ground in a Lehmann melanging drum with a measured quantity of unrefined cane sugar — the only added ingredient. Conch time is between 18 and 40 hours, determined entirely by flavour development during tasting. Shorter conch preserves fruit and acidity; longer conch develops smoothness and rounds tannins. No lecithin is used to alter viscosity.</p>
+          </div>
+        </div>
+
+        <div class="process-step sr">
+          <div class="step-num-wrap sr">
+            <div class="step-num sr">05</div>
+          </div>
+          <div class="step-content sr">
+            <p class="step-label sr">Stage Five</p>
+            <h3 class="step-title sr">Tempering, Moulding & Edition</h3>
+            <p class="step-desc sr">Finished chocolate is tempered by hand on a marble slab at 27–28°C, then poured into a single 60-gram mould per bar. Bars rest for a minimum of 72 hours before demoulding. Each bar is inspected, stamped with a batch number, then hand-wrapped in archival paper printed with the origin notes, farmer name, harvest year, and the bar's position within the edition of 240. Every bar is signed.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="tools">
+    <div class="container">
+      <div class="tools-inner">
+        <div>
+          <p class="tools-eyebrow">The Atelier Equipment</p>
+          <h2 class="tools-title">Instruments of the Craft</h2>
+          <ul class="tools-list">
+            <li><span class="tool-name">Probat P12 Drum Roaster</span>Variable roast profiles per origin</li>
+            <li><span class="tool-name">Lehmann Melanging Drum</span>18–40 hour conch cycle</li>
+            <li><span class="tool-name">Selmi Tempering Unit</span>Precision crystallisation control</li>
+            <li><span class="tool-name">Marble Tempering Slab</span>Hand-finishing and correction</li>
+            <li><span class="tool-name">Cut-Test Guillotine</span>Fermentation quality assessment</li>
+            <li><span class="tool-name">Moisture Analyser</span>Bean reception protocol</li>
+          </ul>
+        </div>
+        <img src="https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=800&q=80&auto=format&fit=crop" alt="Cacao workshop tools" class="tools-img" />
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery">
+    <div class="container">
+      <div class="gallery-header">
+        <p class="gallery-eyebrow">The Atelier</p>
+        <h2 class="gallery-title">Inside the Workshop</h2>
+      </div>
+      <div class="gallery-grid">
+        <img src="https://images.pexels.com/photos/1640775/pexels-photo-1640775.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Cacao beans" class="gallery-img" />
+        <img src="https://images.unsplash.com/photo-1511381939415-e44cd37b74a9?w=800&q=80&auto=format&fit=crop" alt="Chocolate process" class="gallery-img" />
+        <img src="https://images.unsplash.com/photo-1607920592519-bab2a80efd3a?w=800&q=80&auto=format&fit=crop" alt="Finished bars" class="gallery-img" />
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-bar">
+    <div class="container">
+      <p class="cta-eyebrow">Commission an Origin</p>
+      <h2 class="cta-title">Begin Your Enquiry</h2>
+      <p class="cta-body">Commission applications are accepted year-round, with production scheduled to match harvest calendars. Describe your origin preferences and intended purpose — we will advise on current availability.</p>
+      <a href="contact.html" class="cta-btn">Submit an Enquiry</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-logo">Umbra Cacao</div>
+          <p class="footer-tagline">From the shadow of the bean,<br>the light of the bar.</p>
+          <div class="footer-coord">
+            Atelier: 47°8'N 8°52'E<br />
+            Zug, Switzerland<br />
+            Est. 2014
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title sr">Navigate</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="collection.html">Creations</a></li>
+            <li><a href="process.html">Process</a></li>
+            <li><a href="contact.html">Commission</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title sr">Contact</div>
+          <ul class="footer-links">
+            <li><a href="mailto:atelier@umbracacao.com">atelier@umbracacao.com</a></li>
+          </ul>
+          <p style="margin-top:24px; font-family:var(--font-mono); font-size:10px; color:var(--text-dim); line-height:2;">
+            Commissions accepted by application only.<br />
+            Seasonal availability varies by origin.<br />
+            No walk-ins. Written correspondence preferred.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">&copy; 2026 Umbra Cacao — All rights reserved</span>
+        <span class="footer-copy">Shadow Cacao · Est. 2014</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    
+  /* Smooth fade-in: pre-hide below-fold elements before GSAP runs */
+  gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.banner-content', { y: 24, opacity: 0, duration: 1, delay: 0.3, ease: 'power2.out', immediateRender: false });
+    gsap.from('.intro-eyebrow, .intro-title, .intro-body', { scrollTrigger: { trigger: '.intro', start: 'top 80%', once: true }, y: 30, opacity: 0, stagger: 0.15, duration: 0.9, ease: 'power2.out', immediateRender: false });
+    gsap.from('.process-step', { scrollTrigger: { trigger: '.process-timeline', start: 'top 85%', once: true }, y: 30, opacity: 0, stagger: 0.18, duration: 0.8, ease: 'power2.out', immediateRender: false });
+    gsap.from('.tools-inner > div:first-child', { scrollTrigger: { trigger: '.tools-inner', start: 'top 80%', once: true }, x: -40, opacity: 0, duration: 0.9, ease: 'power2.out', immediateRender: false });
+    gsap.from('.tools-img', { scrollTrigger: { trigger: '.tools-inner', start: 'top 80%', once: true }, x: 40, opacity: 0, duration: 0.9, ease: 'power2.out', immediateRender: false });
+    gsap.from('.gallery-img', { scrollTrigger: { trigger: '.gallery-grid', start: 'top 85%', once: true }, y: 30, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out', immediateRender: false });
+    gsap.from('.cta-eyebrow, .cta-title, .cta-body, .cta-btn', { scrollTrigger: { trigger: '.cta-bar', start: 'top 80%', once: true }, y: 30, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out', immediateRender: false });
+
+    window.addEventListener('scroll', function() {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+</body>
+</html>

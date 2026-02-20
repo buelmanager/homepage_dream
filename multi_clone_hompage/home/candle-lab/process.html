@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Candle Craft — IGNIS ATELIER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg:            #201508;
+      --surface:       #281A0A;
+      --surface2:      #241208;
+      --flame:         #D4882A;
+      --flame-light:   #E8A840;
+      --flame-dark:    #8A4E1A;
+      --smoke:         #4A3E30;
+      --cream:         #F0E8D8;
+      --stone:         #A08868;
+      --muted:         #6A5A44;
+      --border:        #302010;
+      --border2:       #3C2A14;
+      --font-serif:    'Playfair Display', Georgia, serif;
+      --font-sans:     'Jost', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--cream); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; transition: background 0.4s, padding 0.4s; }
+    #navbar.scrolled { background: rgba(32,21,8,0.93); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 14px 48px; border-bottom: 1px solid var(--border2); }
+    .nav-logo { font-family: var(--font-serif); font-size: 15px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--cream); font-weight: 400; }
+    .nav-logo em { font-style: italic; color: var(--flame); }
+    .nav-links { display: flex; align-items: center; gap: 40px; list-style: none; }
+    .nav-links a { font-size: 11px; font-weight: 400; letter-spacing: 0.25em; text-transform: uppercase; color: var(--stone); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--cream); }
+    .nav-cta { font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; padding: 10px 28px; border: 1px solid var(--flame-dark); color: var(--flame); transition: background 0.3s, color 0.3s; }
+    .nav-cta:hover { background: var(--flame); color: var(--bg); }
+
+    .page-banner { height: 50vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .page-banner-bg { position: absolute; inset: 0; background-image: url('https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80'); background-size: cover; background-position: center; filter: brightness(0.28) saturate(0.6); }
+    .page-banner-overlay { position: absolute; inset: 0; background: rgba(32,21,8,0.62); }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; }
+    .page-banner-label { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--flame); margin-bottom: 1rem; display: block; }
+    .page-banner-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 400; color: var(--cream); font-style: italic; }
+
+    .section-label { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--flame); margin-bottom: 1rem; display: block; }
+
+    /* INTRO */
+    .intro-section { background: var(--surface); padding: 7rem 4rem; }
+    .intro-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+    .intro-inner h2 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 400; color: var(--cream); margin-bottom: 1.5rem; font-style: italic; }
+    .intro-inner p { font-size: 0.92rem; line-height: 2; color: var(--stone); max-width: 620px; margin: 0 auto; }
+
+    /* TIMELINE */
+    .timeline-section { background: var(--bg); padding: 9rem 4rem; }
+    .timeline-inner { max-width: 1000px; margin: 0 auto; }
+    .timeline-header { margin-bottom: 5rem; }
+    .timeline-header h2 { font-family: var(--font-serif); font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 400; color: var(--cream); font-style: italic; }
+    .t-steps { display: flex; flex-direction: column; }
+    .t-step { display: grid; grid-template-columns: 90px 1fr; gap: 3rem; padding: 3.5rem 0; border-bottom: 1px solid var(--border); }
+    .t-step:last-child { border-bottom: none; }
+    .t-step-num { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 400; color: var(--flame); opacity: 0.3; line-height: 1; padding-top: 0.2rem; font-style: italic; }
+    .t-step-content h3 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 400; color: var(--cream); margin-bottom: 0.8rem; }
+    .t-step-content p { font-size: 0.87rem; line-height: 2; color: var(--stone); }
+    .t-step-note { display: inline-block; font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--flame); border: 1px solid var(--flame-dark); padding: 4px 12px; margin-top: 0.8rem; }
+
+    /* ATELIER */
+    .atelier-section { background: var(--surface); padding: 9rem 4rem; }
+    .atelier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; max-width: 1200px; margin: 0 auto; align-items: center; }
+    .atelier-img { aspect-ratio: 4/5; overflow: hidden; }
+    .atelier-img img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-content h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 400; color: var(--cream); margin-bottom: 1.5rem; font-style: italic; }
+    .atelier-content p { font-size: 0.88rem; line-height: 2; color: var(--stone); margin-bottom: 1.2rem; }
+    .atelier-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem; }
+    .atelier-list li { font-size: 0.85rem; color: var(--stone); padding-left: 1.5rem; position: relative; line-height: 1.7; }
+    .atelier-list li::before { content: '—'; position: absolute; left: 0; color: var(--flame); font-family: var(--font-serif); }
+
+    /* GALLERY */
+    .gallery-section { background: var(--bg); padding: 7rem 4rem; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+    .gallery-item { aspect-ratio: 3/4; overflow: hidden; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .gallery-item:hover img { transform: scale(1.04); }
+
+    /* CTA */
+    .cta-section { background: var(--surface); padding: 9rem 4rem; text-align: center; }
+    .cta-inner h2 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 400; color: var(--cream); margin-bottom: 1.2rem; font-style: italic; }
+    .cta-inner p { font-size: 0.9rem; color: var(--stone); margin-bottom: 3rem; line-height: 1.9; }
+    .cta-btn { display: inline-block; font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; border: 1px solid var(--flame-dark); padding: 14px 40px; color: var(--flame); transition: background 0.3s, color 0.3s; }
+    .cta-btn:hover { background: var(--flame); color: var(--bg); }
+
+    footer { background: var(--bg); padding: 6rem 4rem 3rem; border-top: 1px solid var(--border2); }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+    .footer-brand-name { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cream); margin-bottom: 1rem; }
+    .footer-brand-name em { font-style: italic; color: var(--flame); }
+    .footer-brand-desc { font-size: 0.8rem; line-height: 1.8; color: var(--stone); margin-bottom: 1rem; max-width: 260px; }
+    .footer-batch { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.22em; color: var(--flame); opacity: 0.7; }
+    .footer-col .footer-col-title { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.38em; text-transform: uppercase; color: var(--flame); margin-bottom: 1.5rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-col ul li a { font-size: 0.82rem; color: var(--stone); transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--cream); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid var(--border); }
+    .footer-copy { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.18em; color: var(--muted); }
+    .footer-flame-glyph { font-size: 0.82rem; color: var(--stone); }
+
+    @media (max-width: 900px) {
+      #navbar { padding: 20px 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .atelier-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+</head>
+<body>
+  <header id="navbar">
+    <div class="nav-logo"><em>IGNIS</em> ATELIER</div>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="process.html" class="active">Candle Craft</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="collection.html" class="nav-cta">Inner Circle</a>
+  </header>
+
+  <section class="page-banner">
+    <div class="page-banner-bg"></div>
+    <div class="page-banner-overlay"></div>
+    <div class="page-banner-content">
+      <span class="page-banner-label">How We Work</span>
+      <h1 class="page-banner-title">Candle Craft</h1>
+    </div>
+  </section>
+
+  <section class="intro-section">
+    <div class="intro-inner">
+      <span class="section-label">The Method</span>
+      <h2>Everything Begins with the Wick.</h2>
+      <p>A candle's flame behaviour is determined before the first drop of wax is poured. The wick — its diameter, braid type, length above the wax, and material — is the most consequential single decision in candle design. We spend more time on wick selection than on any other aspect of production. The wax formulation, the vessel, and the fragrance follow from the wick decision, not the other way around.</p>
+    </div>
+  </section>
+
+  <section class="timeline-section">
+    <div class="timeline-inner">
+      <div class="timeline-header">
+        <span class="section-label">Five Stages</span>
+        <h2>From Concept to Candle</h2>
+      </div>
+      <div class="t-steps">
+        <div class="t-step sr">
+          <div class="t-step-num sr">I</div>
+          <div class="t-step-content sr">
+            <h3>Flame Typology Specification</h3>
+            <p>Every new candle begins with a flame typology specification — a written description of the quality of light the candle must produce. This document answers: what room is this candle for? What time of day? What activity? What is the desired atmospheric quality? From this specification, we derive the target flame height, movement behaviour, and light spread. The fragrance brief comes after. A candle that produces the wrong quality of light is not corrected by an interesting scent.</p>
+            <span class="t-step-note sr">Written spec before any pour</span>
+          </div>
+        </div>
+        <div class="t-step sr">
+          <div class="t-step-num sr">II</div>
+          <div class="t-step-content sr">
+            <h3>Wick Research</h3>
+            <p>We maintain a library of approximately 60 wick configurations — different diameters, braid types, and core materials. For each new candle, we conduct systematic burn tests across candidate wicks in prototype vessels, observing flame height, movement, and mushrooming (carbon buildup). Each test is recorded with photographs at 2, 4, 8, and 24 hours. We rarely finalise a wick in under 3 weeks.</p>
+            <span class="t-step-note sr">60+ wick configurations · 3-week minimum</span>
+          </div>
+        </div>
+        <div class="t-step sr">
+          <div class="t-step-num sr">III</div>
+          <div class="t-step-content sr">
+            <h3>Wax Formulation</h3>
+            <p>Once the wick is specified, we formulate the wax to complement it. Pure beeswax produces a harder, slower-burning candle with a stable flame — appropriate for Still-typology candles. Coconut wax blends produce a softer, more responsive pool — appropriate for Dancing and Complex candles. The formulation is tested against the target wick in the target vessel before fragrance is added. Fragrance affects burn behaviour; we need a clean baseline first.</p>
+            <span class="t-step-note sr">Beeswax or coconut blend · No paraffin</span>
+          </div>
+        </div>
+        <div class="t-step sr">
+          <div class="t-step-num sr">IV</div>
+          <div class="t-step-content sr">
+            <h3>Fragrance Integration</h3>
+            <p>Fragrance is added to the wax at the minimum concentration that produces a perceptible scent throw. We resist the industry convention of maximising fragrance load — high fragrance concentrations interfere with burn behaviour and often produce a sweetness that obscures the natural beeswax scent. All IGNIS fragrances are built from natural base materials: essential oils, absolutes, and plant resins. We do not use synthetic fragrance ingredients.</p>
+            <span class="t-step-note sr">Natural bases only · Minimum effective concentration</span>
+          </div>
+        </div>
+        <div class="t-step sr">
+          <div class="t-step-num sr">V</div>
+          <div class="t-step-content sr">
+            <h3>Hand Pour and Quality Check</h3>
+            <p>Each candle is hand-poured in a single batch of maximum 60 units. Wax temperature at pour is 65–70°C for beeswax and 55–60°C for coconut blends — temperatures that produce a smooth surface and consistent fragrance distribution. The wick is positioned and held with a wick centering bar for 30 minutes. Each candle is inspected before labelling. Any candle with an off-centre wick, surface crack, or visible void is removed from the batch. Label and number are applied by hand.</p>
+            <span class="t-step-note sr">Max 60 units · Hand-numbered</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="atelier-section">
+    <div class="atelier-grid">
+      <div class="atelier-img sr">
+        <img src="https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="The Atelier" />
+      </div>
+      <div class="atelier-content sr">
+        <span class="section-label">Kloosterstraat, Antwerp</span>
+        <h2>The Studio.<br/><em>Where Light is Made.</em></h2>
+        <p>The IGNIS atelier on Kloosterstraat in Antwerp's design district was designed around two requirements: consistent temperature and controlled airflow. Both conditions affect flame behaviour during testing and therefore affect every production decision we make.</p>
+        <p>The space is divided into three zones. The production studio, where all pouring takes place at a controlled ambient temperature. The testing room, a sealed environment with regulated airflow for systematic flame observation. And the reception area, where atelier visits take place by appointment.</p>
+        <ul class="atelier-list">
+          <li>Temperature-controlled production studio: 20°C ± 1°C year-round</li>
+          <li>Sealed testing chamber with calibrated airflow control</li>
+          <li>Wick library: 60+ configurations on permanent display</li>
+          <li>Wax formulation archive: records from every batch since 2018</li>
+          <li>Small-batch fragrance mixing station with natural raw materials</li>
+          <li>Atelier visits by appointment: maximum 4 visitors per session</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-section">
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80&auto=format&fit=crop" alt="Pouring" loading="lazy" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Wicks" loading="lazy" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Flame" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner">
+      <span class="section-label">Visit the Atelier</span>
+      <h2>Book an Atelier Visit.</h2>
+      <p>Atelier visits are available by appointment, maximum four visitors per session. We walk through the production process, show the wick library and wax formulation archive, and discuss the flame typology framework that defines the IGNIS approach. Contact us to arrange a visit.</p>
+      <a href="contact.html" class="cta-btn">Contact the Atelier</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name"><em>IGNIS</em> ATELIER</div>
+        <p class="footer-brand-desc">Hand-poured small-batch candles from Antwerp. We regard flame as the primary design element. Wax is merely its vessel. Each candle is engineered to produce a specific quality of light.</p>
+        <div class="footer-batch">Current Batch: No. 047 · 60 pours</div>
+      </div>
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Collection</div>
+        <ul>
+          <li><a href="collection.html">EMBER</a></li>
+          <li><a href="collection.html">NOCTE</a></li>
+          <li><a href="collection.html">SOLUM</a></li>
+          <li><a href="collection.html">VETIVER</a></li>
+        </ul>
+      </div>
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Atelier</div>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="process.html">Candle Craft</a></li>
+          <li><a href="process.html">Flame Study</a></li>
+          <li><a href="contact.html">Ceremony</a></li>
+        </ul>
+      </div>
+      <div class="footer-col sr">
+        <div class="footer-col-title sr">Access</div>
+        <ul>
+          <li><a href="contact.html">Inner Circle</a></li>
+          <li><a href="contact.html">Wholesale</a></li>
+          <li><a href="contact.html">Gift Sets</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2025 IGNIS ATELIER. Hand-poured in small batches.</span>
+      <span class="footer-flame-glyph">Antwerp, Belgium</span>
+    </div>
+  </footer>
+
+  <script>
+    
+  /* Smooth fade-in: pre-hide below-fold elements before GSAP runs */
+  gsap.registerPlugin(ScrollTrigger);
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); }, { passive: true });
+    gsap.from('.intro-inner', { opacity: 0, y: 24, immediateRender: false, scrollTrigger: { trigger: '.intro-section', start: 'top 80%', once: true } });
+    gsap.from('.t-step', { opacity: 0, y: 24, stagger: 0.15, immediateRender: false, scrollTrigger: { trigger: '.t-steps', start: 'top 80%', once: true } });
+    gsap.from('.atelier-img', { opacity: 0, x: -40, immediateRender: false, scrollTrigger: { trigger: '.atelier-grid', start: 'top 80%', once: true } });
+    gsap.from('.atelier-content', { opacity: 0, x: 40, immediateRender: false, scrollTrigger: { trigger: '.atelier-grid', start: 'top 75%', once: true } });
+    gsap.from('.gallery-item', { opacity: 0, y: 24, stagger: 0.15, immediateRender: false, scrollTrigger: { trigger: '.gallery-grid', start: 'top 80%', once: true } });
+    gsap.from('.cta-inner', { opacity: 0, y: 24, immediateRender: false, scrollTrigger: { trigger: '.cta-section', start: 'top 80%', once: true } });
+  </script>
+</body>
+</html>

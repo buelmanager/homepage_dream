@@ -162,16 +162,12 @@ export default function ProfilePage() {
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
   useEffect(() => {
-    console.log("[Profile] useEffect triggered - status:", status);
-
     if (status === "unauthenticated") {
-      console.log("[Profile] Unauthenticated - redirecting to /signin");
       router.push("/signin");
       return;
     }
 
     if (status === "authenticated") {
-      console.log("[Profile] Authenticated - fetching data...");
 
       Promise.allSettled([
         fetchWithTimeout("/api/credits", 30000).then((r) => {
@@ -209,8 +205,7 @@ export default function ProfilePage() {
           setPurchases(purchData?.purchases ?? []);
           setLoading(false);
         })
-        .catch((error) => {
-          console.error("[Profile] Error fetching data:", error);
+        .catch(() => {
           setLoading(false);
         });
     }
@@ -237,7 +232,6 @@ export default function ProfilePage() {
   };
 
   if (status === "loading" || loading) {
-    console.log("[Profile] Showing loader - status:", status, "loading:", loading);
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

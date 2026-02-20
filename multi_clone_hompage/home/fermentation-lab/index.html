@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KULTIVAT — Time Does the Work. We Just Pay Attention.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+/* SplitText polyfill — replaces Club GSAP premium plugin (not on CDN) */
+class SplitText {
+  constructor(target, opts = {}) {
+    const el = typeof target === 'string'
+      ? document.querySelector(target)
+      : (target instanceof Element ? target : null);
+    this.chars = []; this.words = []; this.lines = [];
+    if (!el) return;
+    this._el = el;
+    const type = (opts.type || 'chars,words').toLowerCase();
+    const original = el.textContent;
+    el.setAttribute('data-split-orig', original);
+    if (type.includes('chars')) {
+      el.innerHTML = original.split('').map(c =>
+        c === ' '
+          ? '<span class="char" style="display:inline-block">&nbsp;</span>'
+          : `<span class="char" style="display:inline-block">${c}</span>`
+      ).join('');
+      this.chars = Array.from(el.querySelectorAll('.char'));
+    } else if (type.includes('words')) {
+      el.innerHTML = original.split(/\s+/).filter(Boolean).map(w =>
+        `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`
+      ).join('');
+      this.words = Array.from(el.querySelectorAll('.word'));
+    }
+    this.lines = [el];
+  }
+  revert() {
+    if (this._el) {
+      const orig = this._el.getAttribute('data-split-orig');
+      if (orig) this._el.textContent = orig;
+    }
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+:root {
+  --bg: #2E2820;
+  --surface: #3D342A;
+  --surface-2: #4A3F32;
+  --brass: #C9A96E;
+  --warm: #E8C49A;
+  --green: #6B8E6B;
+  --linen: #F0EBE0;
+  --muted: #9A8E80;
+  --deep: #1C1610;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--linen);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  cursor: none;
+}
+#cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--brass); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+}
+#cursor-ring {
+  position: fixed; width: 28px; height: 28px;
+  border: 1px solid rgba(201,169,110,0.4); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%); transition: all .1s;
+}
+
+/* ── Preloader ── */
+#preloader {
+  position: fixed; inset: 0;
+  background: #1A140E; z-index: 9000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+}
+#pre-label {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.4em; color: var(--green); opacity: 0;
+}
+#pre-brand {
+  font-family: var(--font-display); font-size: 28px;
+  letter-spacing: 0.4em; color: var(--linen); opacity: 0;
+  text-transform: uppercase;
+}
+#pre-sub {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.3em; color: var(--muted); opacity: 0;
+}
+
+/* ── Scroll Indicator ── */
+#scroll-indicator {
+  position: fixed; left: 26px; top: 50%;
+  transform: translateY(-50%); z-index: 800;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0; transition: opacity .5s;
+}
+#scroll-indicator.visible { opacity: 1; }
+.si-dots { display: flex; flex-direction: column; gap: 9px; }
+.si-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--muted); cursor: pointer;
+  transition: background .3s, transform .3s;
+}
+.si-dot.active { background: var(--brass); transform: scale(1.8); }
+.si-line {
+  width: 1px; height: 56px;
+  background: rgba(154,142,128,0.2); position: relative; overflow: hidden;
+}
+.si-fill {
+  position: absolute; bottom: 0; left: 0; width: 100%;
+  background: var(--brass); height: 0%; transition: height .4s;
+}
+.si-lbl {
+  font-family: var(--font-mono); font-size: 7px;
+  letter-spacing: 0.2em; color: var(--muted);
+  writing-mode: vertical-lr; margin-top: 4px;
+}
+
+/* ── Navbar ── */
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 700;
+  padding: 20px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .4s, backdrop-filter .4s, padding .3s;
+}
+#navbar.scrolled {
+  background: rgba(46,40,32,0.9);
+  backdrop-filter: blur(14px); padding: 13px 52px;
+  border-bottom: 1px solid rgba(201,169,110,0.1);
+}
+.nav-logo {
+  font-family: var(--font-display); font-size: 18px;
+  letter-spacing: 0.4em; color: var(--linen); text-decoration: none;
+  text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.25em; color: var(--muted); text-decoration: none;
+  transition: color .3s;
+}
+.nav-links a:hover { color: var(--brass); }
+.nav-reserve {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.25em; color: var(--brass);
+  border: 1px solid rgba(201,169,110,0.3);
+  padding: 9px 18px; text-decoration: none;
+  transition: background .3s, color .3s;
+}
+.nav-reserve:hover { background: var(--brass); color: var(--deep); }
+
+/* ── Hero ── */
+#hero {
+  height: 100vh; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background-image: url('https://images.pexels.com/photos/811838/pexels-photo-811838.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80');
+  background-size: cover; background-position: center;
+  transform: scale(1.06);
+  animation: kb 22s ease-in-out infinite alternate;
+  filter: saturate(0.45) brightness(0.55);
+}
+@keyframes kb {
+  0% { transform: scale(1.06); }
+  100% { transform: scale(1.1) translate(-1%,-0.5%); }
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(26,20,14,0.65) 0%, rgba(46,40,32,0.25) 45%, rgba(46,40,32,0.75) 85%, #2E2820 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  text-align: center; max-width: 800px; padding: 0 40px;
+}
+.hero-code {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.4em; color: var(--green); margin-bottom: 28px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 10vw, 120px);
+  line-height: 1; font-weight: 300;
+  color: var(--linen); letter-spacing: 0.12em;
+  margin-bottom: 20px; text-transform: uppercase;
+}
+.hero-tagline {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(17px, 2.2vw, 22px); font-weight: 300;
+  color: var(--muted); letter-spacing: 0.04em; margin-bottom: 44px;
+}
+.hero-btns { display: flex; gap: 16px; justify-content: center; }
+.btn-brass {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em;
+  color: var(--deep); background: var(--brass);
+  padding: 13px 28px; text-decoration: none;
+  transition: background .3s;
+}
+.btn-brass:hover { background: var(--warm); }
+.btn-outline {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em;
+  color: var(--linen);
+  border: 1px solid rgba(240,235,224,0.2);
+  padding: 13px 28px; text-decoration: none;
+  transition: border-color .3s, color .3s;
+}
+.btn-outline:hover { border-color: var(--brass); color: var(--brass); }
+
+/* ── Philosophy ── */
+#philosophy {
+  padding: 120px 48px; background: var(--surface);
+}
+.phil-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center; max-width: 1200px; margin: 0 auto;
+}
+.phil-img-wrap { height: 480px; overflow: hidden; }
+.phil-img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(0.45) brightness(0.65);
+}
+.section-eyebrow {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.4em; color: var(--brass); margin-bottom: 14px;
+}
+.section-title {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(28px, 4vw, 44px); font-weight: 300;
+  color: var(--linen); margin-bottom: 28px; max-width: 420px;
+}
+.phil-text {
+  font-family: var(--font-sans); font-size: 14px;
+  color: var(--muted); line-height: 1.9; font-weight: 300; margin-bottom: 18px;
+}
+.phil-data {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px;
+}
+.data-item {}
+.data-key {
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 0.35em; color: var(--brass); margin-bottom: 4px;
+}
+.data-value {
+  font-family: var(--font-display); font-size: 17px;
+  color: var(--linen); font-weight: 300;
+}
+
+/* ── Stats ── */
+#stats {
+  background: var(--bg);
+  border-top: 1px solid rgba(201,169,110,0.12);
+  border-bottom: 1px solid rgba(201,169,110,0.12);
+}
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  max-width: 1100px; margin: 0 auto;
+}
+.stat-item {
+  padding: 44px 20px; text-align: center;
+  border-right: 1px solid rgba(201,169,110,0.08);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--font-display); font-size: clamp(34px,5vw,52px);
+  color: var(--brass); font-weight: 300; line-height: 1; margin-bottom: 10px;
+}
+.stat-lbl {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.3em; color: var(--muted);
+}
+
+/* ── Cultures Grid ── */
+#cultures {
+  padding: 120px 48px; background: var(--surface);
+}
+.cultures-header { max-width: 1200px; margin: 0 auto 48px; }
+.culture-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; max-width: 1200px; margin: 0 auto;
+  overflow: visible;
+}
+.culture-card {
+  background: var(--surface-2);
+  border: 1px solid rgba(201,169,110,0.1);
+  overflow: hidden; position: relative;
+  transition: border-color .4s;
+}
+.culture-card:nth-child(even) { transform: translateY(28px); }
+.culture-card:hover { border-color: rgba(201,169,110,0.3); }
+.culture-img {
+  width: 100%; height: 240px; object-fit: cover; display: block;
+  filter: saturate(0.45) brightness(0.65);
+  transition: filter .5s;
+}
+.culture-card:hover .culture-img { filter: saturate(0.6) brightness(0.75); }
+.culture-info { padding: 22px 20px; }
+.culture-id {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.35em; color: var(--green); margin-bottom: 6px;
+}
+.culture-name {
+  font-family: var(--font-display); font-size: 20px;
+  font-style: italic; font-weight: 300; color: var(--linen); margin-bottom: 6px;
+}
+.culture-sub {
+  font-family: var(--font-sans); font-size: 11px;
+  color: var(--muted); font-weight: 300;
+}
+.culture-overlay {
+  position: absolute; inset: 0;
+  background: rgba(26,20,14,0.93);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .4s; gap: 10px; padding: 24px; text-align: center;
+}
+.culture-card:hover .culture-overlay { opacity: 1; }
+.ov-strain {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.3em; color: var(--green);
+}
+.ov-desc {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 15px; color: var(--linen); line-height: 1.6; font-weight: 300;
+}
+.ov-time {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--muted); letter-spacing: 0.2em;
+}
+
+/* ── Process Timeline ── */
+#process {
+  padding: 120px 48px; background: var(--bg);
+}
+.process-inner { max-width: 1000px; margin: 0 auto; }
+.process-header { margin-bottom: 64px; }
+.p-timeline { position: relative; }
+.p-spine {
+  position: absolute; left: 28px; top: 0; bottom: 0;
+  width: 1px; background: rgba(201,169,110,0.12); overflow: hidden;
+}
+.p-spine-fill {
+  position: absolute; top: 0; left: 0; width: 100%;
+  background: var(--brass); height: 0%;
+}
+.p-step {
+  display: flex; gap: 52px; margin-bottom: 56px; padding-left: 72px; position: relative;
+}
+.p-dot {
+  position: absolute; left: 20px; top: 6px;
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 1px solid var(--brass); background: var(--bg); z-index: 1;
+}
+.p-day {
+  font-family: var(--font-mono); font-size: 32px;
+  color: rgba(201,169,110,0.18); flex-shrink: 0; width: 60px; line-height: 1;
+}
+.p-content {}
+.p-label {
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 0.4em; color: var(--green); margin-bottom: 6px;
+}
+.p-title {
+  font-family: var(--font-display); font-size: 22px;
+  color: var(--linen); font-weight: 300; font-style: italic; margin-bottom: 10px;
+}
+.p-text {
+  font-family: var(--font-sans); font-size: 13px;
+  color: var(--muted); line-height: 1.8; font-weight: 300;
+}
+
+/* ── Lab Bento ── */
+#lab {
+  padding: 120px 48px; background: var(--surface);
+}
+.lab-inner { max-width: 1200px; margin: 0 auto; }
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 280px 280px;
+  gap: 16px; margin-top: 48px;
+}
+.bento-cell {
+  overflow: hidden; position: relative; border: 1px solid rgba(201,169,110,0.1);
+}
+.bento-cell:first-child { grid-column: span 2; }
+.bento-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.45) brightness(0.6);
+  transition: filter .5s, transform .6s;
+}
+.bento-cell:hover .bento-img { filter: saturate(0.6) brightness(0.7); transform: scale(1.03); }
+.bento-label {
+  position: absolute; bottom: 16px; left: 16px;
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.3em; color: var(--brass);
+  background: rgba(26,20,14,0.7); padding: 4px 8px;
+}
+
+/* ── Collection ── */
+#collection {
+  padding: 120px 48px; background: var(--bg);
+}
+.collection-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 28px; max-width: 1200px; margin: 48px auto 0; overflow: visible;
+}
+.product-card {
+  background: var(--surface);
+  border: 1px solid rgba(201,169,110,0.1); overflow: hidden;
+  transition: border-color .4s;
+}
+.product-card:nth-child(even) { transform: translateY(24px); }
+.product-card:hover { border-color: rgba(201,169,110,0.3); }
+.product-img {
+  width: 100%; height: 220px; object-fit: cover; display: block;
+  filter: saturate(0.45) brightness(0.65);
+  transition: filter .5s;
+}
+.product-card:hover .product-img { filter: saturate(0.6) brightness(0.75); }
+.product-info { padding: 22px 20px; }
+.product-batch {
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 0.35em; color: var(--green); margin-bottom: 6px;
+}
+.product-name {
+  font-family: var(--font-display); font-size: 20px;
+  font-style: italic; font-weight: 300; color: var(--linen); margin-bottom: 6px;
+}
+.product-age {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--brass); letter-spacing: 0.2em;
+}
+
+/* ── Commission ── */
+#commission {
+  padding: 120px 48px; background: var(--surface); text-align: center;
+}
+.commission-inner { max-width: 680px; margin: 0 auto; }
+.commission-title {
+  font-family: var(--font-display); font-style: italic;
+  font-size: clamp(28px,4.5vw,48px); font-weight: 300;
+  color: var(--linen); margin-bottom: 20px;
+}
+.commission-text {
+  font-family: var(--font-sans); font-size: 13px;
+  color: var(--muted); line-height: 1.9; font-weight: 300; margin-bottom: 36px;
+}
+.commission-form {
+  display: grid; gap: 14px; max-width: 520px; margin: 0 auto;
+}
+.f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.f-input, .f-select, .f-textarea {
+  background: var(--surface-2);
+  border: 1px solid rgba(201,169,110,0.2); outline: none;
+  color: var(--linen); font-family: var(--font-mono); font-size: 11px;
+  padding: 12px 14px; font-weight: 300;
+  transition: border-color .3s; letter-spacing: 0.1em;
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus {
+  border-color: rgba(201,169,110,0.45);
+}
+.f-select { cursor: pointer; }
+.f-select option { background: var(--surface-2); }
+.f-textarea { resize: vertical; min-height: 90px; }
+.f-submit {
+  background: var(--brass); border: none; color: var(--deep);
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.35em;
+  padding: 14px; cursor: pointer;
+  transition: background .3s;
+}
+.f-submit:hover { background: var(--warm); }
+
+/* ── Footer ── */
+#footer {
+  background: var(--surface);
+  padding: 64px 48px 36px;
+  border-top: 1px solid rgba(201,169,110,0.1);
+}
+.footer-grid {
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 56px; max-width: 1200px; margin: 0 auto 48px;
+}
+.footer-brand {
+  font-family: var(--font-display); font-size: 20px;
+  letter-spacing: 0.4em; color: var(--linen); margin-bottom: 4px;
+}
+.footer-tagline {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.25em; color: var(--muted); margin-bottom: 12px;
+}
+.footer-about {
+  font-family: var(--font-sans); font-size: 12px;
+  color: var(--muted); line-height: 1.7; font-weight: 300;
+}
+.footer-col-title {
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 0.4em; color: var(--brass); margin-bottom: 16px;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 8px; }
+.footer-links a {
+  font-family: var(--font-sans); font-size: 12px;
+  color: var(--muted); text-decoration: none; font-weight: 300; transition: color .3s;
+}
+.footer-links a:hover { color: var(--linen); }
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto;
+  border-top: 1px solid rgba(154,142,128,0.12); padding-top: 18px;
+  display: flex; justify-content: space-between;
+}
+.footer-legal {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--muted); letter-spacing: 0.1em;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .phil-inner { grid-template-columns: 1fr; }
+  .phil-img-wrap { height: 300px; }
+  .culture-grid, .collection-grid { grid-template-columns: 1fr 1fr; }
+  .bento-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .bento-cell:first-child { grid-column: span 2; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  #navbar { padding: 16px 24px; }
+  .nav-links { display: none; }
+  #philosophy, #cultures, #process, #lab, #collection, #commission { padding: 80px 24px; }
+  .culture-grid, .collection-grid { grid-template-columns: 1fr; }
+  .culture-card:nth-child(even), .product-card:nth-child(even) { transform: none; }
+  .bento-grid { display: flex; flex-direction: column; }
+  .bento-cell { height: 220px; }
+  .f-row { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  #scroll-indicator { display: none; }
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg { animation: none; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div id="pre-label">// INITIALIZING CULTURE ARCHIVE</div>
+  <div id="pre-brand">KULTIVAT</div>
+  <div id="pre-sub">// fermentation research studio — est. 2012</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="si-dots" id="si-dots"></div>
+  <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-lbl" id="si-lbl">INIT</div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">KULTIVAT</a>
+  <ul class="nav-links">
+    <li><a href="#cultures">Cultures</a></li>
+    <li><a href="#process">Method</a></li>
+    <li><a href="#lab">The Lab</a></li>
+    <li><a href="#collection">Archive</a></li>
+  </ul>
+  <a class="nav-reserve" href="#commission">Commission</a>
+</nav>
+
+<!-- Hero -->
+<section id="hero" data-section="INIT">
+  <div class="hero-bg" id="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-code">// KULTIVAT_FERMENTATION_RESEARCH v2.12</div>
+    <h1 class="hero-title" id="hero-title">KULTIVAT</h1>
+    <p class="hero-tagline" id="hero-tagline">Time does the work. We just pay attention.</p>
+    <div class="hero-btns" id="hero-btns">
+      <a class="btn-brass" href="#cultures">The Living Archives</a>
+      <a class="btn-outline" href="#process">The Method</a>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section id="philosophy" data-section="ON TERROIR">
+  <div class="phil-inner">
+    <div class="phil-img-wrap">
+      <img class="phil-img" id="phil-img"
+        src="https://images.unsplash.com/photo-1560448075-bb485b067938?w=800&q=80&auto=format&fit=crop" alt="Fermentation vessels">
+    </div>
+    <div>
+      <div class="section-eyebrow">// PHILOSOPHY</div>
+      <h2 class="section-title">Microbial terroir<br>is real.</h2>
+      <p class="phil-text">The koji that grows in our Kyoto-strain chamber behaves differently from the koji in our Berlin studio. Same species. Different air, different mineral water, different ambient microbiology. The result is perceptibly, measurably distinct — and replicable nowhere else on earth.</p>
+      <p class="phil-text">We do not add flavour to our ferments. We create the conditions in which flavour is inevitable. Our role is patience, precision, and the discipline to intervene as little as possible.</p>
+      <div class="phil-data">
+        <div class="data-item">
+          <div class="data-key">Primary Method</div>
+          <div class="data-value">Koji / Lacto / Acetic</div>
+        </div>
+        <div class="data-item">
+          <div class="data-key">Shortest Cycle</div>
+          <div class="data-value">72 Hours</div>
+        </div>
+        <div class="data-item">
+          <div class="data-key">Longest Cycle</div>
+          <div class="data-value">36 Months</div>
+        </div>
+        <div class="data-item">
+          <div class="data-key">Cultures in Archive</div>
+          <div class="data-value">38 Active</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section id="stats" data-section="DATA">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num">2012</div>
+      <div class="stat-lbl">// Founded</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">38</div>
+      <div class="stat-lbl">// Active Cultures</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">36 Mo</div>
+      <div class="stat-lbl">// Max Maturation</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">12</div>
+      <div class="stat-lbl">// Annual Commissions</div>
+    </div>
+  </div>
+</section>
+
+<!-- Cultures -->
+<section id="cultures" data-section="CULTURES">
+  <div class="cultures-header">
+    <div class="section-eyebrow">// LIVING ARCHIVES</div>
+    <h2 class="section-title">Six active cultures.<br>Each irreplaceable.</h2>
+  </div>
+  <div class="culture-grid">
+    <div class="culture-card">
+      <img class="culture-img" src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Koji">
+      <div class="culture-info">
+        <div class="culture-id">CULT-001 // Aspergillus oryzae</div>
+        <div class="culture-name">The Kyoto Koji</div>
+        <div class="culture-sub">Maintained since 2012 · Champagne yeast character</div>
+      </div>
+      <div class="culture-overlay">
+        <div class="ov-strain">Strain K-12 // Isolated Kyoto 2012</div>
+        <div class="ov-desc">Nutty, floral, deeply savoury. The koji that started everything. Maintained through 840 consecutive culture cycles.</div>
+        <div class="ov-time">// Cycle: 48h · Temp: 28°C · RH: 90%</div>
+      </div>
+    </div>
+    <div class="culture-card">
+      <img class="culture-img" src="https://images.pexels.com/photos/1099680/pexels-photo-1099680.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Miso">
+      <div class="culture-info">
+        <div class="culture-id">CULT-002 // Long-Aged Miso</div>
+        <div class="culture-name">The 36-Month</div>
+        <div class="culture-sub">Barley · Soybean · Hand-pressed</div>
+      </div>
+      <div class="culture-overlay">
+        <div class="ov-strain">Batch M-24 // Started Jan 2022</div>
+        <div class="ov-desc">Dark amber. Umami depth that arrives in three waves. Commission slots for this culture open once per year.</div>
+        <div class="ov-time">// Cycle: 36 months · Monitored weekly</div>
+      </div>
+    </div>
+    <div class="culture-card">
+      <img class="culture-img" src="https://images.pexels.com/photos/3278215/pexels-photo-3278215.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Vinegar">
+      <div class="culture-info">
+        <div class="culture-id">CULT-003 // Acetobacter</div>
+        <div class="culture-name">The Oak Vinegar</div>
+        <div class="culture-sub">Oak-aged · Bordeaux wine base</div>
+      </div>
+      <div class="culture-overlay">
+        <div class="ov-strain">Mother V-07 // 14 Years Continuous</div>
+        <div class="ov-desc">Fourteen years of continuous culture in a single oak barrel. The mother is now irreplaceable — a living archive of fourteen vintages.</div>
+        <div class="ov-time">// Cycle: 24 months · Never restarted</div>
+      </div>
+    </div>
+    <div class="culture-card">
+      <img class="culture-img" src="https://images.pexels.com/photos/3756879/pexels-photo-3756879.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Garum">
+      <div class="culture-info">
+        <div class="culture-id">CULT-004 // Fish Garum</div>
+        <div class="culture-name">The Black Garum</div>
+        <div class="culture-sub">Mackerel · 18 Months · Sea Salt</div>
+      </div>
+      <div class="culture-overlay">
+        <div class="ov-strain">Batch G-18 // Nordic Recipe</div>
+        <div class="ov-desc">The ancient ferment reimagined with precision temperature control. 18 months produces a liquid so concentrated that a single gram changes everything.</div>
+        <div class="ov-time">// Cycle: 18 months · 60°C chamber</div>
+      </div>
+    </div>
+    <div class="culture-card">
+      <img class="culture-img" src="https://images.pexels.com/photos/733174/pexels-photo-733174.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Lacto">
+      <div class="culture-info">
+        <div class="culture-id">CULT-005 // Lactobacillus</div>
+        <div class="culture-name">The Fermented Pantry</div>
+        <div class="culture-sub">Seasonal vegetables · Wild-cultured</div>
+      </div>
+      <div class="culture-overlay">
+        <div class="ov-strain">L-Series // Ambient Cultures</div>
+        <div class="ov-desc">The ambient bacteria of our Berlin studio, captured in vegetables grown 30km north. A pure expression of location.</div>
+        <div class="ov-time">// Cycle: 72h–3 weeks · Variable</div>
+      </div>
+    </div>
+    <div class="culture-card">
+      <img class="culture-img" src="https://images.pexels.com/photos/2775196/pexels-photo-2775196.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Commission">
+      <div class="culture-info">
+        <div class="culture-id">CULT-NEW // Your Commission</div>
+        <div class="culture-name">Your Culture</div>
+        <div class="culture-sub">Species · Duration · Application — your choice</div>
+      </div>
+      <div class="culture-overlay">
+        <div class="ov-strain">New Strain // Commission Only</div>
+        <div class="ov-desc">We design, initiate, and maintain a culture on your behalf — 12 to 36 months. The result is yours exclusively. No other client receives the same strain.</div>
+        <div class="ov-time">// Begin: enquire below</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section id="process" data-section="METHOD">
+  <div class="process-inner">
+    <div class="process-header">
+      <div class="section-eyebrow">// THE METHOD</div>
+      <h2 class="section-title">Five acts of<br>microbial patience.</h2>
+    </div>
+    <div class="p-timeline">
+      <div class="p-spine"><div class="p-spine-fill" id="p-fill"></div></div>
+      <div class="p-step sr">
+        <div class="p-dot"></div>
+        <div class="p-day">D01</div>
+        <div class="p-content">
+          <div class="p-label">// INOCULATION</div>
+          <h3 class="p-title">The First Contact</h3>
+          <p class="p-text">The substrate — grain, legume, or protein — is prepared to precise water activity and temperature specifications. The culture is introduced. Conditions are set. We begin waiting and do not interfere.</p>
+        </div>
+      </div>
+      <div class="p-step sr">
+        <div class="p-dot"></div>
+        <div class="p-day">D03</div>
+        <div class="p-content">
+          <div class="p-label">// OBSERVATION</div>
+          <h3 class="p-title">Reading the Signs</h3>
+          <p class="p-text">Three days in. The culture is assessed by pH, visual growth, aroma, and Brix where applicable. Adjustments are made with the lightest possible hand — temperature ±0.5°C, humidity ±2%. No more.</p>
+        </div>
+      </div>
+      <div class="p-step sr">
+        <div class="p-dot"></div>
+        <div class="p-day">D14</div>
+        <div class="p-content">
+          <div class="p-label">// EVALUATION</div>
+          <h3 class="p-title">The Two-Week Assessment</h3>
+          <p class="p-text">Tasting begins. The first flavour arc becomes legible. We determine whether the ferment is developing on schedule, running early, or needs a longer window. Most need longer.</p>
+        </div>
+      </div>
+      <div class="p-step sr">
+        <div class="p-dot"></div>
+        <div class="p-day">D90</div>
+        <div class="p-content">
+          <div class="p-label">// MATURATION</div>
+          <h3 class="p-title">The Long Middle</h3>
+          <p class="p-text">Months pass. Weekly aroma checks. Monthly tasting. The ferment is largely self-directing now. Our role is to ensure conditions remain stable and to resist the temptation to intervene unnecessarily.</p>
+        </div>
+      </div>
+      <div class="p-step sr" style="margin-bottom:0">
+        <div class="p-dot"></div>
+        <div class="p-day">D–</div>
+        <div class="p-content">
+          <div class="p-label">// COMPLETION</div>
+          <h3 class="p-title">When It Is Ready</h3>
+          <p class="p-text">There is no fixed endpoint. Completion is a sensory determination made by two pairs of hands independently. When both reach the same conclusion without communication, bottling begins. Not before.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Lab Bento -->
+<section id="lab" data-section="THE LAB">
+  <div class="lab-inner">
+    <div class="section-eyebrow">// STUDIO & CHAMBER</div>
+    <h2 class="section-title">Where the work<br>happens.</h2>
+    <div class="bento-grid">
+      <div class="bento-cell">
+        <img class="bento-img" src="https://images.pexels.com/photos/2693212/pexels-photo-2693212.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Main lab">
+        <div class="bento-label">// MAIN RESEARCH KITCHEN · Berlin</div>
+      </div>
+      <div class="bento-cell">
+        <img class="bento-img" src="https://images.pexels.com/photos/3807534/pexels-photo-3807534.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Chamber">
+        <div class="bento-label">// KOJI CHAMBER · 28°C · 90% RH</div>
+      </div>
+      <div class="bento-cell">
+        <img class="bento-img" src="https://images.unsplash.com/photo-1458819714733-e5ab3d536722?w=800&q=80&auto=format&fit=crop" alt="Archive">
+        <div class="bento-label">// CULTURE ARCHIVE · 38 Strains</div>
+      </div>
+      <div class="bento-cell">
+        <img class="bento-img" src="https://images.pexels.com/photos/1671325/pexels-photo-1671325.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Sourcing">
+        <div class="bento-label">// INGREDIENT SOURCING · Seasonal</div>
+      </div>
+      <div class="bento-cell">
+        <img class="bento-img" src="https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=800&q=80&auto=format&fit=crop" alt="Tasting">
+        <div class="bento-label">// TASTING LABORATORY</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Collection Archive -->
+<section id="collection" data-section="ARCHIVE">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="section-eyebrow">// MATURED WORKS</div>
+    <h2 class="section-title">Current release.<br>By allocation only.</h2>
+  </div>
+  <div class="collection-grid">
+    <div class="product-card">
+      <img class="product-img" src="https://images.pexels.com/photos/1640776/pexels-photo-1640776.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Miso">
+      <div class="product-info">
+        <div class="product-batch">// BATCH M-18 · Release 2024</div>
+        <div class="product-name">Barley Miso, 30 Months</div>
+        <div class="product-age">100g · 250g · Allocation Only</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img class="product-img" src="https://images.pexels.com/photos/3808008/pexels-photo-3808008.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Garum">
+      <div class="product-info">
+        <div class="product-batch">// BATCH G-14 · Limited 60ml</div>
+        <div class="product-name">Black Garum, 18 Months</div>
+        <div class="product-age">60ml · 8 units remaining</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img class="product-img" src="https://images.pexels.com/photos/3758105/pexels-photo-3758105.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Vinegar">
+      <div class="product-info">
+        <div class="product-batch">// BATCH V-07 · Archive Draw</div>
+        <div class="product-name">Oak-Aged Vinegar, 36 Months</div>
+        <div class="product-age">100ml · Annual Release Only</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Commission -->
+<section id="commission" data-section="COMMISSION">
+  <div class="commission-inner">
+    <div class="section-eyebrow" style="text-align:center">// ATELIER ACCESS</div>
+    <h2 class="commission-title">Reserve &amp; Commission</h2>
+    <p class="commission-text">We accept twelve bespoke fermentation commissions per year. Each is a 12–36 month project: we design the culture, manage the environment, monitor the maturation, and deliver the result. No two commissions are identical. None of the cultures are shared.</p>
+    <form class="commission-form" onsubmit="return false;">
+      <div class="f-row">
+        <input class="f-input" type="text" placeholder="// Name">
+        <input class="f-input" type="email" placeholder="// Email">
+      </div>
+      <select class="f-select">
+        <option>// Culture type — Koji</option>
+        <option>// Culture type — Long-aged Miso</option>
+        <option>// Culture type — Vinegar</option>
+        <option>// Culture type — Garum</option>
+        <option>// Culture type — Custom</option>
+      </select>
+      <select class="f-select">
+        <option>// Duration — 12 months</option>
+        <option>// Duration — 18 months</option>
+        <option>// Duration — 24 months</option>
+        <option>// Duration — 36 months</option>
+      </select>
+      <textarea class="f-textarea" placeholder="// Application, intended use, or context..."></textarea>
+      <button class="f-submit" type="submit">// SUBMIT COMMISSION REQUEST</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">KULTIVAT</div>
+      <div class="footer-tagline">// time does the work. we just pay attention.</div>
+      <p class="footer-about">Fermentation research studio. Est. 2012. Berlin &amp; Kyoto. 38 active cultures, 12 annual commissions. A fictional brand created for design demonstration purposes.</p>
+    </div>
+    <div>
+      <div class="footer-col-title sr">// The Cultures</div>
+      <ul class="footer-links">
+        <li><a href="#">Kyoto Koji</a></li>
+        <li><a href="#">36-Month Miso</a></li>
+        <li><a href="#">Oak Vinegar</a></li>
+        <li><a href="#">Black Garum</a></li>
+        <li><a href="#">Fermented Pantry</a></li>
+        <li><a href="#">Commissions</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title sr">// The Studio</div>
+      <ul class="footer-links">
+        <li><a href="#">Philosophy</a></li>
+        <li><a href="#">The Method</a></li>
+        <li><a href="#">Lab & Chamber</a></li>
+        <li><a href="#">Field Notes</a></li>
+        <li><a href="#">Archive</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title sr">// Contact</div>
+      <ul class="footer-links">
+        <li><a href="#">lab@kultivat.com</a></li>
+        <li><a href="#">Berlin — Main Studio</a></li>
+        <li><a href="#">Kyoto — Culture Chamber</a></li>
+        <li><a href="#">By appointment</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2024 KULTIVAT Research Studio. All rights reserved.</div>
+    <div class="footer-legal">// Fictional brand for design purposes.</div>
+  </div>
+</footer>
+
+<script>
+  
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  const sections = [
+    { id: 'hero', label: 'INIT' }, { id: 'philosophy', label: 'TERROIR' },
+    { id: 'stats', label: 'DATA' }, { id: 'cultures', label: 'CULTURES' },
+    { id: 'process', label: 'METHOD' }, { id: 'lab', label: 'LAB' },
+    { id: 'collection', label: 'ARCHIVE' }, { id: 'commission', label: 'COMMISSION' },
+    { id: 'footer', label: 'CONTACT' },
+  ];
+
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function anim() {
+    rx += (mx - rx) * 0.1; ry += (my - ry) * 0.1;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px';
+    requestAnimationFrame(anim);
+  })();
+
+  const heroBg = document.getElementById('hero-bg');
+  document.addEventListener('mousemove', e => {
+    const dx = (e.clientX / window.innerWidth - 0.5) * 12;
+    const dy = (e.clientY / window.innerHeight - 0.5) * 7;
+    heroBg.style.transform = `scale(1.06) translate(${dx}px,${dy}px)`;
+  });
+
+  const preloader = document.getElementById('preloader');
+  const tlp = gsap.timeline({
+    onComplete: () => {
+      gsap.to(preloader, { opacity: 0, duration: 1.0, onComplete: () => {
+        preloader.style.display = 'none';
+        document.getElementById('scroll-indicator').classList.add('visible');
+        initPage();
+      }});
+    }
+  });
+  tlp.to('#pre-label', { opacity: 1, duration: 1.0 })
+     .to('#pre-brand', { opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.1')
+     .to('#pre-sub', { opacity: 1, duration: 1.0 }, '-=0.2')
+     .to({}, { duration: 0.8 });
+
+  setTimeout(() => {
+    if (preloader.style.display !== 'none') {
+      preloader.style.display = 'none';
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }
+  }, 4000);
+
+  const siDotsEl = document.getElementById('si-dots');
+  const siFill = document.getElementById('si-fill');
+  const siLbl = document.getElementById('si-lbl');
+  const dots = sections.map((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'si-dot'; d.title = s.label;
+    d.addEventListener('click', () => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' }));
+    siDotsEl.appendChild(d); return d;
+  });
+  if (dots.length) dots[0].classList.add('active');
+  let cur = 0;
+  window.addEventListener('scroll', () => {
+    const prog = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    siFill.style.height = Math.min(prog * 100, 100) + '%';
+    let found = 0;
+    sections.forEach((s, i) => {
+      const el = document.getElementById(s.id);
+      if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.5) found = i;
+    });
+    if (found !== cur) {
+      cur = found;
+      dots.forEach((d, i) => d.classList.toggle('active', i === found));
+      siLbl.textContent = sections[found]?.label || '';
+    }
+  });
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  function initPage() {
+    gsap.from('#hero-title', { y: 24, opacity: 0, duration: 1.2, ease: 'power2.out', immediateRender: false, delay: 0.1 });
+    gsap.from('#hero-tagline', { y: 30, opacity: 0, duration: 1, ease: 'power2.out', immediateRender: false, delay: 0.4 });
+    gsap.from('#hero-btns', { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', immediateRender: false, delay: 0.7 });
+
+    gsap.to('#phil-img', {
+      yPercent: -8, ease: 'none', immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+    gsap.from('#philosophy .phil-inner > div:last-child > *', {
+      y: 30, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy', start: 'top 75%', once: true }
+    });
+
+    gsap.from('.stat-item', {
+      y: 30, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#stats', start: 'top 80%', once: true }
+    });
+
+    gsap.from('.culture-card', {
+      y: 24, opacity: 0, stagger: 0.1, duration: 0.9, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#cultures', start: 'top 75%', once: true }
+    });
+
+    gsap.to('#p-fill', {
+      height: '100%', duration: 1.5, ease: 'none', immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 70%', end: 'bottom 80%', scrub: 1 }
+    });
+    gsap.from('.p-step', {
+      x: 30, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 75%', once: true }
+    });
+
+    gsap.from('.bento-cell', {
+      y: 30, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#lab', start: 'top 75%', once: true }
+    });
+
+    gsap.from('.product-card', {
+      y: 24, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#collection', start: 'top 75%', once: true }
+    });
+
+    gsap.from('.commission-inner > *', {
+      y: 30, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power2.out', immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true }
+    });
+  }
+</script>
+</body>
+</html>

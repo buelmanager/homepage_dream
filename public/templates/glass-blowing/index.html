@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitrara Atelier — Where Fire Becomes Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+/* SplitText polyfill — replaces Club GSAP premium plugin (not on CDN) */
+class SplitText {
+  constructor(target, opts = {}) {
+    const el = typeof target === 'string'
+      ? document.querySelector(target)
+      : (target instanceof Element ? target : null);
+    this.chars = []; this.words = []; this.lines = [];
+    if (!el) return;
+    this._el = el;
+    const type = (opts.type || 'chars,words').toLowerCase();
+    const original = el.textContent;
+    el.setAttribute('data-split-orig', original);
+    if (type.includes('chars')) {
+      el.innerHTML = original.split('').map(c =>
+        c === ' '
+          ? '<span class="char" style="display:inline-block">&nbsp;</span>'
+          : `<span class="char" style="display:inline-block">${c}</span>`
+      ).join('');
+      this.chars = Array.from(el.querySelectorAll('.char'));
+    } else if (type.includes('words')) {
+      el.innerHTML = original.split(/\s+/).filter(Boolean).map(w =>
+        `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`
+      ).join('');
+      this.words = Array.from(el.querySelectorAll('.word'));
+    }
+    this.lines = [el];
+  }
+  revert() {
+    if (this._el) {
+      const orig = this._el.getAttribute('data-split-orig');
+      if (orig) this._el.textContent = orig;
+    }
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+:root {
+  --bg: #221D18;
+  --surface: #2A2420;
+  --furnace: #322B24;
+  --ember: #C8813A;
+  --amber-light: #E8A85A;
+  --ivory: #F5EFE6;
+  --ivory-dim: rgba(245,239,230,0.55);
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ivory);
+  font-family: var(--font-ui);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Cursor */
+.cursor-dot {
+  width: 5px; height: 5px;
+  background: var(--ember);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%,-50%);
+}
+.cursor-ring {
+  width: 28px; height: 28px;
+  border: 1px solid rgba(200,129,58,0.35);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+/* Preloader */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: #201A14;
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.preloader-flame {
+  width: 48px; height: 64px;
+  position: relative;
+}
+.flame-body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px; height: 48px;
+  background: radial-gradient(ellipse at 50% 80%, #C8813A 0%, #E8A85A 40%, transparent 100%);
+  border-radius: 50% 50% 30% 30%;
+  animation: flameDance 1.2s ease-in-out infinite alternate;
+}
+.flame-inner {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px; height: 28px;
+  background: radial-gradient(ellipse at 50% 80%, #FFF5E0 0%, #E8A85A 60%, transparent 100%);
+  border-radius: 50% 50% 30% 30%;
+  animation: flameDance 0.9s ease-in-out infinite alternate-reverse;
+}
+@keyframes flameDance {
+  from { transform: translateX(-50%) scaleX(1); }
+  to { transform: translateX(-50%) scaleX(0.85) scaleY(1.08); }
+}
+.preloader-brand {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  letter-spacing: 0.4em;
+  color: var(--ivory);
+  opacity: 0;
+  animation: fadeUp 0.8s 1.5s ease forwards;
+}
+.preloader-sub {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ember);
+  opacity: 0;
+  animation: fadeUp 0.8s 1.9s ease forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scroll Indicator */
+#scroll-indicator {
+  position: fixed;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+#scroll-indicator.visible { opacity: 1; }
+.si-dots { display: flex; flex-direction: column; gap: 8px; }
+.si-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(245,239,230,0.2);
+  transition: all 0.4s;
+  cursor: pointer;
+}
+.si-dot.active {
+  background: var(--ember);
+  width: 4px; height: 12px;
+  border-radius: 2px;
+}
+.si-progress {
+  width: 1px;
+  height: 44px;
+  background: rgba(245,239,230,0.12);
+  position: relative;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.si-fill {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--ember);
+  transition: height 0.3s;
+}
+.si-label {
+  font-family: var(--font-ui);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.3);
+  writing-mode: vertical-rl;
+  margin-top: 6px;
+  transition: color 0.4s;
+}
+.si-label.active { color: var(--ember); }
+
+/* Navbar */
+#navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 800;
+  padding: 26px 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.5s;
+}
+#navbar.scrolled {
+  background: rgba(26,22,18,0.93);
+  backdrop-filter: blur(16px);
+  padding: 16px 64px;
+  border-bottom: 1px solid rgba(245,239,230,0.05);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: 0.22em;
+  color: var(--ivory);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--ember); }
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.5);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--ivory); }
+.nav-cta {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ember);
+  text-decoration: none;
+  border: 1px solid rgba(200,129,58,0.4);
+  padding: 10px 24px;
+  transition: all 0.3s;
+}
+.nav-cta:hover { background: var(--ember); color: var(--bg); }
+
+/* Hero */
+#hero {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.pexels.com/photos/1144687/pexels-photo-1144687.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80');
+  background-size: cover;
+  background-position: center 40%;
+  animation: slowZoom 18s ease-in-out infinite alternate;
+}
+@keyframes slowZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(34,29,24,0.35) 0%,
+    rgba(34,29,24,0.40) 50%,
+    rgba(34,29,24,0.70) 100%
+  );
+}
+.hero-glow {
+  position: absolute;
+  bottom: -200px; left: 50%;
+  transform: translateX(-50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse, rgba(200,129,58,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 860px;
+  padding: 0 40px;
+}
+.hero-tag {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ember);
+  display: block;
+  margin-bottom: 24px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 9vw, 9.5rem);
+  font-weight: 300;
+  line-height: 0.92;
+  color: var(--ivory);
+  margin-bottom: 30px;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--ember);
+  display: block;
+}
+.hero-divider {
+  width: 48px; height: 1px;
+  background: var(--ember);
+  margin: 0 auto 28px;
+  opacity: 0.6;
+}
+.hero-sub {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  color: rgba(245,239,230,0.6);
+  max-width: 480px;
+  margin: 0 auto 48px;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+}
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+.btn-fire {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--ember);
+  padding: 16px 44px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+.btn-fire:hover { background: var(--amber-light); }
+.btn-outline {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  padding: 15px 44px;
+  border: 1px solid rgba(245,239,230,0.2);
+  text-decoration: none;
+  transition: border-color 0.3s;
+}
+.btn-outline:hover { border-color: rgba(245,239,230,0.5); }
+.hero-scroll {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.hero-scroll-line {
+  width: 1px; height: 52px;
+  background: linear-gradient(to bottom, transparent, var(--ember));
+  animation: scrollGlow 2s ease-in-out infinite;
+}
+@keyframes scrollGlow {
+  0%,100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+.hero-scroll-label {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.3);
+}
+
+/* Stats */
+#stats {
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid rgba(245,239,230,0.05);
+  border-bottom: 1px solid rgba(245,239,230,0.05);
+}
+.stat-item {
+  padding: 48px 32px;
+  text-align: center;
+  border-right: 1px solid rgba(245,239,230,0.05);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 300;
+  color: var(--ember);
+  line-height: 1;
+  display: block;
+}
+.stat-label {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.35);
+  margin-top: 8px;
+  display: block;
+}
+
+/* The Breath — Philosophy */
+#breath {
+  padding: 140px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.breath-visual {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+}
+.breath-visual img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 8s ease;
+}
+.breath-visual:hover img { transform: scale(1.04); }
+.breath-temp-badge {
+  position: absolute;
+  top: 24px; right: 24px;
+  background: rgba(13,10,8,0.85);
+  border: 1px solid rgba(200,129,58,0.3);
+  padding: 12px 16px;
+  text-align: center;
+}
+.badge-num {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--ember);
+  display: block;
+  line-height: 1;
+}
+.badge-label {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.4);
+  margin-top: 4px;
+  display: block;
+}
+.breath-text {}
+.section-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ember);
+  display: block;
+  margin-bottom: 24px;
+}
+.breath-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--ivory);
+  margin-bottom: 28px;
+}
+.breath-title em { font-style: italic; color: var(--ember); }
+.breath-body {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--ivory-dim);
+  margin-bottom: 20px;
+}
+.breath-quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.3rem;
+  color: rgba(245,239,230,0.7);
+  border-left: 2px solid var(--ember);
+  padding-left: 20px;
+  margin-top: 28px;
+  line-height: 1.65;
+}
+
+/* Collection */
+#collection {
+  padding: 140px 80px;
+  background: var(--furnace);
+}
+.collection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 64px;
+}
+.collection-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  color: var(--ivory);
+}
+.collection-sub {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--ivory-dim);
+  max-width: 300px;
+  text-align: right;
+  line-height: 1.7;
+}
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  overflow: visible;
+}
+.collection-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+}
+.collection-card:nth-child(2) {
+  transform: translateY(40px);
+}
+.collection-card:nth-child(4) {
+  transform: translateY(-20px);
+}
+.collection-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.collection-card:hover .collection-img { transform: scale(1.07); }
+.collection-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13,10,8,0.9) 0%, transparent 55%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+}
+.collection-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--ivory);
+  margin-bottom: 4px;
+}
+.collection-material {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+.collection-tag {
+  position: absolute;
+  top: 16px; left: 16px;
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: rgba(26,22,18,0.75);
+  color: rgba(245,239,230,0.5);
+  padding: 4px 9px;
+}
+
+/* Process */
+#process {
+  padding: 140px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.process-bg-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(200,129,58,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.process-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 100px;
+}
+.process-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300;
+  color: var(--ivory);
+  margin-bottom: 20px;
+}
+.process-sub {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.95rem;
+  color: var(--ivory-dim);
+  line-height: 1.8;
+}
+.process-spine-wrap {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.process-spine {
+  position: absolute;
+  top: 32px;
+  left: 0; right: 0;
+  height: 1px;
+  background: rgba(245,239,230,0.08);
+}
+.process-spine-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, var(--ember), var(--amber-light));
+  transition: width 2s ease;
+}
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  position: relative;
+  z-index: 1;
+}
+.process-step {
+  text-align: center;
+  padding: 0 16px;
+}
+.step-dot {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid rgba(200,129,58,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 28px;
+  position: relative;
+  transition: all 0.4s;
+}
+.step-dot svg {
+  width: 20px; height: 20px;
+  fill: var(--ember);
+  opacity: 0.6;
+  transition: opacity 0.4s;
+}
+.process-step:hover .step-dot {
+  background: var(--ember);
+  border-color: var(--ember);
+  box-shadow: 0 0 30px rgba(200,129,58,0.4);
+}
+.process-step:hover .step-dot svg {
+  fill: var(--bg);
+  opacity: 1;
+}
+.step-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--ivory);
+  margin-bottom: 10px;
+}
+.step-temp {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ember);
+  margin-bottom: 12px;
+  display: block;
+}
+.step-desc {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: rgba(245,239,230,0.4);
+}
+
+/* Atelier */
+#atelier {
+  padding: 140px 80px;
+  background: var(--furnace);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.atelier-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 3px;
+}
+.atelier-img-wrap {
+  overflow: hidden;
+}
+.atelier-img-wrap img {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+.atelier-img-wrap:nth-child(1) {
+  grid-column: 1 / span 2;
+  min-height: 280px;
+}
+.atelier-img-wrap:nth-child(1) img { min-height: 280px; }
+.atelier-img-wrap:hover img { transform: scale(1.05); }
+.atelier-text {}
+.atelier-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 300;
+  color: var(--ivory);
+  line-height: 1.15;
+  margin-bottom: 28px;
+}
+.atelier-title em { font-style: italic; color: var(--ember); }
+.atelier-body {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.9;
+  color: var(--ivory-dim);
+  margin-bottom: 20px;
+}
+.atelier-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 36px;
+}
+.spec-item {
+  border-left: 2px solid rgba(200,129,58,0.3);
+  padding-left: 16px;
+}
+.spec-val {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--ember);
+  display: block;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.spec-label {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.35);
+}
+
+/* Commission */
+#commission {
+  padding: 140px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: start;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.commission-text { padding-top: 20px; }
+.commission-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 300;
+  color: var(--ivory);
+  line-height: 1.1;
+  margin-bottom: 30px;
+}
+.commission-title em { font-style: italic; color: var(--ember); }
+.commission-body {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.9;
+  color: var(--ivory-dim);
+  margin-bottom: 36px;
+}
+.commission-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.commission-points li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.85rem;
+  color: rgba(245,239,230,0.55);
+  line-height: 1.6;
+}
+.commission-points li::before {
+  content: '—';
+  color: var(--ember);
+  flex-shrink: 0;
+  margin-top: 0.1em;
+}
+.commission-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+.form-label {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.35);
+}
+.form-input, .form-select, .form-textarea {
+  background: var(--surface);
+  border: 1px solid rgba(245,239,230,0.08);
+  color: var(--ivory);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.95rem;
+  padding: 13px 16px;
+  outline: none;
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.3s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: rgba(200,129,58,0.4);
+}
+.form-select option { background: var(--surface); }
+.form-textarea { min-height: 90px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-submit {
+  background: var(--ember);
+  color: var(--bg);
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 17px 40px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 6px;
+  transition: background 0.3s;
+}
+.form-submit:hover { background: var(--amber-light); }
+
+/* Luminaries / Press */
+#luminaries {
+  padding: 120px 80px;
+  background: var(--furnace);
+  border-top: 1px solid rgba(245,239,230,0.05);
+}
+.luminaries-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.luminaries-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--ivory);
+}
+.swiper-luminaries { max-width: 860px; margin: 0 auto; }
+.lum-slide {
+  padding: 50px 56px;
+  background: var(--surface);
+  border-top: 1px solid rgba(200,129,58,0.2);
+  text-align: center;
+}
+.lum-quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  color: var(--ivory);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.lum-source {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+/* Signal / Newsletter */
+#signal {
+  padding: 120px 80px;
+  text-align: center;
+  background: var(--bg);
+}
+.signal-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  color: var(--ivory);
+  margin-bottom: 16px;
+}
+.signal-sub {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.95rem;
+  color: var(--ivory-dim);
+  max-width: 460px;
+  margin: 0 auto 40px;
+  line-height: 1.8;
+}
+.signal-form {
+  display: flex;
+  max-width: 440px;
+  margin: 0 auto;
+}
+.signal-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid rgba(245,239,230,0.1);
+  border-right: none;
+  color: var(--ivory);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  padding: 14px 16px;
+  outline: none;
+}
+.signal-btn {
+  background: var(--ember);
+  color: var(--bg);
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.signal-btn:hover { background: var(--amber-light); }
+
+/* Footer */
+footer {
+  background: #2A2320;
+  padding: 80px 80px 40px;
+  border-top: 1px solid rgba(245,239,230,0.05);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 56px;
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--ivory);
+  margin-bottom: 12px;
+  display: block;
+}
+.footer-logo span { color: var(--ember); }
+.footer-tagline {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.85rem;
+  color: rgba(245,239,230,0.35);
+  line-height: 1.7;
+  max-width: 240px;
+}
+.footer-col-head {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ember);
+  margin-bottom: 18px;
+  display: block;
+}
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-links a {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: 0.85rem;
+  color: rgba(245,239,230,0.4);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--ivory); }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(245,239,230,0.05);
+  padding-top: 28px;
+}
+.footer-legal {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  color: rgba(245,239,230,0.18);
+}
+.footer-socials {
+  display: flex;
+  gap: 20px;
+}
+.footer-social {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.28);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.footer-social:hover { color: var(--ember); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  #stats { grid-template-columns: repeat(2,1fr); }
+  #breath, #commission { grid-template-columns: 1fr; gap: 48px; }
+  #atelier { grid-template-columns: 1fr; gap: 48px; }
+  .collection-grid { grid-template-columns: 1fr 1fr; }
+  .process-steps { grid-template-columns: 1fr; gap: 32px; }
+  .process-spine { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  #navbar { padding: 16px 24px; }
+  #navbar.scrolled { padding: 12px 24px; }
+  .nav-links { display: none; }
+  #scroll-indicator { display: none; }
+  #breath, #instruments, #collection, #process, #atelier, #commission, #luminaries, #signal { padding: 80px 24px; }
+  .collection-grid { grid-template-columns: 1fr; }
+  .collection-card:nth-child(2), .collection-card:nth-child(4) { transform: none; }
+  .atelier-images { grid-template-columns: 1fr; }
+  .atelier-img-wrap:nth-child(1) { grid-column: auto; }
+  .atelier-specs { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .hero-title { font-size: 3.5rem; }
+  .hero-btns { flex-direction: column; }
+  .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+  footer { padding: 60px 24px 32px; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  .collection-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .collection-sub { text-align: left; max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-flame">
+    <div class="flame-body"></div>
+    <div class="flame-inner"></div>
+  </div>
+  <div class="preloader-brand">VITRARA</div>
+  <div class="preloader-sub">Glass Atelier · Est. 2011</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="si-dots" id="siDots"></div>
+  <div class="si-progress"><div class="si-fill" id="siFill"></div></div>
+  <div class="si-label" id="siLabel">Ignition</div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">VITR<span>A</span>RA</a>
+  <ul class="nav-links">
+    <li><a href="#breath">Philosophy</a></li>
+    <li><a href="#collection">Collection</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#atelier">Atelier</a></li>
+  </ul>
+  <a href="#commission" class="nav-cta">Commission a Piece</a>
+</nav>
+
+<!-- Hero — IGNITION -->
+<section id="hero" data-section="Ignition">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <span class="hero-tag">Murano-trained · Portland Studio</span>
+    <h1 class="hero-title" id="heroTitle">Where<br>fire<br><em>becomes</em><br>form.</h1>
+    <div class="hero-divider"></div>
+    <p class="hero-sub">Handblown glass objects shaped at 1,200°C. Each piece is formed in a single breath — irreducible, unrepeatable.</p>
+    <div class="hero-btns">
+      <a href="#collection" class="btn-fire">View Collection</a>
+      <a href="#commission" class="btn-outline">Commission a Piece</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span class="hero-scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- Stats -->
+<section id="stats" data-section="Vitrara">
+  <div class="stat-item">
+    <span class="stat-num" data-count="1200">0</span>
+    <span class="stat-label">°C Furnace Temperature</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-count="14">0</span>
+    <span class="stat-label">Years in Studio Practice</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-count="340">0</span>
+    <span class="stat-label">Unique Works Created</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-count="1">0</span>
+    <span class="stat-label">Breath Per Piece</span>
+  </div>
+</section>
+
+<!-- The Breath — Philosophy -->
+<section id="breath" data-section="Philosophy">
+  <div class="breath-visual">
+    <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?w=1920&q=80&auto=format&fit=crop" alt="Glass in form" loading="lazy">
+    <div class="breath-temp-badge">
+      <span class="badge-num">1,200</span>
+      <span class="badge-label">°C Working temp</span>
+    </div>
+  </div>
+  <div class="breath-text">
+    <span class="section-eyebrow">01 — The Breath</span>
+    <h2 class="breath-title">Glass is not made.<br><em>It is coaxed.</em></h2>
+    <p class="breath-body">Silica, ash, and heat: these three elements have produced glass for three thousand years. Nothing in the chemistry has changed. What changes is the blower — the accumulated hours of muscle memory that let a person shape 1,200°C material with nothing more than breath, gravity, and timing.</p>
+    <p class="breath-body">At Vitrara, we work in a single session per piece. No return trips to the furnace. No corrections. The form that emerges is the form the material was willing to become.</p>
+    <blockquote class="breath-quote">
+      "The furnace doesn't forgive hesitation. Neither does the piece."
+    </blockquote>
+  </div>
+</section>
+
+<!-- Collection Grid -->
+<section id="collection" data-section="Collection">
+  <div style="padding:0 80px;">
+    <div class="collection-header">
+      <div>
+        <span class="section-eyebrow">02 — Collection</span>
+        <h2 class="collection-title">Current works.</h2>
+      </div>
+      <p class="collection-sub">Each series is limited to the number achievable in a single firing week. When the kiln cools, the series closes.</p>
+    </div>
+  </div>
+  <div class="collection-grid" style="padding:0 80px;">
+    <div class="collection-card">
+      <img class="collection-img" src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=800&q=80&auto=format&fit=crop" alt="Vessel I" loading="lazy">
+      <span class="collection-tag">Series A · 2024</span>
+      <div class="collection-overlay">
+        <h3 class="collection-name">Cinder Vessel</h3>
+        <span class="collection-material">Borosilicate · ash-grey patina</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img class="collection-img" src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1920&q=80&auto=format&fit=crop" alt="Bowl" loading="lazy">
+      <span class="collection-tag">Series B · 2025</span>
+      <div class="collection-overlay">
+        <h3 class="collection-name">Ember Bowl</h3>
+        <span class="collection-material">Soda-lime · copper-ruby core</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img class="collection-img" src="https://images.unsplash.com/photo-1505873242700-f289a29e1724?w=1920&q=80&auto=format&fit=crop" alt="Sculpture" loading="lazy">
+      <span class="collection-tag">Series C · 2025</span>
+      <div class="collection-overlay">
+        <h3 class="collection-name">Smoke Column</h3>
+        <span class="collection-material">Clear-body · trapped air inclusions</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img class="collection-img" src="https://images.pexels.com/photos/1619854/pexels-photo-1619854.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80" alt="Vase" loading="lazy">
+      <span class="collection-tag">Series D · 2026</span>
+      <div class="collection-overlay">
+        <h3 class="collection-name">Tide Vase</h3>
+        <span class="collection-material">Sea-green · wave-fold seam</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img class="collection-img" src="https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80" alt="Dish" loading="lazy">
+      <span class="collection-tag">Series E · 2026</span>
+      <div class="collection-overlay">
+        <h3 class="collection-name">Salt Flat Dish</h3>
+        <span class="collection-material">Flat-press · mineral matte finish</span>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img class="collection-img" src="https://images.pexels.com/photos/2736499/pexels-photo-2736499.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80" alt="Pendant" loading="lazy">
+      <span class="collection-tag">Series F · 2026</span>
+      <div class="collection-overlay">
+        <h3 class="collection-name">Lava Pendant</h3>
+        <span class="collection-material">Suspended glass · amber threading</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section id="process" data-section="Process">
+  <div class="process-bg-glow"></div>
+  <div class="process-header">
+    <span class="section-eyebrow" style="display:block;text-align:center;margin-bottom:16px;">03 — Process</span>
+    <h2 class="process-title">Five acts at<br>the furnace mouth.</h2>
+    <p class="process-sub">The sequence cannot be shortened. Each act builds the conditions for the next. Skip any step and the glass remembers.</p>
+  </div>
+  <div class="process-spine-wrap">
+    <div class="process-spine"><div class="process-spine-fill" id="processSpine"></div></div>
+    <div class="process-steps">
+      <div class="process-step sr">
+        <div class="step-dot sr">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg>
+        </div>
+        <h4 class="step-name sr">Gather</h4>
+        <span class="step-temp sr">1,200 °C</span>
+        <p class="step-desc sr">The blowpipe collects molten glass from the furnace. Weight and temperature are felt, not measured.</p>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr">
+          <svg viewBox="0 0 24 24"><path d="M12 4 C8 4 4 8 4 12 C4 16 8 20 12 20"/></svg>
+        </div>
+        <h4 class="step-name sr">Shape</h4>
+        <span class="step-temp sr">1,100 °C</span>
+        <p class="step-desc sr">Marver contact creates the initial geometry. The glass is still forgiving — briefly.</p>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr">
+          <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="5"/></svg>
+        </div>
+        <h4 class="step-name sr">Blow</h4>
+        <span class="step-temp sr">1,050 °C</span>
+        <p class="step-desc sr">A single sustained breath inflates the gather. This is the moment that cannot be taken back.</p>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr">
+          <svg viewBox="0 0 24 24"><path d="M4 20 L20 4"/><path d="M4 12 L12 4"/><path d="M12 20 L20 12"/></svg>
+        </div>
+        <h4 class="step-name sr">Sculpt</h4>
+        <span class="step-temp sr">900 °C</span>
+        <p class="step-desc sr">Jacks, shears, and gravity finalize the form. Speed is essential — the window is under four minutes.</p>
+      </div>
+      <div class="process-step sr">
+        <div class="step-dot sr">
+          <svg viewBox="0 0 24 24"><path d="M4 20 L12 4 L20 20"/></svg>
+        </div>
+        <h4 class="step-name sr">Anneal</h4>
+        <span class="step-temp sr">480 °C → 20 °C</span>
+        <p class="step-desc sr">18 hours in the annealing oven. Cooling too fast creates invisible fractures that surface years later.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Atelier -->
+<section id="atelier" data-section="Atelier">
+  <div class="atelier-images">
+    <div class="atelier-img-wrap sr">
+      <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&q=80&auto=format&fit=crop" alt="Atelier wide" loading="lazy">
+    </div>
+    <div class="atelier-img-wrap sr">
+      <img src="https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Hands at work" loading="lazy">
+    </div>
+    <div class="atelier-img-wrap sr">
+      <img src="https://images.pexels.com/photos/1834399/pexels-photo-1834399.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80" alt="Detail" loading="lazy">
+    </div>
+  </div>
+  <div class="atelier-text sr">
+    <span class="section-eyebrow">04 — The Atelier</span>
+    <h2 class="atelier-title">A studio built<br>for <em>heat</em><br>and time.</h2>
+    <p class="atelier-body">Our Portland studio houses a 2,000-pound Spruce Pine batch glass furnace operating continuously — it has not been cold in nine years. The studio temperature rarely drops below 35°C in summer. This is not incidental: it is the condition of the work.</p>
+    <p class="atelier-body">Visitors are welcome during open blowing sessions on the first Friday of each month. No booking required. Arrive after the furnace warms — we begin at noon.</p>
+    <div class="atelier-specs">
+      <div class="spec-item">
+        <span class="spec-val">2,000</span>
+        <span class="spec-label">lb furnace batch</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-val">9 yr</span>
+        <span class="spec-label">Continuous operation</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-val">3</span>
+        <span class="spec-label">Gaffers on staff</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-val">18 hr</span>
+        <span class="spec-label">Annealing cycle</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Commission Form -->
+<section id="commission" data-section="Commission">
+  <div class="commission-text">
+    <span class="section-eyebrow">05 — Commission</span>
+    <h2 class="commission-title">A piece<br>made for<br><em>one room.</em></h2>
+    <p class="commission-body">We accept four to six bespoke commissions per year. Each begins with a conversation about the space, the light, and what you want the glass to hold.</p>
+    <ul class="commission-points">
+      <li>Site visit and light study where possible</li>
+      <li>2–4 month lead time depending on complexity</li>
+      <li>Single-session creation, witnessed on request</li>
+      <li>Delivery in custom hand-packed crate</li>
+      <li>Lifetime crack repair guarantee</li>
+    </ul>
+  </div>
+  <form class="commission-form" id="commissionForm">
+    <div class="form-row">
+      <div class="form-group sr">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" placeholder="First name">
+      </div>
+      <div class="form-group sr">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" placeholder="Last name">
+      </div>
+    </div>
+    <div class="form-group sr">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" placeholder="your@email.com">
+    </div>
+    <div class="form-group sr">
+      <label class="form-label">Work Type</label>
+      <select class="form-select">
+        <option value="">Select type</option>
+        <option>Vessel / Vase</option>
+        <option>Sculptural Object</option>
+        <option>Lighting / Pendant</option>
+        <option>Architectural Installation</option>
+        <option>Not yet decided</option>
+      </select>
+    </div>
+    <div class="form-group sr">
+      <label class="form-label">Intended Location</label>
+      <input type="text" class="form-input" placeholder="Private residence, gallery, etc.">
+    </div>
+    <div class="form-group sr">
+      <label class="form-label">Brief</label>
+      <textarea class="form-textarea" placeholder="Describe the space, the light, what you're looking for. The more you share, the better the conversation begins."></textarea>
+    </div>
+    <button type="submit" class="form-submit">Begin the Conversation</button>
+  </form>
+</section>
+
+<!-- Luminaries -->
+<section id="luminaries" data-section="Press">
+  <div class="luminaries-header">
+    <span class="section-eyebrow" style="display:block;text-align:center;margin-bottom:12px;">Luminaries</span>
+    <h2 class="luminaries-title">In their own light</h2>
+  </div>
+  <div class="swiper swiper-luminaries">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide lum-slide">
+        <p class="lum-quote">"Vitrara makes objects that seem to have arrived, not been made. There is no design language here — only consequence."</p>
+        <span class="lum-source">— Wallpaper*, Objects of Desire 2025</span>
+      </div>
+      <div class="swiper-slide lum-slide">
+        <p class="lum-quote">"In an age of machine-perfect surfaces, the slight asymmetry of a Vitrara piece is the entire point. The breath is visible."</p>
+        <span class="lum-source">— Monocle, Issue 175</span>
+      </div>
+      <div class="swiper-slide lum-slide">
+        <p class="lum-quote">"I placed the Cinder Vessel on a north-facing windowsill and have not moved it in two years. The light changes; it is never the same object."</p>
+        <span class="lum-source">— Commission client, Edinburgh 2024</span>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- Signal -->
+<section id="signal" data-section="Signal">
+  <span class="section-eyebrow" style="display:block;text-align:center;margin-bottom:12px;">Stay in range</span>
+  <h2 class="signal-title">New firings. Rare openings.</h2>
+  <p class="signal-sub">Notifications when new works are available and when commission slots open. Infrequent. Direct.</p>
+  <form class="signal-form">
+    <input type="email" class="signal-input" placeholder="your@email.com">
+    <button type="submit" class="signal-btn">Subscribe</button>
+  </form>
+</section>
+
+<!-- Footer -->
+<footer id="footer" data-section="Vitrara">
+  <div class="footer-grid">
+    <div>
+      <span class="footer-logo">VITR<span>A</span>RA</span>
+      <p class="footer-tagline">Where fire becomes form. Glass atelier — Portland, Oregon. Est. 2011.</p>
+    </div>
+    <div>
+      <span class="footer-col-head sr">Studio</span>
+      <ul class="footer-links">
+        <li><a href="#">Philosophy</a></li>
+        <li><a href="#">Collection</a></li>
+        <li><a href="#">Process</a></li>
+        <li><a href="#">The Atelier</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-head sr">Acquire</span>
+      <ul class="footer-links">
+        <li><a href="#">Commission a Piece</a></li>
+        <li><a href="#">Open Sessions</a></li>
+        <li><a href="#">Gift Enquiries</a></li>
+        <li><a href="#">Galleries</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-head sr">Contact</span>
+      <ul class="footer-links">
+        <li><a href="#">Portland, Oregon</a></li>
+        <li><a href="#">Fri–Sun, 11–18h</a></li>
+        <li><a href="#">hello@vitrara.co</a></li>
+        <li><a href="#">+1 503 000 0000</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-legal">© 2026 Vitrara Glass Atelier. All rights reserved. Fictional brand — for demonstration only.</span>
+    <div class="footer-socials">
+      <a href="#" class="footer-social">Instagram</a>
+      <a href="#" class="footer-social">Pinterest</a>
+      <a href="#" class="footer-social">Journal</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+  /* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+// Sections
+const sections = [
+  { id: 'hero', label: 'Ignition' },
+  { id: 'stats', label: 'Vitrara' },
+  { id: 'breath', label: 'Philosophy' },
+  { id: 'collection', label: 'Collection' },
+  { id: 'process', label: 'Process' },
+  { id: 'atelier', label: 'Atelier' },
+  { id: 'commission', label: 'Commission' },
+  { id: 'luminaries', label: 'Press' },
+  { id: 'signal', label: 'Signal' }
+];
+
+// Build dots
+const siDots = document.getElementById('siDots');
+sections.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'si-dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => {
+    document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' });
+  });
+  siDots.appendChild(d);
+});
+
+// Scroll indicator update
+function updateSI() {
+  const sy = window.scrollY;
+  const dh = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('siFill').style.height = (sy / dh * 100) + '%';
+  let ai = 0;
+  sections.forEach((s, i) => {
+    const el = document.getElementById(s.id);
+    if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.5) ai = i;
+  });
+  document.querySelectorAll('.si-dot').forEach((d, i) => d.classList.toggle('active', i === ai));
+  document.getElementById('siLabel').textContent = sections[ai].label;
+}
+window.addEventListener('scroll', updateSI, { passive: true });
+
+// Navbar
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// Cursor
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
+});
+(function animateRing() {
+  rx += (mx - rx) * 0.1; ry += (my - ry) * 0.1;
+  ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+  requestAnimationFrame(animateRing);
+})();
+document.querySelectorAll('a,button,input,select,textarea,.collection-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    ring.style.width = '52px'; ring.style.height = '52px';
+    ring.style.borderColor = 'rgba(200,129,58,0.6)';
+  });
+  el.addEventListener('mouseleave', () => {
+    ring.style.width = '28px'; ring.style.height = '28px';
+    ring.style.borderColor = 'rgba(200,129,58,0.35)';
+  });
+});
+
+// Preloader
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    gsap.to('#preloader', {
+      opacity: 0,
+      duration: 0.8,
+      delay: 2.6,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('scroll-indicator').classList.add('visible');
+        initAnimations();
+      }
+    });
+  }, 100);
+  setTimeout(() => {
+    document.getElementById('scroll-indicator')?.classList.add('visible');
+  }, 4000);
+});
+
+function initAnimations() {
+  // Hero
+  try {
+    const split = new SplitText('#heroTitle', { type: 'lines' });
+    gsap.from(split.lines, {
+      opacity: 0,
+      y: 24,
+      duration: 1.3,
+      stagger: 0.15,
+      ease: 'power2.out',
+      immediateRender: false
+    });
+  } catch(e) {
+    gsap.from('#heroTitle', { opacity: 0, y: 24, duration: 1, immediateRender: false });
+  }
+  gsap.from('.hero-tag', { opacity: 0, y: 16, duration: 0.7, delay: 0.1, immediateRender: false });
+  gsap.from('.hero-divider', { opacity: 0, scaleX: 0, duration: 0.7, delay: 0.7, immediateRender: false });
+  gsap.from('.hero-sub', { opacity: 0, y: 16, duration: 0.7, delay: 0.8, immediateRender: false });
+  gsap.from('.hero-btns', { opacity: 0, y: 16, duration: 0.7, delay: 1, immediateRender: false });
+
+  // Hero mousemove parallax
+  document.getElementById('hero').addEventListener('mousemove', e => {
+    const px = (e.clientX / window.innerWidth - 0.5) * 28;
+    const py = (e.clientY / window.innerHeight - 0.5) * 28;
+    gsap.to('#heroBg', { backgroundPositionX: `calc(center + ${px * -0.4}px)`, duration: 1.2, overwrite: 'auto' });
+  });
+
+  // Stats counter
+  gsap.from('.stat-item', {
+    opacity: 0, y: 30, stagger: 0.1, duration: 0.8,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#stats', start: 'top 85%', once: true }
+  });
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    ScrollTrigger.create({
+      trigger: el, start: 'top 85%', once: true,
+      onEnter: () => {
+        let obj = { val: 0 };
+        gsap.to(obj, { val: target, duration: 2.2, ease: 'power2.out',
+          onUpdate: () => { el.childNodes[0].textContent = Math.round(obj.val); }
+        });
+      }
+    });
+  });
+
+  // Philosophy
+  gsap.from('.breath-visual', {
+    opacity: 0, x: -60, duration: 1.2,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#breath', start: 'top 75%', once: true }
+  });
+  gsap.from('.breath-text > *', {
+    opacity: 0, y: 24, stagger: 0.12, duration: 0.9,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#breath', start: 'top 75%', once: true }
+  });
+
+  // Collection
+  gsap.from('.collection-card', {
+    opacity: 0, y: 24, stagger: 0.1, duration: 1,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#collection', start: 'top 75%', once: true }
+  });
+
+  // Process
+  ScrollTrigger.create({
+    trigger: '#process', start: 'top 70%', once: true,
+    onEnter: () => {
+      gsap.to('#processSpine', { width: '100%', duration: 2.2, ease: 'power2.inOut' });
+    }
+  });
+  gsap.from('.process-step', {
+    opacity: 0, y: 30, stagger: 0.15, duration: 0.8,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#process', start: 'top 75%', once: true }
+  });
+
+  // Atelier
+  gsap.from('.atelier-img-wrap', {
+    opacity: 0, y: 24, stagger: 0.1, duration: 1,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#atelier', start: 'top 75%', once: true }
+  });
+  gsap.from('.atelier-text > *', {
+    opacity: 0, x: 40, stagger: 0.1, duration: 0.9,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#atelier', start: 'top 75%', once: true }
+  });
+
+  // Commission
+  gsap.from('.commission-text > *', {
+    opacity: 0, x: -40, stagger: 0.1, duration: 0.9,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true }
+  });
+  gsap.from('.commission-form > *', {
+    opacity: 0, y: 20, stagger: 0.08, duration: 0.7,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#commission', start: 'top 75%', once: true }
+  });
+
+  // Press
+  gsap.from('.swiper-luminaries', {
+    opacity: 0, y: 24, duration: 1,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#luminaries', start: 'top 80%', once: true }
+  });
+
+  // Signal
+  gsap.from('#signal > *', {
+    opacity: 0, y: 30, stagger: 0.12, duration: 0.8,
+    immediateRender: false,
+    scrollTrigger: { trigger: '#signal', start: 'top 80%', once: true }
+  });
+
+  // Footer
+  gsap.from('.footer-grid > *', {
+    opacity: 0, y: 30, stagger: 0.1, duration: 0.8,
+    immediateRender: false,
+    scrollTrigger: { trigger: 'footer', start: 'top 85%', once: true }
+  });
+}
+
+// Swiper
+new Swiper('.swiper-luminaries', {
+  loop: true,
+  autoplay: { delay: 5500, disableOnInteraction: false },
+  pagination: { el: '.swiper-pagination', clickable: true },
+  effect: 'fade',
+  fadeEffect: { crossFade: true }
+});
+
+// Form
+document.getElementById('commissionForm')?.addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = e.target.querySelector('.form-submit');
+  btn.textContent = 'Enquiry received — we\'ll be in touch.';
+  btn.style.background = 'rgba(200,129,58,0.25)';
+  btn.style.color = 'var(--ember)';
+  btn.disabled = true;
+});
+</script>
+</body>
+</html>
