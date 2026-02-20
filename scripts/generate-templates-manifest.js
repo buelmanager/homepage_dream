@@ -167,8 +167,12 @@ function scanTemplatesDirectory(baseDir, sourcePrefix = "/templates", sourceMeta
     let thumbnailUrl = null;
 
     if (fs.existsSync(imagesDir)) {
+      // thumbnail.jpg 우선 (압축된 썸네일)
+      const thumbnailPath = path.join(imagesDir, "thumbnail.jpg");
       const fullpagePath = path.join(imagesDir, "fullpage.png");
-      if (fs.existsSync(fullpagePath)) {
+      if (fs.existsSync(thumbnailPath)) {
+        thumbnailUrl = `${sourcePrefix}/${folder}/images/thumbnail.jpg`;
+      } else if (fs.existsSync(fullpagePath)) {
         thumbnailUrl = `${sourcePrefix}/${folder}/images/fullpage.png`;
       } else {
         const files = fs.readdirSync(imagesDir);
