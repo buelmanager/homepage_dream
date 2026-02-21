@@ -5,7 +5,7 @@ import { lemonRequest } from "@/lib/lemonsqueezy";
 import { getLemonStoreId, getLemonVariantId } from "@/lib/app-settings";
 
 const SUBSCRIPTION_PLANS = {
-  PRO: { price: 20, monthlyLimit: 999999, label: "Pro" },
+  PRO: { price: 10, monthlyLimit: 999999, label: "Pro" },
 };
 
 type PlanKey = keyof typeof SUBSCRIPTION_PLANS;

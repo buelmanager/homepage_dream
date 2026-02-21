@@ -111,7 +111,7 @@ export default async function TemplateDetailPage({
             operatingSystem: "Web",
             offers: {
               "@type": "Offer",
-              price: template.tier === "FREE" ? "0" : "20",
+              price: template.tier === "FREE" ? "0" : "10",
               priceCurrency: "USD",
               availability: "https://schema.org/InStock",
             },

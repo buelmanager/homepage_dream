@@ -365,7 +365,7 @@ export default function ProfilePage() {
                     Upgrade to PRO
                   </h3>
                   <p className="text-sm text-amber-700 dark:text-amber-300">
-                    Get unlimited PRO template downloads for $20/month
+                    Get unlimited PRO template downloads for $10/month
                   </p>
                 </div>
                 <Button

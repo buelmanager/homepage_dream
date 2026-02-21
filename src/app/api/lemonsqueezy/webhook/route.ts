@@ -9,7 +9,7 @@ type PlanKey = "PRO";
 type LocalStatus = "ACTIVE" | "CANCELLED" | "EXPIRED";
 
 const SUBSCRIPTION_PLANS: Record<PlanKey, { price: number; monthlyLimit: number }> = {
-  PRO: { price: 20, monthlyLimit: 999999 },
+  PRO: { price: 10, monthlyLimit: 999999 },
 };
 
 function planFromVariantId(variantId?: string | number | null): PlanKey | null {
