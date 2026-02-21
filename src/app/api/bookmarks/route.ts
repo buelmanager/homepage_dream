@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import logger from "@/lib/logger";
 import templatesManifest from "@/data/templates-manifest.json";
 
 const manifestBySlug = new Map(
@@ -58,7 +59,7 @@ export async function GET() {
 
     return NextResponse.json({ bookmarks: enriched });
   } catch (error) {
-    console.error("[API /api/bookmarks GET] Error:", error);
+    logger.error("[API /api/bookmarks GET]", error);
     return NextResponse.json(
       { error: "Failed to fetch bookmarks" },
       { status: 500 }
@@ -124,7 +125,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   } catch (error) {
-    console.error("[API /api/bookmarks POST] Error:", error);
+    logger.error("[API /api/bookmarks POST]", error);
     return NextResponse.json(
       { error: "Failed to update bookmark" },
       { status: 500 }

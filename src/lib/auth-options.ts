@@ -164,7 +164,7 @@ export const authOptions: NextAuthOptions = {
           image: user.image,
           role: user.role,
           credits: user.credits,
-        } as any;
+        };
       },
     }),
     ...(hasGitHubOAuth
@@ -208,13 +208,15 @@ export const authOptions: NextAuthOptions = {
       });
     },
     async signOut(message) {
+      const msg = message as { token?: { id?: string } };
       logAuth("info", "nextauth.event.signOut", {
-        tokenId: (message as any)?.token?.id ?? null,
+        tokenId: msg?.token?.id ?? null,
       });
     },
     async session(message) {
+      const msg = message as { session?: { user?: { id?: string } } };
       logAuth("info", "nextauth.event.session", {
-        userId: (message as any)?.session?.user?.id ?? null,
+        userId: msg?.session?.user?.id ?? null,
       });
     },
   },
@@ -222,7 +224,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       logAuth("info", "callback.signIn", {
         provider: account?.provider ?? null,
-        userId: (user as any)?.id ?? null,
+        userId: user?.id ?? null,
         email: redactEmail(user?.email),
       });
 
@@ -233,9 +235,9 @@ export const authOptions: NextAuthOptions = {
 
       const dbUser = await resolveOAuthUser(user);
 
-      (user as any).id = dbUser.id;
-      (user as any).role = dbUser.role;
-      (user as any).credits = dbUser.credits;
+      user.id = dbUser.id;
+      user.role = dbUser.role;
+      user.credits = dbUser.credits;
 
       await ensureOAuthAccountLinked(dbUser.id, account);
 
@@ -245,30 +247,31 @@ export const authOptions: NextAuthOptions = {
       logAuth("info", "callback.jwt", {
         trigger: trigger ?? null,
         hasUser: !!user,
-        tokenId: (token as any)?.id ?? null,
+        tokenId: token?.id ?? null,
       });
 
       if (user) {
-        token.id = (user as any).id;
-        token.role = (user as any).role ?? "USER";
-        token.credits = (user as any).credits ?? 0;
+        token.id = user.id;
+        token.role = user.role ?? "USER";
+        token.credits = user.credits ?? 0;
       }
 
       if (trigger === "update" && session) {
-        token.credits = (session as any).credits;
+        const s = session as { credits?: number };
+        token.credits = s.credits ?? token.credits;
       }
 
       return token;
     },
     async session({ session, token }) {
       logAuth("info", "callback.session", {
-        tokenId: (token as any)?.id ?? null,
-        role: (token as any)?.role ?? null,
-        credits: (token as any)?.credits ?? null,
+        tokenId: token?.id ?? null,
+        role: token?.role ?? null,
+        credits: token?.credits ?? null,
       });
-      (session.user as any).id = token.id;
-      (session.user as any).role = token.role;
-      (session.user as any).credits = token.credits;
+      session.user.id = token.id;
+      session.user.role = token.role;
+      session.user.credits = token.credits;
       return session;
     },
   },

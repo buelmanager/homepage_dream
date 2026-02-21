@@ -23,6 +23,53 @@ const signupSchema = z
 
 type FormErrors = Partial<Record<"name" | "email" | "password" | "confirmPassword" | "root", string>>;
 
+function FormField({
+  id,
+  label,
+  type,
+  icon: Icon,
+  placeholder,
+  autoComplete,
+  value,
+  onChange,
+  error,
+}: {
+  id: string;
+  label: string;
+  type: string;
+  icon: React.ElementType;
+  placeholder: string;
+  autoComplete?: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label
+        htmlFor={id}
+        className="text-xs font-medium tracking-wide text-stone-500 uppercase"
+      >
+        {label}
+      </label>
+      <div className="relative">
+        <Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+        <Input
+          id={id}
+          type={type}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="border-stone-200 bg-stone-50/50 pl-10 py-5 text-stone-900 placeholder:text-stone-400 focus:border-stone-400 focus:ring-stone-300"
+          required
+        />
+      </div>
+      {error && <p className="text-xs text-red-600">{error}</p>}
+    </div>
+  );
+}
+
 export default function SignUpPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -115,103 +162,10 @@ export default function SignUpPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3.5">
-            <div className="space-y-1.5">
-              <label
-                htmlFor="name"
-                className="text-xs font-medium tracking-wide text-stone-500 uppercase"
-              >
-                Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Your name"
-                  value={form.name}
-                  onChange={(e) => updateField("name", e.target.value)}
-                  className="border-stone-200 bg-stone-50/50 pl-10 py-5 text-stone-900 placeholder:text-stone-400 focus:border-stone-400 focus:ring-stone-300"
-                  required
-                />
-              </div>
-              {errors.name && (
-                <p className="text-xs text-red-600">{errors.name}</p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <label
-                htmlFor="email"
-                className="text-xs font-medium tracking-wide text-stone-500 uppercase"
-              >
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={form.email}
-                  onChange={(e) => updateField("email", e.target.value)}
-                  className="border-stone-200 bg-stone-50/50 pl-10 py-5 text-stone-900 placeholder:text-stone-400 focus:border-stone-400 focus:ring-stone-300"
-                  required
-                />
-              </div>
-              {errors.email && (
-                <p className="text-xs text-red-600">{errors.email}</p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <label
-                htmlFor="password"
-                className="text-xs font-medium tracking-wide text-stone-500 uppercase"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Min. 6 characters"
-                  value={form.password}
-                  onChange={(e) => updateField("password", e.target.value)}
-                  className="border-stone-200 bg-stone-50/50 pl-10 py-5 text-stone-900 placeholder:text-stone-400 focus:border-stone-400 focus:ring-stone-300"
-                  required
-                />
-              </div>
-              {errors.password && (
-                <p className="text-xs text-red-600">{errors.password}</p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <label
-                htmlFor="confirmPassword"
-                className="text-xs font-medium tracking-wide text-stone-500 uppercase"
-              >
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Repeat your password"
-                  value={form.confirmPassword}
-                  onChange={(e) => updateField("confirmPassword", e.target.value)}
-                  className="border-stone-200 bg-stone-50/50 pl-10 py-5 text-stone-900 placeholder:text-stone-400 focus:border-stone-400 focus:ring-stone-300"
-                  required
-                />
-              </div>
-              {errors.confirmPassword && (
-                <p className="text-xs text-red-600">{errors.confirmPassword}</p>
-              )}
-            </div>
+            <FormField id="name" label="Name" type="text" icon={User} placeholder="Your name" value={form.name} onChange={(v) => updateField("name", v)} error={errors.name} />
+            <FormField id="email" label="Email" type="email" icon={Mail} placeholder="you@example.com" value={form.email} onChange={(v) => updateField("email", v)} error={errors.email} />
+            <FormField id="password" label="Password" type="password" icon={Lock} placeholder="Min. 6 characters" autoComplete="new-password" value={form.password} onChange={(v) => updateField("password", v)} error={errors.password} />
+            <FormField id="confirmPassword" label="Confirm Password" type="password" icon={Lock} placeholder="Repeat your password" autoComplete="new-password" value={form.confirmPassword} onChange={(v) => updateField("confirmPassword", v)} error={errors.confirmPassword} />
 
             {errors.root && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">

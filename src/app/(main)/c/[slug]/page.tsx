@@ -23,6 +23,66 @@ import { PurchaseCard } from "@/components/template/purchase-card";
 import { CATEGORIES } from "@/types";
 import type { SectionItem } from "@/types";
 
+type RelatedSection = Pick<
+  SectionItem,
+  "id" | "slug" | "title" | "category" | "thumbnailUrl" | "style" | "order"
+>;
+
+function getCategoryLabel(name: string) {
+  return CATEGORIES.find((c) => c.name === name)?.label ?? name;
+}
+
+function RelatedSectionCard({ section }: { section: RelatedSection }) {
+  return (
+    <Link href={`/c/${section.slug}`}>
+      <Card className="group cursor-pointer overflow-hidden border-border/40 transition-all duration-200 hover:border-border hover:shadow-lg">
+        <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+          {section.thumbnailUrl ? (
+            <Image
+              src={section.thumbnailUrl}
+              alt={section.title}
+              fill
+              className="object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-muted-foreground">
+              <Layers className="size-8 opacity-30" />
+            </div>
+          )}
+          <div className="absolute left-2.5 top-2.5">
+            <Badge className="bg-foreground/80 text-background tabular-nums backdrop-blur-sm">
+              {String(section.order + 1).padStart(2, "0")}
+            </Badge>
+          </div>
+        </div>
+        <CardContent className="flex flex-col gap-2 py-3">
+          <div className="flex items-start justify-between gap-2">
+            <span className="text-sm font-semibold leading-tight line-clamp-1">
+              {section.title}
+            </span>
+            <Badge variant="outline" className="shrink-0 text-[10px]">
+              {getCategoryLabel(section.category)}
+            </Badge>
+          </div>
+          {section.style.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {section.style.slice(0, 3).map((s: string) => (
+                <span
+                  key={s}
+                  className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -79,15 +139,9 @@ export default async function SectionDetailPage({
     template: {
       slug: string;
       title: string;
-      sections: Pick<
-        SectionItem,
-        "id" | "slug" | "title" | "category" | "thumbnailUrl" | "style" | "order"
-      >[];
+      sections: RelatedSection[];
     } | null;
   };
-
-  const getCategoryLabel = (name: string) =>
-    CATEGORIES.find((c) => c.name === name)?.label ?? name;
 
   const relatedSections =
     section.template?.sections.filter(
@@ -220,75 +274,9 @@ export default async function SectionDetailPage({
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {relatedSections.map(
-                (
-                  related: Pick<
-                    SectionItem,
-                    | "id"
-                    | "slug"
-                    | "title"
-                    | "category"
-                    | "thumbnailUrl"
-                    | "style"
-                    | "order"
-                  >
-                ) => (
-                  <Link key={related.id} href={`/c/${related.slug}`}>
-                    <Card className="group cursor-pointer overflow-hidden border-border/40 transition-all duration-200 hover:border-border hover:shadow-lg">
-                      <div className="relative aspect-[16/10] overflow-hidden bg-muted">
-                        {related.thumbnailUrl ? (
-                          <Image
-                            src={related.thumbnailUrl}
-                            alt={related.title}
-                            fill
-                            className="object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center text-muted-foreground">
-                            <Layers className="size-8 opacity-30" />
-                          </div>
-                        )}
-
-                        <div className="absolute left-2.5 top-2.5">
-                          <Badge className="bg-foreground/80 text-background tabular-nums backdrop-blur-sm">
-                            {String(related.order + 1).padStart(2, "0")}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <CardContent className="flex flex-col gap-2 py-3">
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="text-sm font-semibold leading-tight line-clamp-1">
-                            {related.title}
-                          </span>
-                          <Badge
-                            variant="outline"
-                            className="shrink-0 text-[10px]"
-                          >
-                            {getCategoryLabel(related.category)}
-                          </Badge>
-                        </div>
-
-                        {related.style.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {related.style
-                              .slice(0, 3)
-                              .map((s: string) => (
-                                <span
-                                  key={s}
-                                  className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                                >
-                                  {s}
-                                </span>
-                              ))}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )
-              )}
+              {relatedSections.map((related: RelatedSection) => (
+                <RelatedSectionCard key={related.id} section={related} />
+              ))}
             </div>
           </section>
         )}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import logger from "@/lib/logger";
 
 export async function GET() {
   try {
@@ -17,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({ credits: user?.credits ?? 0 });
   } catch (error) {
-    console.error("[API /api/credits] Error:", error);
+    logger.error("[API /api/credits]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

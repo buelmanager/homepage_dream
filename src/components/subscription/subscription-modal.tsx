@@ -80,7 +80,7 @@ export function SubscriptionModal({ isOpen, onClose }: SubscriptionModalProps) {
               <span className="text-2xl font-medium text-muted-foreground line-through mr-2">
                 $50
               </span>
-              <span className="text-5xl font-bold">$20</span>
+              <span className="text-5xl font-bold">$10</span>
               <span className="text-muted-foreground text-lg">/month</span>
             </div>
 

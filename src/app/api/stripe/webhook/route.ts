@@ -14,7 +14,7 @@ const SUBSCRIPTION_PLANS: Record<
   PlanKey,
   { price: number; monthlyLimit: number }
 > = {
-  PRO: { price: 20, monthlyLimit: 999999 },
+  PRO: { price: 10, monthlyLimit: 999999 },
 };
 
 type StripeSubscriptionResponse = {

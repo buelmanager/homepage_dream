@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { getDefaultSignupCredits } from "@/lib/app-settings";
+import logger from "@/lib/logger";
 
 export async function POST(request: Request) {
   try {
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("[register] Error:", error);
+    logger.error("[register] Error", error);
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
       { status: 500 }

@@ -23,7 +23,7 @@ const freePlan = {
 const proPlan = {
   name: "PRO",
   originalPrice: 50,
-  price: 20,
+  price: 10,
   description: "Unlimited access to everything",
   features: [
     "Unlimited PRO template downloads",

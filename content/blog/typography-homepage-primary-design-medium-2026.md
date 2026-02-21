@@ -31,9 +31,7 @@ Perhaps the most striking validation of this approach comes from one of the worl
 ## Building a Typography System: From Body Baseline to Display Scale
 
 Making the leap to type-led design does not mean simply cranking your headline size to 7rem and calling it done. Every effective display typography system starts with a solid body text baseline and scales upward from there. The two layers -- body and display -- are part of the same unified system, not separate concerns.
-
-![Web designer working with type hierarchy and layout system on screen](https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80)
-*Photo by [Pankaj Patel](https://unsplash.com/@pankajpatel) on [Unsplash](https://unsplash.com)*
+ 
 
 CSS-Tricks frames the foundation clearly: the typographic baseline for any homepage starts at 16-18px for paragraph text, a line-height of 1.5-1.9, and a measure of 45-75 characters per line. These are not arbitrary numbers. They represent decades of readability research translated into web defaults. The designer who uses 8rem hero headlines must also ensure that the body text beneath them remains readable. Display type builds on this foundation rather than replacing it.
 

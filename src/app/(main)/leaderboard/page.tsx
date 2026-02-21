@@ -23,6 +23,64 @@ const PERIODS = [
   { key: "daily", label: "Daily" },
 ] as const;
 
+const MS_PER_DAY = 86_400_000;
+const MS_PER_WEEK = 604_800_000;
+const TOP_RANK_THRESHOLD = 3;
+
+function LeaderboardRow({
+  template: t,
+  rank,
+  metric,
+  metricIcon: MetricIcon,
+  isLast,
+}: {
+  template: LeaderboardTemplate;
+  rank: number;
+  metric: "viewCount" | "likeCount" | "saveCount";
+  metricIcon: React.ElementType;
+  isLast: boolean;
+}) {
+  const metricValue = t[metric];
+  return (
+    <Link
+      href={`/templates/${t.slug}`}
+      className={`group grid grid-cols-[60px_1fr_100px] sm:grid-cols-[60px_1fr_120px_100px] items-center gap-4 px-6 py-4 transition-colors hover:bg-stone-50 ${
+        !isLast ? "border-b border-stone-100/80" : ""
+      } ${rank <= TOP_RANK_THRESHOLD ? "bg-amber-50/20" : ""}`}
+    >
+      <RankBadge rank={rank} />
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="relative h-10 w-16 shrink-0 overflow-hidden rounded-md border border-stone-200 bg-stone-100">
+          {t.thumbnailUrl ? (
+            <Image src={t.thumbnailUrl} alt={t.title} fill className="object-cover" sizes="64px" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-xs text-stone-400">N/A</div>
+          )}
+        </div>
+        <span className="truncate font-medium text-stone-800 group-hover:text-stone-950">{t.title}</span>
+      </div>
+      <div className="hidden sm:block">
+        <Badge variant="secondary" className="bg-stone-100 text-stone-600 font-normal capitalize">{t.category}</Badge>
+      </div>
+      <div className="flex items-center justify-end gap-1.5 text-stone-600">
+        <MetricIcon className="h-4 w-4 text-stone-400" />
+        <span className="font-semibold tabular-nums">{metricValue.toLocaleString()}</span>
+      </div>
+    </Link>
+  );
+}
+
+type LeaderboardTemplate = {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  thumbnailUrl: string | null;
+  viewCount: number;
+  likeCount: number;
+  saveCount: number;
+};
+
 function RankBadge({ rank }: { rank: number }) {
   if (rank === 1) {
     return (
@@ -70,19 +128,8 @@ export default async function LeaderboardPage({
   const where = {
     status: "PUBLISHED" as const,
     ...(category !== "all" && { category }),
-    ...(period === "daily" && { createdAt: { gte: new Date(Date.now() - 86400000) } }),
-    ...(period === "weekly" && { createdAt: { gte: new Date(Date.now() - 604800000) } }),
-  };
-
-  type LeaderboardTemplate = {
-    id: string;
-    slug: string;
-    title: string;
-    category: string;
-    thumbnailUrl: string | null;
-    viewCount: number;
-    likeCount: number;
-    saveCount: number;
+    ...(period === "daily" && { createdAt: { gte: new Date(Date.now() - MS_PER_DAY) } }),
+    ...(period === "weekly" && { createdAt: { gte: new Date(Date.now() - MS_PER_WEEK) } }),
   };
 
   const templates: LeaderboardTemplate[] = await prisma.template.findMany({
@@ -211,58 +258,16 @@ export default async function LeaderboardPage({
               </span>
             </div>
 
-            {templates.map((t, i) => {
-              const MetricIcon = activeMetric.icon;
-              const metricValue = t[metric];
-              return (
-                <Link
-                  key={t.id}
-                  href={`/templates/${t.slug}`}
-                  className={`group grid grid-cols-[60px_1fr_100px] sm:grid-cols-[60px_1fr_120px_100px] items-center gap-4 px-6 py-4 transition-colors hover:bg-stone-50 ${
-                    i < templates.length - 1 ? "border-b border-stone-100/80" : ""
-                  } ${i < 3 ? "bg-amber-50/20" : ""}`}
-                >
-                  <RankBadge rank={i + 1} />
-
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative h-10 w-16 shrink-0 overflow-hidden rounded-md border border-stone-200 bg-stone-100">
-                      {t.thumbnailUrl ? (
-                        <Image
-                          src={t.thumbnailUrl}
-                          alt={t.title}
-                          fill
-                          className="object-cover"
-                          sizes="64px"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-xs text-stone-400">
-                          N/A
-                        </div>
-                      )}
-                    </div>
-                    <span className="truncate font-medium text-stone-800 group-hover:text-stone-950">
-                      {t.title}
-                    </span>
-                  </div>
-
-                  <div className="hidden sm:block">
-                    <Badge
-                      variant="secondary"
-                      className="bg-stone-100 text-stone-600 font-normal capitalize"
-                    >
-                      {t.category}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-1.5 text-stone-600">
-                    <MetricIcon className="h-4 w-4 text-stone-400" />
-                    <span className="font-semibold tabular-nums">
-                      {metricValue.toLocaleString()}
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
+            {templates.map((t, i) => (
+              <LeaderboardRow
+                key={t.id}
+                template={t}
+                rank={i + 1}
+                metric={metric}
+                metricIcon={activeMetric.icon}
+                isLast={i === templates.length - 1}
+              />
+            ))}
           </div>
         )}
       </div>

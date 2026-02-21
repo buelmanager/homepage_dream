@@ -1,19 +1,18 @@
 import pg from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import logger from "@/lib/logger";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
 function createPrismaClient() {
-  // Prefer pooled connection for serverless runtimes (Vercel).
   const connectionString = process.env.DATABASE_URL || process.env.DIRECT_URL;
   if (!connectionString) {
     throw new Error("Missing DATABASE_URL (or DIRECT_URL fallback)");
   }
 
-  // Supabase Postgres requires SSL in most environments.
   const ssl = connectionString.includes("supabase.com")
     ? { rejectUnauthorized: false }
     : undefined;
@@ -27,11 +26,11 @@ function createPrismaClient() {
   });
 
   pool.on("error", (err) => {
-    console.error("[Prisma] Pool error:", err);
+    logger.error("[Prisma] Pool error", err);
   });
 
   const adapter = new PrismaPg(pool);
-  return new PrismaClient({ adapter } as any);
+  return new PrismaClient({ adapter } as ConstructorParameters<typeof PrismaClient>[0]);
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();

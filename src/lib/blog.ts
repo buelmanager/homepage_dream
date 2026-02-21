@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { marked, Renderer } from "marked";
+import sanitizeHtml from "sanitize-html";
 
 // Escape raw HTML blocks in markdown to prevent XSS.
 // Normal markdown formatting (bold, code, links, etc.) is unaffected
@@ -80,7 +81,26 @@ export async function getPostBySlug(
   const post = parseFrontmatter(filePath, slug);
   if (!post.published) return null;
 
-  const html = await marked(post.content, { renderer: safeRenderer });
+  const rawHtml = await marked(post.content, { renderer: safeRenderer });
+  const html = sanitizeHtml(rawHtml, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+      "img",
+      "h1",
+      "h2",
+      "h3",
+      "figure",
+      "figcaption",
+      "picture",
+      "source",
+    ]),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      img: ["src", "alt", "title", "width", "height", "loading"],
+      a: ["href", "target", "rel"],
+      source: ["srcset", "type"],
+    },
+    allowedSchemes: ["http", "https", "mailto"],
+  });
 
   return {
     slug: post.slug,
