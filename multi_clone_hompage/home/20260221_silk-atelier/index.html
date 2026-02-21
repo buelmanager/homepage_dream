@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filament & Reve — Woven from Silence</title>
+  <meta name="description" content="Luxury silk atelier. Hand-woven silk pieces made with generational craft.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #2E2519; --surface: #3D3025; --accent: #C4A96B; --accent-soft: #8B7355; --text: #F0EAD6; --text-dim: #A89880; --font-serif: 'Cormorant Garamond', Georgia, serif; --font-sans: 'Inter', sans-serif; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--text); }
+    .preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+    .preloader-text { font-family: var(--font-serif); font-size: 1.8rem; letter-spacing: 0.5em; text-transform: uppercase; opacity: 0; }
+    .preloader.hidden { opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; background: rgba(46, 37, 25, 0.95); backdrop-filter: blur(20px); }
+    .navbar.scrolled { padding: 1rem 3rem; }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 400; letter-spacing: 0.2em; color: var(--text); text-decoration: none; }
+    .nav-links { display: flex; list-style: none; gap: 2.5rem; }
+    .nav-links a { font-size: 0.75rem; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { padding: 0.6rem 1.2rem; border: 1px solid var(--accent); color: var(--accent) !important; }
+    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.35); }
+    .hero-content { position: relative; z-index: 2; text-align: center; }
+    .hero-brand { font-family: var(--font-serif); font-size: 5rem; font-weight: 300; letter-spacing: 0.12em; line-height: 1.1; }
+    .hero-tagline { font-family: var(--font-serif); font-style: italic; font-size: 1.5rem; color: var(--accent); margin-top: 1.5rem; }
+    .hero-cta { display: inline-block; margin-top: 2.5rem; padding: 0.8rem 2rem; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); background: transparent; border: 1px solid var(--accent); text-decoration: none; transition: all 0.4s; }
+    .hero-cta:hover { background: var(--accent); color: var(--bg); }
+    .philosophy { padding: 8rem 0; background: var(--surface); text-align: center; }
+    .philosophy-inner { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+    .philosophy-quote { font-family: var(--font-serif); font-size: 2.2rem; font-style: italic; font-weight: 300; line-height: 1.5; }
+    .philosophy-sub { margin-top: 2rem; color: var(--text-dim); font-weight: 300; }
+    .collection { padding: 8rem 0; background: var(--bg); }
+    .collection-inner { max-width: 1300px; margin: 0 auto; padding: 0 2rem; }
+    .collection-header { text-align: center; margin-bottom: 4rem; }
+    .section-title { font-family: var(--font-serif); font-size: 2.8rem; font-weight: 300; letter-spacing: 0.1em; }
+    .collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; overflow: visible; }
+    .col-item { position: relative; aspect-ratio: 3/4; overflow: hidden; cursor: pointer; }
+    .col-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+    .col-item:hover img { transform: scale(1.08); }
+    .col-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(46, 37, 25, 0.9) 0%, transparent 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; opacity: 0; transition: opacity 0.4s; }
+    .col-item:hover .col-overlay { opacity: 1; }
+    .col-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 400; }
+    .col-meta { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-top: 0.5rem; }
+    .atelier { padding: 8rem 0; background: var(--surface); }
+    .atelier-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .atelier-img img { width: 100%; height: 450px; object-fit: cover; }
+    .atelier-content h2 { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 300; margin-bottom: 1.5rem; }
+    .atelier-content p { color: var(--text-dim); line-height: 1.9; font-weight: 300; margin-bottom: 1rem; }
+    .atelier-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .bespoke { padding: 6rem 0; background: var(--bg); text-align: center; }
+    .bespoke-inner { max-width: 600px; margin: 0 auto; padding: 0 2rem; }
+    .bespoke h2 { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 300; margin-bottom: 1rem; }
+    .bespoke p { color: var(--text-dim); margin-bottom: 2rem; font-weight: 300; }
+    .bespoke-form { display: grid; gap: 1rem; }
+    .form-group label { display: block; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem; }
+    .form-input, .form-textarea { width: 100%; padding: 0.8rem; font-family: var(--font-sans); font-size: 1rem; color: var(--text); background: var(--surface); border: 1px solid rgba(196, 169, 107, 0.2); outline: none; }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { min-height: 100px; }
+    .form-submit { padding: 1rem 2rem; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bg); background: var(--accent); border: none; cursor: pointer; justify-self: center; }
+    .footer { background: var(--bg); padding: 4rem 0 2rem; border-top: 1px solid var(--surface); text-align: center; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.8rem; letter-spacing: 0.2em; margin-bottom: 1rem; }
+    .footer-tagline { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 2rem; }
+    .footer-contact { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+    .footer-contact a { color: var(--text); text-decoration: none; font-size: 0.9rem; }
+    .footer-contact a:hover { color: var(--accent); }
+    .footer-copy { font-size: 0.75rem; color: var(--text-dim); }
+    @media (max-width: 1024px) { .collection-grid { grid-template-columns: repeat(2, 1fr); } .atelier-inner { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .nav-links { display: none; } .hero-brand { font-size: 3rem; } .collection-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="preloader"><div class="preloader-text">Filament & Reve</div></div>
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">FILAMENT & REVE</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Collections</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+  <section class="hero" id="hero">
+    <img src="images/img-1.webp" alt="Silk">
+    <div class="hero-content">
+      <h1 class="hero-brand">FILAMENT<br>& REVE</h1>
+      <p class="hero-tagline">Woven from silence.</p>
+      <a href="#collection" class="hero-cta">Explore Collection</a>
+    </div>
+  </section>
+  <section class="philosophy" id="philosophy">
+    <div class="philosophy-inner">
+      <p class="philosophy-quote">True luxury is the experience of material speaking without noise.</p>
+      <p class="philosophy-sub">Each piece begins as a conversation between artisan and thread.</p>
+    </div>
+  </section>
+  <section class="collection" id="collection">
+    <div class="collection-inner">
+      <div class="collection-header"><h2 class="section-title">The Collection</h2></div>
+      <div class="collection-grid">
+        <div class="col-item"><img src="images/img-2.webp" alt="Silk"><div class="col-overlay"><h3 class="col-title">Evening Scarf</h3><span class="col-meta">100% Mulberry Silk</span></div></div>
+        <div class="col-item"><img src="images/img-3.webp" alt="Silk"><div class="col-overlay"><h3 class="col-title">Morning Wrap</h3><span class="col-meta">Hand-rolled</span></div></div>
+        <div class="col-item"><img src="images/img-4.webp" alt="Silk"><div class="col-overlay"><h3 class="col-title">Noir Pillow</h3><span class="col-meta">Silk Velvet</span></div></div>
+        <div class="col-item"><img src="images/img-5.webp" alt="Silk"><div class="col-overlay"><h3 class="col-title">Cashmere Throw</h3><span class="col-meta">Pure</span></div></div>
+        <div class="col-item"><img src="images/img-6.webp" alt="Silk"><div class="col-overlay"><h3 class="col-title">Silk Cushion</h3><span class="col-meta">Embroidered</span></div></div>
+        <div class="col-item"><img src="images/img-7.webp" alt="Silk"><div class="col-overlay"><h3 class="col-title">Luxe Robe</h3><span class="col-meta">Silk Satin</span></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="atelier" id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img"><img src="images/img-8.webp" alt="Atelier"></div>
+      <div class="atelier-content">
+        <span class="atelier-label">The Atelier</span>
+        <h2>Woven by Generations</h2>
+        <p>Each piece begins as raw silk, transformed by hands trained across generations. We work with the finest mulberry silk, chosen not for spectacle but for the way it holds light and memory.</p>
+        <p>Our artisans in Lyon continue traditions dating back centuries. The result is not a product but a transmission of patience into form.</p>
+      </div>
+    </div>
+  </section>
+  <section class="bespoke" id="bespoke">
+    <div class="bespoke-inner">
+      <h2>Commission a Piece</h2>
+      <p>We accept a limited number of bespoke commissions each season.</p>
+      <form class="bespoke-form">
+        <div class="form-group"><label>Name</label><input type="text" class="form-input" placeholder="Your name"></div>
+        <div class="form-group"><label>Vision</label><textarea class="form-textarea" placeholder="Describe your vision..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Inquiry</button>
+      </form>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">FILAMENT & REVE</div>
+      <p class="footer-tagline">Lyon, France. Worldwide delivery.</p>
+      <div class="footer-contact"><a href="mailto:atelier@filamentreve.com">atelier@filamentreve.com</a><a href="#">@filamentreve</a></div>
+      <p class="footer-copy">© 2024 Filament & Reve. All rights reserved.</p>
+    </div>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    (function preHideBelowFold(){const VH=window.innerHeight;const sel=['.col-item','.atelier-img','.atelier-content'];document.querySelectorAll(sel.join(',')).forEach(function(el){if(el.getBoundingClientRect().top>VH*0.95){el.style.opacity='0';el.style.transform='translateY(24px)';el.style.willChange='opacity, transform';}});})();
+    window.addEventListener('load',function(){const tl=gsap.timeline();tl.to('.preloader-text',{opacity:1,duration:0.8}).to('.preloader',{opacity:0,duration:0.8,delay:0.5});});
+    window.addEventListener('scroll',function(){const navbar=document.querySelector('.navbar');if(window.scrollY>100)navbar.classList.add('scrolled');else navbar.classList.remove('scrolled');});
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.hero-brand',{opacity:0,y:40,duration:1.2,delay:2,ease:'power2.out'});
+    gsap.from('.hero-tagline',{opacity:0,y:20,duration:1,delay:2.3,ease:'power2.out'});
+    gsap.from('.philosophy-quote',{scrollTrigger:{trigger:'.philosophy',start:'top 80%'},opacity:0,y:24,duration:1.1,ease:'power2.out',immediateRender:false});
+    gsap.from('.col-item',{scrollTrigger:{trigger:'.collection',start:'top 70%'},opacity:0,y:24,duration:1.1,stagger:0.1,ease:'power2.out',immediateRender:false});
+    gsap.from('.atelier-img',{scrollTrigger:{trigger:'.atelier',start:'top 70%'},opacity:0,x:-30,duration:1.1,ease:'power2.out',immediateRender:false});
+    gsap.from('.atelier-content',{scrollTrigger:{trigger:'.atelier',start:'top 70%'},opacity:0,x:30,duration:1.1,ease:'power2.out',immediateRender:false});
+  </script>
+</body>
+</html>

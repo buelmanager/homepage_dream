@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verdant Veil — Where Patience Meets Petals</title>
+  <meta name="description" content="Verdant Veil is a luxury orchid greenhouse sanctuary where rare botanical treasures are cultivated with patience and devotion. Experience the art of orchid collection.">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  
+  <style>
+    :root {
+      --bg: #1A2F23;
+      --surface: #243328;
+      --accent: #C9A962;
+      --ivory: #F5F0E8;
+      --text: #2C2C2C;
+      --sage: #8B9D83;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--ivory);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Preloader */
+    .preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    .preloader.hidden { opacity: 0; visibility: hidden; }
+    .preloader-mark {
+      width: 80px;
+      height: 80px;
+    }
+    .preloader-mark svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--accent);
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .preloader-brand {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+      opacity: 0;
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      position: fixed;
+      left: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-dot {
+      width: 10px;
+      height: 10px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+    .scroll-dot.active {
+      background: var(--accent);
+      transform: scale(1.3);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: rgba(201, 169, 98, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      background: var(--accent);
+      transition: height 0.3s ease;
+    }
+    .scroll-label {
+      writing-mode: vertical-rl;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--sage);
+      text-transform: uppercase;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      transition: all 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(26, 47, 35, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 16px 48px;
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--ivory);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      padding: 12px 28px;
+      border: 1px solid var(--accent);
+      color: var(--accent) !important;
+      transition: all 0.3s ease;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg) !important;
+    }
+    .nav-cta::after { display: none !important; }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: kenBurns 20s ease-in-out infinite alternate;
+    }
+    @keyframes kenBurns {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(26,47,35,0.4) 0%, rgba(26,47,35,0.7) 100%);
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 24px;
+    }
+    .hero-tagline {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: var(--ivory);
+    }
+    .hero-subtitle {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--sage);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    .hero-cta {
+      display: inline-block;
+      padding: 18px 48px;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: all 0.4s ease;
+    }
+    .hero-cta:hover {
+      background: var(--ivory);
+      transform: translateY(-2px);
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--ivory);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 60px;
+      background: rgba(245, 240, 232, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-scroll-line::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: var(--ivory);
+      animation: scrollDown 2s ease-in-out infinite;
+    }
+    @keyframes scrollDown {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(200%); }
+    }
+
+    /* Stats Strip */
+    .stats-strip {
+      background: var(--surface);
+      padding: 48px 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .stats-item {
+      text-align: center;
+      padding: 24px;
+    }
+    .stats-number {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      font-weight: 400;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stats-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sage);
+    }
+
+    /* Philosophy Section */
+    .philosophy {
+      padding: 120px 48px;
+      background: var(--bg);
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .philosophy-card {
+      text-align: center;
+      padding: 48px 32px;
+      background: var(--surface);
+      border: 1px solid rgba(201, 169, 98, 0.15);
+      transition: all 0.4s ease;
+    }
+    .philosophy-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+    }
+    .philosophy-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 24px;
+      stroke: var(--accent);
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .philosophy-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      color: var(--ivory);
+    }
+    .philosophy-text {
+      font-size: 0.95rem;
+      color: var(--sage);
+      line-height: 1.8;
+    }
+
+    /* Collection Section */
+    .collection {
+      padding: 120px 48px;
+      background: var(--surface);
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-tag {
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 400;
+      color: var(--ivory);
+    }
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow: visible;
+    }
+    .collection-item {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .collection-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .collection-item:hover img {
+      transform: scale(1.08);
+    }
+    .collection-overlay {
+      position: absolute;
+      inset: background: linear-gradient 0;
+     (180deg, transparent 40%, rgba(26,47,35,0.9) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      transition: opacity 0.4s ease;
+    }
+    .collection-name {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      color: var(--ivory);
+      margin-bottom: 8px;
+    }
+    .collection-price {
+      font-size: 0.9rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+    .collection-cta {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 14px 32px;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: all 0.4s ease;
+    }
+    .collection-item:hover .collection-cta {
+      opacity: 1;
+    }
+
+    /* Atelier Section */
+    .atelier {
+      padding: 120px 48px;
+      background: var(--bg);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .atelier-img {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+    }
+    .atelier-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .atelier-img::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: 20px;
+      bottom: 20px;
+      border: 1px solid var(--accent);
+      z-index: -1;
+    }
+    .atelier-content {
+      padding: 32px 0;
+    }
+    .atelier-tag {
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .atelier-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 32px;
+      line-height: 1.3;
+    }
+    .atelier-text {
+      color: var(--sage);
+      font-size: 1.05rem;
+      line-height: 1.9;
+      margin-bottom: 40px;
+    }
+    .atelier-features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .atelier-feature {
+      padding: 24px;
+      background: var(--surface);
+      border-left: 2px solid var(--accent);
+    }
+    .atelier-feature-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--ivory);
+      margin-bottom: 8px;
+    }
+    .atelier-feature-text {
+      font-size: 0.85rem;
+      color: var(--sage);
+    }
+
+    /* Process Section */
+    .process {
+      padding: 120px 48px;
+      background: var(--surface);
+    }
+    .process-timeline {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .process-timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(201, 169, 98, 0.3);
+      transform: translateX(-50%);
+    }
+    .process-step {
+      display: flex;
+      align-items: center;
+      margin-bottom: 64px;
+      position: relative;
+    }
+    .process-step:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+    .process-step:nth-child(even) .process-content {
+      text-align: right;
+    }
+    .process-number {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      background: var(--bg);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      color: var(--accent);
+      z-index: 1;
+    }
+    .process-content {
+      width: calc(50% - 60px);
+      padding: 32px;
+    }
+    .process-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .process-text {
+      font-size: 0.95rem;
+      color: var(--sage);
+      line-height: 1.7;
+    }
+
+    /* Heritage Section */
+    .heritage {
+      padding: 120px 48px;
+      background: var(--bg);
+    }
+    .heritage-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .heritage-item {
+      text-align: center;
+      padding: 40px 24px;
+      background: var(--surface);
+      border: 1px solid rgba(201, 169, 98, 0.1);
+      transition: all 0.4s ease;
+    }
+    .heritage-item:hover {
+      border-color: var(--accent);
+    }
+    .heritage-year {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .heritage-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .heritage-text {
+      font-size: 0.9rem;
+      color: var(--sage);
+      line-height: 1.7;
+    }
+
+    /* Press Section */
+    .press {
+      padding: 120px 48px;
+      background: var(--surface);
+    }
+    .press .swiper {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding-bottom: 60px;
+    }
+    .press-slide {
+      padding: 48px;
+      background: var(--bg);
+      text-align: center;
+    }
+    .press-quote {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    .press-author {
+      font-size: 0.9rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+    .swiper-pagination-bullet {
+      background: var(--sage) !important;
+      opacity: 0.5 !important;
+    }
+    .swiper-pagination-bullet-active {
+      background: var(--accent) !important;
+      opacity: 1 !important;
+    }
+
+    /* Commission Form */
+    .commission {
+      padding: 120px 48px;
+      background: var(--bg);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: start;
+    }
+    .commission-info {
+      padding: 32px 0;
+    }
+    .commission-tag {
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .commission-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 24px;
+      line-height: 1.3;
+    }
+    .commission-text {
+      color: var(--sage);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+    .commission-details {
+      display: grid;
+      gap: 24px;
+    }
+    .commission-detail {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .commission-detail svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent);
+      fill: none;
+    }
+    .commission-detail span {
+      color: var(--ivory);
+      font-size: 0.95rem;
+    }
+    .commission-form {
+      padding: 48px;
+      background: var(--surface);
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 8px;
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid rgba(201, 169, 98, 0.2);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+    .form-submit {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent);
+      border: none;
+      color: var(--bg);
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .form-submit:hover {
+      background: var(--ivory);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg);
+      padding: 80px 48px 40px;
+      border-top: 1px solid rgba(201, 169, 98, 0.1);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      max-width: 1400px;
+      margin: 0 auto 64px;
+    }
+    .footer-brand {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+    .footer-text {
+      color: var(--sage);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      max-width: 300px;
+    }
+    .footer-title {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .footer-links {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+    .footer-links a {
+      color: var(--sage);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom {
+      text-align: center;
+      padding-top: 40px;
+      border-top: 1px solid rgba(201, 169, 98, 0.1);
+    }
+    .footer-copyright {
+      font-size: 0.8rem;
+      color: var(--sage);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .navbar { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .atelier { grid-template-columns: 1fr; gap: 48px; }
+      .heritage-grid { grid-template-columns: repeat(2, 1fr); }
+      .commission { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .process-timeline::before { display: none; }
+      .process-step, .process-step:nth-child(even) { flex-direction: column; }
+      .process-content, .process-step:nth-child(even) .process-content {
+        width: 100%;
+        text-align: center;
+      }
+      .process-number { display: none; }
+      .heritage-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Preloader -->
+  <div class="preloader">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 80 80">
+        <path d="M40 10 C55 10, 70 25, 70 40 C70 55, 55 70, 40 70 C25 70, 10 55, 10 40 C10 25, 25 10, 40 10" />
+        <path d="M25 40 C25 30, 30 25, 40 25 C50 25, 55 30, 55 40 C55 50, 50 55, 40 55 C30 55, 25 50, 25 40" />
+      </svg>
+    </div>
+    <div class="preloader-brand">VERDANT VEIL</div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator" id="scroll-indicator">
+    <div class="scroll-dot active"></div>
+    <div class="scroll-line">
+      <div class="scroll-line-fill" id="scroll-fill"></div>
+    </div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">VERDANT VEIL</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Collections</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img src="https://images.pexels.com/photos/1011302/pexels-photo-1011302.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80" alt="Orchid greenhouse">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-tagline">Luxury Orchid Sanctuary</p>
+      <h1 class="hero-title">Where Patience<br>Meets Petals</h1>
+      <p class="hero-subtitle">Discover the art of orchid cultivation in our exclusive greenhouse sanctuary</p>
+      <a href="#collection" class="hero-cta">Explore Collection</a>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Stats Strip -->
+  <section class="stats-strip">
+    <div class="stats-item">
+      <div class="stats-number" data-count="150">0</div>
+      <div class="stats-label">Rare Varieties</div>
+    </div>
+    <div class="stats-item">
+      <div class="stats-number" data-count="25">0</div>
+      <div class="stats-label">Years of Heritage</div>
+    </div>
+    <div class="stats-item">
+      <div class="stats-number" data-count="3000">0</div>
+      <div class="stats-label">Orchids Cultivated</div>
+    </div>
+    <div class="stats-item">
+      <div class="stats-number" data-count="500">0</div>
+      <div class="stats-label">Clients Worldwide</div>
+    </div>
+  </section>
+
+  <!-- Philosophy Section -->
+  <section class="philosophy" id="philosophy">
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <svg class="philosophy-icon" viewBox="0 0 48 48">
+          <path d="M24 4 C24 4, 8 16, 8 28 C8 40, 18 44, 24 44 C30 44, 40 40, 40 28 C40 16, 24 4, 24 4Z" />
+          <path d="M24 20 L24 32 M18 26 L24 32 L30 26" />
+        </svg>
+        <h3 class="philosophy-title">Patient Cultivation</h3>
+        <p class="philosophy-text">Each orchid receives years of dedicated care, mimicking its natural habitat to ensure optimal growth and blooming.</p>
+      </div>
+      <div class="philosophy-card">
+        <svg class="philosophy-icon" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="18" />
+          <path d="M24 12 L24 24 L32 28" />
+        </svg>
+        <h3 class="philosophy-title">Curated Selection</h3>
+        <p class="philosophy-text">We source the rarest specimens from renowned growers worldwide, hand-picking each for its exceptional beauty.</p>
+      </div>
+      <div class="philosophy-card">
+        <svg class="philosophy-icon" viewBox="0 0 48 48">
+          <path d="M12 36 L24 12 L36 36 Z" />
+          <path d="M24 20 L24 28" />
+        </svg>
+        <h3 class="philosophy-title">Artistic Vision</h3>
+        <p class="philosophy-text">Every arrangement is a living sculpture, designed to bring enduring beauty to your space for years to come.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collection Section -->
+  <section class="collection" id="collection">
+    <div class="section-header">
+      <p class="section-tag">Our Collection</p>
+      <h2 class="section-title">Rare Orchid Varieties</h2>
+    </div>
+    <div class="collection-grid">
+      <div class="collection-item">
+        <img src="https://images.pexels.com/photos/6954697/pexels-photo-6954697.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="White Phalaenopsis">
+        <div class="collection-overlay">
+          <h3 class="collection-name">Moonlight Phalaenopsis</h3>
+          <p class="collection-price">$285</p>
+        </div>
+        <a href="contact.html" class="collection-cta">Reserve</a>
+      </div>
+      <div class="collection-item">
+        <img src="https://images.pexels.com/photos/1379640/pexels-photo-1379640.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Purple Orchid">
+        <div class="collection-overlay">
+          <h3 class="collection-name">Violet Majesty</h3>
+          <p class="collection-price">$340</p>
+        </div>
+        <a href="contact.html" class="collection-cta">Reserve</a>
+      </div>
+      <div class="collection-item">
+        <img src="https://images.pexels.com/photos/4672184/pexels-photo-4672184.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Orange Orchid">
+        <div class="collection-overlay">
+          <h3 class="collection-name">Sunset Cattleya</h3>
+          <p class="collection-price">$420</p>
+        </div>
+        <a href="contact.html" class="collection-cta">Reserve</a>
+      </div>
+      <div class="collection-item">
+        <img src="https://images.pexels.com/photos/1831408/pexels-photo-1831408.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Chandelier">
+        <div class="collection-overlay">
+          <h3 class="collection-name">Crystal Cascade</h3>
+          <p class="collection-price">$380</p>
+        </div>
+        <a href="contact.html" class="collection-cta">Reserve</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Atelier Section -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-img">
+      <img src="https://images.pexels.com/photos/4451739/pexels-photo-4451739.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80" alt="Greenhouse interior">
+    </div>
+    <div class="atelier-content">
+      <p class="atelier-tag">The Sanctuary</p>
+      <h2 class="atelier-title">A Private World of Botanical Wonder</h2>
+      <p class="atelier-text">Our greenhouse sanctuary maintains the perfect balance of temperature, humidity, and light to nurture the world's most exquisite orchids. Each plant thrives in conditions meticulously recreated from its native environment.</p>
+      <div class="atelier-features">
+        <div class="atelier-feature">
+          <h4 class="atelier-feature-title">Climate Control</h4>
+          <p class="atelier-feature-text">Precision temperature between 65-75°F with 60-80% humidity year-round</p>
+        </div>
+        <div class="atelier-feature">
+          <h4 class="atelier-feature-title">Natural Light</h4>
+          <p class="atelier-feature-text">Filtered sunlight through specialized horticultural glass panels</p>
+        </div>
+        <div class="atelier-feature">
+          <h4 class="atelier-feature-title">Expert Care</h4>
+          <p class="atelier-feature-text">24/7 monitoring by certified horticulturists with decades of experience</p>
+        </div>
+        <div class="atelier-feature">
+          <h4 class="atelier-feature-title">Sustainable Practices</h4>
+          <p class="atelier-feature-text">Organic fertilizers and eco-friendly pest management</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section -->
+  <section class="process" id="process">
+    <div class="section-header">
+      <p class="section-tag">Our Process</p>
+      <h2 class="section-title">The Art of Orchid Cultivation</h2>
+    </div>
+    <div class="process-timeline">
+      <div class="process-step">
+        <div class="process-number">1</div>
+        <div class="process-content">
+          <h3 class="process-title">Selection</h3>
+          <p class="process-text">We carefully select rare specimens from elite growers, choosing plants with exceptional genetic potential and stunning characteristics.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-number">2</div>
+        <div class="process-content">
+          <h3 class="process-title">Acclimation</h3>
+          <p class="process-text">Each orchid undergoes a careful acclimation period in our quarantine space, adjusting to our sanctuary's unique environment.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-number">3</div>
+        <div class="process-content">
+          <h3 class="process-title">Cultivation</h3>
+          <p class="process-text">Our expert team provides personalized care, monitoring each plant's growth and optimizing conditions for thriving health.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-number">4</div>
+        <div class="process-content">
+          <h3 class="process-title">Blooming</h3>
+          <p class="process-text">When ready, each orchid is presented at its peak bloom, showcasing the result of patient, dedicated cultivation.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-number">5</div>
+        <div class="process-content">
+          <h3 class="process-title">Presentation</h3>
+          <p class="process-text">Every orchid is elegantly packaged and delivered to its new home with detailed care instructions for lasting beauty.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage Section -->
+  <section class="heritage" id="heritage">
+    <div class="section-header">
+      <p class="section-tag">Our Heritage</p>
+      <h2 class="section-title">A Legacy of Excellence</h2>
+    </div>
+    <div class="heritage-grid">
+      <div class="heritage-item">
+        <div class="heritage-year">1998</div>
+        <h3 class="heritage-title">Foundation</h3>
+        <p class="heritage-text">Verdant Veil was established with a vision to bring the world's rarest orchids to discerning collectors.</p>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2008</div>
+        <h3 class="heritage-title">Global Sourcing</h3>
+        <p class="heritage-text">We established partnerships with elite growers across Asia, South America, and Europe.</p>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2018</div>
+        <h3 class="heritage-title">Sanctuary Built</h3>
+        <p class="heritage-text">Our purpose-built greenhouse sanctuary opened, setting new standards in orchid cultivation.</p>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2024</div>
+        <h3 class="heritage-title">Award Recognition</h3>
+        <p class="heritage-text">Named "Premier Orchid Specialist" by International Horticultural Society.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Press Section -->
+  <section class="press" id="press">
+    <div class="section-header">
+      <p class="section-tag">Press & Recognition</p>
+      <h2 class="section-title">What They Say</h2>
+    </div>
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-slide">
+            <p class="press-quote">"Verdant Veil has redefined what it means to collect orchids. Their specimens are truly unparalleled in quality and beauty."</p>
+            <p class="press-author">— Architectural Digest</p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-slide">
+            <p class="press-quote">"A pilgrimage for any serious orchid enthusiast. The sanctuary itself is a masterpiece of botanical art."</p>
+            <p class="press-author">— Vogue Living</p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-slide">
+            <p class="press-quote">"Their commitment to preservation and cultivation is extraordinary. These aren't just plants, they're living treasures."</p>
+            <p class="press-author">— The New York Times</p>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- Commission Form -->
+  <section class="commission" id="commission">
+    <div class="commission-info">
+      <p class="commission-tag">Begin Your Journey</p>
+      <h2 class="commission-title">Reserve Your Orchid</h2>
+      <p class="commission-text">Experience the beauty of our sanctuary firsthand. Schedule a private viewing or request our collection catalog. All appointments are by reservation only to ensure personalized attention.</p>
+      <div class="commission-details">
+        <div class="commission-detail">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <span>Sanctuary Location Provided Upon Reservation</span>
+        </div>
+        <div class="commission-detail">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>+1 (555) 000-0000</span>
+        </div>
+        <div class="commission-detail">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>inquiries@verdantveil.com</span>
+        </div>
+      </div>
+    </div>
+    <div class="commission-form">
+      <form>
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Tell us about your orchid preferences..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Request Appointment</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">VERDANT VEIL</div>
+        <p class="footer-text">Where Patience Meets Petals — Cultivating the world's finest orchids since 1998.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Explore</h4>
+        <ul class="footer-links">
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="collection.html">Collections</a></li>
+          <li><a href="process.html">Process</a></li>
+          <li><a href="contact.html">Visit</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Services</h4>
+        <ul class="footer-links">
+          <li><a href="contact.html">Private Viewings</a></li>
+          <li><a href="contact.html">Corporate Gifts</a></li>
+          <li><a href="contact.html">Wedding Events</a></li>
+          <li><a href="contact.html">Subscriptions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Connect</h4>
+        <ul class="footer-links">
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Pinterest</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Newsletter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">© 2026 Verdant Veil. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  
+  <script>
+    /* Smooth fade-in: pre-hide below-fold elements before GSAP runs */
+    (function preHideBelowFold() {
+      const VH = window.innerHeight;
+      const sel = [
+        '.stats-item', '.philosophy-card',
+        '.collection-item', '.atelier-img', '.atelier-content', '.atelier-text',
+        '.process-step', '.heritage-item',
+        '.press-slide', '.form-group', '.footer-col', '[data-animate]'
+      ];
+      document.querySelectorAll(sel.join(',')).forEach(function(el) {
+        if (el.getBoundingClientRect().top > VH * 0.95) {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(24px)';
+          el.style.willChange = 'opacity, transform';
+        }
+      });
+    })();
+
+    /* Preloader */
+    const preloader = document.querySelector('.preloader');
+    const preloaderBrand = document.querySelector('.preloader-brand');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+
+    window.addEventListener('load', () => {
+      const tl = gsap.timeline();
+      
+      tl.to(preloaderBrand, {
+        opacity: 1,
+        duration: 0.8,
+        delay: 0.5
+      })
+      .to(preloader, {
+        opacity: 0,
+        duration: 0.8,
+        delay: 1,
+        onComplete: () => {
+          preloader.style.display = 'none';
+        }
+      })
+      .to(scrollIndicator, {
+        opacity: 1,
+        duration: 0.6
+      }, '-=0.4');
+      
+      /* Hero content animation */
+      gsap.from('.hero-tagline', {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        delay: 1.5
+      });
+      gsap.from('.hero-title', {
+        opacity: 0,
+        y: 30,
+        duration: 1.2,
+        delay: 1.8
+      });
+      gsap.from('.hero-subtitle', {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        delay: 2.2
+      });
+      gsap.from('.hero-cta', {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        delay: 2.6
+      });
+    });
+
+    /* Scroll indicator */
+    setTimeout(() => {
+      scrollIndicator.classList.add('visible');
+    }, 4000);
+
+    /* Navbar scroll effect */
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 100) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    /* Stats counter animation */
+    const statsNumbers = document.querySelectorAll('.stats-number');
+    statsNumbers.forEach(num => {
+      const target = parseInt(num.dataset.count);
+      gsap.to(num, {
+        innerHTML: target,
+        duration: 2,
+        snap: { innerHTML: 1 },
+        scrollTrigger: {
+          trigger: num,
+          start: 'top 85%',
+          once: true
+        }
+      });
+    });
+
+    /* Philosophy cards */
+    gsap.from('.philosophy-card', {
+      opacity: 0,
+      y: 24,
+      duration: 1.1,
+      stagger: 0.15,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.philosophy',
+        start: 'top 75%'
+      }
+    });
+
+    /* Collection items */
+    gsap.from('.collection-item', {
+      opacity: 0,
+      y: 24,
+      duration: 1.1,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.collection',
+        start: 'top 75%'
+      }
+    });
+
+    /* Atelier section */
+    gsap.from('.atelier-img', {
+      opacity: 0,
+      x: -30,
+      duration: 1.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.atelier',
+        start: 'top 75%'
+      }
+    });
+    gsap.from('.atelier-content', {
+      opacity: 0,
+      x: 30,
+      duration: 1.1,
+      delay: 0.2,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.atelier',
+        start: 'top 75%'
+      }
+    });
+
+    /* Process steps */
+    gsap.from('.process-step', {
+      opacity: 0,
+      y: 24,
+      duration: 1.1,
+      stagger: 0.15,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.process',
+        start: 'top 75%'
+      }
+    });
+
+    /* Heritage items */
+    gsap.from('.heritage-item', {
+      opacity: 0,
+      y: 24,
+      duration: 1.1,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.heritage',
+        start: 'top 75%'
+      }
+    });
+
+    /* Press swiper */
+    const swiper = new Swiper('.press .swiper', {
+      slidesPerView: 1,
+      spaceBetween: 32,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false
+      }
+    });
+
+    /* Commission form */
+    gsap.from('.commission-info', {
+      opacity: 0,
+      x: -30,
+      duration: 1.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.commission',
+        start: 'top 75%'
+      }
+    });
+    gsap.from('.commission-form', {
+      opacity: 0,
+      x: 30,
+      duration: 1.1,
+      delay: 0.2,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.commission',
+        start: 'top 75%'
+      }
+    });
+
+    /* Scroll indicator progress */
+    const sections = document.querySelectorAll('section');
+    const dots = document.querySelectorAll('.scroll-dot');
+    
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (scrollY >= sectionTop - window.innerHeight / 2) {
+          current = section.getAttribute('id');
+        }
+      });
+      
+      dots.forEach(dot => dot.classList.remove('active'));
+      const currentIndex = sections.findIndex(s => s.getAttribute('id') === current);
+      if (dots[currentIndex]) {
+        dots[currentIndex].classList.add('active');
+      }
+      
+      /* Update progress line */
+      const scrollPercent = (scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      document.getElementById('scroll-fill').style.height = scrollPercent + '%';
+    });
+  </script>
+</body>
+</html>

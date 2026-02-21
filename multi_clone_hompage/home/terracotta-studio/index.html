@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Argile Studio — Born of Earth, Shaped by Fire</title>
+  <meta name="description" content="Argile Studio is a luxury terracotta atelier where ancient craftsmanship meets modern design. Discover handcrafted ceramic pieces born of earth and shaped by fire.">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    :root {
+      --bg: #3D2B25;
+      --surface: #4A4543;
+      --accent: #B8860B;
+      --ivory: #F5EDE4;
+      --terracotta: #C45A3B;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Work Sans', sans-serif;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--ivory); overflow-x: hidden; line-height: 1.6; }
+
+    .preloader { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+    .preloader.hidden { opacity: 0; visibility: hidden; }
+    .preloader-mark { width: 80px; height: 80px; border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .preloader-mark-inner { width: 50px; height: 50px; border: 2px solid var(--terracotta); border-radius: 50%; }
+    .preloader-brand { position: absolute; font-family: var(--font-serif); font-size: 1.5rem; letter-spacing: 0.3em; color: var(--ivory); opacity: 0; }
+
+    .scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.4s ease; }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 10px; height: 10px; border: 1.5px solid var(--accent); border-radius: 50%; background: transparent; transition: all 0.3s ease; }
+    .scroll-dot.active { background: var(--accent); transform: scale(1.3); }
+    .scroll-line { width: 1px; height: 60px; background: rgba(184, 134, 11, 0.3); position: relative; overflow: hidden; }
+    .scroll-line-fill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: var(--accent); transition: height 0.3s ease; }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--ivory); opacity: 0.6; text-transform: uppercase; }
+
+    .navbar { position: fixed; top: 0; left: 0; right: 0; padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: all 0.4s ease; }
+    .navbar.scrolled { background: rgba(61, 43, 37, 0.95); backdrop-filter: blur(20px); padding: 16px 48px; }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 0.2em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--ivory); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; position: relative; transition: color 0.3s ease; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s ease; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { padding: 12px 28px; border: 1px solid var(--accent); color: var(--accent) !important; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg) !important; }
+    .nav-cta::after { display: none !important; }
+
+    .hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; z-index: 0; }
+    .hero-bg img { width: 100%; height: 100%; object-fit: cover; animation: kenBurns 20s ease-in-out infinite alternate; }
+    @keyframes kenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(61,43,37,0.5) 0%, rgba(61,43,37,0.75) 100%); z-index: 1; }
+    .hero-content { position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 0 24px; }
+    .hero-tagline { font-size: 0.85rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 6rem); font-weight: 400; line-height: 1.1; margin-bottom: 24px; color: var(--ivory); }
+    .hero-subtitle { font-family: var(--font-serif); font-size: 1.4rem; font-style: italic; color: var(--ivory); opacity: 0.8; max-width: 600px; margin: 0 auto 40px; }
+    .hero-cta { display: inline-block; padding: 18px 48px; background: var(--accent); color: var(--bg); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.4s ease; }
+    .hero-cta:hover { background: var(--ivory); transform: translateY(-2px); }
+    .hero-scroll { position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--ivory); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; }
+    .hero-scroll-line { width: 1px; height: 60px; background: rgba(245, 237, 228, 0.3); position: relative; overflow: hidden; }
+    .hero-scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 20px; background: var(--ivory); animation: scrollDown 2s ease-in-out infinite; }
+    @keyframes scrollDown { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
+
+    .stats-strip { background: var(--surface); padding: 48px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .stats-item { text-align: center; padding: 24px; }
+    .stats-number { font-family: var(--font-serif); font-size: 3rem; font-weight: 400; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+    .stats-label { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ivory); opacity: 0.7; }
+
+    .philosophy { padding: 120px 48px; background: var(--bg); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; max-width: 1400px; margin: 0 auto; }
+    .philosophy-card { text-align: center; padding: 48px 32px; background: var(--surface); border: 1px solid rgba(184, 134, 11, 0.15); transition: all 0.4s ease; }
+    .philosophy-card:hover { transform: translateY(-8px); border-color: var(--accent); }
+    .philosophy-icon { width: 48px; height: 48px; margin: 0 auto 24px; stroke: var(--accent); stroke-width: 1.5; fill: none; }
+    .philosophy-title { font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 16px; color: var(--ivory); }
+    .philosophy-text { font-size: 0.95rem; color: var(--ivory); opacity: 0.8; line-height: 1.8; }
+
+    .collection { padding: 120px 48px; background: var(--surface); }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-tag { font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 400; color: var(--ivory); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 1200px; margin: 0 auto; overflow: visible; }
+    .collection-item { position: relative; aspect-ratio: 4/5; overflow: hidden; cursor: pointer; }
+    .collection-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .collection-item:hover img { transform: scale(1.08); }
+    .collection-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(61,43,37,0.9) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; }
+    .collection-name { font-family: var(--font-serif); font-size: 1.6rem; color: var(--ivory); margin-bottom: 8px; }
+    .collection-price { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.1em; }
+    .collection-cta { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 14px 32px; background: var(--accent); color: var(--bg); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0; transition: all 0.4s ease; }
+    .collection-item:hover .collection-cta { opacity: 1; }
+
+    .atelier { padding: 120px 48px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1400px; margin: 0 auto; }
+    .atelier-img { position: relative; aspect-ratio: 4/5; overflow: hidden; }
+    .atelier-img img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-img::before { content: ''; position: absolute; top: -20px; left: -20px; right: 20px; bottom: 20px; border: 1px solid var(--accent); z-index: -1; }
+    .atelier-content { padding: 32px 0; }
+    .atelier-tag { font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+    .atelier-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--ivory); margin-bottom: 32px; line-height: 1.3; }
+    .atelier-text { color: var(--ivory); opacity: 0.85; font-size: 1.05rem; line-height: 1.9; margin-bottom: 40px; }
+
+    .process { padding: 120px 48px; background: var(--surface); }
+    .process-timeline { max-width: 900px; margin: 0 auto; position: relative; }
+    .process-timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(184, 134, 11, 0.3); transform: translateX(-50%); }
+    .process-step { display: flex; align-items: center; margin-bottom: 64px; position: relative; }
+    .process-step:nth-child(even) { flex-direction: row-reverse; }
+    .process-step:nth-child(even) .process-content { text-align: right; }
+    .process-number { position: absolute; left: 50%; transform: translateX(-50%); width: 48px; height: 48px; background: var(--surface); border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.2rem; color: var(--accent); z-index: 1; }
+    .process-content { width: calc(50% - 60px); padding: 32px; }
+    .process-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 12px; }
+    .process-text { font-size: 0.95rem; color: var(--ivory); opacity: 0.8; line-height: 1.7; }
+
+    .press { padding: 120px 48px; background: var(--bg); }
+    .press .swiper { max-width: 1000px; margin: 0 auto; padding-bottom: 60px; }
+    .press-slide { padding: 48px; background: var(--surface); text-align: center; }
+    .press-quote { font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; color: var(--ivory); line-height: 1.8; margin-bottom: 32px; }
+    .press-author { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.1em; }
+    .swiper-pagination-bullet { background: var(--ivory) !important; opacity: 0.5 !important; }
+    .swiper-pagination-bullet-active { background: var(--accent) !important; opacity: 1 !important; }
+
+    .commission { padding: 120px 48px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; max-width: 1400px; margin: 0 auto; align-items: start; }
+    .commission-info { padding: 32px 0; }
+    .commission-tag { font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+    .commission-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--ivory); margin-bottom: 24px; line-height: 1.3; }
+    .commission-text { color: var(--ivory); opacity: 0.85; font-size: 1.05rem; line-height: 1.8; margin-bottom: 40px; }
+    .commission-form { padding: 48px; background: var(--surface); }
+    .form-group { margin-bottom: 24px; }
+    .form-label { display: block; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ivory); opacity: 0.7; margin-bottom: 8px; }
+    .form-input, .form-textarea { width: 100%; padding: 16px; background: var(--bg); border: 1px solid rgba(184, 134, 11, 0.2); color: var(--ivory); font-family: var(--font-sans); font-size: 1rem; transition: border-color 0.3s ease; }
+    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--accent); }
+    .form-textarea { min-height: 150px; resize: vertical; }
+    .form-submit { width: 100%; padding: 18px; background: var(--accent); border: none; color: var(--bg); font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
+    .form-submit:hover { background: var(--ivory); }
+
+    .footer { background: var(--bg); padding: 80px 48px 40px; border-top: 1px solid rgba(184, 134, 11, 0.1); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; max-width: 1400px; margin: 0 auto 64px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.5rem; letter-spacing: 0.2em; color: var(--ivory); margin-bottom: 16px; }
+    .footer-text { color: var(--ivory); opacity: 0.7; font-size: 0.95rem; line-height: 1.7; max-width: 300px; }
+    .footer-title { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+    .footer-links { list-style: none; display: grid; gap: 12px; }
+    .footer-links a { color: var(--ivory); opacity: 0.7; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom { text-align: center; padding-top: 40px; border-top: 1px solid rgba(184, 134, 11, 0.1); }
+    .footer-copyright { font-size: 0.8rem; color: var(--ivory); opacity: 0.5; }
+
+    @media (max-width: 1024px) {
+      .navbar { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .atelier { grid-template-columns: 1fr; gap: 48px; }
+      .process-timeline::before { display: none; }
+      .process-step, .process-step:nth-child(even) { flex-direction: column; }
+      .process-content, .process-step:nth-child(even) .process-content { width: 100%; text-align: center; }
+      .process-number { display: none; }
+      .commission { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .scroll-indicator { display: none; }
+    }
+    @media (max-width: 768px) {
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="preloader">
+    <div class="preloader-mark"><div class="preloader-mark-inner"></div></div>
+    <div class="preloader-brand">ARGILE STUDIO</div>
+  </div>
+
+  <div class="scroll-indicator" id="scroll-indicator">
+    <div class="scroll-dot active"></div>
+    <div class="scroll-line"><div class="scroll-line-fill" id="scroll-fill"></div></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">ARGILE STUDIO</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Collections</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img src="https://images.pexels.com/photos/28486203/pexels-photo-28486203.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80" alt="Terracotta pottery">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-tagline">Luxury Terracotta Atelier</p>
+      <h1 class="hero-title">Born of Earth<br>Shaped by Fire</h1>
+      <p class="hero-subtitle">Handcrafted ceramic pieces made with centuries-old techniques</p>
+      <a href="#collection" class="hero-cta">Explore Collection</a>
+    </div>
+    <div class="hero-scroll"><span>Scroll</span><div class="hero-scroll-line"></div></div>
+  </section>
+
+  <section class="stats-strip">
+    <div class="stats-item"><div class="stats-number" data-count="25">0</div><div class="stats-label">Years of Craft</div></div>
+    <div class="stats-item"><div class="stats-number" data-count="120">0</div><div class="stats-label">Artisan Pieces</div></div>
+    <div class="stats-item"><div class="stats-number" data-count="8">0</div><div class="stats-label">Master Potters</div></div>
+    <div class="stats-item"><div class="stats-number" data-count="45">0</div><div class="stats-label">Countries Served</div></div>
+  </section>
+
+  <section class="philosophy" id="philosophy">
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <svg class="philosophy-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><path d="M24 8 L24 24 L32 28"/></svg>
+        <h3 class="philosophy-title">Earth</h3>
+        <p class="philosophy-text">We source the finest locally-mined clays, rich in minerals and character. Each piece begins as raw earth, waiting to be transformed.</p>
+      </div>
+      <div class="philosophy-card">
+        <svg class="philosophy-icon" viewBox="0 0 48 48"><path d="M12 36 L24 12 L36 36 Z"/><path d="M24 20 L24 28"/></svg>
+        <h3 class="philosophy-title">Fire</h3>
+        <p class="philosophy-text">Our kiln masters oversee each piece through the transformative firing process, where mere clay becomes enduring art.</p>
+      </div>
+      <div class="philosophy-card">
+        <svg class="philosophy-icon" viewBox="0 0 48 48"><path d="M24 4 C40 4, 44 20, 44 28 C44 40, 32 44, 24 44 C16 44, 4 40, 4 28 C4 20, 8 4, 24 4Z"/></svg>
+        <h3 class="philosophy-title">Hands</h3>
+        <p class="philosophy-text">Every piece is shaped by skilled hands with generations of wisdom. No two items are identical — each carries the maker's unique touch.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection" id="collection">
+    <div class="section-header"><p class="section-tag">Our Collection</p><h2 class="section-title">Artisan Pieces</h2></div>
+    <div class="collection-grid">
+      <div class="collection-item">
+        <img src="https://images.pexels.com/photos/3817646/pexels-photo-3817646.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Vase">
+        <div class="collection-overlay"><h3 class="collection-name">Earthen Vase</h3><p class="collection-price">$340</p></div>
+        <a href="contact.html" class="collection-cta">Inquire</a>
+      </div>
+      <div class="collection-item">
+        <img src="https://images.pexels.com/photos/4966180/pexels-photo-4966180.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Bowl">
+        <div class="collection-overlay"><h3 class="collection-name">Fire Bowl</h3><p class="collection-price">$280</p></div>
+        <a href="contact.html" class="collection-cta">Inquire</a>
+      </div>
+      <div class="collection-item">
+        <img src="https://images.pexels.com/photos/7307646/pexels-photo-7307646.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Vessel">
+        <div class="collection-overlay"><h3 class="collection-name">Heritage Vessel</h3><p class="collection-price">$520</p></div>
+        <a href="contact.html" class="collection-cta">Inquire</a>
+      </div>
+      <div class="collection-item">
+        <img src="https://images.pexels.com/photos/6333855/pexels-photo-6333855.jpeg?auto=compress&cs=tinysrgb&w=800&q=80" alt="Planter">
+        <div class="collection-overlay"><h3 class="collection-name">Tall Planter</h3><p class="collection-price">$420</p></div>
+        <a href="contact.html" class="collection-cta">Inquire</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="atelier" id="atelier">
+    <div class="atelier-img"><img src="https://images.pexels.com/photos/20419178/pexels-photo-20419178.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80" alt="Studio"></div>
+    <div class="atelier-content">
+      <p class="atelier-tag">The Atelier</p>
+      <h2 class="atelier-title">Where Art Meets Craft</h2>
+      <p class="atelier-text">Our atelier in the heart of the countryside has been a sanctuary for ceramic arts for over two decades. Here, traditional techniques meet contemporary design, creating pieces that are both timeless and modern.</p>
+    </div>
+  </section>
+
+  <section class="process" id="process">
+    <div class="section-header"><p class="section-tag">Our Process</p><h2 class="section-title">From Clay to Art</h2></div>
+    <div class="process-timeline">
+      <div class="process-step"><div class="process-number">1</div><div class="process-content"><h3 class="process-title">Preparation</h3><p class="process-text">Local clay is aged and prepared, ensuring optimal consistency for throwing.</p></div></div>
+      <div class="process-step"><div class="process-number">2</div><div class="process-content"><h3 class="process-title">Throwing</h3><p class="process-text">Each piece is hand-thrown on the potter's wheel, shaped by experienced hands.</p></div></div>
+      <div class="process-step"><div class="process-number">3</div><div class="process-content"><h3 class="process-title">Drying</h3><p class="process-text">Pieces dry slowly under controlled conditions to prevent cracking.</p></div></div>
+      <div class="process-step"><div class="process-number">4</div><div class="process-content"><h3 class="process-title">Bisque Fire</h3><p class="process-text">First firing at 900°C transforms clay into ceramic.</p></div></div>
+      <div class="process-step"><div class="process-number">5</div><div class="process-content"><h3 class="process-title">Glazing</h3><p class="process-text">Hand-applied glazes create unique finishes, then final firing at 1280°C.</p></div></div>
+    </div>
+  </section>
+
+  <section class="press" id="press">
+    <div class="section-header"><p class="section-tag">Press</p><h2 class="section-title">What They Say</h2></div>
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"Argile Studio has revived the ancient art of terracotta for the modern age. Each piece is a masterpiece."</p><p class="press-author">— Architectural Digest</p></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"The perfect blend of tradition and contemporary design. These pieces elevate any space."</p><p class="press-author">— Vogue Living</p></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"Handcrafted excellence that you can see and feel in every curve and finish."</p><p class="press-author">— Elle Decor</p></div></div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <section class="commission" id="commission">
+    <div class="commission-info">
+      <p class="commission-tag">Get in Touch</p>
+      <h2 class="commission-title">Commission a Piece</h2>
+      <p class="commission-text">We welcome custom commissions for residential and commercial projects. Contact us to discuss your vision.</p>
+    </div>
+    <div class="commission-form">
+      <form>
+        <div class="form-group"><label class="form-label">Name</label><input type="text" class="form-input" placeholder="Your name"></div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="your@email.com"></div>
+        <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="Tell us about your project..."></textarea></div>
+        <button type="submit" class="form-submit">Send Inquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div><div class="footer-brand">ARGILE STUDIO</div><p class="footer-text">Born of Earth, Shaped by Fire — Handcrafted terracotta since 1999.</p></div>
+      <div><h4 class="footer-title">Explore</h4><ul class="footer-links"><li><a href="about.html">About</a></li><li><a href="collection.html">Collections</a></li><li><a href="process.html">Process</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div><h4 class="footer-title">Services</h4><ul class="footer-links"><li><a href="contact.html">Custom Orders</a></li><li><a href="contact.html">Commercial</a></li><li><a href="contact.html">Workshops</a></li></ul></div>
+      <div><h4 class="footer-title">Connect</h4><ul class="footer-links"><li><a href="#">Instagram</a></li><li><a href="#">Pinterest</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p class="footer-copyright">© 2026 Argile Studio. All rights reserved.</p></div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    (function preHideBelowFold() {
+      const VH = window.innerHeight;
+      const sel = ['.stats-item', '.philosophy-card', '.collection-item', '.atelier-img', '.atelier-content', '.process-step', '.press-slide', '.form-group'];
+      document.querySelectorAll(sel.join(',')).forEach(function(el) {
+        if (el.getBoundingClientRect().top > VH * 0.95) {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(24px)';
+          el.style.willChange = 'opacity, transform';
+        }
+      });
+    })();
+
+    const preloader = document.querySelector('.preloader');
+    const preloaderBrand = document.querySelector('.preloader-brand');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+
+    window.addEventListener('load', () => {
+      gsap.to(preloaderBrand, { opacity: 1, duration: 0.8, delay: 0.5 });
+      gsap.to(preloader, { opacity: 0, duration: 0.8, delay: 1.5, onComplete: () => { preloader.style.display = 'none'; } });
+      gsap.to(scrollIndicator, { opacity: 1, duration: 0.6 }, '-=0.4');
+      gsap.from('.hero-tagline', { opacity: 0, y: 20, duration: 1, delay: 2 });
+      gsap.from('.hero-title', { opacity: 0, y: 30, duration: 1.2, delay: 2.3 });
+      gsap.from('.hero-subtitle', { opacity: 0, y: 20, duration: 1, delay: 2.6 });
+      gsap.from('.hero-cta', { opacity: 0, y: 20, duration: 1, delay: 2.9 });
+    });
+
+    setTimeout(() => { scrollIndicator.classList.add('visible'); }, 4000);
+
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      navbar.classList.toggle('scrolled', window.scrollY > 100);
+    });
+
+    document.querySelectorAll('.stats-number').forEach(num => {
+      const target = parseInt(num.dataset.count);
+      gsap.to(num, { innerHTML: target, duration: 2, snap: { innerHTML: 1 }, scrollTrigger: { trigger: num, start: 'top 85%', once: true } });
+    });
+
+    gsap.from('.philosophy-card', { opacity: 0, y: 24, duration: 1.1, stagger: 0.15, ease: 'power2.out', scrollTrigger: { trigger: '.philosophy', start: 'top 75%' } });
+    gsap.from('.collection-item', { opacity: 0, y: 24, duration: 1.1, stagger: 0.12, ease: 'power2.out', scrollTrigger: { trigger: '.collection', start: 'top 75%' } });
+    gsap.from('.atelier-img', { opacity: 0, x: -30, duration: 1.1, ease: 'power2.out', scrollTrigger: { trigger: '.atelier', start: 'top 75%' } });
+    gsap.from('.atelier-content', { opacity: 0, x: 30, duration: 1.1, delay: 0.2, ease: 'power2.out', scrollTrigger: { trigger: '.atelier', start: 'top 75%' } });
+    gsap.from('.process-step', { opacity: 0, y: 24, duration: 1.1, stagger: 0.15, ease: 'power2.out', scrollTrigger: { trigger: '.process', start: 'top 75%' } });
+
+    new Swiper('.press .swiper', { slidesPerView: 1, spaceBetween: 32, pagination: { el: '.swiper-pagination', clickable: true }, autoplay: { delay: 5000, disableOnInteraction: false } });
+  </script>
+</body>
+</html>
