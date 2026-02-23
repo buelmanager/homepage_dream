@@ -55,7 +55,8 @@ async function setSetting(key: string, value: string) {
 }
 
 export async function getLemonStoreId() {
-  return (await getSetting(APP_SETTING_KEYS.LEMON_STORE_ID)) || process.env.LEMONSQUEEZY_STORE_ID || null;
+  const val = (await getSetting(APP_SETTING_KEYS.LEMON_STORE_ID)) || process.env.LEMONSQUEEZY_STORE_ID || null;
+  return val?.trim() || null;
 }
 
 export async function getLemonVariantId(plan: "PRO") {
@@ -65,7 +66,8 @@ export async function getLemonVariantId(plan: "PRO") {
   const envMap = {
     PRO: process.env.LEMONSQUEEZY_VARIANT_ID_PRO,
   } as const;
-  return (await getSetting(keyMap[plan])) || envMap[plan] || null;
+  const val = (await getSetting(keyMap[plan])) || envMap[plan] || null;
+  return val?.trim() || null;
 }
 
 export async function getLemonSettings() {
