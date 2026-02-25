@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOLDEN HIVE — The Rarest Drops on Earth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+/* SplitText inline polyfill — Club GSAP premium not on CDN */
+class SplitText {
+  constructor(el, opts = {}) {
+    this.el = typeof el === 'string' ? document.querySelector(el) : el;
+    this.chars = [];
+    this.words = [];
+    this._split();
+  }
+  _split() {
+    const t = this.el.textContent;
+    this.el.innerHTML = '';
+    t.split(' ').forEach((w, i) => {
+      const ws = document.createElement('span');
+      ws.style.cssText = 'display:inline-block;overflow:hidden;';
+      w.split('').forEach(c => {
+        const s = document.createElement('span');
+        s.textContent = c;
+        s.style.cssText = 'display:inline-block;';
+        this.chars.push(s);
+        ws.appendChild(s);
+      });
+      this.words.push(ws);
+      this.el.appendChild(ws);
+      if (i < t.split(' ').length - 1) this.el.appendChild(document.createTextNode(' '));
+    });
+  }
+}
+</script>
+<style>
+/* ─── CSS Custom Properties ─── */
+:root {
+  --bg: #201608;
+  --surface: #2A1E0C;
+  --surface-2: #342610;
+  --accent: #E8A820;
+  --accent2: #C85A10;
+  --accent-dim: rgba(232,168,32,0.15);
+  --text: #FDF0D0;
+  --text-muted: #A08040;
+  --text-dim: #7A6030;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'EB Garamond', Georgia, serif;
+}
+
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─── Custom Cursor ─── */
+#cursor {
+  position: fixed; width: 10px; height: 10px;
+  background: var(--accent); border-radius: 50%;
+  pointer-events: none; z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: transform 0.12s ease;
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed; width: 40px; height: 40px;
+  border: 1px solid rgba(232,168,32,0.45); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.38s ease, width 0.3s, height 0.3s, border-color 0.3s;
+}
+body:hover #cursor-ring { border-color: rgba(232,168,32,0.7); }
+
+/* ─── Preloader ─── */
+#preloader {
+  position: fixed; inset: 0;
+  background: #100A04;
+  z-index: 9998;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
+}
+.honeycomb-grid {
+  position: absolute; inset: 0;
+  display: flex; flex-wrap: wrap;
+  pointer-events: none;
+}
+.hc-cell {
+  width: 60px; height: 69px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: rgba(232,168,32,0.04);
+  border: 1px solid rgba(232,168,32,0.08);
+  transform: scale(0);
+  transition: transform 0.4s ease, background 0.4s ease;
+}
+.hc-cell.lit { background: rgba(232,168,32,0.12); }
+.preloader-center {
+  position: relative; z-index: 2;
+  text-align: center;
+}
+.drip-svg {
+  width: 80px; height: 80px;
+  margin-bottom: 32px;
+}
+.drip-path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: drawDrip 1.8s ease forwards 0.5s;
+}
+@keyframes drawDrip {
+  to { stroke-dashoffset: 0; }
+}
+.preloader-title {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 5vw, 52px);
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  clip-path: inset(0 100% 0 0);
+  animation: revealTitle 1.2s cubic-bezier(0.77,0,0.18,1) forwards 1.8s;
+}
+.preloader-sub {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 12px;
+  clip-path: inset(0 100% 0 0);
+  animation: revealTitle 1s cubic-bezier(0.77,0,0.18,1) forwards 2.4s;
+}
+@keyframes revealTitle {
+  to { clip-path: inset(0 0% 0 0); }
+}
+.preloader-bar {
+  position: absolute; bottom: 0; left: 0;
+  height: 2px; background: var(--accent);
+  width: 0%; animation: loadBar 3.5s ease forwards;
+}
+@keyframes loadBar { to { width: 100%; } }
+
+/* ─── Honeycomb SVG Background Texture ─── */
+.hc-bg {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.hc-bg svg { width: 100%; height: 100%; }
+
+/* ─── Left Scroll Indicator ─── */
+#scroll-indicator {
+  position: fixed; left: 32px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+}
+.scroll-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.scroll-hex-dot {
+  width: 10px; height: 10px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: var(--text-dim);
+  transition: background 0.3s, transform 0.3s;
+}
+.scroll-hex-dot.active {
+  background: var(--accent);
+  transform: scale(1.4);
+}
+.scroll-line {
+  width: 1px; height: 48px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  margin-top: 8px;
+  animation: scrollLinePulse 2s ease-in-out infinite;
+}
+@keyframes scrollLinePulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ─── Navbar ─── */
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 500;
+  padding: 0 48px;
+  height: 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(32, 22, 8, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(232,168,32,0.12);
+  transition: background 0.4s;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 14px;
+  text-decoration: none;
+}
+.nav-logo-hex {
+  width: 36px; height: 36px;
+}
+.nav-logo-text {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+.nav-links {
+  display: flex; align-items: center; gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-cta {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 24px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+.nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+/* ─── Sections shared ─── */
+section { position: relative; }
+.section-label {
+  font-size: 9px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 400;
+  line-height: 1.12;
+  color: var(--text);
+}
+.section-title em { font-style: italic; color: var(--accent); }
+.section-body {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  max-width: 540px;
+}
+.divider {
+  width: 60px; height: 1px;
+  background: var(--accent);
+  margin: 24px 0;
+}
+
+/* ─── Hero ─── */
+#hero {
+  height: 100vh; min-height: 700px;
+  display: flex; align-items: center;
+  overflow: hidden;
+  background: var(--bg);
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=1600&q=80&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center 40%;
+  transform: scale(1.08);
+  transition: transform 8s ease;
+}
+.hero-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(32,22,8,0.92) 0%,
+    rgba(32,22,8,0.75) 45%,
+    rgba(32,22,8,0.30) 100%
+  );
+}
+.hero-content {
+  position: relative; z-index: 2;
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 80px;
+  width: 100%;
+}
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 28px;
+}
+.hero-eyebrow-line {
+  width: 40px; height: 1px; background: var(--accent);
+}
+.hero-eyebrow-text {
+  font-size: 10px; letter-spacing: 0.5em;
+  text-transform: uppercase; color: var(--accent);
+}
+.hero-headline {
+  font-family: var(--font-heading);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 400;
+  line-height: 1.06;
+  color: var(--text);
+  max-width: 760px;
+  margin-bottom: 32px;
+}
+.hero-headline em { font-style: italic; color: var(--accent); }
+.hero-sub {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin-bottom: 48px;
+}
+.hero-actions {
+  display: flex; gap: 20px; align-items: center;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 40px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s, color 0.3s;
+}
+.btn-primary:hover { background: var(--accent2); color: var(--text); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 40px;
+  border: 1px solid rgba(232,168,32,0.4);
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: border-color 0.3s, color 0.3s;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.hero-stats {
+  position: absolute; bottom: 60px; right: 80px;
+  display: flex; gap: 48px;
+}
+.hero-stat-item { text-align: right; }
+.hero-stat-number {
+  font-family: var(--font-heading);
+  font-size: 36px; font-weight: 400;
+  color: var(--accent); line-height: 1;
+}
+.hero-stat-label {
+  font-size: 9px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ─── Terroir ─── */
+#terroir {
+  padding: 140px 0;
+  background: var(--surface);
+  overflow: hidden;
+}
+.terroir-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+}
+.terroir-header {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; margin-bottom: 80px; align-items: end;
+}
+.terroir-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(232,168,32,0.1);
+}
+.terroir-card {
+  background: var(--surface);
+  padding: 48px 36px;
+  position: relative; overflow: hidden;
+  transition: background 0.4s;
+}
+.terroir-card:hover { background: var(--surface-2); }
+.terroir-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s ease;
+}
+.terroir-card:hover::before { transform: scaleX(1); }
+.terroir-icon {
+  width: 48px; height: 48px; margin-bottom: 28px;
+  color: var(--accent);
+}
+.terroir-origin {
+  font-size: 9px; letter-spacing: 0.5em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 12px;
+}
+.terroir-name {
+  font-family: var(--font-heading);
+  font-size: 22px; font-weight: 400;
+  color: var(--text); margin-bottom: 16px;
+}
+.terroir-desc {
+  font-size: 14px; line-height: 1.7;
+  color: var(--text-muted);
+}
+.terroir-umf {
+  margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid rgba(232,168,32,0.15);
+  font-size: 11px; letter-spacing: 0.2em;
+  color: var(--accent); text-transform: uppercase;
+}
+
+/* ─── The Honeys / Product Cards ─── */
+#honeys {
+  padding: 140px 0;
+  background: var(--bg);
+}
+.honeys-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+}
+.honeys-header {
+  text-align: center; margin-bottom: 80px;
+}
+.honeys-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: rgba(232,168,32,0.08);
+}
+.honey-card {
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+  transition: background 0.4s;
+}
+.honey-card:hover { background: var(--surface); }
+.honey-card-img {
+  height: 260px; overflow: hidden; position: relative;
+}
+.honey-card-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+.honey-card:hover .honey-card-img img { transform: scale(1.06); }
+.honey-card-badge {
+  position: absolute; top: 16px; left: 16px;
+  padding: 6px 14px;
+  background: var(--accent); color: var(--bg);
+  font-size: 9px; letter-spacing: 0.3em;
+  text-transform: uppercase; font-weight: 600;
+}
+.honey-card-body { padding: 32px 28px; }
+.honey-card-origin {
+  font-size: 9px; letter-spacing: 0.45em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 10px;
+}
+.honey-card-name {
+  font-family: var(--font-heading);
+  font-size: 22px; font-weight: 400;
+  color: var(--text); margin-bottom: 12px;
+}
+.honey-card-notes {
+  font-size: 13px; line-height: 1.65;
+  color: var(--text-muted); margin-bottom: 20px;
+}
+.honey-card-meta {
+  display: flex; justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(232,168,32,0.12);
+}
+.honey-card-price {
+  font-family: var(--font-heading);
+  font-size: 20px; color: var(--accent);
+}
+.honey-card-link {
+  font-size: 10px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.honey-card-link:hover { color: var(--accent); }
+
+/* ─── The Apiary ─── */
+#apiary {
+  padding: 140px 0;
+  background: var(--surface);
+  overflow: hidden;
+}
+.apiary-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 100px; align-items: center;
+}
+.apiary-img-wrap {
+  position: relative;
+}
+.apiary-img {
+  width: 100%; aspect-ratio: 3/4;
+  object-fit: cover;
+}
+.apiary-img-frame {
+  position: absolute; top: -20px; left: -20px; right: 20px; bottom: 20px;
+  border: 1px solid rgba(232,168,32,0.2);
+  pointer-events: none;
+}
+.apiary-accent-box {
+  position: absolute; bottom: -32px; right: -32px;
+  width: 160px; height: 160px;
+  background: var(--surface-2);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 24px;
+}
+.apiary-accent-number {
+  font-family: var(--font-heading);
+  font-size: 40px; color: var(--accent); line-height: 1;
+}
+.apiary-accent-label {
+  font-size: 9px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-top: 8px;
+}
+.apiary-pillars {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; margin-top: 48px;
+}
+.apiary-pillar {
+  padding: 24px;
+  border: 1px solid rgba(232,168,32,0.12);
+  background: var(--bg);
+}
+.apiary-pillar-title {
+  font-family: var(--font-heading);
+  font-size: 14px; color: var(--text);
+  margin-bottom: 8px;
+}
+.apiary-pillar-desc {
+  font-size: 12px; line-height: 1.65;
+  color: var(--text-muted);
+}
+
+/* ─── Limited Editions ─── */
+#limited {
+  padding: 140px 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+.limited-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+}
+.limited-header {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: end; margin-bottom: 80px;
+}
+.limited-releases {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; background: rgba(232,168,32,0.08);
+}
+.release-card {
+  background: var(--bg); padding: 48px 36px;
+  position: relative; overflow: hidden;
+}
+.release-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 70%, rgba(232,168,32,0.06));
+}
+.release-number {
+  font-family: var(--font-heading);
+  font-size: 72px; font-weight: 400;
+  color: rgba(232,168,32,0.08);
+  line-height: 1;
+  position: absolute; top: 24px; right: 24px;
+}
+.release-season {
+  font-size: 9px; letter-spacing: 0.5em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 16px;
+}
+.release-name {
+  font-family: var(--font-heading);
+  font-size: 24px; font-weight: 400;
+  color: var(--text); margin-bottom: 16px;
+  line-height: 1.2;
+}
+.release-desc {
+  font-size: 13px; line-height: 1.7;
+  color: var(--text-muted); margin-bottom: 28px;
+}
+.release-meta {
+  display: flex; gap: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(232,168,32,0.12);
+}
+.release-meta-item { }
+.release-meta-value {
+  font-family: var(--font-heading);
+  font-size: 18px; color: var(--accent);
+}
+.release-meta-key {
+  font-size: 9px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ─── Pairing Guide ─── */
+#pairing {
+  padding: 140px 0;
+  background: var(--surface);
+  overflow: hidden;
+}
+.pairing-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+}
+.pairing-header { text-align: center; margin-bottom: 80px; }
+.pairing-tabs {
+  display: flex; gap: 0; margin-bottom: 60px;
+  border-bottom: 1px solid rgba(232,168,32,0.15);
+}
+.pairing-tab {
+  padding: 14px 32px;
+  font-size: 10px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.pairing-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.pairing-panel { display: none; }
+.pairing-panel.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: rgba(232,168,32,0.08); }
+.pairing-item {
+  background: var(--surface); padding: 36px 28px;
+}
+.pairing-honey {
+  font-size: 9px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 12px;
+}
+.pairing-pair {
+  font-family: var(--font-heading);
+  font-size: 20px; font-weight: 400;
+  color: var(--text); margin-bottom: 12px;
+}
+.pairing-note {
+  font-size: 13px; line-height: 1.65; color: var(--text-muted);
+}
+
+/* ─── Certification ─── */
+#certification {
+  padding: 120px 0;
+  background: var(--bg);
+}
+.certification-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+}
+.cert-header { text-align: center; margin-bottom: 64px; }
+.cert-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: rgba(232,168,32,0.08);
+}
+.cert-item {
+  background: var(--bg); padding: 48px 32px;
+  text-align: center;
+  transition: background 0.4s;
+}
+.cert-item:hover { background: var(--surface); }
+.cert-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 24px;
+  color: var(--accent);
+}
+.cert-name {
+  font-family: var(--font-heading);
+  font-size: 18px; font-weight: 400;
+  color: var(--text); margin-bottom: 12px;
+}
+.cert-desc {
+  font-size: 12px; line-height: 1.65;
+  color: var(--text-muted);
+}
+
+/* ─── Testimonials ─── */
+#testimonials {
+  padding: 140px 0;
+  background: var(--surface);
+  overflow: hidden;
+}
+.testimonials-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+}
+.testimonials-header { text-align: center; margin-bottom: 80px; }
+.testimonials-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; background: rgba(232,168,32,0.08);
+}
+.testimonial-card {
+  background: var(--surface); padding: 52px 40px;
+  position: relative;
+}
+.testimonial-quote-mark {
+  font-family: var(--font-heading);
+  font-size: 120px; line-height: 0.8;
+  color: rgba(232,168,32,0.08);
+  position: absolute; top: 32px; left: 32px;
+  pointer-events: none;
+}
+.testimonial-text {
+  font-family: var(--font-heading);
+  font-size: 18px; font-weight: 400; font-style: italic;
+  line-height: 1.65; color: var(--text);
+  margin-bottom: 36px; position: relative; z-index: 1;
+}
+.testimonial-author-name {
+  font-family: var(--font-heading);
+  font-size: 14px; color: var(--accent);
+  margin-bottom: 4px;
+}
+.testimonial-author-role {
+  font-size: 11px; letter-spacing: 0.2em;
+  color: var(--text-muted); text-transform: uppercase;
+}
+
+/* ─── Shop CTA ─── */
+#shop {
+  padding: 140px 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+.shop-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+.shop-product-display {
+  position: relative;
+}
+.shop-product-img {
+  width: 100%; aspect-ratio: 4/5;
+  object-fit: cover;
+}
+.shop-product-tag {
+  position: absolute; top: 24px; right: 24px;
+  padding: 10px 20px;
+  background: rgba(32,22,8,0.9);
+  border: 1px solid rgba(232,168,32,0.3);
+}
+.shop-product-tag-text {
+  font-size: 9px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--accent);
+}
+.shop-featured-label {
+  font-size: 9px; letter-spacing: 0.5em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 20px;
+}
+.shop-product-name {
+  font-family: var(--font-heading);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 400; line-height: 1.12;
+  color: var(--text); margin-bottom: 12px;
+}
+.shop-product-subtitle {
+  font-family: var(--font-heading);
+  font-size: 18px; font-style: italic;
+  color: var(--accent); margin-bottom: 24px;
+}
+.shop-product-desc {
+  font-size: 15px; line-height: 1.75;
+  color: var(--text-muted); margin-bottom: 40px;
+  max-width: 440px;
+}
+.shop-product-details {
+  display: flex; gap: 32px; margin-bottom: 40px;
+}
+.shop-detail { }
+.shop-detail-value {
+  font-family: var(--font-heading);
+  font-size: 22px; color: var(--accent);
+}
+.shop-detail-key {
+  font-size: 9px; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-top: 4px;
+}
+.shop-actions {
+  display: flex; gap: 16px; align-items: center;
+}
+
+/* ─── Footer ─── */
+#footer {
+  background: var(--bg);
+  border-top: 1px solid rgba(232,168,32,0.12);
+  padding: 80px 0 40px;
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 80px;
+}
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px; margin-bottom: 60px;
+}
+.footer-brand-hex {
+  width: 48px; height: 48px; margin-bottom: 20px;
+}
+.footer-brand-name {
+  font-family: var(--font-heading);
+  font-size: 22px; color: var(--accent);
+  letter-spacing: 0.15em; margin-bottom: 16px;
+}
+.footer-brand-desc {
+  font-size: 13px; line-height: 1.7;
+  color: var(--text-muted); max-width: 280px;
+}
+.footer-col-title {
+  font-size: 9px; letter-spacing: 0.5em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 24px;
+}
+.footer-col-links { list-style: none; }
+.footer-col-links li { margin-bottom: 12px; }
+.footer-col-links a {
+  font-size: 13px; color: var(--text-muted);
+  text-decoration: none; transition: color 0.3s;
+}
+.footer-col-links a:hover { color: var(--text); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 40px;
+  border-top: 1px solid rgba(232,168,32,0.08);
+}
+.footer-copy {
+  font-size: 11px; letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+.footer-socials {
+  display: flex; gap: 20px;
+}
+.footer-social {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(232,168,32,0.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); text-decoration: none;
+  font-size: 12px;
+  transition: border-color 0.3s, color 0.3s;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+.footer-social:hover {
+  border-color: var(--accent); color: var(--accent);
+}
+
+/* ─── Honeycomb Texture Pattern ─── */
+.hc-pattern-overlay {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  z-index: 0;
+}
+.hc-pattern-overlay svg {
+  width: 100%; height: 100%;
+  opacity: 0.03;
+}
+
+/* ─── Utility ─── */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+}
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="honeycomb-grid" id="hcGrid"></div>
+  <div class="preloader-center">
+    <svg class="drip-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Honeycomb outline -->
+      <polygon points="40,4 72,22 72,58 40,76 8,58 8,22" stroke="#E8A820" stroke-width="1.5" fill="none"/>
+      <!-- Honey drip path -->
+      <path class="drip-path" d="M40 18 L40 50 C40 58 32 64 40 74" stroke="#E8A820" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="40" cy="75" r="3" fill="#E8A820" class="drip-path"/>
+    </svg>
+    <div class="preloader-title">GOLDEN HIVE</div>
+    <div class="preloader-sub">Heritage Apiary &amp; Fine Honey</div>
+  </div>
+  <div class="preloader-bar"></div>
+</div>
+
+<!-- Left Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="scroll-label">Scroll</div>
+  <div class="scroll-hex-dot active" data-section="hero"></div>
+  <div class="scroll-hex-dot" data-section="terroir"></div>
+  <div class="scroll-hex-dot" data-section="honeys"></div>
+  <div class="scroll-hex-dot" data-section="apiary"></div>
+  <div class="scroll-hex-dot" data-section="limited"></div>
+  <div class="scroll-hex-dot" data-section="pairing"></div>
+  <div class="scroll-hex-dot" data-section="testimonials"></div>
+  <div class="scroll-line"></div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <svg class="nav-logo-hex" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="18,2 33,10.5 33,25.5 18,34 3,25.5 3,10.5" stroke="#E8A820" stroke-width="1.5" fill="rgba(232,168,32,0.08)"/>
+      <polygon points="18,8 27,13 27,23 18,28 9,23 9,13" stroke="#E8A820" stroke-width="0.75" fill="none"/>
+      <circle cx="18" cy="18" r="2.5" fill="#E8A820"/>
+    </svg>
+    <span class="nav-logo-text">GOLDEN HIVE</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#terroir">Terroir</a></li>
+    <li><a href="#honeys">Collection</a></li>
+    <li><a href="#apiary">The Apiary</a></li>
+    <li><a href="#limited">Limited Editions</a></li>
+    <li><a href="#pairing">Pairings</a></li>
+  </ul>
+  <a href="#shop" class="nav-cta">Shop Collection</a>
+</nav>
+
+<!-- Hero Section -->
+<section id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <!-- Honeycomb texture overlay -->
+  <div class="hc-pattern-overlay">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="hcHero" x="0" y="0" width="30" height="26" patternUnits="userSpaceOnUse">
+          <polygon points="15,1 28,8 28,20 15,27 2,20 2,8" fill="none" stroke="#E8A820" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="200" height="200" fill="url(#hcHero)"/>
+    </svg>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <div class="hero-eyebrow-text">Heritage Apiary Since 1887</div>
+    </div>
+    <h1 class="hero-headline" id="heroHeadline">
+      The Rarest<br><em>Drops on Earth</em>
+    </h1>
+    <p class="hero-sub">
+      Monofloral honeys from the world's most remote ecosystems. Each numbered jar contains irreplaceable terroir — harvested once, never replicated.
+    </p>
+    <div class="hero-actions">
+      <a href="#honeys" class="btn-primary">Explore Collection</a>
+      <a href="#apiary" class="btn-ghost">Our Heritage</a>
+    </div>
+  </div>
+  <div class="hero-stats" id="heroStats">
+    <div class="hero-stat-item">
+      <div class="hero-stat-number">UMF 25+</div>
+      <div class="hero-stat-label">Manuka Grade</div>
+    </div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-number">4</div>
+      <div class="hero-stat-label">Rare Terroirs</div>
+    </div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-number">137</div>
+      <div class="hero-stat-label">Years of Craft</div>
+    </div>
+  </div>
+</section>
+
+<!-- Terroir Section -->
+<section id="terroir">
+  <div class="hc-pattern-overlay">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="hcTerroir" x="0" y="0" width="40" height="34" patternUnits="userSpaceOnUse">
+          <polygon points="20,1 38,10 38,28 20,37 2,28 2,10" fill="none" stroke="#E8A820" stroke-width="0.6"/>
+        </pattern>
+      </defs>
+      <rect width="200" height="200" fill="url(#hcTerroir)"/>
+    </svg>
+  </div>
+  <div class="terroir-inner">
+    <div class="terroir-header">
+      <div>
+        <div class="section-label">Origin &amp; Terroir</div>
+        <h2 class="section-title">Where Rarity<br><em>Begins</em></h2>
+      </div>
+      <div>
+        <p class="section-body">
+          Every GOLDEN HIVE variety is sourced from a single botanical origin in a single geographic location — each one as unrepeatable as a grand cru wine. The ecosystem defines the honey; the season defines the jar.
+        </p>
+      </div>
+    </div>
+    <div class="terroir-grid" id="terroirGrid">
+      <!-- New Zealand Manuka -->
+      <div class="terroir-card">
+        <svg class="terroir-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M16 24 C16 18 20 14 24 14 C28 14 32 18 32 24 C32 30 28 34 24 34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="3" fill="currentColor"/>
+        </svg>
+        <div class="terroir-origin">New Zealand • Bay of Plenty</div>
+        <div class="terroir-name">Mānuka Monofloral</div>
+        <div class="terroir-desc">Harvested from remote Leptospermum scoparium stands above 800m elevation. Cold-pressed raw, never heated above 35°C. The benchmark of antibacterial potency.</div>
+        <div class="terroir-umf">UMF 25+ &nbsp;·&nbsp; MGO 1200+</div>
+      </div>
+      <!-- Yemen Sidr -->
+      <div class="terroir-card">
+        <svg class="terroir-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M24 14 L24 34 M14 20 L34 20 M16 28 L32 28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="terroir-origin">Yemen • Hadramawt Valley</div>
+        <div class="terroir-name">Sidr Al-Assal</div>
+        <div class="terroir-desc">From wild Ziziphus spina-christi trees in isolated Yemeni valleys. One harvest per year during October bloom. Ancient spice route provenance in every spoonful.</div>
+        <div class="terroir-umf">Single-origin &nbsp;·&nbsp; Polyphenol-rich</div>
+      </div>
+      <!-- Pitcairn Island -->
+      <div class="terroir-card">
+        <svg class="terroir-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="24" cy="24" r="8" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="24" cy="24" r="2" fill="currentColor"/>
+        </svg>
+        <div class="terroir-origin">Pitcairn Island • South Pacific</div>
+        <div class="terroir-name">Pitcairn Wildflower</div>
+        <div class="terroir-desc">Earth's most remote certified organic honey. No roads, no pesticides, no pollution — 50 km² of untouched Pacific flora. Fewer than 400 jars produced annually.</div>
+        <div class="terroir-umf">Certified Organic &nbsp;·&nbsp; 400 jars/yr</div>
+      </div>
+      <!-- Italian Acacia -->
+      <div class="terroir-card">
+        <svg class="terroir-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M24 36 L24 20 M18 26 L24 20 L30 26 M20 32 L24 26 L28 32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="terroir-origin">Italy • Friuli-Venezia Giulia</div>
+        <div class="terroir-name">Acacia Bianca</div>
+        <div class="terroir-desc">From ancient Robinia forests along the Isonzo River. Pale crystal clarity with vanilla and jasmine. The purest expression of Italian floriculture — harvested during the brief May bloom.</div>
+        <div class="terroir-umf">PDO Protected &nbsp;·&nbsp; 12-day harvest</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The Honeys — Product Collection -->
+<section id="honeys">
+  <div class="honeys-inner">
+    <div class="honeys-header">
+      <div class="section-label">The Collection</div>
+      <h2 class="section-title" style="font-size: clamp(36px,5vw,60px);">Six Expressions of<br><em>Unparalleled Rarity</em></h2>
+    </div>
+    <div class="honeys-grid" id="honeysGrid">
+      <!-- Card 1 -->
+      <div class="honey-card">
+        <div class="honey-card-img">
+          <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&q=80&auto=format&fit=crop" alt="Manuka UMF 25+ honey" loading="lazy">
+          <div class="honey-card-badge">UMF 25+</div>
+        </div>
+        <div class="honey-card-body">
+          <div class="honey-card-origin">New Zealand</div>
+          <div class="honey-card-name">Mānuka Reserve</div>
+          <div class="honey-card-notes">Rich medicinal depth with dark caramel, dried fig, and earthy herbaceous undertones. The apex of monofloral potency.</div>
+          <div class="honey-card-meta">
+            <div class="honey-card-price">£480</div>
+            <a href="#shop" class="honey-card-link">Reserve ↗</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="honey-card">
+        <div class="honey-card-img">
+          <img src="https://images.unsplash.com/photo-1471943038374-36b2a630c8c2?w=800&q=80&auto=format&fit=crop" alt="Sidr honey Yemen" loading="lazy">
+          <div class="honey-card-badge">Rare</div>
+        </div>
+        <div class="honey-card-body">
+          <div class="honey-card-origin">Yemen</div>
+          <div class="honey-card-name">Sidr Al-Assal Gold</div>
+          <div class="honey-card-notes">Warm amber with butterscotch, beeswax, and a lingering spice reminiscent of ancient trade routes. Crystallises slowly, showing remarkable clarity.</div>
+          <div class="honey-card-meta">
+            <div class="honey-card-price">£360</div>
+            <a href="#shop" class="honey-card-link">Reserve ↗</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="honey-card">
+        <div class="honey-card-img">
+          <img src="https://images.unsplash.com/photo-1505944270255-72b8c68c6a70?w=800&q=80&auto=format&fit=crop" alt="Pitcairn wildflower honey" loading="lazy">
+          <div class="honey-card-badge">Limited</div>
+        </div>
+        <div class="honey-card-body">
+          <div class="honey-card-origin">Pitcairn Island</div>
+          <div class="honey-card-name">Pacific Wildflower</div>
+          <div class="honey-card-notes">Delicate and complex — tropical hibiscus, white tea, and mineral salt from Pacific air. Each jar numbered from the annual 400-jar harvest.</div>
+          <div class="honey-card-meta">
+            <div class="honey-card-price">£295</div>
+            <a href="#shop" class="honey-card-link">Reserve ↗</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card 4 -->
+      <div class="honey-card">
+        <div class="honey-card-img">
+          <img src="https://images.unsplash.com/photo-1465911861741-1a9af90e7ac9?w=800&q=80&auto=format&fit=crop" alt="Acacia honey Italy" loading="lazy">
+          <div class="honey-card-badge">PDO</div>
+        </div>
+        <div class="honey-card-body">
+          <div class="honey-card-origin">Friuli, Italy</div>
+          <div class="honey-card-name">Acacia Bianca</div>
+          <div class="honey-card-notes">Crystal-clear liquid gold with the lightest sweetness — jasmine blossom, vanilla pod, and green grass. Remains liquid for years; never clouds.</div>
+          <div class="honey-card-meta">
+            <div class="honey-card-price">£180</div>
+            <a href="#shop" class="honey-card-link">Reserve ↗</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card 5 -->
+      <div class="honey-card">
+        <div class="honey-card-img">
+          <img src="https://images.unsplash.com/photo-1473973266408-ed4ce7b43e29?w=800&q=80&auto=format&fit=crop" alt="Black truffle honey" loading="lazy">
+          <div class="honey-card-badge">Collector</div>
+        </div>
+        <div class="honey-card-body">
+          <div class="honey-card-origin">Périgord, France</div>
+          <div class="honey-card-name">Black Truffle Infusion</div>
+          <div class="honey-card-notes">Acacia Bianca base steeped with hand-selected Tuber melanosporum. Umami depth meets floral sweetness — a paradox only the rarest ingredients achieve.</div>
+          <div class="honey-card-meta">
+            <div class="honey-card-price">£540</div>
+            <a href="#shop" class="honey-card-link">Reserve ↗</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card 6 -->
+      <div class="honey-card">
+        <div class="honey-card-img">
+          <img src="https://images.unsplash.com/photo-1504754524776-8f4f37304e92?w=800&q=80&auto=format&fit=crop" alt="Raw honeycomb section" loading="lazy">
+          <div class="honey-card-badge">Raw</div>
+        </div>
+        <div class="honey-card-body">
+          <div class="honey-card-origin">New Zealand Highlands</div>
+          <div class="honey-card-name">Mānuka Comb Reserve</div>
+          <div class="honey-card-notes">Full sections of raw honeycomb — wax, propolis, and honey in their most unprocessed form. Each piece hand-cut from sustainably managed frames.</div>
+          <div class="honey-card-meta">
+            <div class="honey-card-price">£220</div>
+            <a href="#shop" class="honey-card-link">Reserve ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The Apiary -->
+<section id="apiary">
+  <div class="hc-pattern-overlay">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="hcApiary" x="0" y="0" width="35" height="30" patternUnits="userSpaceOnUse">
+          <polygon points="17.5,1 33,9 33,25 17.5,33 2,25 2,9" fill="none" stroke="#E8A820" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="200" height="200" fill="url(#hcApiary)"/>
+    </svg>
+  </div>
+  <div class="apiary-inner">
+    <div class="apiary-img-wrap" id="apiaryImgWrap">
+      <img class="apiary-img" src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=1000&q=80&auto=format&fit=crop" alt="Heritage beekeeper tending hives">
+      <div class="apiary-img-frame"></div>
+      <div class="apiary-accent-box">
+        <div class="apiary-accent-number">1887</div>
+        <div class="apiary-accent-label">Founded</div>
+      </div>
+    </div>
+    <div class="apiary-text" id="apiaryText">
+      <div class="section-label">Heritage &amp; Philosophy</div>
+      <h2 class="section-title">Ancient Practice,<br><em>Uncompromised</em></h2>
+      <div class="divider"></div>
+      <p class="section-body">
+        GOLDEN HIVE traces its lineage to 1887, when founder Edmund Ashwell established the first treatment-free apiary in the Bay of Plenty. Four generations later, we manage fewer than 300 hives across our global partner apiaries — each one chosen for ecological remoteness and botanical singularity.
+      </p>
+      <p class="section-body" style="margin-top: 20px;">
+        We refuse supplemental feeding, synthetic treatments, and queen replacement schedules. Our bees follow the season; our harvests follow the bees. The hive dictates the yield — never the market.
+      </p>
+      <div class="apiary-pillars">
+        <div class="apiary-pillar">
+          <div class="apiary-pillar-title">Treatment-Free</div>
+          <div class="apiary-pillar-desc">Zero synthetic inputs — no oxalic acid, no antibiotics, no miticides. Natural colony strength only.</div>
+        </div>
+        <div class="apiary-pillar">
+          <div class="apiary-pillar-title">Single-Source</div>
+          <div class="apiary-pillar-desc">Each product originates from one apiary, one botanical species, one harvest season.</div>
+        </div>
+        <div class="apiary-pillar">
+          <div class="apiary-pillar-title">Cold-Pressed</div>
+          <div class="apiary-pillar-desc">Never heated above 35°C — the hive's natural temperature — preserving full enzyme activity.</div>
+        </div>
+        <div class="apiary-pillar">
+          <div class="apiary-pillar-title">Numbered Jars</div>
+          <div class="apiary-pillar-desc">Every jar bears its harvest number, hive identifier, extraction date, and beekeeper initials.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Limited Editions -->
+<section id="limited">
+  <div class="limited-inner">
+    <div class="limited-header">
+      <div>
+        <div class="section-label">Collector Releases</div>
+        <h2 class="section-title">Limited Edition<br><em>Archive</em></h2>
+      </div>
+      <div>
+        <p class="section-body">
+          Four times yearly, GOLDEN HIVE issues a numbered collector release — extraordinary honeys from exceptional seasons, rare florals, or experimental aging. Once sold, never restocked.
+        </p>
+        <a href="#shop" class="btn-ghost" style="display:inline-flex; margin-top:32px;">View All Releases</a>
+      </div>
+    </div>
+    <div class="limited-releases" id="limitedReleases">
+      <div class="release-card">
+        <div class="release-number">01</div>
+        <div class="release-season">Spring 2024 &nbsp;·&nbsp; 180 jars</div>
+        <div class="release-name">Manuka Storm Reserve</div>
+        <div class="release-desc">Harvested during a rare late-frost season that concentrated MGO levels to record 1,400+. Deep, medicinal, with pronounced beeswax and mineral complexity.</div>
+        <div class="release-meta">
+          <div class="release-meta-item">
+            <div class="release-meta-value">£680</div>
+            <div class="release-meta-key">Per 250g</div>
+          </div>
+          <div class="release-meta-item">
+            <div class="release-meta-value">12</div>
+            <div class="release-meta-key">Remaining</div>
+          </div>
+        </div>
+      </div>
+      <div class="release-card">
+        <div class="release-number">02</div>
+        <div class="release-season">Autumn 2024 &nbsp;·&nbsp; 96 jars</div>
+        <div class="release-name">Pitcairn Eclipse Batch</div>
+        <div class="release-desc">Gathered during the total solar eclipse of April 2024 — the bees' unique foraging response during darkness produced an uncommonly dark, intensely aromatic variety.</div>
+        <div class="release-meta">
+          <div class="release-meta-item">
+            <div class="release-meta-value">£920</div>
+            <div class="release-meta-key">Per 250g</div>
+          </div>
+          <div class="release-meta-item">
+            <div class="release-meta-value">3</div>
+            <div class="release-meta-key">Remaining</div>
+          </div>
+        </div>
+      </div>
+      <div class="release-card">
+        <div class="release-number">03</div>
+        <div class="release-season">Winter 2025 &nbsp;·&nbsp; 240 jars</div>
+        <div class="release-name">Sidr Aged in Oak</div>
+        <div class="release-desc">Yemeni Sidr rested for 14 months in ex-Armagnac barrels. The first aged honey in our archive — vanilla, smoke, toffee apple, and the unmistakable warmth of noble wood.</div>
+        <div class="release-meta">
+          <div class="release-meta-item">
+            <div class="release-meta-value">£780</div>
+            <div class="release-meta-key">Per 250g</div>
+          </div>
+          <div class="release-meta-item">
+            <div class="release-meta-value">47</div>
+            <div class="release-meta-key">Remaining</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pairing Guide -->
+<section id="pairing">
+  <div class="hc-pattern-overlay">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="hcPairing" x="0" y="0" width="40" height="34" patternUnits="userSpaceOnUse">
+          <polygon points="20,1 38,10 38,28 20,37 2,28 2,10" fill="none" stroke="#E8A820" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="200" height="200" fill="url(#hcPairing)"/>
+    </svg>
+  </div>
+  <div class="pairing-inner">
+    <div class="pairing-header">
+      <div class="section-label">Connoisseur's Guide</div>
+      <h2 class="section-title">The Art of<br><em>Pairing</em></h2>
+      <p class="section-body" style="margin: 24px auto 0; text-align:center;">
+        Each honey varietal reveals different facets depending on what accompanies it. Our master blender has curated the definitive pairings for cheese, whisky, and tea.
+      </p>
+    </div>
+    <div class="pairing-tabs" id="pairingTabs">
+      <div class="pairing-tab active" data-panel="cheese">Cheese Pairings</div>
+      <div class="pairing-tab" data-panel="whisky">Whisky Pairings</div>
+      <div class="pairing-tab" data-panel="tea">Tea Pairings</div>
+    </div>
+    <div class="pairing-panel active" id="panel-cheese">
+      <div class="pairing-item">
+        <div class="pairing-honey">Mānuka Reserve</div>
+        <div class="pairing-pair">Aged Manchego</div>
+        <div class="pairing-note">The earthy depth of UMF 25+ Mānuka meets the caramel crystalline structure of 24-month Manchego — medicinal sweetness amplified by lanolin-rich fat.</div>
+      </div>
+      <div class="pairing-item">
+        <div class="pairing-honey">Sidr Al-Assal</div>
+        <div class="pairing-pair">Époisses de Bourgogne</div>
+        <div class="pairing-note">The washed-rind pungency of Époisses is tamed and elevated by Sidr's warm butterscotch resonance. A pairing of two ancient traditions — Yemeni and Burgundian.</div>
+      </div>
+      <div class="pairing-item">
+        <div class="pairing-honey">Acacia Bianca</div>
+        <div class="pairing-pair">Fresh Chèvre</div>
+        <div class="pairing-note">The crystal-clear delicacy of Italian Acacia mirrors the lactic brightness of young goat cheese — neither overwhelms, both transcend. Finish with Amalfi lemon zest.</div>
+      </div>
+    </div>
+    <div class="pairing-panel" id="panel-whisky">
+      <div class="pairing-item">
+        <div class="pairing-honey">Mānuka Reserve</div>
+        <div class="pairing-pair">Highland Single Malt</div>
+        <div class="pairing-note">The medicinal heather notes of a 21-year Dalmore harmonise with Mānuka's UMF potency. One drop of honey transforms the dram — never stirs, only dissolves slowly on the tongue.</div>
+      </div>
+      <div class="pairing-item">
+        <div class="pairing-honey">Sidr Aged in Oak</div>
+        <div class="pairing-pair">Armagnac</div>
+        <div class="pairing-note">Already rested in ex-Armagnac barrels, this honey sings alongside vintage Armagnac — a circular conversation of wood, vanilla, and ancient sweetness from two continents.</div>
+      </div>
+      <div class="pairing-item">
+        <div class="pairing-honey">Pitcairn Wildflower</div>
+        <div class="pairing-pair">Japanese Whisky</div>
+        <div class="pairing-note">The floral, mineral complexity of Pitcairn meets the quiet precision of Yamazaki 18 — Pacific nature reflected in Eastern distillation. A transcontinental collaboration.</div>
+      </div>
+    </div>
+    <div class="pairing-panel" id="panel-tea">
+      <div class="pairing-item">
+        <div class="pairing-honey">Acacia Bianca</div>
+        <div class="pairing-pair">First Flush Darjeeling</div>
+        <div class="pairing-note">The Muscatel character of a March-picked first flush Darjeeling is the mirror image of Acacia's floral sweetness — a pairing that needs nothing else.</div>
+      </div>
+      <div class="pairing-item">
+        <div class="pairing-honey">Mānuka Reserve</div>
+        <div class="pairing-pair">Genmaicha</div>
+        <div class="pairing-note">The toasty rice notes of Genmaicha provide a savoury counterpoint to Mānuka's medicinal weight — unusual but undeniable. Serve at 75°C, honey added last.</div>
+      </div>
+      <div class="pairing-item">
+        <div class="pairing-honey">Pitcairn Wildflower</div>
+        <div class="pairing-pair">White Silver Needle</div>
+        <div class="pairing-note">Earth's most remote honey with China's most delicate white tea. The shared qualities — lightness, terroir purity, brevity of season — create perfect resonance.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Certification -->
+<section id="certification">
+  <div class="certification-inner">
+    <div class="cert-header">
+      <div class="section-label">Standards &amp; Certification</div>
+      <h2 class="section-title">Verified at<br><em>Every Step</em></h2>
+    </div>
+    <div class="cert-grid" id="certGrid">
+      <div class="cert-item">
+        <svg class="cert-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M20 28 L25 33 L36 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="cert-name">UMF Certified</div>
+        <div class="cert-desc">Independently tested by the UMF Honey Association. Every Mānuka batch verified for leptosperin, DHA, and methylglyoxal content.</div>
+      </div>
+      <div class="cert-item">
+        <svg class="cert-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="28" cy="28" r="10" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M22 28 C22 24 25 21 28 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="cert-name">Certified Organic</div>
+        <div class="cert-desc">All products certified to EU 834/2007 and NZ Ministry of Primary Industries organic standards. Annual third-party audits of every apiary site.</div>
+      </div>
+      <div class="cert-item">
+        <svg class="cert-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M20 36 L28 16 L36 36" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 30 L34 30" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="cert-name">Raw &amp; Unfiltered</div>
+        <div class="cert-desc">Cold-pressed below 35°C. No ultrafiltration, no pasteurisation. Pollen, propolis, and enzyme content preserved exactly as nature intended.</div>
+      </div>
+      <div class="cert-item">
+        <svg class="cert-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M28 18 L28 38 M18 23 L38 23 M18 33 L38 33" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="cert-name">Numbered &amp; Traced</div>
+        <div class="cert-desc">Blockchain-verified provenance for every jar. Scan your label to access the full harvest record — hive, beekeeper, date, and independent lab results.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials">
+  <div class="hc-pattern-overlay">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="hcTestimonials" x="0" y="0" width="40" height="34" patternUnits="userSpaceOnUse">
+          <polygon points="20,1 38,10 38,28 20,37 2,28 2,10" fill="none" stroke="#E8A820" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="200" height="200" fill="url(#hcTestimonials)"/>
+    </svg>
+  </div>
+  <div class="testimonials-inner">
+    <div class="testimonials-header">
+      <div class="section-label">From Those Who Know</div>
+      <h2 class="section-title">What Masters<br><em>Say</em></h2>
+    </div>
+    <div class="testimonials-grid" id="testimonialsGrid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote-mark">"</div>
+        <div class="testimonial-text">
+          "The Mānuka Storm Reserve is unlike anything I have encountered in thirty years behind a pass. It does not sweeten a dish — it reveals dimensions within it. I use three drops where I once used a tablespoon of anything else."
+        </div>
+        <div class="testimonial-author-name">Chef Héloïse Vandermeersch</div>
+        <div class="testimonial-author-role">3 Michelin Stars &nbsp;·&nbsp; Brussels</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote-mark">"</div>
+        <div class="testimonial-text">
+          "I have collected Pitcairn Wildflower since the first batch in 2019. Each year is categorically different — same island, same bees, a completely new narrative. It is the only food product I buy as a collector rather than a consumer."
+        </div>
+        <div class="testimonial-author-name">James Whitmore-Gray</div>
+        <div class="testimonial-author-role">Food Collector &nbsp;·&nbsp; London</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote-mark">"</div>
+        <div class="testimonial-text">
+          "In two decades writing about artisan producers, GOLDEN HIVE remains the definitive expression of what honey can be when human restraint refuses to interfere. The Sidr Al-Assal is a civilisation in a jar."
+        </div>
+        <div class="testimonial-author-name">Marguerite Osei</div>
+        <div class="testimonial-author-role">Senior Critic, The Art of Eating</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Shop CTA -->
+<section id="shop">
+  <div class="shop-inner">
+    <div class="shop-product-display" id="shopDisplay">
+      <img class="shop-product-img" src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=1000&q=80&auto=format&fit=crop" alt="Golden Hive Mānuka Reserve">
+      <div class="shop-product-tag">
+        <div class="shop-product-tag-text">Best Seller</div>
+      </div>
+    </div>
+    <div class="shop-content" id="shopContent">
+      <div class="shop-featured-label">Featured Product</div>
+      <div class="shop-product-name">Mānuka Reserve</div>
+      <div class="shop-product-subtitle">UMF 25+ · MGO 1200+</div>
+      <p class="shop-product-desc">
+        Our most sought-after expression. Harvested from remote hives at altitude in the Bay of Plenty, this is the benchmark of medicinal potency and terroir-driven flavour. Cold-pressed, numbered, and shipped in hand-blown glass.
+      </p>
+      <div class="shop-product-details">
+        <div class="shop-detail">
+          <div class="shop-detail-value">250g</div>
+          <div class="shop-detail-key">Net Weight</div>
+        </div>
+        <div class="shop-detail">
+          <div class="shop-detail-value">£480</div>
+          <div class="shop-detail-key">Price</div>
+        </div>
+        <div class="shop-detail">
+          <div class="shop-detail-value">48</div>
+          <div class="shop-detail-key">Jars Remaining</div>
+        </div>
+      </div>
+      <div class="shop-actions">
+        <a href="#" class="btn-primary">Reserve Your Jar</a>
+        <a href="#honeys" class="btn-ghost">Full Collection</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <svg class="footer-brand-hex" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="24,3 44,14 44,34 24,45 4,34 4,14" stroke="#E8A820" stroke-width="1.5" fill="rgba(232,168,32,0.06)"/>
+          <polygon points="24,10 38,18 38,34 24,42 10,34 10,18" stroke="#E8A820" stroke-width="0.75" fill="none"/>
+          <circle cx="24" cy="24" r="3" fill="#E8A820"/>
+        </svg>
+        <div class="footer-brand-name">GOLDEN HIVE</div>
+        <p class="footer-brand-desc">Heritage Apiary &amp; Fine Honey since 1887. Monofloral rarities from the world's most remote ecosystems, bottled without compromise.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Collection</div>
+        <ul class="footer-col-links">
+          <li><a href="#honeys">Mānuka Reserve</a></li>
+          <li><a href="#honeys">Sidr Al-Assal</a></li>
+          <li><a href="#honeys">Pitcairn Wildflower</a></li>
+          <li><a href="#honeys">Acacia Bianca</a></li>
+          <li><a href="#honeys">Black Truffle</a></li>
+          <li><a href="#limited">Limited Editions</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">The House</div>
+        <ul class="footer-col-links">
+          <li><a href="#apiary">Our Heritage</a></li>
+          <li><a href="#terroir">Terroir</a></li>
+          <li><a href="#certification">Certifications</a></li>
+          <li><a href="#pairing">Pairing Guide</a></li>
+          <li><a href="#">Wholesale</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <ul class="footer-col-links">
+          <li><a href="#">collectors@goldenhive.com</a></li>
+          <li><a href="#">+44 20 7946 0347</a></li>
+          <li><a href="#">London Flagship</a></li>
+          <li><a href="#">New Zealand Apiary</a></li>
+          <li><a href="#">Press Enquiries</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        &copy; 2024 GOLDEN HIVE Heritage Apiary. All rights reserved.
+        &nbsp;·&nbsp; Treatment-Free &nbsp;·&nbsp; UMF Certified &nbsp;·&nbsp; Numbered Jars
+      </div>
+      <div class="footer-socials">
+        <a href="#" class="footer-social" aria-label="Instagram">&#9650;</a>
+        <a href="#" class="footer-social" aria-label="Pinterest">&#9670;</a>
+        <a href="#" class="footer-social" aria-label="X">&#9632;</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── GSAP Plugin Registration ── */
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── Custom Cursor ── */
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animateCursor() {
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+document.querySelectorAll('a, button, .honey-card, .terroir-card, .pairing-tab').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursorRing.style.width = '60px'; cursorRing.style.height = '60px';
+    cursorRing.style.borderColor = 'rgba(232,168,32,0.8)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursorRing.style.width = '40px'; cursorRing.style.height = '40px';
+    cursorRing.style.borderColor = 'rgba(232,168,32,0.45)';
+  });
+});
+
+/* ── Preloader Honeycomb Grid Build ── */
+(function buildHcGrid() {
+  const grid = document.getElementById('hcGrid');
+  const cols = Math.ceil(window.innerWidth / 60) + 2;
+  const rows = Math.ceil(window.innerHeight / 70) + 2;
+  for (let i = 0; i < cols * rows; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'hc-cell';
+    grid.appendChild(cell);
+  }
+  const cells = grid.querySelectorAll('.hc-cell');
+  let idx = 0;
+  const interval = setInterval(() => {
+    if (idx < cells.length) {
+      cells[idx].style.transform = 'scale(1)';
+      if (Math.random() > 0.7) cells[idx].classList.add('lit');
+      idx++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 8);
+})();
+
+/* ── Preloader Exit ── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const preloader = document.getElementById('preloader');
+    gsap.to(preloader, {
+      duration: 1.2,
+      clipPath: 'inset(0 0 100% 0)',
+      ease: 'power3.inOut',
+      onComplete: () => {
+        preloader.style.display = 'none';
+        initScrollAnimations();
+        /* Show scroll indicator */
+        gsap.to('#scroll-indicator', { autoAlpha: 1, duration: 0.6, delay: 0.3 });
+      }
+    });
+    /* Hero bg zoom */
+    gsap.to('#heroBg', { scale: 1, duration: 8, ease: 'none' });
+  }, 3800);
+
+  /* Fallback: show scroll indicator after 4s no matter what */
+  setTimeout(() => {
+    const si = document.getElementById('scroll-indicator');
+    if (si) si.style.opacity = '1';
+  }, 4000);
+});
+
+/* ── Scroll Animations ── */
+function initScrollAnimations() {
+  /* Hero headline chars */
+  const heroEl = document.getElementById('heroHeadline');
+  if (heroEl) {
+    const st = new SplitText(heroEl);
+    gsap.from(st.chars, {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top 80%',
+        once: true
+      },
+      y: 28,
+      duration: 1.1,
+      ease: 'power2.out',
+      stagger: 0.025
+    });
+  }
+
+  /* Hero sub & actions */
+  gsap.from('.hero-sub', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#hero', start: 'top 75%', once: true },
+    y: 20, duration: 1.0, ease: 'power2.out', delay: 0.4
+  });
+  gsap.from('.hero-actions', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#hero', start: 'top 75%', once: true },
+    y: 20, duration: 1.0, ease: 'power2.out', delay: 0.6
+  });
+  gsap.from('#heroStats .hero-stat-item', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#hero', start: 'top 70%', once: true },
+    y: 24, duration: 1.1, ease: 'power2.out', stagger: 0.12, delay: 0.8
+  });
+
+  /* Hero parallax */
+  gsap.to('#heroBg', {
+    immediateRender: false,
+    scrollTrigger: {
+      trigger: '#hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1
+    },
+    yPercent: 20
+  });
+
+  /* Terroir header */
+  gsap.from('.terroir-header', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#terroir', start: 'top 80%', once: true },
+    y: 28, duration: 1.1, ease: 'power2.out'
+  });
+
+  /* Terroir cards */
+  gsap.from('#terroirGrid .terroir-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#terroirGrid', start: 'top 85%', once: true },
+    y: 36, duration: 1.0, ease: 'power2.out', stagger: 0.1
+  });
+
+  /* Honeys header */
+  gsap.from('.honeys-header', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#honeys', start: 'top 80%', once: true },
+    y: 24, duration: 1.0, ease: 'power2.out'
+  });
+
+  /* Honey cards */
+  gsap.from('#honeysGrid .honey-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#honeysGrid', start: 'top 85%', once: true },
+    y: 32, duration: 1.0, ease: 'power2.out', stagger: 0.1
+  });
+
+  /* Apiary image */
+  gsap.from('#apiaryImgWrap', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#apiary', start: 'top 75%', once: true },
+    x: -40, duration: 1.2, ease: 'power2.out'
+  });
+  gsap.from('#apiaryText', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#apiary', start: 'top 75%', once: true },
+    x: 40, duration: 1.2, ease: 'power2.out', delay: 0.15
+  });
+  gsap.from('.apiary-pillar', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.apiary-pillars', start: 'top 85%', once: true },
+    y: 20, duration: 0.9, ease: 'power2.out', stagger: 0.1, delay: 0.2
+  });
+
+  /* Limited releases */
+  gsap.from('.limited-header', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#limited', start: 'top 80%', once: true },
+    y: 24, duration: 1.0, ease: 'power2.out'
+  });
+  gsap.from('#limitedReleases .release-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#limitedReleases', start: 'top 85%', once: true },
+    y: 32, duration: 1.0, ease: 'power2.out', stagger: 0.12
+  });
+
+  /* Pairing header */
+  gsap.from('.pairing-header', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#pairing', start: 'top 80%', once: true },
+    y: 24, duration: 1.0, ease: 'power2.out'
+  });
+
+  /* Cert items */
+  gsap.from('#certGrid .cert-item', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#certGrid', start: 'top 85%', once: true },
+    y: 28, duration: 0.9, ease: 'power2.out', stagger: 0.1
+  });
+
+  /* Testimonials */
+  gsap.from('#testimonialsGrid .testimonial-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#testimonialsGrid', start: 'top 85%', once: true },
+    y: 32, duration: 1.0, ease: 'power2.out', stagger: 0.12
+  });
+
+  /* Shop */
+  gsap.from('#shopDisplay', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#shop', start: 'top 75%', once: true },
+    x: -40, duration: 1.2, ease: 'power2.out'
+  });
+  gsap.from('#shopContent', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#shop', start: 'top 75%', once: true },
+    x: 40, duration: 1.2, ease: 'power2.out', delay: 0.15
+  });
+}
+
+/* ── Pairing Tab Logic ── */
+document.querySelectorAll('.pairing-tab').forEach(tab => {
+  tab.addEventListener('click', function () {
+    document.querySelectorAll('.pairing-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.pairing-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    const panelId = 'panel-' + this.dataset.panel;
+    const panel = document.getElementById(panelId);
+    if (panel) {
+      panel.classList.add('active');
+      /* Animate in new panel items */
+      gsap.from(panel.querySelectorAll('.pairing-item'), {
+        immediateRender: false,
+        y: 16, duration: 0.6, ease: 'power2.out', stagger: 0.08
+      });
+    }
+  });
+});
+
+/* ── Scroll Indicator Active Dot ── */
+(function initScrollIndicator() {
+  const sections = ['hero', 'terroir', 'honeys', 'apiary', 'limited', 'pairing', 'testimonials'];
+  const dots = document.querySelectorAll('.scroll-hex-dot');
+
+  function updateDots() {
+    const scrollY = window.scrollY + window.innerHeight * 0.4;
+    let activeIdx = 0;
+    sections.forEach((id, idx) => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollY) activeIdx = idx;
+    });
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle('active', idx === activeIdx);
+    });
+  }
+
+  window.addEventListener('scroll', updateDots, { passive: true });
+  updateDots();
+})();
+
+/* ── Navbar scroll effect ── */
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  if (window.scrollY > 80) {
+    nav.style.background = 'rgba(32,22,8,0.97)';
+  } else {
+    nav.style.background = 'rgba(32,22,8,0.85)';
+  }
+}, { passive: true });
+</script>
+</body>
+</html>

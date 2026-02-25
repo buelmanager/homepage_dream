@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MYCEL — Grown in Silence</title>
+  <meta name="description" content="Premium artisan mushroom cultivation lab. Lion's mane, truffle, rare Japanese shiitake. Farm-to-table subscriptions, restaurant wholesale, and foraging kits." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES
+    ============================================= */
+    :root {
+      --bg: #181E14;
+      --surface: #202817;
+      --surface2: #263020;
+      --accent: #7EC84A;
+      --accent2: #C8A060;
+      --text: #EAF2E0;
+      --text-muted: #7A9860;
+      --border: rgba(126, 200, 74, 0.15);
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    img { display: block; width: 100%; }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* =============================================
+       PRELOADER
+    ============================================= */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #0E1209;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    #preloader-svg {
+      width: 320px;
+      height: 200px;
+    }
+
+    #mycel-brand {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      color: var(--text);
+    }
+
+    #preloader-sub {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .mycelium-path {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 1.2;
+      stroke-linecap: round;
+    }
+
+    .mycelium-node {
+      fill: var(--accent);
+    }
+
+    /* =============================================
+       SCROLL INDICATOR
+    ============================================= */
+    #scroll-indicator {
+      position: fixed;
+      left: 1.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .scroll-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: scrollDrop 2s ease-in-out infinite;
+    }
+
+    .scroll-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollDrop {
+      0% { top: -100%; }
+      100% { top: 200%; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+    }
+
+    /* =============================================
+       NAVBAR
+    ============================================= */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 1.4rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+
+    #navbar.scrolled {
+      background: rgba(14, 18, 9, 0.94);
+      backdrop-filter: blur(12px);
+      padding: 1rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: var(--text);
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.4rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-cta {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.6rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1504545102780-26b9839a2b3b?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 40%;
+      transform: scale(1.08);
+      filter: brightness(0.45);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(14, 18, 9, 0.3) 0%,
+        rgba(14, 18, 9, 0.15) 40%,
+        rgba(14, 18, 9, 0.6) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.4rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--text);
+      margin-bottom: 1.6rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    .hero-desc {
+      font-size: 0.9rem;
+      color: rgba(234, 242, 224, 0.7);
+      max-width: 520px;
+      margin: 0 auto 2.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.4rem;
+      background: var(--accent);
+      color: #0E1209;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: #96da60;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.4rem;
+      border: 1px solid rgba(234, 242, 224, 0.4);
+      color: var(--text);
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Hero floating stats */
+    .hero-stats {
+      position: absolute;
+      bottom: 3rem;
+      left: 0;
+      right: 0;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-number {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--accent2);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* =============================================
+       SECTION BASE
+    ============================================= */
+    section {
+      padding: 8rem 0;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 3rem;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--text);
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    .section-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin-top: 1.2rem;
+      line-height: 1.8;
+    }
+
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: var(--accent);
+      margin: 1.8rem 0;
+    }
+
+    /* =============================================
+       SPECIES SECTION
+    ============================================= */
+    #species {
+      background: var(--surface);
+    }
+
+    .species-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .species-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+
+    .species-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .species-img {
+      height: 360px;
+      object-fit: cover;
+      filter: brightness(0.6) saturate(0.8);
+      transition: filter 0.6s ease, transform 0.6s ease;
+    }
+
+    .species-card:hover .species-img {
+      filter: brightness(0.8) saturate(1);
+      transform: scale(1.04);
+    }
+
+    .species-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(14,18,9,0.9) 0%, transparent 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem;
+      transition: background 0.4s;
+    }
+
+    .species-tag {
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .species-name {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .species-sci {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--accent2);
+      margin-top: 0.2rem;
+    }
+
+    .species-meta {
+      margin-top: 0.8rem;
+      font-size: 0.7rem;
+      color: rgba(234,242,224,0.65);
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .species-card:hover .species-meta {
+      max-height: 100px;
+    }
+
+    /* =============================================
+       THE LAB SECTION
+    ============================================= */
+    #the-lab {
+      background: var(--bg);
+    }
+
+    .lab-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .lab-visual {
+      position: relative;
+    }
+
+    .lab-img {
+      height: 600px;
+      object-fit: cover;
+      filter: brightness(0.7);
+    }
+
+    .lab-badge {
+      position: absolute;
+      bottom: 2rem;
+      right: -2rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1.6rem 2rem;
+      text-align: center;
+    }
+
+    .lab-badge-num {
+      font-family: var(--font-heading);
+      font-size: 2.8rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .lab-badge-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    .lab-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .lab-step {
+      display: flex;
+      gap: 1.8rem;
+      padding: 1.8rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .lab-step:last-child { border-bottom: none; }
+
+    .lab-step-num {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 2.2rem;
+      transition: color 0.3s;
+    }
+
+    .lab-step:hover .lab-step-num { color: var(--accent); }
+
+    .lab-step-content {}
+
+    .lab-step-title {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .lab-step-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* =============================================
+       SUBSCRIPTIONS
+    ============================================= */
+    #subscriptions {
+      background: var(--surface);
+    }
+
+    .subs-header {
+      text-align: center;
+      margin-bottom: 4.5rem;
+    }
+
+    .subs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+
+    .sub-card {
+      background: var(--bg);
+      padding: 3rem 2.6rem;
+      border: 1px solid var(--border);
+      transition: border-color 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sub-card.featured {
+      border-color: var(--accent);
+      background: var(--surface2);
+    }
+
+    .sub-card.featured::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      background: var(--accent);
+      color: #0E1209;
+      padding: 0.3rem 0.7rem;
+      font-weight: 500;
+    }
+
+    .sub-card:hover { border-color: var(--accent2); }
+
+    .sub-tier {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+
+    .sub-name {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+    }
+
+    .sub-price {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--accent2);
+      line-height: 1;
+      margin: 1.4rem 0;
+    }
+
+    .sub-price span {
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .sub-divider {
+      width: 32px;
+      height: 1px;
+      background: var(--border);
+      margin: 1.6rem 0;
+    }
+
+    .sub-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1.6rem;
+    }
+
+    .sub-features {
+      list-style: none;
+      margin-bottom: 2.4rem;
+    }
+
+    .sub-features li {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .sub-features li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .sub-btn {
+      display: block;
+      text-align: center;
+      padding: 0.9rem;
+      border: 1px solid var(--accent);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .sub-btn:hover, .sub-card.featured .sub-btn {
+      background: var(--accent);
+      color: #0E1209;
+    }
+
+    /* =============================================
+       RESTAURANT PARTNERS
+    ============================================= */
+    #restaurants {
+      background: var(--bg);
+    }
+
+    .rest-inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .rest-logos {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+
+    .rest-logo-item {
+      background: var(--surface);
+      padding: 1.8rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+
+    .rest-logo-item:hover { border-color: var(--accent2); }
+
+    .rest-logo-text {
+      font-family: var(--font-heading);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .rest-stat-row {
+      display: flex;
+      gap: 3rem;
+      margin-top: 2.8rem;
+    }
+
+    .rest-stat-num {
+      font-family: var(--font-heading);
+      font-size: 2.8rem;
+      font-weight: 300;
+      color: var(--accent2);
+      line-height: 1;
+    }
+
+    .rest-stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* =============================================
+       FORAGING KITS
+    ============================================= */
+    #foraging {
+      background: var(--surface);
+    }
+
+    .foraging-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .kit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5px;
+    }
+
+    .kit-card {
+      background: var(--bg);
+      padding: 2.4rem;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .kit-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .kit-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      line-height: 1;
+    }
+
+    .kit-name {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .kit-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+
+    .kit-price {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      color: var(--accent2);
+    }
+
+    /* =============================================
+       SCIENCE SECTION
+    ============================================= */
+    #science {
+      background: var(--bg);
+    }
+
+    .science-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .science-benefits {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .science-benefit {
+      display: flex;
+      gap: 1.4rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .science-benefit:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .benefit-num {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      padding-top: 0.15rem;
+    }
+
+    .benefit-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .benefit-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .science-visual {
+      position: relative;
+    }
+
+    .science-img {
+      height: 520px;
+      object-fit: cover;
+      filter: brightness(0.65);
+    }
+
+    .science-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    .science-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .science-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* =============================================
+       GALLERY
+    ============================================= */
+    #gallery {
+      background: var(--surface);
+      padding: 6rem 0;
+    }
+
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 2px;
+    }
+
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-item:first-child {
+      grid-column: span 2;
+    }
+
+    .gallery-img {
+      height: 340px;
+      object-fit: cover;
+      filter: brightness(0.7) saturate(0.85);
+      transition: filter 0.5s ease, transform 0.5s ease;
+    }
+
+    .gallery-item:first-child .gallery-img {
+      height: 340px;
+    }
+
+    .gallery-item:hover .gallery-img {
+      filter: brightness(0.9) saturate(1.1);
+      transform: scale(1.04);
+    }
+
+    /* =============================================
+       ORDER / SUBSCRIBE
+    ============================================= */
+    #order {
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .order-bg-pattern {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 30% 50%, rgba(126,200,74,0.04) 0%, transparent 60%),
+                        radial-gradient(circle at 70% 50%, rgba(200,160,96,0.04) 0%, transparent 60%);
+    }
+
+    .order-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .order-form {
+      margin-top: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-input:focus { border-color: var(--accent); }
+
+    .form-select {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A9860' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1.2rem center;
+      transition: border-color 0.3s;
+    }
+
+    .form-select:focus { border-color: var(--accent); }
+    .form-select option { background: var(--surface); }
+
+    .form-submit {
+      padding: 1.1rem;
+      background: var(--accent);
+      color: #0E1209;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .form-submit:hover {
+      background: #96da60;
+      transform: translateY(-2px);
+    }
+
+    .form-note {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    #footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 5rem 0 3rem;
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .footer-brand-name span { color: var(--accent); }
+
+    .footer-tagline {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--accent2);
+      margin-bottom: 1.4rem;
+    }
+
+    .footer-about {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .footer-col-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.4rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-links a {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      transition: color 0.3s;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-cert {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+
+    /* =============================================
+       UTILITY
+    ============================================= */
+    .text-accent { color: var(--accent); }
+    .text-amber { color: var(--accent2); }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 1024px) {
+      .species-grid { grid-template-columns: repeat(2, 1fr); }
+      .subs-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+      .rest-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .rest-logos { grid-template-columns: repeat(4, 1fr); }
+      .foraging-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .science-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 3rem; }
+    }
+
+    @media (max-width: 768px) {
+      #navbar { padding: 1.2rem 1.5rem; }
+      #navbar.scrolled { padding: 0.9rem 1.5rem; }
+      .nav-links { display: none; }
+      .container { padding: 0 1.5rem; }
+      section { padding: 5rem 0; }
+      .hero-stats { flex-wrap: wrap; gap: 2rem; }
+      .species-grid { grid-template-columns: 1fr; }
+      .lab-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .lab-badge { right: 1rem; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item:first-child { grid-column: span 1; }
+      .rest-logos { grid-template-columns: repeat(2, 1fr); }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      #scroll-indicator { display: none; }
+      .kit-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       PRELOADER
+  ============================================================ -->
+  <div id="preloader">
+    <svg id="preloader-svg" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Mycelium branching network — animated paths -->
+      <circle class="mycelium-node" cx="160" cy="100" r="3" />
+      <path class="mycelium-path" id="mp1" d="M160,100 Q120,80 80,60" stroke-dasharray="120" stroke-dashoffset="120" />
+      <path class="mycelium-path" id="mp2" d="M160,100 Q180,70 220,45" stroke-dasharray="100" stroke-dashoffset="100" />
+      <path class="mycelium-path" id="mp3" d="M160,100 Q140,120 100,145" stroke-dasharray="110" stroke-dashoffset="110" />
+      <path class="mycelium-path" id="mp4" d="M160,100 Q190,120 230,150" stroke-dasharray="105" stroke-dashoffset="105" />
+      <path class="mycelium-path" id="mp5" d="M160,100 Q155,60 148,30" stroke-dasharray="75" stroke-dashoffset="75" />
+      <path class="mycelium-path" id="mp6" d="M160,100 Q165,150 170,175" stroke-dasharray="80" stroke-dashoffset="80" />
+      <!-- Branch extensions -->
+      <path class="mycelium-path" id="mp7" d="M80,60 Q55,45 30,35" stroke-dasharray="60" stroke-dashoffset="60" />
+      <path class="mycelium-path" id="mp8" d="M80,60 Q65,35 55,15" stroke-dasharray="55" stroke-dashoffset="55" />
+      <path class="mycelium-path" id="mp9" d="M220,45 Q250,30 280,20" stroke-dasharray="65" stroke-dashoffset="65" />
+      <path class="mycelium-path" id="mp10" d="M220,45 Q245,55 265,75" stroke-dasharray="58" stroke-dashoffset="58" />
+      <path class="mycelium-path" id="mp11" d="M100,145 Q75,155 45,165" stroke-dasharray="62" stroke-dashoffset="62" />
+      <path class="mycelium-path" id="mp12" d="M230,150 Q255,160 285,175" stroke-dasharray="65" stroke-dashoffset="65" />
+      <!-- Spore nodes -->
+      <circle class="mycelium-node" cx="80" cy="60" r="2" />
+      <circle class="mycelium-node" cx="220" cy="45" r="2" />
+      <circle class="mycelium-node" cx="100" cy="145" r="2" />
+      <circle class="mycelium-node" cx="230" cy="150" r="2" />
+      <circle class="mycelium-node" cx="148" cy="30" r="1.5" />
+      <circle class="mycelium-node" cx="170" cy="175" r="1.5" />
+      <circle class="mycelium-node" cx="30" cy="35" r="1.5" />
+      <circle class="mycelium-node" cx="55" cy="15" r="1.5" />
+      <circle class="mycelium-node" cx="280" cy="20" r="1.5" />
+      <circle class="mycelium-node" cx="265" cy="75" r="1.5" />
+      <circle class="mycelium-node" cx="45" cy="165" r="1.5" />
+      <circle class="mycelium-node" cx="285" cy="175" r="1.5" />
+    </svg>
+    <div id="mycel-brand">MYCEL</div>
+    <div id="preloader-sub">Grown in Silence</div>
+  </div>
+
+  <!-- ============================================================
+       SCROLL INDICATOR
+  ============================================================ -->
+  <div id="scroll-indicator">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-line"></div>
+    <div class="scroll-dot"></div>
+  </div>
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">MYC<span>E</span>L</a>
+    <ul class="nav-links">
+      <li><a href="#species">Species</a></li>
+      <li><a href="#the-lab">The Lab</a></li>
+      <li><a href="#subscriptions">Subscribe</a></li>
+      <li><a href="#foraging">Kits</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+    </ul>
+    <a href="#order" class="nav-cta">Subscribe</a>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Artisan Mushroom Cultivation — Est. 2019</p>
+      <h1 class="hero-title">
+        Grown<br /><em>in Silence</em>
+      </h1>
+      <p class="hero-desc">
+        We cultivate rare and premium fungi in controlled underground chambers where darkness, humidity, and time converge.
+      </p>
+      <div class="hero-cta-row">
+        <a href="#subscriptions" class="btn-primary">Explore Subscriptions</a>
+        <a href="#the-lab" class="btn-outline">The Lab</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-number">18</div>
+        <div class="hero-stat-label">Cultivated Species</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number">40+</div>
+        <div class="hero-stat-label">Michelin Restaurants</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number">96h</div>
+        <div class="hero-stat-label">Farm-to-Door</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number">0°C</div>
+        <div class="hero-stat-label">Cold-Chain Delivery</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SPECIES
+  ============================================================ -->
+  <section id="species">
+    <div class="container">
+      <div class="species-header">
+        <span class="section-label">Cultivated Varieties</span>
+        <h2 class="section-title">Six Rare <em>Species</em></h2>
+        <p class="section-subtitle" style="margin:0 auto;">Each mushroom is grown from lab-isolated spores under precise environmental conditions — light spectrum, humidity, CO₂ — to achieve its fullest expression.</p>
+      </div>
+      <div class="species-grid">
+        <!-- Card 1 -->
+        <div class="species-card">
+          <img class="species-img" src="https://images.unsplash.com/photo-1504545102780-26b9839a2b3b?w=800&q=80&auto=format&fit=crop" alt="Lion's Mane mushroom" loading="lazy" />
+          <div class="species-overlay">
+            <span class="species-tag">Neuroprotective</span>
+            <div class="species-name">Lion's Mane</div>
+            <div class="species-sci">Hericium erinaceus</div>
+            <div class="species-meta">Waterfall of cascading white spines. Tastes of seafood — sweet, delicate, meaty. Pairs with butter, sage, lemon.</div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="species-card">
+          <img class="species-img" src="https://images.unsplash.com/photo-1518977676878-fa2c67c10e2d?w=800&q=80&auto=format&fit=crop" alt="Wild forest mushrooms" loading="lazy" />
+          <div class="species-overlay">
+            <span class="species-tag">Umami Master</span>
+            <div class="species-name">Japanese Shiitake</div>
+            <div class="species-sci">Lentinula edodes</div>
+            <div class="species-meta">Oak-log cultivated. Thick cap, silky texture. Deep forest umami. Dried form intensifies five-fold in complexity.</div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="species-card">
+          <img class="species-img" src="https://images.unsplash.com/photo-1508424757381-4db63d473630?w=800&q=80&auto=format&fit=crop" alt="Gourmet mushrooms cooking" loading="lazy" />
+          <div class="species-overlay">
+            <span class="species-tag">Seasonal Rarity</span>
+            <div class="species-name">Black Truffle</div>
+            <div class="species-sci">Tuber melanosporum</div>
+            <div class="species-meta">Inoculated hazelnut substrate. Intensely aromatic. Earthy, musky, floral. Available winter months only.</div>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="species-card">
+          <img class="species-img" src="https://images.unsplash.com/photo-1535185384036-28bbc7ec3b52?w=800&q=80&auto=format&fit=crop" alt="Forest floor fungi" loading="lazy" />
+          <div class="species-overlay">
+            <span class="species-tag">Ancient Remedy</span>
+            <div class="species-name">Reishi</div>
+            <div class="species-sci">Ganoderma lucidum</div>
+            <div class="species-meta">Lacquered crimson cap. Bitter, woody — brewed into tinctures and teas. Centuries of ceremonial use in East Asia.</div>
+          </div>
+        </div>
+        <!-- Card 5 -->
+        <div class="species-card">
+          <img class="species-img" src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80&auto=format&fit=crop" alt="Botanical lab mushrooms" loading="lazy" />
+          <div class="species-overlay">
+            <span class="species-tag">Chefs' Favourite</span>
+            <div class="species-name">Oyster Cluster</div>
+            <div class="species-sci">Pleurotus ostreatus</div>
+            <div class="species-meta">Velvet-edged oyster fans in slate, pearl, and blush pink. Tender, mild, nutty. Crisps beautifully at high heat.</div>
+          </div>
+        </div>
+        <!-- Card 6 -->
+        <div class="species-card">
+          <img class="species-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&q=80&auto=format&fit=crop" alt="Earthy mushroom harvest" loading="lazy" />
+          <div class="species-overlay">
+            <span class="species-tag">Adaptogenic</span>
+            <div class="species-name">Chaga Conk</div>
+            <div class="species-sci">Inonotus obliquus</div>
+            <div class="species-meta">Birchwood-grown. Dense, dark, mineral. Brewed as a rich tea with notes of vanilla and dark chocolate.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       THE LAB
+  ============================================================ -->
+  <section id="the-lab">
+    <div class="container">
+      <div class="lab-inner">
+        <div class="lab-visual">
+          <img class="lab-img" src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=1000&q=80&auto=format&fit=crop" alt="Clean room mushroom lab" loading="lazy" />
+          <div class="lab-badge">
+            <div class="lab-badge-num">ISO 5</div>
+            <div class="lab-badge-text">Clean Room<br>Certification</div>
+          </div>
+        </div>
+        <div class="lab-content">
+          <span class="section-label">Cultivation Process</span>
+          <h2 class="section-title">The <em>Laboratory</em></h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">Five controlled stages transform raw substrate into extraordinary fungi. Every variable — temperature, humidity, light spectrum, CO₂ concentration — is monitored in real time.</p>
+          <div class="lab-steps" style="margin-top: 2.8rem;">
+            <div class="lab-step">
+              <div class="lab-step-num">01</div>
+              <div class="lab-step-content">
+                <div class="lab-step-title">Substrate Preparation</div>
+                <div class="lab-step-desc">Hardwood sawdust, wheat bran, gypsum, and purified water are blended, sterilized at 121°C, and vacuum-sealed in polypropylene bags.</div>
+              </div>
+            </div>
+            <div class="lab-step">
+              <div class="lab-step-num">02</div>
+              <div class="lab-step-content">
+                <div class="lab-step-title">Inoculation</div>
+                <div class="lab-step-desc">Lab-isolated liquid culture is injected under laminar flow. Zero contamination tolerance. Each batch is tracked by DNA fingerprint.</div>
+              </div>
+            </div>
+            <div class="lab-step">
+              <div class="lab-step-num">03</div>
+              <div class="lab-step-content">
+                <div class="lab-step-title">Incubation</div>
+                <div class="lab-step-desc">Bags colonize in darkness at 23°C over 18–24 days. Mycelium threads weave through substrate, building a dense white network.</div>
+              </div>
+            </div>
+            <div class="lab-step">
+              <div class="lab-step-num">04</div>
+              <div class="lab-step-content">
+                <div class="lab-step-title">Fruiting</div>
+                <div class="lab-step-desc">Temperature drops to 16°C. Humidity rises to 90%. Fresh air exchange triggers pinning. Mushrooms emerge within 5–8 days.</div>
+              </div>
+            </div>
+            <div class="lab-step">
+              <div class="lab-step-num">05</div>
+              <div class="lab-step-content">
+                <div class="lab-step-title">Harvest &amp; Cold-Chain</div>
+                <div class="lab-step-desc">Hand-twisted at peak development. Packed within 2 hours in breathable paper at 2°C. Delivered to your door within 96 hours of harvest.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SUBSCRIPTIONS
+  ============================================================ -->
+  <section id="subscriptions">
+    <div class="container">
+      <div class="subs-header">
+        <span class="section-label">Monthly Delivery</span>
+        <h2 class="section-title">Choose Your <em>Box</em></h2>
+        <p class="section-subtitle" style="margin:0 auto;margin-top:1rem;">Seasonal selections curated by our mycologists. Cancel anytime. No commitment required.</p>
+      </div>
+      <div class="subs-grid">
+
+        <!-- Explorer -->
+        <div class="sub-card">
+          <div class="sub-tier">Tier I</div>
+          <div class="sub-name">Explorer</div>
+          <div class="sub-price">$48<span> / month</span></div>
+          <div class="sub-divider"></div>
+          <p class="sub-desc">Your introduction to the underground. A curated selection of 3 seasonal varieties.</p>
+          <ul class="sub-features">
+            <li>3 cultivated species (400g each)</li>
+            <li>Monthly variety rotation</li>
+            <li>Digital cultivation guide</li>
+            <li>Recipe card + pairing notes</li>
+            <li>Cold-chain shipping included</li>
+          </ul>
+          <a href="#order" class="sub-btn">Begin the Journey</a>
+        </div>
+
+        <!-- Connoisseur -->
+        <div class="sub-card featured">
+          <div class="sub-tier">Tier II</div>
+          <div class="sub-name">Connoisseur</div>
+          <div class="sub-price">$98<span> / month</span></div>
+          <div class="sub-divider"></div>
+          <p class="sub-desc">For the devoted. Six rare varieties including seasonal and limited-run cultivars.</p>
+          <ul class="sub-features">
+            <li>6 species (500g each)</li>
+            <li>2 rare or seasonal varieties</li>
+            <li>Tincture or dried selection</li>
+            <li>Access to lab visit waitlist</li>
+            <li>Early harvest notifications</li>
+            <li>Priority cold-chain delivery</li>
+          </ul>
+          <a href="#order" class="sub-btn">Become Connoisseur</a>
+        </div>
+
+        <!-- Chef's Reserve -->
+        <div class="sub-card">
+          <div class="sub-tier">Tier III</div>
+          <div class="sub-name">Chef's Reserve</div>
+          <div class="sub-price">$220<span> / month</span></div>
+          <div class="sub-divider"></div>
+          <p class="sub-desc">Restaurant-grade quantities with mycologist consultation and custom cultivation requests.</p>
+          <ul class="sub-features">
+            <li>Full 8-species selection (1kg each)</li>
+            <li>Black truffle allocation (seasonal)</li>
+            <li>Custom cultivation requests</li>
+            <li>Monthly mycologist consultation</li>
+            <li>Wholesale pricing access</li>
+            <li>Same-day metro delivery option</li>
+          </ul>
+          <a href="#order" class="sub-btn">Reserve Your Allocation</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RESTAURANT PARTNERS
+  ============================================================ -->
+  <section id="restaurants">
+    <div class="container">
+      <div class="rest-inner">
+        <div class="rest-left">
+          <span class="section-label">Wholesale Partners</span>
+          <h2 class="section-title">Trusted by <em>40+</em> Michelin Kitchens</h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">Our fungi appear on tasting menus across the world's most discerning restaurants. Consistency, traceability, and rarity at scale.</p>
+          <div class="rest-stat-row">
+            <div>
+              <div class="rest-stat-num">40+</div>
+              <div class="rest-stat-label">Michelin Stars</div>
+            </div>
+            <div>
+              <div class="rest-stat-num">12</div>
+              <div class="rest-stat-label">Countries Served</div>
+            </div>
+            <div>
+              <div class="rest-stat-num">18kg</div>
+              <div class="rest-stat-label">Daily Output</div>
+            </div>
+          </div>
+          <a href="#order" class="btn-outline" style="display:inline-block;margin-top:2.4rem;">Wholesale Inquiry</a>
+        </div>
+        <div class="rest-logos">
+          <div class="rest-logo-item"><div class="rest-logo-text">ATELIER<br>CRENN</div></div>
+          <div class="rest-logo-item"><div class="rest-logo-text">THE FAT<br>DUCK</div></div>
+          <div class="rest-logo-item"><div class="rest-logo-text">ELEVEN<br>MADISON</div></div>
+          <div class="rest-logo-item"><div class="rest-logo-text">NOMA<br>STUDIO</div></div>
+          <div class="rest-logo-item"><div class="rest-logo-text">MASA<br>NY</div></div>
+          <div class="rest-logo-item"><div class="rest-logo-text">GERANIUM<br>CPH</div></div>
+          <div class="rest-logo-item"><div class="rest-logo-text">QUIQUE<br>DACOSTA</div></div>
+          <div class="rest-logo-item"><div class="rest-logo-text">MUGARITZ<br>SAN</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FORAGING KITS
+  ============================================================ -->
+  <section id="foraging">
+    <div class="container">
+      <div class="foraging-inner">
+        <div class="kit-grid">
+          <div class="kit-card">
+            <div class="kit-icon">🪵</div>
+            <div class="kit-name">Log Inoculation Kit</div>
+            <div class="kit-desc">Plug-spawn a white oak log with shiitake or oyster mushrooms. Watch your log fruit for 3–5 years. Beginner-friendly.</div>
+            <div class="kit-price">$65</div>
+          </div>
+          <div class="kit-card">
+            <div class="kit-icon">🧪</div>
+            <div class="kit-name">Petri Lab Starter</div>
+            <div class="kit-desc">Learn agar preparation, spore transfer, and culture isolation. Includes 10 petri dishes, agar powder, and beginner spore syringe.</div>
+            <div class="kit-price">$88</div>
+          </div>
+          <div class="kit-card">
+            <div class="kit-icon">🌾</div>
+            <div class="kit-name">Grain Spawn Block</div>
+            <div class="kit-desc">Fully colonized rye grain spawn for Lion's Mane or Reishi. Mix into substrate and fruit within 2 weeks. 1.2kg block.</div>
+            <div class="kit-price">$42</div>
+          </div>
+          <div class="kit-card">
+            <div class="kit-icon">🔬</div>
+            <div class="kit-name">Master Cultivator Set</div>
+            <div class="kit-desc">Complete home tek: pressure cooker bag, sterile substrate, LC syringe, humidity tent, grow light. Everything to grow professionally.</div>
+            <div class="kit-price">$180</div>
+          </div>
+        </div>
+        <div class="foraging-text">
+          <span class="section-label">Home Cultivation</span>
+          <h2 class="section-title">Grow Your <em>Own</em></h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">We believe everyone should grow food. Our kits are designed by mycologists for first-time growers — with full support and video guides.</p>
+          <ul style="list-style:none;margin-top:2rem;display:flex;flex-direction:column;gap:0.8rem;">
+            <li style="font-size:0.8rem;color:var(--text-muted);display:flex;gap:0.8rem;align-items:flex-start;">
+              <span style="color:var(--accent);font-size:0.65rem;margin-top:0.2rem;">&#9632;</span>
+              Video grow guides for each kit
+            </li>
+            <li style="font-size:0.8rem;color:var(--text-muted);display:flex;gap:0.8rem;align-items:flex-start;">
+              <span style="color:var(--accent);font-size:0.65rem;margin-top:0.2rem;">&#9632;</span>
+              Direct mycologist support via email
+            </li>
+            <li style="font-size:0.8rem;color:var(--text-muted);display:flex;gap:0.8rem;align-items:flex-start;">
+              <span style="color:var(--accent);font-size:0.65rem;margin-top:0.2rem;">&#9632;</span>
+              Success guarantee — we reship if kit fails
+            </li>
+            <li style="font-size:0.8rem;color:var(--text-muted);display:flex;gap:0.8rem;align-items:flex-start;">
+              <span style="color:var(--accent);font-size:0.65rem;margin-top:0.2rem;">&#9632;</span>
+              Community forum access (4,200+ growers)
+            </li>
+          </ul>
+          <a href="#order" class="btn-primary" style="display:inline-block;margin-top:2.4rem;">Shop Kits</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCIENCE
+  ============================================================ -->
+  <section id="science">
+    <div class="container">
+      <div class="science-inner">
+        <div class="science-left">
+          <span class="section-label">Research &amp; Wellness</span>
+          <h2 class="section-title">The <em>Network</em> Beneath</h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">Mycelium isn't just root — it's intelligence. A single cubic centimeter of forest soil holds 8 kilometers of fungal threads transmitting nutrients, signals, and chemical defense across the ecosystem.</p>
+          <div class="science-benefits" style="margin-top:2.4rem;">
+            <div class="science-benefit">
+              <div class="benefit-num">01</div>
+              <div>
+                <div class="benefit-title">Cognitive Enhancement</div>
+                <div class="benefit-desc">Lion's mane stimulates Nerve Growth Factor (NGF) synthesis. Clinical studies show measurable improvement in memory and focus after 8 weeks of daily consumption.</div>
+              </div>
+            </div>
+            <div class="science-benefit">
+              <div class="benefit-num">02</div>
+              <div>
+                <div class="benefit-title">Immune Modulation</div>
+                <div class="benefit-desc">Beta-glucans in shiitake, reishi, and turkey tail activate macrophages and NK cells. Chaga contains the highest known antioxidant density of any food source.</div>
+              </div>
+            </div>
+            <div class="science-benefit">
+              <div class="benefit-num">03</div>
+              <div>
+                <div class="benefit-title">Gut Microbiome Support</div>
+                <div class="benefit-desc">Fungal polysaccharides serve as prebiotic fuel for Bifidobacterium and Lactobacillus strains. Shown to reduce systemic inflammation markers in 4 weeks.</div>
+              </div>
+            </div>
+            <div class="science-benefit">
+              <div class="benefit-num">04</div>
+              <div>
+                <div class="benefit-title">Adaptogenic Stress Response</div>
+                <div class="benefit-desc">Reishi triterpenes regulate cortisol rhythms and support deep sleep architecture. Used in integrative oncology programs at leading research hospitals.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="science-visual">
+          <img class="science-img" src="https://images.unsplash.com/photo-1530062845289-9109b2c9d409?w=900&q=80&auto=format&fit=crop" alt="Earthy soil mycelium texture" loading="lazy" />
+          <div class="science-tag-row">
+            <span class="science-tag">Beta-Glucans</span>
+            <span class="science-tag">Triterpenes</span>
+            <span class="science-tag">Hericenones</span>
+            <span class="science-tag">Erinacines</span>
+            <span class="science-tag">Lentinan</span>
+            <span class="science-tag">Ergothioneine</span>
+            <span class="science-tag">NGF Induction</span>
+            <span class="science-tag">BDNF Support</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       GALLERY
+  ============================================================ -->
+  <section id="gallery">
+    <div class="container" style="max-width:100%;padding:0;">
+      <div class="gallery-header" style="padding:0 3rem;margin-bottom:3rem;">
+        <span class="section-label">From the Lab</span>
+        <h2 class="section-title">In the <em>Chamber</em></h2>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://images.unsplash.com/photo-1504545102780-26b9839a2b3b?w=1200&q=80&auto=format&fit=crop" alt="Macro mushroom photography" loading="lazy" />
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://images.unsplash.com/photo-1518977676878-fa2c67c10e2d?w=800&q=80&auto=format&fit=crop" alt="Wild forest mushrooms" loading="lazy" />
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800&q=80&auto=format&fit=crop" alt="Clean room lab cultivation" loading="lazy" />
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80&auto=format&fit=crop" alt="Botanical lab environment" loading="lazy" />
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&q=80&auto=format&fit=crop" alt="Harvest wooden crate" loading="lazy" />
+        </div>
+        <div class="gallery-item">
+          <img class="gallery-img" src="https://images.unsplash.com/photo-1530062845289-9109b2c9d409?w=800&q=80&auto=format&fit=crop" alt="Earthy substrate texture" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ORDER / SUBSCRIBE
+  ============================================================ -->
+  <section id="order">
+    <div class="order-bg-pattern"></div>
+    <div class="container">
+      <div class="order-inner">
+        <span class="section-label">Begin Your Subscription</span>
+        <h2 class="section-title">Enter the <em>Underground</em></h2>
+        <p class="section-subtitle" style="margin:0 auto;margin-top:1rem;text-align:center;">Join 3,400+ members receiving rare mushrooms from our lab to their kitchen.</p>
+        <form class="order-form" onsubmit="return false;">
+          <div class="form-row">
+            <input type="text" class="form-input" placeholder="First Name" />
+            <input type="text" class="form-input" placeholder="Last Name" />
+          </div>
+          <input type="email" class="form-input" placeholder="Email Address" />
+          <input type="text" class="form-input" placeholder="Delivery Address" />
+          <div class="form-row">
+            <select class="form-select">
+              <option value="" disabled selected>Select Subscription Tier</option>
+              <option value="explorer">Explorer — $48/mo</option>
+              <option value="connoisseur">Connoisseur — $98/mo</option>
+              <option value="chef">Chef's Reserve — $220/mo</option>
+            </select>
+            <select class="form-select">
+              <option value="" disabled selected>Delivery Frequency</option>
+              <option value="monthly">Monthly</option>
+              <option value="biweekly">Bi-Weekly</option>
+              <option value="weekly">Weekly (Chef's Reserve only)</option>
+            </select>
+          </div>
+          <button type="submit" class="form-submit">Begin Subscription</button>
+          <p class="form-note">Cancel anytime. First delivery within 5 business days. All orders are 100% satisfaction guaranteed.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-brand-name">MYC<span>E</span>L</div>
+          <div class="footer-tagline">Grown in Silence</div>
+          <p class="footer-about">Artisan mushroom cultivation lab specializing in rare and premium fungi. Farm-to-table subscriptions, restaurant wholesale, and home growing education.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Products</div>
+          <ul class="footer-links">
+            <li><a href="#subscriptions">Explorer Box</a></li>
+            <li><a href="#subscriptions">Connoisseur Box</a></li>
+            <li><a href="#subscriptions">Chef's Reserve</a></li>
+            <li><a href="#foraging">Foraging Kits</a></li>
+            <li><a href="#restaurants">Wholesale</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">The Lab</div>
+          <ul class="footer-links">
+            <li><a href="#species">Our Species</a></li>
+            <li><a href="#the-lab">Process</a></li>
+            <li><a href="#science">Research</a></li>
+            <li><a href="#">Lab Tours</a></li>
+            <li><a href="#">Certifications</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <ul class="footer-links">
+            <li><a href="#">About MYCEL</a></li>
+            <li><a href="#">Our Story</a></li>
+            <li><a href="#">Sustainability</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2026 MYCEL Laboratory. All rights reserved.</div>
+        <div class="footer-cert">USDA Certified Organic &nbsp;|&nbsp; ISO 22000 Food Safety &nbsp;|&nbsp; B Corp Certified</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       SCRIPTS
+  ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script>
+    // ============================================================
+    // SplitText inline polyfill (Club GSAP not available on CDN)
+    // ============================================================
+    class SplitText {
+      constructor(el, opts = {}) {
+        this.el = typeof el === 'string' ? document.querySelector(el) : el;
+        this.chars = [];
+        this.words = [];
+        this._split();
+      }
+      _split() {
+        const t = this.el.textContent;
+        this.el.innerHTML = '';
+        t.split(' ').forEach((w, i) => {
+          const ws = document.createElement('span');
+          ws.style.cssText = 'display:inline-block;overflow:hidden;';
+          w.split('').forEach(c => {
+            const s = document.createElement('span');
+            s.textContent = c;
+            s.style.cssText = 'display:inline-block;';
+            this.chars.push(s);
+            ws.appendChild(s);
+          });
+          this.words.push(ws);
+          this.el.appendChild(ws);
+          if (i < t.split(' ').length - 1)
+            this.el.appendChild(document.createTextNode(' '));
+        });
+      }
+    }
+
+    // ============================================================
+    // PRELOADER — mycelium path animation
+    // ============================================================
+    (function () {
+      const paths = document.querySelectorAll('.mycelium-path');
+      const nodes = document.querySelectorAll('.mycelium-node');
+      const brand = document.getElementById('mycel-brand');
+      const sub   = document.getElementById('preloader-sub');
+
+      // Hide nodes + brand initially
+      gsap.set(nodes, { scale: 0, transformOrigin: 'center' });
+      gsap.set([brand, sub], { autoAlpha: 0, y: 12 });
+
+      const tl = gsap.timeline({
+        onComplete: function () {
+          gsap.to('#preloader', {
+            autoAlpha: 0,
+            duration: 0.8,
+            ease: 'power2.inOut',
+            onComplete: function () {
+              document.getElementById('preloader').style.display = 'none';
+              document.getElementById('scroll-indicator').style.visibility = 'visible';
+            }
+          });
+        }
+      });
+
+      // Animate each path stroke
+      paths.forEach((p, idx) => {
+        const len = parseFloat(p.getAttribute('stroke-dasharray')) || 120;
+        tl.to(p, {
+          strokeDashoffset: 0,
+          duration: 0.45,
+          ease: 'power1.inOut'
+        }, idx * 0.08);
+      });
+
+      tl.to(nodes, {
+        scale: 1,
+        duration: 0.4,
+        stagger: 0.04,
+        ease: 'back.out(1.5)'
+      }, '-=0.5');
+
+      tl.to([brand, sub], {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: 'power2.out'
+      }, '-=0.2');
+
+      tl.to({}, { duration: 1.2 }); // hold
+    })();
+
+    // ============================================================
+    // GSAP REGISTER + SCROLLTRIGGER
+    // ============================================================
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ============================================================
+    // NAVBAR SCROLL BEHAVIOR
+    // ============================================================
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', function () {
+      if (window.scrollY > 80) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // ============================================================
+    // HERO ANIMATIONS
+    // ============================================================
+    gsap.from('.hero-bg', {
+      immediateRender: false,
+      scale: 1.15,
+      duration: 1.8,
+      delay: 2.6,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.hero-eyebrow', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.9,
+      delay: 2.8,
+      ease: 'power2.out'
+    });
+
+    // Hero title word split
+    const heroTitleEl = document.querySelector('.hero-title');
+    if (heroTitleEl) {
+      const heroSplit = new SplitText(heroTitleEl);
+      gsap.from(heroSplit.chars, {
+        immediateRender: false,
+        autoAlpha: 0,
+        y: 28,
+        duration: 1.0,
+        delay: 3.0,
+        stagger: 0.04,
+        ease: 'power2.out'
+      });
+    }
+
+    gsap.from('.hero-desc', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.9,
+      delay: 3.4,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.hero-cta-row', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.9,
+      delay: 3.6,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.hero-stat', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.9,
+      delay: 3.8,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    // ============================================================
+    // SPECIES SECTION
+    // ============================================================
+    gsap.from('.species-header', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 24,
+      duration: 1.0,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#species',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.species-card', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 28,
+      duration: 1.0,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.species-grid',
+        start: 'top 85%'
+      }
+    });
+
+    // ============================================================
+    // THE LAB SECTION
+    // ============================================================
+    gsap.from('.lab-visual', {
+      immediateRender: false,
+      autoAlpha: 0,
+      x: -40,
+      duration: 1.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#the-lab',
+        start: 'top 75%'
+      }
+    });
+
+    gsap.from('.lab-content .section-label, .lab-content .section-title, .lab-content .divider, .lab-content .section-subtitle', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.9,
+      stagger: 0.12,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#the-lab',
+        start: 'top 75%'
+      }
+    });
+
+    gsap.from('.lab-step', {
+      immediateRender: false,
+      autoAlpha: 0,
+      x: 24,
+      duration: 0.9,
+      stagger: 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.lab-steps',
+        start: 'top 85%'
+      }
+    });
+
+    // ============================================================
+    // SUBSCRIPTIONS
+    // ============================================================
+    gsap.from('.subs-header', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 24,
+      duration: 1.0,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#subscriptions',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.sub-card', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 28,
+      duration: 1.0,
+      stagger: 0.15,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.subs-grid',
+        start: 'top 85%'
+      }
+    });
+
+    // ============================================================
+    // RESTAURANTS
+    // ============================================================
+    gsap.from('.rest-left', {
+      immediateRender: false,
+      autoAlpha: 0,
+      x: -28,
+      duration: 1.0,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#restaurants',
+        start: 'top 78%'
+      }
+    });
+
+    gsap.from('.rest-logo-item', {
+      immediateRender: false,
+      autoAlpha: 0,
+      scale: 0.92,
+      duration: 0.7,
+      stagger: 0.07,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.rest-logos',
+        start: 'top 85%'
+      }
+    });
+
+    // ============================================================
+    // FORAGING KITS
+    // ============================================================
+    gsap.from('.kit-card', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 24,
+      duration: 0.9,
+      stagger: 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#foraging',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.foraging-text', {
+      immediateRender: false,
+      autoAlpha: 0,
+      x: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#foraging',
+        start: 'top 80%'
+      }
+    });
+
+    // ============================================================
+    // SCIENCE
+    // ============================================================
+    gsap.from('.science-left', {
+      immediateRender: false,
+      autoAlpha: 0,
+      x: -28,
+      duration: 1.0,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#science',
+        start: 'top 78%'
+      }
+    });
+
+    gsap.from('.science-visual', {
+      immediateRender: false,
+      autoAlpha: 0,
+      x: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#science',
+        start: 'top 78%'
+      }
+    });
+
+    gsap.from('.science-benefit', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.9,
+      stagger: 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.science-benefits',
+        start: 'top 85%'
+      }
+    });
+
+    // ============================================================
+    // GALLERY
+    // ============================================================
+    gsap.from('.gallery-item', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 24,
+      duration: 1.0,
+      stagger: 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#gallery',
+        start: 'top 80%'
+      }
+    });
+
+    // ============================================================
+    // ORDER
+    // ============================================================
+    gsap.from('.order-inner', {
+      immediateRender: false,
+      autoAlpha: 0,
+      y: 24,
+      duration: 1.0,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#order',
+        start: 'top 80%'
+      }
+    });
+
+    // ============================================================
+    // HERO PARALLAX
+    // ============================================================
+    gsap.to('.hero-bg', {
+      immediateRender: false,
+      yPercent: 25,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+
+    // ============================================================
+    // SCROLL INDICATOR VISIBILITY
+    // ============================================================
+    const scrollInd = document.getElementById('scroll-indicator');
+    scrollInd.style.visibility = 'hidden';
+
+    // Show after preloader (fallback)
+    setTimeout(function () {
+      scrollInd.style.visibility = 'visible';
+    }, 4000);
+
+    ScrollTrigger.create({
+      trigger: '#hero',
+      start: 'bottom 60%',
+      onEnter: function () {
+        gsap.to(scrollInd, { autoAlpha: 0, duration: 0.4 });
+      },
+      onLeaveBack: function () {
+        gsap.to(scrollInd, { autoAlpha: 1, duration: 0.4 });
+      }
+    });
+
+  </script>
+</body>
+</html>

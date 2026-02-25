@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VIRIDIS — Worlds Within Glass</title>
+  <meta name="description" content="VIRIDIS — Bespoke luxury glass terrariums and living botanical sculptures. Commission-based, architectural-scale installations for homes and offices." />
+  <meta property="og:title" content="VIRIDIS — Worlds Within Glass" />
+  <meta property="og:description" content="Bespoke glass terrariums and living botanical sculptures crafted with botanical precision." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ============================================================
+       CSS VARIABLES
+    ============================================================ */
+    :root {
+      --bg: #F2F5EE;          /* avg=(242+245+238)/3=241.7 ✅ */
+      --surface: #E8EDE2;     /* avg=(232+237+226)/3=231.7 ✅ */
+      --surface2: #DDE4D6;    /* avg=(221+228+214)/3=221 ✅ */
+      --accent: #3A7A4A;      /* deep botanical green */
+      --accent2: #8B6940;     /* aged wood brown */
+      --accent-light: #6AAE7A;
+      --text: #1C2818;
+      --text-muted: #5A7050;
+      --border: rgba(58,122,74,0.15);
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #F2F5EE;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .preloader-sphere {
+      width: 100px;
+      height: 100px;
+    }
+
+    .preloader-logo {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .preloader-tagline {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .preloader-bar-wrap {
+      width: 160px;
+      height: 1px;
+      background: rgba(58,122,74,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+    }
+
+    /* ============================================================
+       SCROLL INDICATOR (LEFT FIXED)
+    ============================================================ */
+    #scroll-indicator {
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scroll-label {
+      font-family: var(--font-body);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+
+    .scroll-leaves {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scroll-leaf {
+      width: 8px;
+      height: 14px;
+      border-radius: 50% 50% 50% 0 / 60% 60% 40% 40%;
+      background: var(--accent);
+      transform-origin: center bottom;
+    }
+
+    .scroll-leaf.active {
+      background: var(--accent2);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 800;
+      padding: 0 60px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    #navbar.scrolled {
+      background: rgba(242,245,238,0.96);
+      box-shadow: 0 1px 0 rgba(58,122,74,0.12);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      color: var(--text);
+      text-transform: uppercase;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #F2F5EE !important;
+      padding: 10px 22px;
+      font-size: 0.68rem !important;
+      letter-spacing: 0.16em !important;
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+    }
+
+    .hero-image {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 40%;
+      transform: scale(1.08);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, rgba(242,245,238,0.88) 40%, rgba(242,245,238,0.3) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      padding: 0 80px;
+      max-width: 720px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3.2rem, 6vw, 6.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--text);
+      margin-bottom: 32px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 420px;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 16px 36px;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: #2d6038;
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      color: var(--accent);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--accent);
+      transition: opacity 0.3s;
+    }
+
+    .btn-ghost:hover {
+      opacity: 0.7;
+    }
+
+    .hero-badge {
+      position: absolute;
+      right: 80px;
+      bottom: 80px;
+      z-index: 20;
+      width: 120px;
+      height: 120px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px;
+      gap: 4px;
+    }
+
+    .badge-num {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      font-weight: 500;
+      color: var(--bg);
+      line-height: 1;
+    }
+
+    .badge-label {
+      font-family: var(--font-body);
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: rgba(242,245,238,0.85);
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* ============================================================
+       SECTION SHARED
+    ============================================================ */
+    section {
+      padding: 120px 80px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .section-eyebrow::before {
+      content: '';
+      display: block;
+      width: 30px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.4rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .section-subtitle {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.8;
+      margin-bottom: 64px;
+    }
+
+    /* ============================================================
+       COLLECTION
+    ============================================================ */
+    #collection {
+      background: var(--surface);
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+    }
+
+    .collection-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .collection-card img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+
+    .collection-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .collection-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(28,40,24,0.85) 0%, rgba(28,40,24,0.1) 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px 28px;
+    }
+
+    .collection-name {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: #F2F5EE;
+      margin-bottom: 6px;
+    }
+
+    .collection-tag {
+      font-family: var(--font-body);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: rgba(242,245,238,0.7);
+      text-transform: uppercase;
+    }
+
+    .collection-arrow {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(242,245,238,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(242,245,238,0.8);
+      font-size: 1rem;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .collection-card:hover .collection-arrow {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ============================================================
+       ECOSYSTEMS
+    ============================================================ */
+    #ecosystems {
+      background: var(--bg);
+    }
+
+    .eco-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 64px;
+    }
+
+    .eco-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+    }
+
+    .eco-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 32px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: transform 0.4s, box-shadow 0.4s;
+    }
+
+    .eco-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(58,122,74,0.12);
+    }
+
+    .eco-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(58,122,74,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--accent);
+      font-size: 1.5rem;
+    }
+
+    .eco-name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .eco-desc {
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       COMMISSION PROCESS
+    ============================================================ */
+    #process {
+      background: var(--accent);
+      padding: 120px 80px;
+    }
+
+    #process .section-eyebrow {
+      color: rgba(242,245,238,0.7);
+    }
+
+    #process .section-eyebrow::before {
+      background: rgba(242,245,238,0.4);
+    }
+
+    #process .section-title {
+      color: #F2F5EE;
+    }
+
+    #process .section-subtitle {
+      color: rgba(242,245,238,0.75);
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+    }
+
+    .process-step {
+      background: rgba(255,255,255,0.07);
+      padding: 48px 36px;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: background 0.4s;
+    }
+
+    .process-step:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .step-num {
+      font-family: var(--font-heading);
+      font-size: 4rem;
+      font-weight: 300;
+      color: rgba(242,245,238,0.15);
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+
+    .step-title {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #F2F5EE;
+      margin-bottom: 16px;
+    }
+
+    .step-desc {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: rgba(242,245,238,0.7);
+      line-height: 1.8;
+    }
+
+    .step-icon {
+      position: absolute;
+      top: 36px;
+      right: 36px;
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(242,245,238,0.8);
+      font-size: 1.1rem;
+    }
+
+    /* ============================================================
+       SCALE
+    ============================================================ */
+    #scale {
+      background: var(--surface);
+    }
+
+    .scale-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: 64px;
+    }
+
+    .scale-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scale-image img {
+      width: 100%;
+      height: 600px;
+      object-fit: cover;
+    }
+
+    .scale-image-badge {
+      position: absolute;
+      bottom: 32px;
+      left: 32px;
+      background: rgba(242,245,238,0.94);
+      padding: 16px 24px;
+      backdrop-filter: blur(8px);
+    }
+
+    .scale-badge-text {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .scale-badge-sub {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .scale-tiers {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .scale-tier {
+      padding: 28px 32px;
+      background: var(--bg);
+      border-left: 3px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+      cursor: default;
+    }
+
+    .scale-tier:hover,
+    .scale-tier.active {
+      border-left-color: var(--accent);
+      background: #EAF0E5;
+    }
+
+    .tier-label {
+      font-family: var(--font-body);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .tier-name {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .tier-range {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       CARE SERVICE
+    ============================================================ */
+    #care {
+      background: var(--bg);
+    }
+
+    .care-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 64px;
+    }
+
+    .care-image img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+    }
+
+    .care-features {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .care-feature {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .care-feature:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .care-feature-icon {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      background: rgba(58,122,74,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+
+    .care-feature-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .care-feature-desc {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .care-pricing {
+      margin-top: 32px;
+      padding: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .care-pricing-label {
+      font-family: var(--font-body);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .care-pricing-price {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .care-pricing-note {
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       WORKSHOP
+    ============================================================ */
+    #workshop {
+      background: var(--surface2);
+    }
+
+    .workshop-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .workshop-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .workshop-image img {
+      width: 100%;
+      height: 580px;
+      object-fit: cover;
+    }
+
+    .workshop-tag {
+      position: absolute;
+      top: 32px;
+      left: 32px;
+      background: var(--accent2);
+      color: #F2F5EE;
+      font-family: var(--font-body);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+    }
+
+    .workshop-details {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .workshop-sessions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .session-card {
+      padding: 24px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .session-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .session-level {
+      font-family: var(--font-body);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .session-name {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .session-info {
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       GALLERY
+    ============================================================ */
+    #gallery {
+      background: var(--text);
+      padding: 120px 80px;
+    }
+
+    #gallery .section-eyebrow {
+      color: rgba(242,245,238,0.6);
+    }
+
+    #gallery .section-eyebrow::before {
+      background: rgba(242,245,238,0.3);
+    }
+
+    #gallery .section-title {
+      color: #F2F5EE;
+    }
+
+    #gallery .section-subtitle {
+      color: rgba(242,245,238,0.6);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 360px);
+      gap: 3px;
+      margin-top: 64px;
+    }
+
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-item.large {
+      grid-row: span 2;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(28,40,24,0.9) 0%, transparent 100%);
+      padding: 24px 20px 20px;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+    }
+
+    .gallery-item:hover .gallery-caption {
+      transform: translateY(0);
+    }
+
+    .gallery-caption-name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: #F2F5EE;
+      margin-bottom: 4px;
+    }
+
+    .gallery-caption-loc {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: rgba(242,245,238,0.65);
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       TESTIMONIALS
+    ============================================================ */
+    #testimonials {
+      background: var(--surface);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 64px;
+    }
+
+    .testimonial-card {
+      padding: 48px 36px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .testimonial-quote {
+      font-family: var(--font-heading);
+      font-size: 5rem;
+      line-height: 0.8;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 32px;
+    }
+
+    .testimonial-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .testimonial-author {
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.06em;
+    }
+
+    .testimonial-role {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ============================================================
+       COMMISSION FORM
+    ============================================================ */
+    #commission {
+      background: var(--bg);
+    }
+
+    .commission-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 64px;
+    }
+
+    .commission-info {
+      position: sticky;
+      top: 100px;
+    }
+
+    .commission-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .commission-stat {
+      padding: 28px 24px;
+      background: var(--surface);
+      border-top: 2px solid var(--accent);
+    }
+
+    .stat-num {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 400;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .commission-form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 14px 18px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.3s;
+      -webkit-appearance: none;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .form-textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-submit {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 18px 40px;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      align-self: flex-start;
+    }
+
+    .form-submit:hover {
+      background: #2d6038;
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    #footer {
+      background: var(--surface);
+      padding: 80px 80px 48px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 60px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .footer-brand-desc {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 280px;
+      margin-bottom: 28px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .footer-social a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .footer-col-title {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      color: var(--text);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      transition: color 0.25s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    .footer-contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 18px;
+    }
+
+    .footer-contact-label {
+      font-family: var(--font-body);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .footer-contact-val {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-legal a {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      transition: color 0.25s;
+    }
+
+    .footer-legal a:hover {
+      color: var(--accent);
+    }
+
+    /* ============================================================
+       UTILITIES
+    ============================================================ */
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    /* ============================================================
+       RESPONSIVE HELPERS
+    ============================================================ */
+    @media (max-width: 900px) {
+      section { padding: 80px 32px; }
+      #hero { padding: 0; }
+      .hero-content { padding: 0 32px; }
+      .collection-grid { grid-template-columns: 1fr 1fr; }
+      .eco-grid { grid-template-columns: repeat(3, 1fr); }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+      .scale-layout { grid-template-columns: 1fr; }
+      .care-layout { grid-template-columns: 1fr; }
+      .workshop-layout { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .commission-layout { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      #navbar { padding: 0 24px; }
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       PRELOADER
+  ============================================================ -->
+  <div id="preloader">
+    <svg class="preloader-sphere" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Sphere outline -->
+      <circle class="pl-sphere" cx="50" cy="50" r="44" stroke="#3A7A4A" stroke-width="1.5" fill="rgba(58,122,74,0.06)"/>
+      <!-- Equator line -->
+      <ellipse class="pl-equator" cx="50" cy="50" rx="44" ry="12" stroke="#3A7A4A" stroke-width="1" stroke-dasharray="3 3"/>
+      <!-- Vertical meridian -->
+      <line class="pl-meridian" x1="50" y1="6" x2="50" y2="94" stroke="#3A7A4A" stroke-width="1" stroke-dasharray="3 3"/>
+      <!-- Stem -->
+      <line class="pl-stem" x1="50" y1="54" x2="50" y2="75" stroke="#3A7A4A" stroke-width="1.5"/>
+      <!-- Left leaf -->
+      <path class="pl-leaf1" d="M50 65 Q38 58 36 48 Q44 50 50 65Z" fill="#3A7A4A"/>
+      <!-- Right leaf -->
+      <path class="pl-leaf2" d="M50 60 Q62 53 64 43 Q56 45 50 60Z" fill="#6AAE7A"/>
+      <!-- Small leaf top -->
+      <path class="pl-leaf3" d="M50 54 Q44 46 46 38 Q52 42 50 54Z" fill="#3A7A4A"/>
+    </svg>
+    <div>
+      <div class="preloader-logo" id="pl-logo">VIRIDIS</div>
+      <div class="preloader-tagline" id="pl-tagline">Worlds Within Glass</div>
+    </div>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar" id="pl-bar"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCROLL INDICATOR (LEFT FIXED)
+  ============================================================ -->
+  <div id="scroll-indicator">
+    <div class="scroll-label">Scroll</div>
+    <div class="scroll-leaves">
+      <div class="scroll-leaf active" id="leaf-0"></div>
+      <div class="scroll-leaf" id="leaf-1"></div>
+      <div class="scroll-leaf" id="leaf-2"></div>
+      <div class="scroll-leaf" id="leaf-3"></div>
+      <div class="scroll-leaf" id="leaf-4"></div>
+    </div>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <nav id="navbar">
+    <div class="nav-logo">VIRIDIS</div>
+    <ul class="nav-links">
+      <li><a href="#collection">Collection</a></li>
+      <li><a href="#ecosystems">Ecosystems</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#workshop">Workshop</a></li>
+      <li><a href="#commission" class="nav-cta">Commission</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero">
+    <div class="hero-image" id="hero-img"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Botanical Atelier — Est. 2011</div>
+      <h1 class="hero-title">
+        Worlds<br><em>Within Glass</em>
+      </h1>
+      <p class="hero-subtitle">
+        Bespoke living sculptures of moss, fern and flora — contained in hand-blown glass, scaled from desk to architectural installation.
+      </p>
+      <div class="hero-actions">
+        <a href="#commission" class="btn-primary">Begin a Commission</a>
+        <a href="#collection" class="btn-ghost">View Collection</a>
+      </div>
+    </div>
+    <div class="hero-badge">
+      <span class="badge-num">14</span>
+      <span class="badge-label">Years of Living Art</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       COLLECTION
+  ============================================================ -->
+  <section id="collection">
+    <div class="section-eyebrow">Signature Forms</div>
+    <h2 class="section-title">The Collection</h2>
+    <p class="section-subtitle">Four distinct architectural glass forms — each a unique vessel for a living world within.</p>
+
+    <div class="collection-grid">
+      <!-- Geometric -->
+      <div class="collection-card">
+        <img src="https://images.unsplash.com/photo-1520412099551-62b6bafeb796?w=800&q=80&auto=format&fit=crop" alt="Geometric Terrarium" loading="lazy" />
+        <div class="collection-overlay">
+          <div class="collection-name">Geometric</div>
+          <div class="collection-tag">Faceted crystal glass · Desert & succulents</div>
+        </div>
+        <div class="collection-arrow">→</div>
+      </div>
+      <!-- Wardian Case -->
+      <div class="collection-card">
+        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80&auto=format&fit=crop" alt="Wardian Case Terrarium" loading="lazy" />
+        <div class="collection-overlay">
+          <div class="collection-name">Wardian Case</div>
+          <div class="collection-tag">Victorian brass & glass · Tropical ferns</div>
+        </div>
+        <div class="collection-arrow">→</div>
+      </div>
+      <!-- Biome Sphere -->
+      <div class="collection-card">
+        <img src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=800&q=80&auto=format&fit=crop" alt="Biome Sphere Terrarium" loading="lazy" />
+        <div class="collection-overlay">
+          <div class="collection-name">Biome Sphere</div>
+          <div class="collection-tag">Borosilicate globe · Closed ecosystem</div>
+        </div>
+        <div class="collection-arrow">→</div>
+      </div>
+      <!-- Architectural Column -->
+      <div class="collection-card">
+        <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=800&q=80&auto=format&fit=crop" alt="Architectural Column Terrarium" loading="lazy" />
+        <div class="collection-overlay">
+          <div class="collection-name">Architectural Column</div>
+          <div class="collection-tag">Floor-to-ceiling · Bespoke commission</div>
+        </div>
+        <div class="collection-arrow">→</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ECOSYSTEMS
+  ============================================================ -->
+  <section id="ecosystems">
+    <div class="eco-header">
+      <div>
+        <div class="section-eyebrow">Living Worlds</div>
+        <h2 class="section-title">Five <em>Ecosystems</em></h2>
+      </div>
+      <p class="section-subtitle" style="margin-bottom:0;">
+        Each terrarium is a self-sustaining micro-ecosystem — chosen and curated to thrive within its glass architecture for decades.
+      </p>
+    </div>
+    <div class="eco-grid">
+      <div class="eco-card">
+        <div class="eco-icon">🌿</div>
+        <div class="eco-name">Tropical Rainforest</div>
+        <div class="eco-desc">Humidity-loving ferns, orchids and bromeliads in a lush, layered canopy within glass.</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-icon">🪨</div>
+        <div class="eco-name">Desert Diorama</div>
+        <div class="eco-desc">Sculptural cacti, agave and mineral rock formations — arid beauty in geometric glass.</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-icon">🌱</div>
+        <div class="eco-name">Moss Garden</div>
+        <div class="eco-desc">Living carpet of cushion moss, stone and dwarf ferns — serene Japanese-inspired landscapes.</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-icon">🍃</div>
+        <div class="eco-name">Fern Grotto</div>
+        <div class="eco-desc">Ancient fronds, maidenhair and wood ferns cascading over volcanic basalt and driftwood.</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-icon">🪤</div>
+        <div class="eco-name">Carnivorous</div>
+        <div class="eco-desc">Venus flytraps, sundews and pitcher plants — nature's most theatrical micro-predators in glass.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       COMMISSION PROCESS
+  ============================================================ -->
+  <section id="process">
+    <div class="section-eyebrow">How It Works</div>
+    <h2 class="section-title">The Commission <em>Process</em></h2>
+    <p class="section-subtitle">From initial vision to living installation — a four-stage atelier process designed for precision and ease.</p>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <div class="step-icon">💬</div>
+        <div class="step-title">Consultation</div>
+        <div class="step-desc">A private session to understand your space, aesthetic vision, light conditions and ecosystem preference. We listen before we design.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <div class="step-icon">✏️</div>
+        <div class="step-title">Design</div>
+        <div class="step-desc">Our botanical designers produce hand-drawn plans and material samples — glasswork, soil substrate, plant selection and hardscape elements.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <div class="step-icon">🔨</div>
+        <div class="step-title">Build</div>
+        <div class="step-desc">Hand-crafted in our London atelier over 4–12 weeks. Glass blown or cast to specification. Plants propagated and conditioned on site.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <div class="step-icon">🌿</div>
+        <div class="step-title">Deliver & Maintain</div>
+        <div class="step-desc">White-glove installation by our team. Optional monthly maintenance subscription ensures your living work of art thrives indefinitely.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCALE
+  ============================================================ -->
+  <section id="scale">
+    <div class="section-eyebrow">Scale & Proportion</div>
+    <h2 class="section-title">Desk to <em>Architectural</em></h2>
+    <p class="section-subtitle">From a contemplative desk companion to a 2-metre lobby centrepiece — every scale is possible.</p>
+
+    <div class="scale-layout">
+      <div class="scale-image">
+        <img src="https://images.unsplash.com/photo-1463936560600-9c4b36c32699?w=900&q=80&auto=format&fit=crop" alt="Large terrarium installation" loading="lazy" />
+        <div class="scale-image-badge">
+          <div class="scale-badge-text">2.4 m</div>
+          <div class="scale-badge-sub">Tallest commission to date</div>
+        </div>
+      </div>
+
+      <div class="scale-tiers">
+        <div class="scale-tier active">
+          <div class="tier-label">Tier I</div>
+          <div class="tier-name">Desktop Companion</div>
+          <div class="tier-range">15 – 40 cm · Single specimen · From £480</div>
+        </div>
+        <div class="scale-tier">
+          <div class="tier-label">Tier II</div>
+          <div class="tier-name">Statement Piece</div>
+          <div class="tier-range">40 – 90 cm · Multi-species ecosystem · From £1,200</div>
+        </div>
+        <div class="scale-tier">
+          <div class="tier-label">Tier III</div>
+          <div class="tier-name">Room Feature</div>
+          <div class="tier-range">90 cm – 1.5 m · Curated biome · From £3,800</div>
+        </div>
+        <div class="scale-tier">
+          <div class="tier-label">Tier IV</div>
+          <div class="tier-name">Architectural Installation</div>
+          <div class="tier-range">1.5 m – 3 m+ · Bespoke · From £12,000</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CARE SERVICE
+  ============================================================ -->
+  <section id="care">
+    <div class="section-eyebrow">Living Art Care</div>
+    <h2 class="section-title">Monthly <em>Maintenance</em></h2>
+    <p class="section-subtitle">Our botanists visit to prune, feed, water and assess — keeping your world within glass perpetually pristine.</p>
+
+    <div class="care-layout">
+      <div class="care-image">
+        <img src="https://images.unsplash.com/photo-1518531933922-0f9e48e06f2c?w=900&q=80&auto=format&fit=crop" alt="Terrarium care service" loading="lazy" />
+      </div>
+      <div>
+        <div class="care-features">
+          <div class="care-feature">
+            <div class="care-feature-icon">🌿</div>
+            <div>
+              <div class="care-feature-title">Monthly Botanical Visit</div>
+              <div class="care-feature-desc">A qualified botanist attends your installation monthly — trimming, feeding and health-checking every specimen.</div>
+            </div>
+          </div>
+          <div class="care-feature">
+            <div class="care-feature-icon">💧</div>
+            <div>
+              <div class="care-feature-title">Substrate & Humidity Control</div>
+              <div class="care-feature-desc">Optimal moisture levels, substrate refreshing and humidity calibration to sustain your ecosystem year-round.</div>
+            </div>
+          </div>
+          <div class="care-feature">
+            <div class="care-feature-icon">🔬</div>
+            <div>
+              <div class="care-feature-title">Plant Replacement Guarantee</div>
+              <div class="care-feature-desc">Any specimen that fails is replaced at no additional charge. Your ecosystem always looks its absolute best.</div>
+            </div>
+          </div>
+          <div class="care-feature">
+            <div class="care-feature-icon">📞</div>
+            <div>
+              <div class="care-feature-title">Dedicated Botanist Hotline</div>
+              <div class="care-feature-desc">Direct access to your assigned botanist for urgent questions, seasonal adjustments and care advice.</div>
+            </div>
+          </div>
+        </div>
+        <div class="care-pricing">
+          <div class="care-pricing-label">Monthly Subscription</div>
+          <div class="care-pricing-price">From £85 / month</div>
+          <div class="care-pricing-note">Based on installation size. Annual contracts available with priority scheduling.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       WORKSHOP
+  ============================================================ -->
+  <section id="workshop">
+    <div class="workshop-layout">
+      <div class="workshop-image">
+        <img src="https://images.unsplash.com/photo-1445820074-9819d4de0ae8?w=900&q=80&auto=format&fit=crop" alt="Terrarium building workshop" loading="lazy" />
+        <div class="workshop-tag">Public Workshop</div>
+      </div>
+      <div class="workshop-details">
+        <div>
+          <div class="section-eyebrow">Hands On</div>
+          <h2 class="section-title">Build Your Own <em>World</em></h2>
+          <p class="section-subtitle" style="margin-bottom:0;">
+            Join our atelier in London for an intimate terrarium-building session — guided by our resident botanists. Take home your creation.
+          </p>
+        </div>
+        <div class="workshop-sessions">
+          <div class="session-card">
+            <div class="session-level">Beginner</div>
+            <div class="session-name">Glass Terrarium Foundations</div>
+            <div class="session-info">3 hrs · 8 guests · £145 per person</div>
+          </div>
+          <div class="session-card">
+            <div class="session-level">Intermediate</div>
+            <div class="session-name">Closed Ecosystem Design</div>
+            <div class="session-info">4 hrs · 6 guests · £195 per person</div>
+          </div>
+          <div class="session-card">
+            <div class="session-level">Advanced</div>
+            <div class="session-name">Wardian Case Masterclass</div>
+            <div class="session-info">6 hrs · 4 guests · £340 per person</div>
+          </div>
+          <div class="session-card">
+            <div class="session-level">Private Group</div>
+            <div class="session-name">Bespoke Corporate Event</div>
+            <div class="session-info">Half-day · 10–20 guests · POA</div>
+          </div>
+        </div>
+        <a href="#commission" class="btn-primary" style="align-self:flex-start;">Reserve a Workshop</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       GALLERY
+  ============================================================ -->
+  <section id="gallery">
+    <div class="section-eyebrow">Commissioned Works</div>
+    <h2 class="section-title" style="color:#F2F5EE;">Portfolio <em>Selection</em></h2>
+    <p class="section-subtitle">Six works from our atelier — each a unique collaboration between client vision and botanical craft.</p>
+
+    <div class="gallery-grid">
+      <div class="gallery-item large">
+        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=900&q=80&auto=format&fit=crop" alt="Penthouse Tropical Column" loading="lazy" />
+        <div class="gallery-caption">
+          <div class="gallery-caption-name">Mayfair Penthouse Column</div>
+          <div class="gallery-caption-loc">London · 2.1 m Tropical Biome</div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1520412099551-62b6bafeb796?w=700&q=80&auto=format&fit=crop" alt="Geometric Desert" loading="lazy" />
+        <div class="gallery-caption">
+          <div class="gallery-caption-name">Geometric Desert Cluster</div>
+          <div class="gallery-caption-loc">New York · Desk Installation</div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=700&q=80&auto=format&fit=crop" alt="Moss Garden Sphere" loading="lazy" />
+        <div class="gallery-caption">
+          <div class="gallery-caption-name">Moss Garden Sphere Trio</div>
+          <div class="gallery-caption-loc">Tokyo · Residential Study</div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1463936560600-9c4b36c32699?w=700&q=80&auto=format&fit=crop" alt="Fern Grotto" loading="lazy" />
+        <div class="gallery-caption">
+          <div class="gallery-caption-name">Fern Grotto Wardian</div>
+          <div class="gallery-caption-loc">Paris · Interior Commission</div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=80&auto=format&fit=crop" alt="Carnivorous Collection" loading="lazy" />
+        <div class="gallery-caption">
+          <div class="gallery-caption-name">Carnivorous Collection</div>
+          <div class="gallery-caption-loc">Berlin · Gallery Installation</div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=700&q=80&auto=format&fit=crop" alt="Biome Sphere" loading="lazy" />
+        <div class="gallery-caption">
+          <div class="gallery-caption-name">Biome Sphere Centrepiece</div>
+          <div class="gallery-caption-loc">Dubai · Hotel Lobby</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TESTIMONIALS
+  ============================================================ -->
+  <section id="testimonials">
+    <div class="section-eyebrow" style="justify-content:center;">Client Words</div>
+    <h2 class="section-title text-center">What They <em>Say</em></h2>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <div class="testimonial-text">VIRIDIS created something I can only describe as a contained wilderness — a living painting that changes subtly with every season. It has become the singular object in my home.</div>
+        <div class="testimonial-divider"></div>
+        <div class="testimonial-author">Lucinda Farrow</div>
+        <div class="testimonial-role">Art Collector & Interior Patron, London</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <div class="testimonial-text">As an interior designer, I specify VIRIDIS for every client who wants a room element with genuine soul. No other studio combines botanical precision with such understated luxury.</div>
+        <div class="testimonial-divider"></div>
+        <div class="testimonial-author">James Okafor</div>
+        <div class="testimonial-role">Principal, Okafor Studio — London & New York</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <div class="testimonial-text">The Wardian Case in our boardroom has transformed every meeting. Clients comment on it before anything else. VIRIDIS delivered a commission of extraordinary craftsmanship.</div>
+        <div class="testimonial-divider"></div>
+        <div class="testimonial-author">Hana Miyamoto</div>
+        <div class="testimonial-role">CEO, Aoyama Capital Group, Tokyo</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       COMMISSION FORM
+  ============================================================ -->
+  <section id="commission">
+    <div class="section-eyebrow">Begin</div>
+    <h2 class="section-title">Commission <em>Enquiry</em></h2>
+    <p class="section-subtitle">Tell us about your space and vision. Our botanical design team will respond within 48 hours.</p>
+
+    <div class="commission-layout">
+      <div class="commission-info">
+        <p style="font-family:var(--font-body);font-size:0.9rem;color:var(--text-muted);line-height:1.9;margin-bottom:32px;">
+          Every VIRIDIS commission begins with a conversation. Whether you envision a compact desk garden or a 3-metre architectural installation — our process is the same: attentive, unhurried, and devoted to botanical excellence.
+        </p>
+        <div class="commission-stats">
+          <div class="commission-stat">
+            <div class="stat-num">340+</div>
+            <div class="stat-label">Commissions Completed</div>
+          </div>
+          <div class="commission-stat">
+            <div class="stat-num">28</div>
+            <div class="stat-label">Countries Delivered To</div>
+          </div>
+          <div class="commission-stat">
+            <div class="stat-num">14</div>
+            <div class="stat-label">Years in Practice</div>
+          </div>
+          <div class="commission-stat">
+            <div class="stat-num">98%</div>
+            <div class="stat-label">Client Satisfaction</div>
+          </div>
+        </div>
+      </div>
+
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" placeholder="Eleanor" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" placeholder="Ashworth" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="eleanor@ashworth.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Commission Type</label>
+          <select class="form-select">
+            <option value="">Select a form</option>
+            <option>Geometric Terrarium</option>
+            <option>Wardian Case</option>
+            <option>Biome Sphere</option>
+            <option>Architectural Column</option>
+            <option>Bespoke / Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preferred Ecosystem</label>
+          <select class="form-select">
+            <option value="">Select an ecosystem</option>
+            <option>Tropical Rainforest</option>
+            <option>Desert Diorama</option>
+            <option>Moss Garden</option>
+            <option>Fern Grotto</option>
+            <option>Carnivorous</option>
+            <option>Mixed / Unsure</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Approximate Budget</label>
+          <select class="form-select">
+            <option value="">Select a range</option>
+            <option>Under £1,000</option>
+            <option>£1,000 – £3,000</option>
+            <option>£3,000 – £8,000</option>
+            <option>£8,000 – £20,000</option>
+            <option>£20,000+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tell Us About Your Vision</label>
+          <textarea class="form-textarea" placeholder="Describe your space, the atmosphere you're looking for, and any specific plants or materials you love..."></textarea>
+        </div>
+        <button class="form-submit">Submit Commission Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">VIRIDIS</div>
+        <div class="footer-brand-desc">Bespoke luxury glass terrariums and living botanical sculptures. Commission-based, architectural-scale installations worldwide.</div>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">In</a>
+          <a href="#" aria-label="Pinterest">Pi</a>
+          <a href="#" aria-label="LinkedIn">Li</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="#collection">Collection</a></li>
+          <li><a href="#ecosystems">Ecosystems</a></li>
+          <li><a href="#process">Commission Process</a></li>
+          <li><a href="#scale">Scale Guide</a></li>
+          <li><a href="#gallery">Portfolio</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-links">
+          <li><a href="#care">Care Subscription</a></li>
+          <li><a href="#workshop">Workshops</a></li>
+          <li><a href="#commission">Commission</a></li>
+          <li><a href="#">Gift Vouchers</a></li>
+          <li><a href="#">Corporate Projects</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-label">Atelier</div>
+          <div class="footer-contact-val">14 Botanical Mews, Chelsea<br>London SW3 4PQ</div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-label">Email</div>
+          <div class="footer-contact-val">studio@viridis.co</div>
+        </div>
+        <div class="footer-contact-item">
+          <div class="footer-contact-label">Phone</div>
+          <div class="footer-contact-val">+44 20 7946 0800</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 VIRIDIS Botanical Atelier. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Commission</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    /* ============================================================
+       INLINE SPLITTEXT POLYFILL
+    ============================================================ */
+    class SplitText {
+      constructor(el,opts={}){this.el=typeof el==='string'?document.querySelector(el):el;this.chars=[];this.words=[];this._split();}
+      _split(){const t=this.el.textContent;this.el.innerHTML='';t.split(' ').forEach((w,i)=>{const ws=document.createElement('span');ws.style.cssText='display:inline-block;overflow:hidden;';w.split('').forEach(c=>{const s=document.createElement('span');s.textContent=c;s.style.cssText='display:inline-block;';this.chars.push(s);ws.appendChild(s);});this.words.push(ws);this.el.appendChild(ws);if(i<t.split(' ').length-1)this.el.appendChild(document.createTextNode(' '));});}
+    }
+
+    /* ============================================================
+       GSAP SETUP
+    ============================================================ */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    (function initPreloader() {
+      const tl = gsap.timeline();
+
+      // Draw sphere elements
+      tl.to('.pl-sphere', { strokeDashoffset: 0, duration: 1.2, ease: 'power2.inOut' })
+        .to('.pl-equator', { strokeDashoffset: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
+        .to('.pl-meridian', { strokeDashoffset: 0, duration: 0.8, ease: 'power2.out' }, '-=0.6')
+        .to('.pl-stem', { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out' }, '-=0.2')
+        .to(['.pl-leaf1', '.pl-leaf2', '.pl-leaf3'], {
+          scale: 1,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: 'back.out(1.7)',
+          transformOrigin: 'bottom center'
+        }, '-=0.1')
+        .from('#pl-logo', { y: 16, autoAlpha: 0, duration: 0.7, ease: 'power2.out' }, '-=0.2')
+        .from('#pl-tagline', { y: 10, autoAlpha: 0, duration: 0.5, ease: 'power2.out' }, '-=0.4')
+        .to('#pl-bar', { width: '100%', duration: 1.4, ease: 'power1.inOut' }, '-=0.3')
+        .to('#preloader', {
+          autoAlpha: 0,
+          duration: 0.7,
+          ease: 'power2.inOut',
+          onComplete: function() {
+            document.getElementById('preloader').style.display = 'none';
+            initScrollIndicator();
+            initHeroAnimation();
+            ScrollTrigger.refresh();
+          }
+        });
+
+      // Initial states for SVG paths
+      gsap.set('.pl-sphere', { strokeDasharray: 280, strokeDashoffset: 280 });
+      gsap.set('.pl-equator', { strokeDasharray: 180, strokeDashoffset: 180 });
+      gsap.set('.pl-meridian', { strokeDasharray: 90, strokeDashoffset: 90 });
+      gsap.set('.pl-stem', { strokeDasharray: 22, strokeDashoffset: 22 });
+      gsap.set(['.pl-leaf1', '.pl-leaf2', '.pl-leaf3'], { scale: 0 });
+    })();
+
+    /* ============================================================
+       SCROLL INDICATOR
+    ============================================================ */
+    function initScrollIndicator() {
+      const indicator = document.getElementById('scroll-indicator');
+      gsap.from(indicator, { autoAlpha: 0, x: -16, duration: 0.8, ease: 'power2.out', delay: 0.3 });
+
+      const sections = ['hero','collection','ecosystems','process','scale','care','workshop','gallery','testimonials','commission','footer'];
+      const leaves = document.querySelectorAll('.scroll-leaf');
+
+      ScrollTrigger.create({
+        trigger: 'body',
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate(self) {
+          const idx = Math.min(Math.floor(self.progress * leaves.length), leaves.length - 1);
+          leaves.forEach((l, i) => l.classList.toggle('active', i <= idx));
+        }
+      });
+    }
+
+    /* ============================================================
+       NAVBAR SCROLL
+    ============================================================ */
+    ScrollTrigger.create({
+      trigger: 'body',
+      start: 'top -60px',
+      onEnter: () => document.getElementById('navbar').classList.add('scrolled'),
+      onLeaveBack: () => document.getElementById('navbar').classList.remove('scrolled')
+    });
+
+    /* ============================================================
+       HERO ANIMATION
+    ============================================================ */
+    function initHeroAnimation() {
+      const tl = gsap.timeline();
+      tl.from('.hero-image', { scale: 1.15, duration: 1.8, ease: 'power2.out' })
+        .from('.hero-eyebrow', { y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out' }, '-=1.0')
+        .from('.hero-title', { y: 32, autoAlpha: 0, duration: 1.1, ease: 'power2.out' }, '-=0.7')
+        .from('.hero-subtitle', { y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out' }, '-=0.7')
+        .from('.hero-actions', { y: 16, autoAlpha: 0, duration: 0.8, ease: 'power2.out' }, '-=0.6')
+        .from('.hero-badge', { scale: 0, autoAlpha: 0, duration: 0.7, ease: 'back.out(1.7)' }, '-=0.4');
+    }
+
+    /* ============================================================
+       SCROLL ANIMATIONS — using immediateRender: false at TOP LEVEL
+    ============================================================ */
+
+    // Collection section header
+    gsap.from('#collection .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#collection', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#collection .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#collection', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+    gsap.from('#collection .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#collection', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.2
+    });
+
+    // Collection cards
+    gsap.from('.collection-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.collection-grid', start: 'top 85%' },
+      y: 40, autoAlpha: 0, duration: 1.0, ease: 'power2.out', stagger: 0.1
+    });
+
+    // Ecosystems header
+    gsap.from('#ecosystems .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#ecosystems', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#ecosystems .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#ecosystems', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+    gsap.from('#ecosystems .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#ecosystems', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.2
+    });
+
+    // Eco cards
+    gsap.from('.eco-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.eco-grid', start: 'top 85%' },
+      y: 40, autoAlpha: 0, duration: 0.95, ease: 'power2.out', stagger: 0.08
+    });
+
+    // Process section
+    gsap.from('#process .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#process .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+    gsap.from('#process .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.2
+    });
+
+    gsap.from('.process-step', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.process-steps', start: 'top 85%' },
+      y: 40, autoAlpha: 0, duration: 1.0, ease: 'power2.out', stagger: 0.1
+    });
+
+    // Scale section
+    gsap.from('#scale .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#scale', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#scale .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#scale', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+    gsap.from('#scale .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#scale', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.2
+    });
+
+    gsap.from('.scale-image', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.scale-layout', start: 'top 85%' },
+      x: -40, autoAlpha: 0, duration: 1.1, ease: 'power2.out'
+    });
+
+    gsap.from('.scale-tier', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.scale-tiers', start: 'top 85%' },
+      x: 30, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.1
+    });
+
+    // Care section
+    gsap.from('#care .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#care', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#care .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#care', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+    gsap.from('#care .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#care', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.2
+    });
+
+    gsap.from('.care-image', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.care-layout', start: 'top 85%' },
+      x: -40, autoAlpha: 0, duration: 1.1, ease: 'power2.out'
+    });
+
+    gsap.from('.care-feature', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.care-features', start: 'top 85%' },
+      y: 24, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.1
+    });
+
+    gsap.from('.care-pricing', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.care-pricing', start: 'top 90%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+
+    // Workshop section
+    gsap.from('#workshop .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#workshop', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#workshop .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#workshop', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+    gsap.from('#workshop .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#workshop', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.2
+    });
+
+    gsap.from('.workshop-image', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.workshop-layout', start: 'top 85%' },
+      x: -40, autoAlpha: 0, duration: 1.1, ease: 'power2.out'
+    });
+
+    gsap.from('.session-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.workshop-sessions', start: 'top 85%' },
+      y: 24, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.08
+    });
+
+    // Gallery section
+    gsap.from('#gallery .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#gallery', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#gallery .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#gallery', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+    gsap.from('#gallery .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#gallery', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.2
+    });
+
+    gsap.from('.gallery-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.gallery-grid', start: 'top 85%' },
+      y: 40, autoAlpha: 0, duration: 1.0, ease: 'power2.out', stagger: 0.1
+    });
+
+    // Testimonials section
+    gsap.from('#testimonials .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#testimonials', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#testimonials .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#testimonials', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+
+    gsap.from('.testimonial-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.testimonials-grid', start: 'top 85%' },
+      y: 40, autoAlpha: 0, duration: 1.0, ease: 'power2.out', stagger: 0.12
+    });
+
+    // Commission section
+    gsap.from('#commission .section-eyebrow', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out'
+    });
+    gsap.from('#commission .section-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+    gsap.from('#commission .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.2
+    });
+
+    gsap.from('.commission-info', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.commission-layout', start: 'top 85%' },
+      x: -30, autoAlpha: 0, duration: 1.0, ease: 'power2.out'
+    });
+
+    gsap.from('.commission-form', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.commission-layout', start: 'top 85%' },
+      x: 30, autoAlpha: 0, duration: 1.0, ease: 'power2.out', delay: 0.1
+    });
+
+    gsap.from('.commission-stat', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.commission-stats', start: 'top 88%' },
+      y: 24, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.08
+    });
+
+    // Footer
+    gsap.from('#footer .footer-top > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#footer', start: 'top 85%' },
+      y: 24, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.1
+    });
+
+    /* ============================================================
+       SCALE TIER HOVER INTERACTION
+    ============================================================ */
+    document.querySelectorAll('.scale-tier').forEach(tier => {
+      tier.addEventListener('mouseenter', () => {
+        document.querySelectorAll('.scale-tier').forEach(t => t.classList.remove('active'));
+        tier.classList.add('active');
+      });
+    });
+
+    /* ============================================================
+       PARALLAX HERO IMAGE
+    ============================================================ */
+    ScrollTrigger.create({
+      trigger: '#hero',
+      start: 'top top',
+      end: 'bottom top',
+      onUpdate(self) {
+        gsap.set('#hero-img', { y: self.progress * 80 });
+      }
+    });
+
+    /* ============================================================
+       REVEAL SCROLL INDICATOR AFTER PRELOADER
+    ============================================================ */
+    setTimeout(() => {
+      const si = document.getElementById('scroll-indicator');
+      if (si) si.style.visibility = 'visible';
+    }, 4000);
+
+  </script>
+
+</body>
+</html>

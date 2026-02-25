@@ -1,0 +1,3026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS ARENA — Where Legends Are Made</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       CSS RESET & ROOT VARIABLES
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #10162A;
+      --surface: #161E35;
+      --surface2: #1C2640;
+      --accent: #00D4FF;
+      --accent2: #FF2D78;
+      --accent3: #7B2FFF;
+      --text: #E8F0FF;
+      --text-muted: #6080A8;
+      --font-heading: 'Rajdhani', 'Montserrat', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 40px rgba(0, 212, 255, 0.25);
+      --glow-pink: 0 0 20px rgba(255, 45, 120, 0.5), 0 0 40px rgba(255, 45, 120, 0.25);
+      --glow-purple: 0 0 20px rgba(123, 47, 255, 0.5), 0 0 40px rgba(123, 47, 255, 0.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #050A14;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .preloader-hex-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.03) 0%, transparent 70%);
+    }
+
+    .hex-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      box-shadow: var(--glow-cyan);
+      animation: scanDown 2s linear infinite;
+    }
+
+    @keyframes scanDown {
+      0% { top: 0; }
+      100% { top: 100%; }
+    }
+
+    .preloader-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .preloader-logo {
+      font-family: var(--font-heading);
+      font-size: clamp(36px, 7vw, 72px);
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--text);
+      text-shadow: var(--glow-cyan);
+      margin-bottom: 12px;
+    }
+
+    .preloader-tagline {
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+
+    .preloader-bar-wrap {
+      width: 280px;
+      height: 2px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      margin: 0 auto 16px;
+      overflow: hidden;
+    }
+
+    .preloader-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+      box-shadow: 0 0 12px var(--accent);
+      border-radius: 2px;
+      animation: loadBar 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes loadBar {
+      0% { width: 0%; }
+      60% { width: 75%; }
+      100% { width: 100%; }
+    }
+
+    .preloader-pct {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    .glitch-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      color: inherit;
+    }
+
+    .glitch-text::before {
+      color: var(--accent2);
+      clip-path: polygon(0 33%, 100% 33%, 100% 66%, 0 66%);
+      animation: glitch1 2s infinite linear alternate-reverse;
+    }
+
+    .glitch-text::after {
+      color: var(--accent3);
+      clip-path: polygon(0 0%, 100% 0%, 100% 33%, 0 33%);
+      animation: glitch2 2s infinite linear alternate;
+    }
+
+    @keyframes glitch1 {
+      0%   { transform: translateX(-2px); }
+      25%  { transform: translateX(2px); }
+      50%  { transform: translateX(-1px); }
+      75%  { transform: translateX(1px); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes glitch2 {
+      0%   { transform: translateX(2px); }
+      25%  { transform: translateX(-2px); }
+      50%  { transform: translateX(1px); }
+      75%  { transform: translateX(-1px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* ============================================================
+       SCROLL INDICATOR (LEFT)
+    ============================================================ */
+    #scroll-indicator {
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scroll-label {
+      font-family: var(--font-heading);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      text-shadow: 0 0 10px var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .scroll-track {
+      width: 2px;
+      height: 80px;
+      background: rgba(0, 212, 255, 0.15);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-thumb {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 30%;
+      background: linear-gradient(180deg, var(--accent), transparent);
+      box-shadow: 0 0 10px var(--accent);
+      border-radius: 2px;
+      animation: scrollThumb 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollThumb {
+      0%   { top: 0%; }
+      100% { top: 70%; }
+    }
+
+    .scroll-marker {
+      width: 8px;
+      height: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+
+    .scroll-marker:nth-child(3) { opacity: 0.6; }
+    .scroll-marker:nth-child(4) { opacity: 0.3; }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 900;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(16, 22, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+      transition: padding 0.3s ease;
+    }
+
+    #navbar.scrolled {
+      padding: 14px 40px;
+      background: rgba(16, 22, 42, 0.95);
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent3), var(--accent));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .nav-logo span { color: var(--accent); text-shadow: 0 0 12px var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+
+    .nav-links a {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+
+    .nav-cta {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      cursor: pointer;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: all 0.2s;
+      text-shadow: 0 0 8px var(--accent);
+      box-shadow: inset 0 0 0 0 var(--accent);
+    }
+
+    .nav-cta:hover {
+      background: var(--accent);
+      color: #050A14;
+      text-shadow: none;
+      box-shadow: var(--glow-cyan);
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-bg img {
+      object-position: center;
+      filter: brightness(0.35) saturate(1.3);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(16, 22, 42, 0.7) 0%, rgba(16, 22, 42, 0.3) 50%, rgba(123, 47, 255, 0.15) 100%),
+        linear-gradient(to right, rgba(16, 22, 42, 0.9) 0%, transparent 60%);
+    }
+
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 40px;
+      max-width: 800px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      background: rgba(0, 212, 255, 0.08);
+      margin-bottom: 28px;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent2);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent2);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    .hero-badge span {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(52px, 9vw, 100px);
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+
+    .hero-title .line-accent {
+      color: var(--accent);
+      text-shadow: var(--glow-cyan);
+      display: block;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 460px;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 36px;
+      background: linear-gradient(135deg, var(--accent3), var(--accent));
+      color: #fff;
+      border: none;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--glow-purple);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(123, 47, 255, 0.5), var(--glow-cyan);
+    }
+
+    .btn-secondary {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 15px 36px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .hero-scroll-line {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent));
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* ============================================================
+       STATS SECTION
+    ============================================================ */
+    #stats {
+      background: var(--surface);
+      padding: 80px 0;
+      border-top: 1px solid rgba(0, 212, 255, 0.1);
+      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 40px 24px;
+      border-right: 1px solid rgba(0, 212, 255, 0.1);
+      position: relative;
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: var(--glow-cyan);
+      line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-unit {
+      font-size: 0.5em;
+      color: var(--text-muted);
+      text-shadow: none;
+    }
+
+    .stat-label {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       SECTION SHARED
+    ============================================================ */
+    section { padding: 120px 0; background: var(--bg); }
+    section:nth-child(even) { background: var(--surface); }
+
+    .section-label {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      text-shadow: 0 0 10px var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .section-title span { color: var(--accent); text-shadow: var(--glow-cyan); }
+
+    .section-desc {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 560px;
+    }
+
+    .section-header {
+      margin-bottom: 72px;
+    }
+
+    /* ============================================================
+       THE PODS
+    ============================================================ */
+    #pods { background: var(--bg); }
+
+    .pods-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .pod-card {
+      background: var(--surface);
+      border: 1px solid rgba(0, 212, 255, 0.1);
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    }
+
+    .pod-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 212, 255, 0.4);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), var(--glow-cyan);
+    }
+
+    .pod-card.featured {
+      border-color: rgba(123, 47, 255, 0.4);
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(123, 47, 255, 0.1) 100%);
+    }
+
+    .pod-card.featured:hover {
+      border-color: rgba(123, 47, 255, 0.7);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), var(--glow-purple);
+    }
+
+    .pod-image {
+      height: 220px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .pod-image img {
+      transition: transform 0.6s ease;
+    }
+
+    .pod-card:hover .pod-image img { transform: scale(1.05); }
+
+    .pod-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(22, 30, 53, 0.9) 0%, transparent 50%);
+    }
+
+    .pod-tier-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 4px 12px;
+      font-family: var(--font-heading);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: rgba(0, 212, 255, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .pod-tier-badge.vip {
+      background: rgba(123, 47, 255, 0.2);
+      border-color: var(--accent3);
+      color: var(--accent3);
+      text-shadow: 0 0 8px var(--accent3);
+    }
+
+    .pod-body {
+      padding: 28px 28px 32px;
+    }
+
+    .pod-name {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .pod-price {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .pod-price span {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 400;
+      text-shadow: none;
+    }
+
+    .pod-specs {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .pod-spec {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .pod-spec-icon {
+      width: 18px;
+      height: 18px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      font-size: 8px;
+      color: var(--accent);
+    }
+
+    .pod-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      color: var(--accent);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+
+    .pod-btn:hover, .pod-btn.active {
+      background: var(--accent);
+      color: #050A14;
+      text-shadow: none;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .pod-btn.vip-btn {
+      border-color: rgba(123, 47, 255, 0.5);
+      color: var(--accent3);
+    }
+
+    .pod-btn.vip-btn:hover {
+      background: var(--accent3);
+      color: #fff;
+      box-shadow: var(--glow-purple);
+    }
+
+    /* ============================================================
+       TECH SPECS
+    ============================================================ */
+    #tech { background: var(--surface); }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .tech-card {
+      background: var(--bg);
+      border: 1px solid rgba(0, 212, 255, 0.08);
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+
+    .tech-card:hover { border-color: rgba(0, 212, 255, 0.3); }
+
+    .tech-card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.08), transparent 70%);
+    }
+
+    .tech-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      font-size: 22px;
+    }
+
+    .tech-card-title {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    .tech-spec-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tech-spec-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.06);
+    }
+
+    .tech-spec-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .tech-spec-key {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .tech-spec-val {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    /* ============================================================
+       GAMES
+    ============================================================ */
+    #games { background: var(--bg); }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .game-card {
+      background: var(--surface);
+      border: 1px solid rgba(0, 212, 255, 0.08);
+      padding: 28px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: all 0.3s;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      cursor: pointer;
+    }
+
+    .game-card:hover {
+      border-color: rgba(0, 212, 255, 0.35);
+      background: rgba(0, 212, 255, 0.05);
+      transform: translateX(4px);
+    }
+
+    .game-icon {
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      background: rgba(0, 212, 255, 0.06);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+
+    .game-info {}
+
+    .game-name {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .game-genre {
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .game-players {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .game-players-num {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent2);
+      text-shadow: 0 0 8px var(--accent2);
+    }
+
+    .game-players-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ============================================================
+       COACHING
+    ============================================================ */
+    #coaching { background: var(--surface); }
+
+    .coaching-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .coaching-image-wrap {
+      position: relative;
+      height: 500px;
+    }
+
+    .coaching-image-wrap img {
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+    }
+
+    .coaching-image-wrap::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      right: 12px;
+      bottom: 12px;
+      border: 1px solid rgba(0, 212, 255, 0.12);
+      clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+      z-index: -1;
+    }
+
+    .coaching-stat-badge {
+      position: absolute;
+      bottom: 24px;
+      right: -24px;
+      background: var(--surface2);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      padding: 16px 24px;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .coaching-stat-num {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: var(--glow-cyan);
+      line-height: 1;
+    }
+
+    .coaching-stat-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .coaching-content {}
+
+    .coaching-features {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: 36px 0;
+    }
+
+    .coaching-feature {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .coaching-feature-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+
+    .coaching-feature-title {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .coaching-feature-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       TOURNAMENT
+    ============================================================ */
+    #tournament { background: var(--bg); }
+
+    .tournament-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .tournament-schedule {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tournament-event {
+      background: var(--surface);
+      border: 1px solid rgba(0, 212, 255, 0.1);
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      align-items: center;
+      gap: 20px;
+      transition: border-color 0.2s;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+
+    .tournament-event:hover { border-color: rgba(0, 212, 255, 0.3); }
+
+    .event-date {
+      text-align: center;
+    }
+
+    .event-day {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .event-month {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .event-info {}
+
+    .event-name {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .event-game {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .event-prize {
+      text-align: right;
+    }
+
+    .event-prize-num {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent2);
+      text-shadow: 0 0 8px var(--accent2);
+    }
+
+    .event-prize-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .tournament-prize-pool {
+      background: var(--surface);
+      border: 1px solid rgba(123, 47, 255, 0.25);
+      padding: 40px;
+      text-align: center;
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    }
+
+    .prize-pool-amount {
+      font-family: var(--font-heading);
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 700;
+      color: var(--accent2);
+      text-shadow: var(--glow-pink);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .prize-pool-label {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .prize-tiers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .prize-tier {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: rgba(255, 45, 120, 0.05);
+      border: 1px solid rgba(255, 45, 120, 0.15);
+    }
+
+    .prize-rank {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .prize-rank.gold { color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    .prize-rank.silver { color: #C0C0C0; }
+    .prize-rank.bronze { color: #CD7F32; }
+
+    .prize-tier-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .prize-amount {
+      margin-left: auto;
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ============================================================
+       MEMBERSHIP
+    ============================================================ */
+    #membership { background: var(--surface); }
+
+    .membership-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .membership-card {
+      background: var(--bg);
+      border: 1px solid rgba(0, 212, 255, 0.1);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    }
+
+    .membership-card.featured {
+      background: linear-gradient(135deg, rgba(123, 47, 255, 0.15), rgba(0, 212, 255, 0.08));
+      border-color: rgba(123, 47, 255, 0.4);
+    }
+
+    .membership-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0, 212, 255, 0.4);
+    }
+
+    .membership-card.featured:hover {
+      box-shadow: 0 20px 60px rgba(123, 47, 255, 0.25);
+    }
+
+    .membership-popular {
+      position: absolute;
+      top: 20px;
+      right: -20px;
+      background: var(--accent3);
+      color: #fff;
+      font-family: var(--font-heading);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      padding: 4px 36px;
+      transform: rotate(45deg);
+      transform-origin: center;
+      text-shadow: none;
+    }
+
+    .membership-tier-name {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .membership-pass-name {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .membership-price {
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+    }
+
+    .membership-price-amount {
+      font-family: var(--font-heading);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: var(--glow-cyan);
+      line-height: 1;
+    }
+
+    .membership-price-period {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .membership-features {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .membership-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .membership-feature.included { color: var(--text); }
+
+    .feature-check {
+      width: 20px;
+      height: 20px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .feature-check.no {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    .membership-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      color: var(--accent);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+
+    .membership-btn:hover, .membership-card.featured .membership-btn {
+      background: linear-gradient(135deg, var(--accent3), var(--accent));
+      border-color: transparent;
+      color: #fff;
+      text-shadow: none;
+      box-shadow: var(--glow-purple);
+    }
+
+    /* ============================================================
+       TESTIMONIALS
+    ============================================================ */
+    #testimonials { background: var(--bg); }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid rgba(0, 212, 255, 0.08);
+      padding: 36px;
+      position: relative;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+
+    .testimonial-quote {
+      font-size: 48px;
+      color: var(--accent);
+      text-shadow: var(--glow-cyan);
+      line-height: 0.8;
+      margin-bottom: 20px;
+      font-family: Georgia, serif;
+    }
+
+    .testimonial-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent3), var(--accent));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .testimonial-name {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .testimonial-handle {
+      font-size: 12px;
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent);
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 3px;
+      color: #FFD700;
+      font-size: 12px;
+      text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+    }
+
+    /* ============================================================
+       BOOK NOW
+    ============================================================ */
+    #book {
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #book::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(123, 47, 255, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .book-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .book-content {}
+
+    .book-form {
+      background: var(--bg);
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      padding: 48px;
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(0, 212, 255, 0.04);
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.2);
+    }
+
+    .form-input::placeholder { color: var(--text-muted); }
+
+    select.form-input {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300D4FF' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+
+    select.form-input option { background: var(--surface); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-submit {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--accent3), var(--accent));
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      margin-top: 8px;
+    }
+
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);
+    }
+
+    .book-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 36px;
+    }
+
+    .book-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .book-info-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+
+    .book-info-title {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .book-info-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg);
+      padding: 80px 0 40px;
+      border-top: 1px solid rgba(0, 212, 255, 0.1);
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand {}
+
+    .footer-logo {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .footer-logo span { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+
+    .footer-tagline {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      text-shadow: 0 0 8px var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .footer-desc {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 212, 255, 0.06);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+
+    .social-icon:hover {
+      background: rgba(0, 212, 255, 0.15);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    .footer-col-title {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      border-top: 1px solid rgba(0, 212, 255, 0.08);
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-copy span { color: var(--accent); }
+
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-legal a {
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .footer-legal a:hover { color: var(--accent); }
+
+    /* ============================================================
+       NEON ACCENT UTILITIES
+    ============================================================ */
+    .neon-cyan { color: var(--accent); text-shadow: var(--glow-cyan); }
+    .neon-pink { color: var(--accent2); text-shadow: var(--glow-pink); }
+    .neon-purple { color: var(--accent3); text-shadow: var(--glow-purple); }
+
+    .divider-line {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+      margin: 80px 0;
+    }
+
+    /* ============================================================
+       ANIMATIONS / TRANSITIONS
+    ============================================================ */
+    @keyframes neonFlicker {
+      0%, 95%, 100% { text-shadow: var(--glow-cyan); }
+      96%, 98%      { text-shadow: none; }
+      97%, 99%      { text-shadow: var(--glow-cyan); }
+    }
+
+    .neon-flicker { animation: neonFlicker 8s linear infinite; }
+
+    /* ============================================================
+       RESPONSIVE (basic)
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .pods-grid, .tech-grid, .membership-grid, .testimonials-grid { grid-template-columns: 1fr 1fr; }
+      .games-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .coaching-layout, .tournament-layout, .book-layout { grid-template-columns: 1fr; gap: 48px; }
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 24px; }
+      #navbar { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .pods-grid, .tech-grid, .membership-grid, .testimonials-grid, .games-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr; gap: 40px; }
+      section { padding: 80px 0; }
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       PRELOADER
+  ============================================================ -->
+  <div id="preloader">
+    <canvas class="hex-canvas" id="hexCanvas"></canvas>
+    <div class="scan-line"></div>
+    <div class="preloader-content">
+      <div class="glitch-wrap">
+        <div class="preloader-logo glitch-text neon-flicker" data-text="NEXUS ARENA">NEXUS ARENA</div>
+      </div>
+      <div class="preloader-tagline">Where Legends Are Made</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar" id="preloaderBar"></div>
+      </div>
+      <div class="preloader-pct" id="preloaderPct">INITIALIZING...</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCROLL INDICATOR
+  ============================================================ -->
+  <div id="scroll-indicator">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-track">
+      <div class="scroll-thumb"></div>
+    </div>
+    <div class="scroll-marker"></div>
+    <div class="scroll-marker"></div>
+    <div class="scroll-marker"></div>
+  </div>
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      <span>NEXUS</span>&nbsp;ARENA
+    </a>
+    <div class="nav-links">
+      <a href="#pods">The Pods</a>
+      <a href="#games">Games</a>
+      <a href="#coaching">Coaching</a>
+      <a href="#tournament">Tournaments</a>
+      <a href="#membership">Membership</a>
+    </div>
+    <a href="#book" class="nav-cta">Book a Pod</a>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero">
+    <div class="hero-bg">
+      <img
+        src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600&q=80&auto=format&fit=crop"
+        alt="Gaming Setup with RGB neon lighting"
+        loading="eager"
+      />
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-grid-lines"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        <span>Live Tournament — March 2026</span>
+      </div>
+
+      <h1 class="hero-title" id="heroTitle">
+        WHERE
+        <span class="line-accent">LEGENDS</span>
+        ARE MADE
+      </h1>
+
+      <p class="hero-sub">
+        Ultra-premium esports lounge with custom gaming pods, 240Hz 4K displays, pro-grade peripherals, and private coaching suites. Compete. Train. Dominate.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#book" class="btn-primary">Book a Pod</a>
+        <a href="#pods" class="btn-secondary">Explore Setups</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <div class="hero-scroll-line"></div>
+      <span>Scroll to explore</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       STATS
+  ============================================================ -->
+  <section id="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">240<span class="stat-unit">Hz</span></div>
+          <div class="stat-label">Refresh Rate</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4<span class="stat-unit">K</span></div>
+          <div class="stat-label">Resolution</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Gaming Pods</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">50<span class="stat-unit">ms</span></div>
+          <div class="stat-label">Ultra-low Ping</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       THE PODS
+  ============================================================ -->
+  <section id="pods">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">The Experience</div>
+        <h2 class="section-title">Choose Your <span>Pod</span></h2>
+        <p class="section-desc">Every pod engineered for peak performance. From casual sessions to elite tournament prep — we have your setup.</p>
+      </div>
+
+      <div class="pods-grid">
+        <!-- Standard Pod -->
+        <div class="pod-card">
+          <div class="pod-image">
+            <img
+              src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80&auto=format&fit=crop"
+              alt="Standard Gaming Pod"
+              loading="lazy"
+            />
+            <div class="pod-image-overlay"></div>
+            <div class="pod-tier-badge">Standard</div>
+          </div>
+          <div class="pod-body">
+            <h3 class="pod-name">Standard Pod</h3>
+            <div class="pod-price">$12 <span>/ hour</span></div>
+            <ul class="pod-specs">
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                27" 144Hz 1080p Display
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                RTX 3070 · Ryzen 7 5800X
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                32GB DDR5 RAM
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                Mechanical Keyboard + Gaming Mouse
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                RGB Ambient Lighting
+              </li>
+            </ul>
+            <a href="#book" class="pod-btn">Book Standard</a>
+          </div>
+        </div>
+
+        <!-- Pro Pod -->
+        <div class="pod-card">
+          <div class="pod-image">
+            <img
+              src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&q=80&auto=format&fit=crop"
+              alt="Pro Gaming Pod"
+              loading="lazy"
+            />
+            <div class="pod-image-overlay"></div>
+            <div class="pod-tier-badge">PRO</div>
+          </div>
+          <div class="pod-body">
+            <h3 class="pod-name">Pro Pod</h3>
+            <div class="pod-price">$22 <span>/ hour</span></div>
+            <ul class="pod-specs">
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                27" 240Hz 4K IPS Display
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                RTX 4090 · Ryzen 9 7900X
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                64GB DDR5 RAM · NVMe SSD
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                SteelSeries Apex Pro + Viper V3
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                Audiophile Headset + Mic
+              </li>
+            </ul>
+            <a href="#book" class="pod-btn">Book Pro</a>
+          </div>
+        </div>
+
+        <!-- VIP Suite -->
+        <div class="pod-card featured">
+          <div class="pod-image">
+            <img
+              src="https://images.unsplash.com/photo-1535016120720-40c646be5580?w=800&q=80&auto=format&fit=crop"
+              alt="VIP Tournament Suite"
+              loading="lazy"
+            />
+            <div class="pod-image-overlay"></div>
+            <div class="pod-tier-badge vip">VIP Suite</div>
+          </div>
+          <div class="pod-body">
+            <h3 class="pod-name">VIP Tournament Suite</h3>
+            <div class="pod-price">$60 <span>/ hour</span></div>
+            <ul class="pod-specs">
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                Dual 27" 360Hz 4K OLED Displays
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                RTX 4090 Ti · i9-14900KS
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                128GB DDR5 · 2TB NVMe RAID
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                Full Pro Peripheral Set
+              </li>
+              <li class="pod-spec">
+                <div class="pod-spec-icon">&#9670;</div>
+                Private Suite + Dedicated Coach Access
+              </li>
+            </ul>
+            <a href="#book" class="pod-btn vip-btn">Book VIP Suite</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TECH SPECS
+  ============================================================ -->
+  <section id="tech">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Hardware</div>
+        <h2 class="section-title">Pro-Grade <span>Tech</span></h2>
+        <p class="section-desc">Every component selected by competitive professionals. No compromises — only peak performance.</p>
+      </div>
+
+      <div class="tech-grid">
+        <div class="tech-card">
+          <div class="tech-icon">&#128250;</div>
+          <h3 class="tech-card-title">Display</h3>
+          <div class="tech-spec-list">
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Panel</span>
+              <span class="tech-spec-val">4K OLED / IPS</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Refresh</span>
+              <span class="tech-spec-val">360Hz Max</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Response</span>
+              <span class="tech-spec-val">0.1ms GTG</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Sync</span>
+              <span class="tech-spec-val">NVIDIA G-Sync</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Size</span>
+              <span class="tech-spec-val">27" + 32"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tech-card">
+          <div class="tech-icon">&#128187;</div>
+          <h3 class="tech-card-title">PC Build</h3>
+          <div class="tech-spec-list">
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">GPU</span>
+              <span class="tech-spec-val">RTX 4090 Ti</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">CPU</span>
+              <span class="tech-spec-val">i9-14900KS</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">RAM</span>
+              <span class="tech-spec-val">128GB DDR5</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Storage</span>
+              <span class="tech-spec-val">2TB NVMe</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Cooling</span>
+              <span class="tech-spec-val">360mm AIO</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tech-card">
+          <div class="tech-icon">&#127918;</div>
+          <h3 class="tech-card-title">Peripherals</h3>
+          <div class="tech-spec-list">
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Keyboard</span>
+              <span class="tech-spec-val">Apex Pro TKL</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Mouse</span>
+              <span class="tech-spec-val">Viper V3 Pro</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Headset</span>
+              <span class="tech-spec-val">Arctis Nova Pro</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Chair</span>
+              <span class="tech-spec-val">Secretlab Titan</span>
+            </div>
+            <div class="tech-spec-item">
+              <span class="tech-spec-key">Mousepad</span>
+              <span class="tech-spec-val">4XL Extended</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       GAMES
+  ============================================================ -->
+  <section id="games">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Library</div>
+        <h2 class="section-title">Every Genre. <span>Every Title.</span></h2>
+        <p class="section-desc">From tactical shooters to MOBA battlegrounds — our library covers every competitive genre with the top titles.</p>
+      </div>
+
+      <div class="games-grid">
+        <div class="game-card">
+          <div class="game-icon">&#127919;</div>
+          <div class="game-info">
+            <div class="game-name">Tactical FPS</div>
+            <div class="game-genre">Shooter · Strategy</div>
+          </div>
+          <div class="game-players">
+            <div class="game-players-num">847</div>
+            <div class="game-players-label">Playing Now</div>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-icon">&#9876;</div>
+          <div class="game-info">
+            <div class="game-name">Battle Royale</div>
+            <div class="game-genre">Survival · Action</div>
+          </div>
+          <div class="game-players">
+            <div class="game-players-num">1,204</div>
+            <div class="game-players-label">Playing Now</div>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-icon">&#9876;&#65039;</div>
+          <div class="game-info">
+            <div class="game-name">MOBA Arena</div>
+            <div class="game-genre">Strategy · Team</div>
+          </div>
+          <div class="game-players">
+            <div class="game-players-num">632</div>
+            <div class="game-players-label">Playing Now</div>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-icon">&#127939;</div>
+          <div class="game-info">
+            <div class="game-name">Racing Sim</div>
+            <div class="game-genre">Simulation · Speed</div>
+          </div>
+          <div class="game-players">
+            <div class="game-players-num">218</div>
+            <div class="game-players-label">Playing Now</div>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-icon">&#9876;</div>
+          <div class="game-info">
+            <div class="game-name">Fighting Games</div>
+            <div class="game-genre">1v1 · Competitive</div>
+          </div>
+          <div class="game-players">
+            <div class="game-players-num">389</div>
+            <div class="game-players-label">Playing Now</div>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="game-icon">&#127942;</div>
+          <div class="game-info">
+            <div class="game-name">Sports &amp; Fantasy</div>
+            <div class="game-genre">Multi-genre · Team</div>
+          </div>
+          <div class="game-players">
+            <div class="game-players-num">456</div>
+            <div class="game-players-label">Playing Now</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       COACHING
+  ============================================================ -->
+  <section id="coaching">
+    <div class="container">
+      <div class="coaching-layout">
+        <div class="coaching-image-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80&auto=format&fit=crop"
+            alt="Pro coaching session"
+            loading="lazy"
+          />
+          <div class="coaching-stat-badge">
+            <div class="coaching-stat-num">98%</div>
+            <div class="coaching-stat-text">Rank Improvement</div>
+          </div>
+        </div>
+
+        <div class="coaching-content">
+          <div class="section-label">Elite Training</div>
+          <h2 class="section-title">Train With <span>The Pros</span></h2>
+          <p class="section-desc">Our roster of certified pro coaches — former tournament champions and top-ranked streamers — offer personalized 1-on-1 sessions.</p>
+
+          <div class="coaching-features">
+            <div class="coaching-feature">
+              <div class="coaching-feature-icon">&#127919;</div>
+              <div>
+                <div class="coaching-feature-title">Aim &amp; Mechanics Training</div>
+                <div class="coaching-feature-desc">Precision drills and reflex training with custom aim maps and pro-level mouse sensitivity calibration.</div>
+              </div>
+            </div>
+            <div class="coaching-feature">
+              <div class="coaching-feature-icon">&#129504;</div>
+              <div>
+                <div class="coaching-feature-title">Strategy &amp; Game Sense</div>
+                <div class="coaching-feature-desc">VOD reviews, map control theory, rotation timing and meta-game strategy from top-ranked pros.</div>
+              </div>
+            </div>
+            <div class="coaching-feature">
+              <div class="coaching-feature-icon">&#129498;</div>
+              <div>
+                <div class="coaching-feature-title">Mental Performance</div>
+                <div class="coaching-feature-desc">Tilt management, pressure control, and focus techniques used by esports professionals worldwide.</div>
+              </div>
+            </div>
+          </div>
+
+          <a href="#book" class="btn-primary">Book a Coaching Session</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TOURNAMENT
+  ============================================================ -->
+  <section id="tournament">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Compete</div>
+        <h2 class="section-title">Monthly <span>Tournaments</span></h2>
+        <p class="section-desc">Real stakes. Real prizes. Monthly tournaments across all major titles — open to all skill levels with tiered divisions.</p>
+      </div>
+
+      <div class="tournament-layout">
+        <div class="tournament-schedule">
+          <div class="tournament-event">
+            <div class="event-date">
+              <div class="event-day">08</div>
+              <div class="event-month">Mar</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">NEXUS CUP — Spring Qualifier</div>
+              <div class="event-game">Tactical FPS · 5v5 Open</div>
+            </div>
+            <div class="event-prize">
+              <div class="event-prize-num">$2,500</div>
+              <div class="event-prize-label">Prize Pool</div>
+            </div>
+          </div>
+
+          <div class="tournament-event">
+            <div class="event-date">
+              <div class="event-day">15</div>
+              <div class="event-month">Mar</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">Battle Royale Championship</div>
+              <div class="event-game">Battle Royale · Solo + Duo</div>
+            </div>
+            <div class="event-prize">
+              <div class="event-prize-num">$1,800</div>
+              <div class="event-prize-label">Prize Pool</div>
+            </div>
+          </div>
+
+          <div class="tournament-event">
+            <div class="event-date">
+              <div class="event-day">22</div>
+              <div class="event-month">Mar</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">MOBA Masters Invitational</div>
+              <div class="event-game">MOBA · 5v5 Team</div>
+            </div>
+            <div class="event-prize">
+              <div class="event-prize-num">$3,200</div>
+              <div class="event-prize-label">Prize Pool</div>
+            </div>
+          </div>
+
+          <div class="tournament-event">
+            <div class="event-date">
+              <div class="event-day">29</div>
+              <div class="event-month">Mar</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">NEXUS Grand Final</div>
+              <div class="event-game">Multi-Title · Championship</div>
+            </div>
+            <div class="event-prize">
+              <div class="event-prize-num">$5,000</div>
+              <div class="event-prize-label">Prize Pool</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="tournament-prize-pool">
+            <div class="prize-pool-amount">$12.5K</div>
+            <div class="prize-pool-label">Monthly Prize Pool</div>
+            <div class="prize-tiers">
+              <div class="prize-tier">
+                <span class="prize-rank gold">1st</span>
+                <span class="prize-tier-label">Grand Champion</span>
+                <span class="prize-amount">$5,000</span>
+              </div>
+              <div class="prize-tier">
+                <span class="prize-rank silver">2nd</span>
+                <span class="prize-tier-label">Runner Up</span>
+                <span class="prize-amount">$2,500</span>
+              </div>
+              <div class="prize-tier">
+                <span class="prize-rank bronze">3rd</span>
+                <span class="prize-tier-label">Semi-Final</span>
+                <span class="prize-amount">$1,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MEMBERSHIP
+  ============================================================ -->
+  <section id="membership">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Nexus Pass</div>
+        <h2 class="section-title">Unlock <span>More</span></h2>
+        <p class="section-desc">Choose the membership tier that matches your commitment. Every level brings you closer to the arena's full potential.</p>
+      </div>
+
+      <div class="membership-grid">
+        <!-- Tier 1 -->
+        <div class="membership-card">
+          <div class="membership-tier-name">Tier 01</div>
+          <div class="membership-pass-name">Nexus Core</div>
+          <div class="membership-price">
+            <div class="membership-price-amount">$49</div>
+            <div class="membership-price-period">/ month</div>
+          </div>
+          <ul class="membership-features">
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> 10 Pod Hours / Month</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> 10% Discount on All Bookings</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> Priority Queue Access</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> Tournament Entry (Open)</li>
+            <li class="membership-feature"><div class="feature-check no">&#8211;</div> Coaching Sessions</li>
+            <li class="membership-feature"><div class="feature-check no">&#8211;</div> VIP Suite Access</li>
+          </ul>
+          <a href="#book" class="membership-btn">Start Core</a>
+        </div>
+
+        <!-- Tier 2 — Featured -->
+        <div class="membership-card featured">
+          <div class="membership-popular">Most Popular</div>
+          <div class="membership-tier-name">Tier 02</div>
+          <div class="membership-pass-name">Nexus Pro</div>
+          <div class="membership-price">
+            <div class="membership-price-amount">$129</div>
+            <div class="membership-price-period">/ month</div>
+          </div>
+          <ul class="membership-features">
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> 30 Pod Hours / Month</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> 20% Discount on All Bookings</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> Skip-the-Queue VIP Access</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> 2 Coaching Sessions / Month</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> Tournament Entry (All Tiers)</li>
+            <li class="membership-feature"><div class="feature-check no">&#8211;</div> VIP Suite Access</li>
+          </ul>
+          <a href="#book" class="membership-btn">Start Pro</a>
+        </div>
+
+        <!-- Tier 3 -->
+        <div class="membership-card">
+          <div class="membership-tier-name">Tier 03</div>
+          <div class="membership-pass-name">Nexus Elite</div>
+          <div class="membership-price">
+            <div class="membership-price-amount">$299</div>
+            <div class="membership-price-period">/ month</div>
+          </div>
+          <ul class="membership-features">
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> Unlimited Pod Hours</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> 35% Discount — All Services</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> Dedicated VIP Locker</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> 6 Coaching Sessions / Month</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> VIP Suite Reserved Access</li>
+            <li class="membership-feature included"><div class="feature-check">&#10003;</div> Sponsored Tournament Entry</li>
+          </ul>
+          <a href="#book" class="membership-btn">Start Elite</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TESTIMONIALS
+  ============================================================ -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Community</div>
+        <h2 class="section-title">Gamers <span>Speak</span></h2>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">The VIP Tournament Suite changed how I prep for ranked. The dual 360Hz OLEDs and zero input lag made me realize my home setup was holding me back. I went from Diamond II to Challenger in two weeks of training here.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">AK</div>
+            <div>
+              <div class="testimonial-name">Alex Kim</div>
+              <div class="testimonial-handle">@KimsEliteAim</div>
+            </div>
+            <div class="testimonial-stars" style="margin-left: auto;">
+              &#9733;&#9733;&#9733;&#9733;&#9733;
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">Nexus Arena's coaching program is legitimately world-class. My coach reviewed 4 hours of my gameplay and pinpointed every mechanical flaw in 30 minutes. My rank climbed three divisions in a single season.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SR</div>
+            <div>
+              <div class="testimonial-name">Sofia Reyes</div>
+              <div class="testimonial-handle">@SofiaPlaysWar</div>
+            </div>
+            <div class="testimonial-stars" style="margin-left: auto;">
+              &#9733;&#9733;&#9733;&#9733;&#9733;
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">Won my first tournament here and walked out with $2,500. The atmosphere during competition is electric — everyone is serious, the tech is flawless, and the staff knows the meta better than most players I know.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">JT</div>
+            <div>
+              <div class="testimonial-name">James Tran</div>
+              <div class="testimonial-handle">@TranMission_GG</div>
+            </div>
+            <div class="testimonial-stars" style="margin-left: auto;">
+              &#9733;&#9733;&#9733;&#9733;&#9733;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       BOOK NOW
+  ============================================================ -->
+  <section id="book">
+    <div class="container">
+      <div class="book-layout">
+        <div class="book-content">
+          <div class="section-label">Reserve</div>
+          <h2 class="section-title">Book Your <span>Pod</span></h2>
+          <p class="section-desc" style="margin-bottom: 0;">Secure your session in 60 seconds. Select your pod type, date, and time — then show up ready to compete.</p>
+
+          <div class="book-info-list">
+            <div class="book-info-item">
+              <div class="book-info-icon">&#128336;</div>
+              <div>
+                <div class="book-info-title">Open 7 Days</div>
+                <div class="book-info-desc">Mon–Fri: 10:00–02:00 &nbsp;|&nbsp; Sat–Sun: 09:00–04:00</div>
+              </div>
+            </div>
+            <div class="book-info-item">
+              <div class="book-info-icon">&#128205;</div>
+              <div>
+                <div class="book-info-title">Location</div>
+                <div class="book-info-desc">42 Nexus Plaza, Level 3 — Downtown Gaming District</div>
+              </div>
+            </div>
+            <div class="book-info-item">
+              <div class="book-info-icon">&#128241;</div>
+              <div>
+                <div class="book-info-title">Instant Confirmation</div>
+                <div class="book-info-desc">Receive your pod code and session details via email within 2 minutes.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="book-form">
+          <form onsubmit="return false;">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-input" placeholder="Your name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" placeholder="your@email.com" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time</label>
+                <select class="form-input">
+                  <option value="">Select time</option>
+                  <option>10:00 AM</option>
+                  <option>12:00 PM</option>
+                  <option>02:00 PM</option>
+                  <option>04:00 PM</option>
+                  <option>06:00 PM</option>
+                  <option>08:00 PM</option>
+                  <option>10:00 PM</option>
+                  <option>12:00 AM</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Pod Type</label>
+                <select class="form-input">
+                  <option value="">Select pod</option>
+                  <option>Standard Pod — $12/hr</option>
+                  <option>Pro Pod — $22/hr</option>
+                  <option>VIP Tournament Suite — $60/hr</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Duration</label>
+                <select class="form-input">
+                  <option value="">Select hours</option>
+                  <option>1 Hour</option>
+                  <option>2 Hours</option>
+                  <option>3 Hours</option>
+                  <option>4 Hours</option>
+                  <option>Full Day (8hrs)</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="form-submit">Confirm Reservation</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo"><span>NEXUS</span> ARENA</div>
+          <div class="footer-tagline">Where Legends Are Made</div>
+          <p class="footer-desc">Ultra-premium esports lounge and gaming arena. 12 custom gaming pods, pro coaching, and monthly tournaments with real prize pools.</p>
+          <div class="footer-social">
+            <div class="social-icon">&#120143;</div>
+            <div class="social-icon">&#128247;</div>
+            <div class="social-icon">&#127918;</div>
+            <div class="social-icon">&#9654;</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Arena</div>
+          <ul class="footer-links">
+            <li><a href="#pods">The Pods</a></li>
+            <li><a href="#tech">Tech Specs</a></li>
+            <li><a href="#games">Game Library</a></li>
+            <li><a href="#coaching">Coaching</a></li>
+            <li><a href="#tournament">Tournaments</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Membership</div>
+          <ul class="footer-links">
+            <li><a href="#membership">Nexus Core</a></li>
+            <li><a href="#membership">Nexus Pro</a></li>
+            <li><a href="#membership">Nexus Elite</a></li>
+            <li><a href="#book">Gift Cards</a></li>
+            <li><a href="#book">Corporate Events</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Support</div>
+          <ul class="footer-links">
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">House Rules</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Press Kit</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2026 <span>Nexus Arena</span>. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       SCRIPTS
+  ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    // ====================================================================
+    // SPLITTEXT POLYFILL
+    // ====================================================================
+    class SplitText {
+      constructor(el, opts = {}) {
+        this.el = typeof el === 'string' ? document.querySelector(el) : el;
+        this.chars = [];
+        this.words = [];
+        this._split();
+      }
+      _split() {
+        const t = this.el.textContent;
+        this.el.innerHTML = '';
+        t.split(' ').forEach((w, i) => {
+          const ws = document.createElement('span');
+          ws.style.cssText = 'display:inline-block;overflow:hidden;';
+          w.split('').forEach(c => {
+            const s = document.createElement('span');
+            s.textContent = c;
+            s.style.cssText = 'display:inline-block;';
+            this.chars.push(s);
+            ws.appendChild(s);
+          });
+          this.words.push(ws);
+          this.el.appendChild(ws);
+          if (i < t.split(' ').length - 1) this.el.appendChild(document.createTextNode(' '));
+        });
+      }
+    }
+
+    // ====================================================================
+    // HEX CANVAS BACKGROUND (Preloader)
+    // ====================================================================
+    (function () {
+      const canvas = document.getElementById('hexCanvas');
+      const ctx = canvas.getContext('2d');
+      let W, H;
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        drawHex();
+      }
+
+      function drawHex() {
+        ctx.clearRect(0, 0, W, H);
+        const size = 40;
+        const w = size * 2;
+        const h = Math.sqrt(3) * size;
+
+        for (let row = -1; row < H / h + 2; row++) {
+          for (let col = -1; col < W / (w * 0.75) + 2; col++) {
+            const x = col * w * 0.75;
+            const y = row * h + (col % 2 === 0 ? 0 : h / 2);
+            const dist = Math.sqrt(Math.pow(x - W / 2, 2) + Math.pow(y - H / 2, 2));
+            const alpha = Math.max(0, 0.07 - dist / (W * 1.5));
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+              const angle = (Math.PI / 180) * (60 * i - 30);
+              const px = x + size * Math.cos(angle);
+              const py = y + size * Math.sin(angle);
+              if (i === 0) ctx.moveTo(px, py);
+              else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = `rgba(0, 212, 255, ${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+    })();
+
+    // ====================================================================
+    // PRELOADER
+    // ====================================================================
+    const pctEl = document.getElementById('preloaderPct');
+    const preloader = document.getElementById('preloader');
+    let pct = 0;
+
+    const pctInterval = setInterval(() => {
+      pct = Math.min(pct + Math.floor(Math.random() * 4) + 1, 99);
+      pctEl.textContent = `LOADING... ${pct}%`;
+      if (pct >= 99) clearInterval(pctInterval);
+    }, 60);
+
+    function hidePreloader() {
+      pctEl.textContent = 'READY — 100%';
+      gsap.to(preloader, {
+        duration: 0.8,
+        y: '-100%',
+        ease: 'power3.inOut',
+        delay: 0.3,
+        onComplete: () => {
+          preloader.style.display = 'none';
+          showScrollIndicator();
+          startHeroAnim();
+        }
+      });
+    }
+
+    function showScrollIndicator() {
+      const si = document.getElementById('scroll-indicator');
+      gsap.fromTo(si,
+        { autoAlpha: 0, x: -20 },
+        { autoAlpha: 1, x: 0, duration: 0.6, ease: 'power2.out' }
+      );
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(hidePreloader, 2500);
+    });
+
+    setTimeout(() => {
+      const si = document.getElementById('scroll-indicator');
+      if (si && si.style.visibility !== 'visible') {
+        gsap.set(si, { autoAlpha: 1 });
+      }
+    }, 4000);
+
+    // ====================================================================
+    // GSAP + SCROLLTRIGGER INIT
+    // ====================================================================
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ====================================================================
+    // HERO ANIMATION
+    // ====================================================================
+    function startHeroAnim() {
+      const tl = gsap.timeline();
+
+      tl.from('.hero-badge', {
+        immediateRender: false,
+        duration: 0.7,
+        y: 20,
+        autoAlpha: 0,
+        ease: 'power2.out'
+      });
+
+      const heroTitle = document.getElementById('heroTitle');
+      if (heroTitle) {
+        const split = new SplitText(heroTitle);
+        tl.from(split.chars, {
+          immediateRender: false,
+          duration: 0.8,
+          y: 40,
+          autoAlpha: 0,
+          stagger: 0.04,
+          ease: 'power2.out'
+        }, '-=0.3');
+      }
+
+      tl.from('.hero-sub', {
+        immediateRender: false,
+        duration: 0.8,
+        y: 20,
+        autoAlpha: 0,
+        ease: 'power2.out'
+      }, '-=0.4');
+
+      tl.from('.hero-actions > *', {
+        immediateRender: false,
+        duration: 0.6,
+        y: 16,
+        autoAlpha: 0,
+        stagger: 0.12,
+        ease: 'power2.out'
+      }, '-=0.4');
+
+      tl.from('.hero-scroll-hint', {
+        immediateRender: false,
+        duration: 0.6,
+        autoAlpha: 0,
+        y: 10,
+        ease: 'power2.out'
+      }, '-=0.2');
+    }
+
+    // ====================================================================
+    // SCROLL-TRIGGERED ANIMATIONS
+    // ====================================================================
+
+    // Stats
+    gsap.from('.stat-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#stats', start: 'top 85%' },
+      duration: 0.9,
+      y: 32,
+      autoAlpha: 0,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    // Section headers
+    gsap.utils.toArray('.section-header').forEach(el => {
+      gsap.from(el.children, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        duration: 0.9,
+        y: 24,
+        autoAlpha: 0,
+        stagger: 0.12,
+        ease: 'power2.out'
+      });
+    });
+
+    // Pod Cards
+    gsap.from('.pod-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.pods-grid', start: 'top 85%' },
+      duration: 1,
+      y: 40,
+      autoAlpha: 0,
+      stagger: 0.15,
+      ease: 'power2.out'
+    });
+
+    // Tech Cards
+    gsap.from('.tech-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.tech-grid', start: 'top 85%' },
+      duration: 0.9,
+      y: 32,
+      autoAlpha: 0,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    // Game Cards
+    gsap.from('.game-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.games-grid', start: 'top 85%' },
+      duration: 0.8,
+      x: -24,
+      autoAlpha: 0,
+      stagger: 0.08,
+      ease: 'power2.out'
+    });
+
+    // Coaching
+    gsap.from('.coaching-image-wrap', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#coaching', start: 'top 80%' },
+      duration: 1.1,
+      x: -40,
+      autoAlpha: 0,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.coaching-content > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#coaching', start: 'top 80%' },
+      duration: 0.9,
+      y: 24,
+      autoAlpha: 0,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    // Tournament events
+    gsap.from('.tournament-event', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.tournament-schedule', start: 'top 85%' },
+      duration: 0.8,
+      x: -32,
+      autoAlpha: 0,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.tournament-prize-pool', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.tournament-prize-pool', start: 'top 85%' },
+      duration: 1,
+      scale: 0.95,
+      autoAlpha: 0,
+      ease: 'power2.out'
+    });
+
+    // Membership cards
+    gsap.from('.membership-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.membership-grid', start: 'top 85%' },
+      duration: 0.9,
+      y: 36,
+      autoAlpha: 0,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    // Testimonials
+    gsap.from('.testimonial-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.testimonials-grid', start: 'top 85%' },
+      duration: 0.9,
+      y: 28,
+      autoAlpha: 0,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    // Book section
+    gsap.from('.book-content > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#book', start: 'top 80%' },
+      duration: 0.9,
+      y: 20,
+      autoAlpha: 0,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.book-form', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#book', start: 'top 80%' },
+      duration: 1,
+      x: 40,
+      autoAlpha: 0,
+      ease: 'power2.out'
+    });
+
+    // Footer
+    gsap.from('.footer-top > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: 'footer', start: 'top 90%' },
+      duration: 0.8,
+      y: 20,
+      autoAlpha: 0,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    // ====================================================================
+    // NAVBAR SCROLL BEHAVIOR
+    // ====================================================================
+    window.addEventListener('scroll', () => {
+      const nb = document.getElementById('navbar');
+      if (window.scrollY > 80) nb.classList.add('scrolled');
+      else nb.classList.remove('scrolled');
+    });
+
+    // ====================================================================
+    // STAT NUMBER COUNT UP
+    // ====================================================================
+    ScrollTrigger.create({
+      trigger: '#stats',
+      start: 'top 85%',
+      once: true,
+      onEnter: () => {
+        document.querySelectorAll('.stat-number').forEach(el => {
+          const unit = el.querySelector('.stat-unit');
+          const unitText = unit ? unit.outerHTML : '';
+          const rawText = el.textContent.replace(/[^\d.]/g, '');
+          const target = parseFloat(rawText);
+          if (isNaN(target)) return;
+          const obj = { val: 0 };
+          gsap.to(obj, {
+            val: target,
+            duration: 2,
+            ease: 'power2.out',
+            onUpdate: () => {
+              const v = target < 1 ? obj.val.toFixed(1) : Math.round(obj.val);
+              el.innerHTML = v + unitText;
+            }
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

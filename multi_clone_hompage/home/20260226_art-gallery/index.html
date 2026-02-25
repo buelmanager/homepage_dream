@@ -1,0 +1,2334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MERIDIAN GALLERY — Where Art Finds Its Horizon</title>
+  <meta name="description" content="MERIDIAN GALLERY represents 40+ international contemporary artists. Exhibitions, art fairs, and acquisitions in the heart of the city." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- GSAP 3.12.2 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* =============================================
+       CSS RESET & CUSTOM PROPERTIES
+    ============================================= */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #F7F4EF;
+      --surface: #EFEBE4;
+      --accent: #1A1A1A;
+      --accent2: #C85D3A;
+      --text: #1A1A1A;
+      --text-muted: #6B6560;
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Inter', sans-serif;
+      --max-w: 1400px;
+      --nav-h: 80px;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* =============================================
+       PRELOADER
+    ============================================= */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .preloader-canvas {
+      width: 120px;
+      height: 120px;
+    }
+
+    .preloader-canvas svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .preloader-canvas svg path {
+      stroke: var(--accent);
+      stroke-width: 1;
+      fill: none;
+      stroke-dasharray: 500;
+      stroke-dashoffset: 500;
+    }
+
+    .preloader-text {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .preloader-tagline {
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: -24px;
+    }
+
+    /* =============================================
+       SCROLL INDICATOR — Fixed Left
+    ============================================= */
+    #scroll-indicator {
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 900;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: var(--text-muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent2);
+      animation: scrollLine 2.4s ease-in-out infinite;
+    }
+
+    @keyframes scrollLine {
+      0% { top: -100%; }
+      100% { top: 100%; }
+    }
+
+    .scroll-section-num {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+    }
+
+    .scroll-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent2);
+      transition: transform 0.3s;
+    }
+
+    .scroll-line-bottom {
+      width: 1px;
+      height: 40px;
+      background: var(--text-muted);
+    }
+
+    /* =============================================
+       NAVBAR
+    ============================================= */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      z-index: 800;
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    #navbar.scrolled {
+      background: rgba(247, 244, 239, 0.96);
+      box-shadow: 0 1px 0 rgba(26, 26, 26, 0.08);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    .nav-cta {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 10px 22px;
+      border: 1px solid var(--accent);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .nav-cta:hover {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    #hero {
+      min-height: 100vh;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 64px 80px 120px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent2);
+    }
+
+    .hero-heading {
+      font-family: var(--font-heading);
+      font-size: clamp(64px, 8vw, 120px);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+      margin-bottom: 40px;
+    }
+
+    .hero-heading em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent2);
+    }
+
+    .hero-sub {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 360px;
+      margin-bottom: 48px;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .btn-primary {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 16px 36px;
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    .btn-ghost {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+      display: inline-block;
+    }
+
+    .btn-ghost:hover {
+      color: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-img-wrap {
+      position: absolute;
+      inset: 80px 0 0 0;
+      overflow: hidden;
+    }
+
+    .hero-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.05);
+      transition: transform 8s ease;
+    }
+
+    .hero-exhibition-tag {
+      position: absolute;
+      bottom: 80px;
+      left: -24px;
+      background: var(--accent2);
+      color: var(--bg);
+      padding: 20px 32px;
+      z-index: 3;
+    }
+
+    .hero-exhibition-tag .tag-label {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .hero-exhibition-tag .tag-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-exhibition-tag .tag-date {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    .hero-stats {
+      position: absolute;
+      bottom: 40px;
+      right: 48px;
+      display: flex;
+      gap: 40px;
+      z-index: 3;
+    }
+
+    .hero-stat {
+      text-align: right;
+    }
+
+    .hero-stat .stat-num {
+      font-family: var(--font-heading);
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .hero-stat .stat-label {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* =============================================
+       CURRENT EXHIBITION
+    ============================================= */
+    #exhibition {
+      padding: 140px 120px;
+      background: var(--bg);
+    }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 64px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .section-label::after {
+      content: '';
+      display: inline-block;
+      width: 60px;
+      height: 1px;
+      background: var(--accent2);
+    }
+
+    .exhibition-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .exhibition-img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+    }
+
+    .exhibition-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .exhibition-img-wrap:hover img {
+      transform: scale(1.03);
+    }
+
+    .exhibition-badge {
+      position: absolute;
+      top: 32px;
+      right: 32px;
+      background: var(--bg);
+      padding: 12px 20px;
+    }
+
+    .exhibition-badge span {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
+
+    .exhibition-info {
+      padding-top: 40px;
+    }
+
+    .exhibition-category {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .exhibition-title {
+      font-family: var(--font-heading);
+      font-size: clamp(42px, 4vw, 64px);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .exhibition-title em {
+      font-style: italic;
+    }
+
+    .exhibition-artist {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--accent2);
+      margin-bottom: 32px;
+    }
+
+    .exhibition-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .exhibition-desc {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    .exhibition-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .exhibition-meta-item {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .exhibition-meta-item .meta-key {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      min-width: 80px;
+    }
+
+    .exhibition-meta-item .meta-val {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    /* =============================================
+       ARTISTS
+    ============================================= */
+    #artists {
+      padding: 140px 120px;
+      background: var(--surface);
+    }
+
+    .artists-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 80px;
+    }
+
+    .section-heading {
+      font-family: var(--font-heading);
+      font-size: clamp(42px, 5vw, 72px);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .section-heading em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    .view-all-link {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    .view-all-link:hover {
+      color: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    .artists-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+
+    .artist-card {
+      cursor: pointer;
+      group: true;
+    }
+
+    .artist-img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      margin-bottom: 20px;
+    }
+
+    .artist-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+      filter: grayscale(20%);
+    }
+
+    .artist-card:hover .artist-img-wrap img {
+      transform: scale(1.05);
+      filter: grayscale(0%);
+    }
+
+    .artist-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(26,26,26,0.5) 0%, transparent 50%);
+      transition: opacity 0.4s;
+    }
+
+    .artist-overlay-text {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+    }
+
+    .artist-country {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,0.7);
+    }
+
+    .artist-name {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--bg);
+      line-height: 1.1;
+      margin-top: 4px;
+    }
+
+    .artist-medium {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .artist-exhibitions {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-top: 4px;
+    }
+
+    /* =============================================
+       COLLECTION HIGHLIGHTS
+    ============================================= */
+    #collection {
+      padding: 140px 120px;
+      background: var(--bg);
+    }
+
+    .collection-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      margin-bottom: 80px;
+      align-items: end;
+    }
+
+    .collection-desc {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-muted);
+    }
+
+    .masonry-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 20px;
+    }
+
+    .masonry-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .masonry-item:nth-child(1) { grid-row: span 2; aspect-ratio: 3/4; }
+    .masonry-item:nth-child(2) { aspect-ratio: 4/3; }
+    .masonry-item:nth-child(3) { aspect-ratio: 1/1; }
+    .masonry-item:nth-child(4) { aspect-ratio: 4/3; }
+    .masonry-item:nth-child(5) { aspect-ratio: 1/1; }
+    .masonry-item:nth-child(6) { aspect-ratio: 4/3; }
+
+    .masonry-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .masonry-item:hover img {
+      transform: scale(1.06);
+    }
+
+    .masonry-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26,26,26,0);
+      transition: background 0.4s;
+      display: flex;
+      align-items: flex-end;
+      padding: 24px;
+    }
+
+    .masonry-item:hover .masonry-overlay {
+      background: rgba(26,26,26,0.55);
+    }
+
+    .masonry-info {
+      transform: translateY(12px);
+      transition: transform 0.4s;
+    }
+
+    .masonry-item:hover .masonry-info {
+      transform: translateY(0);
+    }
+
+    .masonry-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--bg);
+      font-style: italic;
+    }
+
+    .masonry-artist-name {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,0.7);
+      margin-top: 4px;
+    }
+
+    .masonry-price {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent2);
+      margin-top: 4px;
+    }
+
+    /* =============================================
+       ART FAIRS
+    ============================================= */
+    #artfairs {
+      padding: 140px 120px;
+      background: var(--accent);
+    }
+
+    #artfairs .section-label {
+      color: rgba(247,244,239,0.5);
+    }
+
+    #artfairs .section-label::after {
+      background: rgba(247,244,239,0.3);
+    }
+
+    #artfairs .section-heading {
+      color: var(--bg);
+      margin-bottom: 80px;
+    }
+
+    .fairs-list {
+      list-style: none;
+      border-top: 1px solid rgba(247,244,239,0.12);
+    }
+
+    .fair-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto auto;
+      align-items: center;
+      gap: 40px;
+      padding: 36px 0;
+      border-bottom: 1px solid rgba(247,244,239,0.12);
+      cursor: pointer;
+      transition: background 0.3s;
+      position: relative;
+    }
+
+    .fair-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent2);
+      transition: width 0.5s ease;
+    }
+
+    .fair-item:hover::after {
+      width: 100%;
+    }
+
+    .fair-num {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(247,244,239,0.3);
+      letter-spacing: 0.1em;
+    }
+
+    .fair-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .fair-name {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--bg);
+      letter-spacing: 0.01em;
+      transition: color 0.3s;
+    }
+
+    .fair-item:hover .fair-name {
+      color: var(--accent2);
+    }
+
+    .fair-location {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(247,244,239,0.4);
+    }
+
+    .fair-date {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(247,244,239,0.5);
+      text-align: right;
+    }
+
+    .fair-arrow {
+      font-size: 20px;
+      color: rgba(247,244,239,0.2);
+      transition: color 0.3s, transform 0.3s;
+    }
+
+    .fair-item:hover .fair-arrow {
+      color: var(--accent2);
+      transform: translateX(6px);
+    }
+
+    /* =============================================
+       ABOUT
+    ============================================= */
+    #about {
+      padding: 160px 120px;
+      background: var(--bg);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 120px;
+      align-items: start;
+    }
+
+    .about-left {}
+
+    .about-number {
+      font-family: var(--font-heading);
+      font-size: 120px;
+      font-weight: 300;
+      color: var(--surface);
+      line-height: 1;
+      margin-bottom: -20px;
+    }
+
+    .about-heading {
+      font-family: var(--font-heading);
+      font-size: clamp(42px, 4.5vw, 66px);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--accent);
+      margin-bottom: 40px;
+    }
+
+    .about-heading em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    .about-body {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .about-right {
+      padding-top: 120px;
+    }
+
+    .about-img-main {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      margin-bottom: 24px;
+    }
+
+    .about-img-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .about-img-caption {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .about-values {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 64px;
+    }
+
+    .about-value {
+      border-top: 1px solid var(--surface);
+      padding-top: 24px;
+    }
+
+    .about-value-icon {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--accent2);
+      margin-bottom: 12px;
+    }
+
+    .about-value-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .about-value-desc {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    /* =============================================
+       CONTACT / VISIT
+    ============================================= */
+    #contact {
+      padding: 140px 120px;
+      background: var(--surface);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 100px;
+      align-items: start;
+    }
+
+    .contact-info {}
+
+    .contact-address-block {
+      margin-bottom: 48px;
+    }
+
+    .contact-block-label {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 16px;
+    }
+
+    .contact-address-text {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--accent);
+    }
+
+    .hours-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hours-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(26,26,26,0.08);
+    }
+
+    .hours-day {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .hours-time {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .hours-closed {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .contact-form {}
+
+    .form-title {
+      font-family: var(--font-heading);
+      font-size: clamp(32px, 3vw, 48px);
+      font-weight: 300;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .form-title em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    .form-subtitle {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid rgba(26,26,26,0.12);
+      padding: 14px 18px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.3s;
+      appearance: none;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .form-textarea {
+      height: 120px;
+      resize: none;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-submit {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 18px 40px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      margin-top: 8px;
+    }
+
+    .form-submit:hover {
+      background: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    #footer {
+      background: var(--surface);
+      border-top: 1px solid rgba(26,26,26,0.1);
+      padding: 80px 120px 48px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 80px;
+    }
+
+    .footer-brand {}
+
+    .footer-logo {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .footer-tagline {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+
+    .social-link {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(26,26,26,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .social-link:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .footer-col-title {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .footer-col-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col-links a {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+
+    .footer-col-links a:hover {
+      color: var(--accent2);
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(26,26,26,0.1);
+      padding-top: 32px;
+    }
+
+    .footer-copy {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-muted);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-legal a {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      transition: color 0.3s;
+    }
+
+    .footer-legal a:hover {
+      color: var(--accent);
+    }
+
+    /* =============================================
+       MARQUEE STRIP
+    ============================================= */
+    .marquee-strip {
+      background: var(--accent);
+      overflow: hidden;
+      padding: 14px 0;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marqueeRun 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .marquee-item {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(247,244,239,0.6);
+      padding: 0 40px;
+      flex-shrink: 0;
+    }
+
+    .marquee-dot {
+      color: var(--accent2);
+      font-style: normal;
+    }
+
+    @keyframes marqueeRun {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* =============================================
+       UTILITIES
+    ============================================= */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 1100px) {
+      #hero { grid-template-columns: 1fr; min-height: 100vh; }
+      .hero-left { padding: 160px 48px 80px; }
+      .hero-right { display: none; }
+      .hero-stats { display: none; }
+
+      #exhibition { padding: 100px 48px; }
+      .exhibition-grid { grid-template-columns: 1fr; gap: 48px; }
+
+      #artists { padding: 100px 48px; }
+      .artists-grid { grid-template-columns: repeat(2, 1fr); }
+
+      #collection { padding: 100px 48px; }
+      .collection-header { grid-template-columns: 1fr; gap: 24px; }
+      .masonry-grid { grid-template-columns: 1fr 1fr; }
+      .masonry-item:nth-child(1) { grid-row: span 1; aspect-ratio: 4/3; }
+
+      #artfairs { padding: 100px 48px; }
+      .fair-item { grid-template-columns: 60px 1fr auto; }
+      .fair-arrow { display: none; }
+
+      #about { padding: 100px 48px; }
+      .about-grid { grid-template-columns: 1fr; gap: 60px; }
+      .about-right { padding-top: 0; }
+
+      #contact { padding: 100px 48px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 60px; }
+
+      #footer { padding: 60px 48px 32px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+
+      #navbar { padding: 0 24px; }
+      #scroll-indicator { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .artists-grid { grid-template-columns: 1fr; }
+      .masonry-grid { grid-template-columns: 1fr; }
+      .masonry-item:nth-child(n) { aspect-ratio: 4/3; }
+      .fair-item { grid-template-columns: 1fr; gap: 8px; }
+      .fair-num { display: none; }
+      .about-values { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       PRELOADER
+  ============================================= -->
+  <div id="preloader">
+    <div class="preloader-canvas">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Frame / Canvas outline -->
+        <rect id="pre-rect" x="12" y="12" width="96" height="96" rx="0"
+          stroke="#1A1A1A" stroke-width="1" fill="none"
+          stroke-dasharray="384" stroke-dashoffset="384" />
+        <!-- Inner horizon line -->
+        <line id="pre-line" x1="12" y1="68" x2="108" y2="68"
+          stroke="#C85D3A" stroke-width="0.8" fill="none"
+          stroke-dasharray="96" stroke-dashoffset="96" />
+        <!-- Minimal sun/circle motif -->
+        <circle id="pre-circle" cx="60" cy="50" r="14"
+          stroke="#1A1A1A" stroke-width="0.8" fill="none"
+          stroke-dasharray="88" stroke-dashoffset="88" />
+      </svg>
+    </div>
+    <p class="preloader-text">MERIDIAN GALLERY</p>
+    <p class="preloader-tagline">Where Art Finds Its Horizon</p>
+  </div>
+
+  <!-- =============================================
+       SCROLL INDICATOR
+  ============================================= -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-dot"></div>
+    <span class="scroll-section-num" id="section-num">01</span>
+    <div class="scroll-line-bottom"></div>
+  </div>
+
+  <!-- =============================================
+       NAVBAR
+  ============================================= -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Meridian</a>
+    <ul class="nav-links">
+      <li><a href="#exhibition">Exhibitions</a></li>
+      <li><a href="#artists">Artists</a></li>
+      <li><a href="#collection">Collection</a></li>
+      <li><a href="#artfairs">Art Fairs</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Visit Gallery</a>
+  </nav>
+
+  <!-- =============================================
+       HERO
+  ============================================= -->
+  <section id="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Now Showing</div>
+      <h1 class="hero-heading" id="hero-title">
+        Where<br />
+        Art<br />
+        <em>Finds</em><br />
+        Its<br />
+        Horizon
+      </h1>
+      <p class="hero-sub">
+        MERIDIAN GALLERY represents 40+ international artists whose work challenges, provokes, and transcends. We believe in the transformative power of contemporary art.
+      </p>
+      <div class="hero-cta-group">
+        <a href="#exhibition" class="btn-primary">Current Exhibition</a>
+        <a href="#artists" class="btn-ghost">View Artists</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-img-wrap">
+        <img
+          src="https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=1200&q=80&auto=format&fit=crop"
+          alt="Gallery interior with white walls and contemporary art"
+          id="hero-img"
+        />
+      </div>
+      <div class="hero-exhibition-tag">
+        <div class="tag-label">Featured Exhibition</div>
+        <div class="tag-title">Chromatic Reverie</div>
+        <div class="tag-date">Jan 15 — Mar 28, 2026</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="stat-num">40+</div>
+        <div class="stat-label">International Artists</div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-num">18</div>
+        <div class="stat-label">Years of Curation</div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Art Fairs Annually</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee Strip -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <span class="marquee-item">Chromatic Reverie <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Contemporary Fine Art <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">International Artists <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Frieze London 2026 <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Art Basel Miami <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Gallery Hours: Tue–Sun 10–18 <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Chromatic Reverie <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Contemporary Fine Art <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">International Artists <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Frieze London 2026 <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Art Basel Miami <span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Gallery Hours: Tue–Sun 10–18 <span class="marquee-dot">✦</span></span>
+    </div>
+  </div>
+
+  <!-- =============================================
+       CURRENT EXHIBITION
+  ============================================= -->
+  <section id="exhibition">
+    <div class="section-label">Current Exhibition</div>
+
+    <div class="exhibition-grid">
+      <!-- Image -->
+      <div class="exhibition-img-wrap">
+        <img
+          src="https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=1200&q=80&auto=format&fit=crop"
+          alt="Chromatic Reverie — Contemporary abstract painting exhibition"
+        />
+        <div class="exhibition-badge">
+          <span>On View Now</span>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="exhibition-info">
+        <div class="exhibition-category">Solo Exhibition · Gallery I &amp; II</div>
+        <h2 class="exhibition-title"><em>Chromatic Reverie</em></h2>
+        <div class="exhibition-artist">Isabelle Voss</div>
+        <div class="exhibition-divider"></div>
+        <p class="exhibition-desc">
+          In her most ambitious body of work to date, Berlin-based painter Isabelle Voss presents forty large-scale canvases that interrogate the relationship between color, memory, and emotional landscape. Working with layers of translucent pigment applied over months, each piece accumulates time as a visible material.
+        </p>
+        <p class="exhibition-desc">
+          Voss invites viewers to inhabit a chromatic world where the boundary between abstraction and sensation dissolves — where blue becomes grief, ochre becomes nostalgia, and crimson becomes joy uncontained.
+        </p>
+        <div class="exhibition-meta">
+          <div class="exhibition-meta-item">
+            <span class="meta-key">Period</span>
+            <span class="meta-val">January 15 — March 28, 2026</span>
+          </div>
+          <div class="exhibition-meta-item">
+            <span class="meta-key">Location</span>
+            <span class="meta-val">Gallery I &amp; II, Ground Floor</span>
+          </div>
+          <div class="exhibition-meta-item">
+            <span class="meta-key">Artist</span>
+            <span class="meta-val">Isabelle Voss (b.1979, Berlin)</span>
+          </div>
+          <div class="exhibition-meta-item">
+            <span class="meta-key">Works</span>
+            <span class="meta-val">40 Paintings, Oil on Linen</span>
+          </div>
+        </div>
+        <a href="#" class="btn-primary">View Exhibition</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       ARTISTS
+  ============================================= -->
+  <section id="artists">
+    <div class="artists-header">
+      <div>
+        <div class="section-label">Our Roster</div>
+        <h2 class="section-heading">Represented<br /><em>Artists</em></h2>
+      </div>
+      <a href="#" class="view-all-link">View All 40+ Artists</a>
+    </div>
+
+    <div class="artists-grid">
+      <!-- Artist 1 -->
+      <div class="artist-card">
+        <div class="artist-img-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&q=80&auto=format&fit=crop"
+            alt="Isabelle Voss — Painter"
+          />
+          <div class="artist-overlay">
+            <div class="artist-overlay-text">
+              <div class="artist-country">Germany · Berlin</div>
+              <div class="artist-name">Isabelle Voss</div>
+            </div>
+          </div>
+        </div>
+        <div class="artist-medium">Oil on Linen · Large-Scale Painting</div>
+        <div class="artist-exhibitions">3 Solo Exhibitions</div>
+      </div>
+
+      <!-- Artist 2 -->
+      <div class="artist-card">
+        <div class="artist-img-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1531243625752-c0eb5edc17a5?w=800&q=80&auto=format&fit=crop"
+            alt="Marcus Chen — Sculptor"
+          />
+          <div class="artist-overlay">
+            <div class="artist-overlay-text">
+              <div class="artist-country">China · Shanghai</div>
+              <div class="artist-name">Marcus Chen</div>
+            </div>
+          </div>
+        </div>
+        <div class="artist-medium">Bronze &amp; Steel · Monumental Sculpture</div>
+        <div class="artist-exhibitions">2 Group Exhibitions</div>
+      </div>
+
+      <!-- Artist 3 -->
+      <div class="artist-card">
+        <div class="artist-img-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&q=80&auto=format&fit=crop"
+            alt="Sofia Reyes — Installation Artist"
+          />
+          <div class="artist-overlay">
+            <div class="artist-overlay-text">
+              <div class="artist-country">Mexico · Mexico City</div>
+              <div class="artist-name">Sofia Reyes</div>
+            </div>
+          </div>
+        </div>
+        <div class="artist-medium">Installation · Light &amp; Sound</div>
+        <div class="artist-exhibitions">4 Solo Exhibitions</div>
+      </div>
+
+      <!-- Artist 4 -->
+      <div class="artist-card">
+        <div class="artist-img-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1580136579312-4b4d99f7e5b3?w=800&q=80&auto=format&fit=crop"
+            alt="Kwame Osei — Mixed Media"
+          />
+          <div class="artist-overlay">
+            <div class="artist-overlay-text">
+              <div class="artist-country">Ghana · Accra</div>
+              <div class="artist-name">Kwame Osei</div>
+            </div>
+          </div>
+        </div>
+        <div class="artist-medium">Mixed Media · Textile &amp; Photography</div>
+        <div class="artist-exhibitions">2 Solo Exhibitions</div>
+      </div>
+
+      <!-- Artist 5 -->
+      <div class="artist-card">
+        <div class="artist-img-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=800&q=80&auto=format&fit=crop"
+            alt="Elena Morozova — Painter"
+          />
+          <div class="artist-overlay">
+            <div class="artist-overlay-text">
+              <div class="artist-country">Russia · Moscow</div>
+              <div class="artist-name">Elena Morozova</div>
+            </div>
+          </div>
+        </div>
+        <div class="artist-medium">Watercolor &amp; Ink · Works on Paper</div>
+        <div class="artist-exhibitions">1 Solo Exhibition</div>
+      </div>
+
+      <!-- Artist 6 -->
+      <div class="artist-card">
+        <div class="artist-img-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&q=80&auto=format&fit=crop"
+            alt="Julien Marceau — Photography"
+          />
+          <div class="artist-overlay">
+            <div class="artist-overlay-text">
+              <div class="artist-country">France · Paris</div>
+              <div class="artist-name">Julien Marceau</div>
+            </div>
+          </div>
+        </div>
+        <div class="artist-medium">Photography · Silver Gelatin Prints</div>
+        <div class="artist-exhibitions">3 Group Exhibitions</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       COLLECTION HIGHLIGHTS
+  ============================================= -->
+  <section id="collection">
+    <div class="collection-header">
+      <div>
+        <div class="section-label">Acquisitions</div>
+        <h2 class="section-heading">Collection<br /><em>Highlights</em></h2>
+      </div>
+      <p class="collection-desc">
+        Our permanent collection spans six decades of contemporary practice. Each work is selected for its aesthetic ambition, cultural resonance, and formal innovation. We acquire with intention — building collections that speak across generations.
+      </p>
+    </div>
+
+    <div class="masonry-grid">
+      <div class="masonry-item">
+        <img
+          src="https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=1200&q=80&auto=format&fit=crop"
+          alt="Chromatic Reverie No. 12 — Isabelle Voss"
+        />
+        <div class="masonry-overlay">
+          <div class="masonry-info">
+            <div class="masonry-title">Chromatic Reverie No. 12</div>
+            <div class="masonry-artist-name">Isabelle Voss, 2024</div>
+            <div class="masonry-price">Available on Inquiry</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="masonry-item">
+        <img
+          src="https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=1200&q=80&auto=format&fit=crop"
+          alt="Threshold IV — Marcus Chen"
+        />
+        <div class="masonry-overlay">
+          <div class="masonry-info">
+            <div class="masonry-title">Threshold IV</div>
+            <div class="masonry-artist-name">Marcus Chen, 2023</div>
+            <div class="masonry-price">$185,000</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="masonry-item">
+        <img
+          src="https://images.unsplash.com/photo-1580136579312-4b4d99f7e5b3?w=1200&q=80&auto=format&fit=crop"
+          alt="Resonance Field — Sofia Reyes"
+        />
+        <div class="masonry-overlay">
+          <div class="masonry-info">
+            <div class="masonry-title">Resonance Field</div>
+            <div class="masonry-artist-name">Sofia Reyes, 2025</div>
+            <div class="masonry-price">$240,000</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="masonry-item">
+        <img
+          src="https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=1200&q=80&auto=format&fit=crop"
+          alt="Memory Thread III — Kwame Osei"
+        />
+        <div class="masonry-overlay">
+          <div class="masonry-info">
+            <div class="masonry-title">Memory Thread III</div>
+            <div class="masonry-artist-name">Kwame Osei, 2024</div>
+            <div class="masonry-price">$98,000</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="masonry-item">
+        <img
+          src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=1200&q=80&auto=format&fit=crop"
+          alt="Silence Studies — Elena Morozova"
+        />
+        <div class="masonry-overlay">
+          <div class="masonry-info">
+            <div class="masonry-title">Silence Studies</div>
+            <div class="masonry-artist-name">Elena Morozova, 2023</div>
+            <div class="masonry-price">$42,000</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="masonry-item">
+        <img
+          src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80&auto=format&fit=crop"
+          alt="Corridor Studies II — Julien Marceau"
+        />
+        <div class="masonry-overlay">
+          <div class="masonry-info">
+            <div class="masonry-title">Corridor Studies II</div>
+            <div class="masonry-artist-name">Julien Marceau, 2022</div>
+            <div class="masonry-price">$68,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       ART FAIRS
+  ============================================= -->
+  <section id="artfairs">
+    <div class="section-label">Schedule</div>
+    <h2 class="section-heading">Upcoming<br /><em>Art Fairs</em></h2>
+
+    <ul class="fairs-list">
+      <li class="fair-item">
+        <span class="fair-num">01</span>
+        <div class="fair-info">
+          <span class="fair-name">Frieze London</span>
+          <span class="fair-location">Regent's Park, London, UK</span>
+        </div>
+        <div class="fair-date">October 8–12, 2026</div>
+        <span class="fair-arrow">→</span>
+      </li>
+      <li class="fair-item">
+        <span class="fair-num">02</span>
+        <div class="fair-info">
+          <span class="fair-name">Art Basel Miami Beach</span>
+          <span class="fair-location">Miami Beach Convention Center, USA</span>
+        </div>
+        <div class="fair-date">December 4–7, 2026</div>
+        <span class="fair-arrow">→</span>
+      </li>
+      <li class="fair-item">
+        <span class="fair-num">03</span>
+        <div class="fair-info">
+          <span class="fair-name">FIAC Paris</span>
+          <span class="fair-location">Grand Palais Éphémère, Paris, France</span>
+        </div>
+        <div class="fair-date">October 22–25, 2026</div>
+        <span class="fair-arrow">→</span>
+      </li>
+      <li class="fair-item">
+        <span class="fair-num">04</span>
+        <div class="fair-info">
+          <span class="fair-name">The Armory Show</span>
+          <span class="fair-location">Javits Center, New York, USA</span>
+        </div>
+        <div class="fair-date">September 5–8, 2026</div>
+        <span class="fair-arrow">→</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- =============================================
+       ABOUT
+  ============================================= -->
+  <section id="about">
+    <div class="about-grid">
+      <div class="about-left">
+        <div class="section-label">Our Story</div>
+        <div class="about-number">18</div>
+        <h2 class="about-heading">A Gallery<br />Built on<br /><em>Belief</em></h2>
+
+        <p class="about-body">
+          Founded in 2008 by curator and collector Diane Kessler, MERIDIAN GALLERY was born from a singular conviction: that great art is not merely decorative — it is the clearest mirror we have of what it means to be alive in a particular moment.
+        </p>
+        <p class="about-body">
+          Over eighteen years, we have grown from a single room on Rue du Temple to a 4,000 square meter complex spanning three interconnected buildings. Through this growth, our mission has remained unchanged: to identify and champion artists who take genuine risks, and to connect their work with collectors and institutions who share our belief in art's transformative capacity.
+        </p>
+        <p class="about-body">
+          We represent forty-three artists across painting, sculpture, photography, installation, and new media — from emerging voices to internationally recognized figures shown at MoMA, Tate Modern, and the Venice Biennale.
+        </p>
+
+        <div class="about-values">
+          <div class="about-value">
+            <div class="about-value-icon">I.</div>
+            <div class="about-value-title">Curatorial Integrity</div>
+            <div class="about-value-desc">Every exhibition begins with a question, not an answer. We curate from intellectual curiosity.</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-icon">II.</div>
+            <div class="about-value-title">Artist-First</div>
+            <div class="about-value-desc">Long-term relationships with our artists. We invest in careers, not transactions.</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-icon">III.</div>
+            <div class="about-value-title">Global Vision</div>
+            <div class="about-value-desc">Forty-three artists across twenty-two countries. Art has no borders.</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-icon">IV.</div>
+            <div class="about-value-title">Collector Support</div>
+            <div class="about-value-desc">Advisory services, collection building, and installation — we are with you throughout.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-right">
+        <div class="about-img-main">
+          <img
+            src="https://images.unsplash.com/photo-1531243625752-c0eb5edc17a5?w=1200&q=80&auto=format&fit=crop"
+            alt="Gallery opening night — MERIDIAN GALLERY"
+          />
+        </div>
+        <p class="about-img-caption">Gallery I during Chromatic Reverie opening, January 2026</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       CONTACT / VISIT
+  ============================================= -->
+  <section id="contact">
+    <div class="section-label">Visit &amp; Inquire</div>
+
+    <div class="contact-grid">
+      <!-- Info -->
+      <div class="contact-info">
+        <h2 class="section-heading" style="margin-bottom: 56px;">Find<br /><em>Us Here</em></h2>
+
+        <div class="contact-address-block">
+          <div class="contact-block-label">Gallery Address</div>
+          <div class="contact-address-text">
+            14 Rue du Temple<br />
+            75004 Paris, France
+          </div>
+        </div>
+
+        <div class="contact-address-block">
+          <div class="contact-block-label">Opening Hours</div>
+          <ul class="hours-list">
+            <li class="hours-item">
+              <span class="hours-day">Tuesday – Friday</span>
+              <span class="hours-time">10:00 – 18:00</span>
+            </li>
+            <li class="hours-item">
+              <span class="hours-day">Saturday</span>
+              <span class="hours-time">10:00 – 20:00</span>
+            </li>
+            <li class="hours-item">
+              <span class="hours-day">Sunday</span>
+              <span class="hours-time">12:00 – 17:00</span>
+            </li>
+            <li class="hours-item">
+              <span class="hours-day">Monday</span>
+              <span class="hours-time hours-closed">Closed</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="contact-address-block">
+          <div class="contact-block-label">Contact</div>
+          <div class="contact-address-text">
+            +33 (0)1 42 72 48 92<br />
+            <span style="font-size:16px;">info@meridiangallery.com</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="contact-form">
+        <h3 class="form-title">Make an<br /><em>Enquiry</em></h3>
+        <p class="form-subtitle">
+          For acquisition inquiries, exhibition information, press requests, or private viewings, please complete the form below. Our team responds within 24 hours.
+        </p>
+        <form>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="fname">First Name</label>
+              <input type="text" id="fname" class="form-input" placeholder="First name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lname">Last Name</label>
+              <input type="text" id="lname" class="form-input" placeholder="Last name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input type="email" id="email" class="form-input" placeholder="your@email.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inquiry">Inquiry Type</label>
+            <select id="inquiry" class="form-select">
+              <option value="" disabled selected>Select inquiry type</option>
+              <option>Artwork Acquisition</option>
+              <option>Exhibition Information</option>
+              <option>Private Viewing Request</option>
+              <option>Press &amp; Media</option>
+              <option>Collection Advisory</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">Message</label>
+            <textarea id="message" class="form-textarea" placeholder="Please describe your inquiry..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">Send Enquiry</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">Meridian Gallery</div>
+        <div class="footer-tagline">Where Art Finds Its Horizon</div>
+        <div class="footer-social">
+          <a href="#" class="social-link" aria-label="Instagram">Ig</a>
+          <a href="#" class="social-link" aria-label="Facebook">Fb</a>
+          <a href="#" class="social-link" aria-label="Twitter">X</a>
+          <a href="#" class="social-link" aria-label="LinkedIn">Li</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Exhibitions</div>
+        <ul class="footer-col-links">
+          <li><a href="#">Current Shows</a></li>
+          <li><a href="#">Upcoming</a></li>
+          <li><a href="#">Archive</a></li>
+          <li><a href="#">Virtual Tours</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Gallery</div>
+        <ul class="footer-col-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Artists</a></li>
+          <li><a href="#">Art Fairs</a></li>
+          <li><a href="#">Press Room</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-col-links">
+          <li><a href="#">Acquisitions</a></li>
+          <li><a href="#">Collection Advisory</a></li>
+          <li><a href="#">Private Viewings</a></li>
+          <li><a href="#">Corporate Art</a></li>
+          <li><a href="#">Shipping &amp; Installation</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 MERIDIAN GALLERY. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Cookie Settings</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── SplitText Inline Polyfill ──────────────────
+    class SplitText {
+      constructor(el, opts={}) {
+        this.el = typeof el==='string'?document.querySelector(el):el;
+        this.chars=[];this.words=[];this._split();
+      }
+      _split() {
+        const text=this.el.textContent;this.el.innerHTML='';
+        text.split(' ').forEach((word,wi)=>{
+          const ws=document.createElement('span');
+          ws.style.cssText='display:inline-block;overflow:hidden;';
+          word.split('').forEach(ch=>{
+            const s=document.createElement('span');s.textContent=ch;
+            s.style.cssText='display:inline-block;';
+            this.chars.push(s);ws.appendChild(s);
+          });
+          this.words.push(ws);this.el.appendChild(ws);
+          if(wi<text.split(' ').length-1)this.el.appendChild(document.createTextNode(' '));
+        });
+      }
+    }
+
+    // ── Preloader ──────────────────────────────────
+    (function initPreloader() {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.to('#preloader', {
+            duration: 0.8,
+            y: -40,
+            autoAlpha: 0,
+            ease: 'power2.inOut',
+            onComplete: () => {
+              document.getElementById('preloader').style.display = 'none';
+              initScrollIndicator();
+            }
+          });
+          initHero();
+        }
+      });
+
+      // Draw SVG paths
+      tl.to('#pre-rect', { strokeDashoffset: 0, duration: 1.2, ease: 'power2.inOut' })
+        .to('#pre-line',   { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' }, '-=0.3')
+        .to('#pre-circle', { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' }, '-=0.3')
+        .from('.preloader-text', {
+          y: 16, autoAlpha: 0, duration: 0.6, ease: 'power2.out'
+        }, '-=0.2')
+        .from('.preloader-tagline', {
+          y: 10, autoAlpha: 0, duration: 0.5, ease: 'power2.out'
+        }, '-=0.3')
+        .to({}, { duration: 0.8 });
+    })();
+
+    // ── Scroll Indicator ───────────────────────────
+    function initScrollIndicator() {
+      const indicator = document.getElementById('scroll-indicator');
+      const numEl = document.getElementById('section-num');
+      gsap.from(indicator, { autoAlpha: 0, x: -12, duration: 0.8, ease: 'power2.out' });
+
+      const sections = document.querySelectorAll('section');
+      const nums = ['01','02','03','04','05','06','07'];
+
+      sections.forEach((sec, i) => {
+        ScrollTrigger.create({
+          trigger: sec,
+          start: 'top 60%',
+          end: 'bottom 40%',
+          onEnter: () => { numEl.textContent = nums[i] || '0'+(i+1); },
+          onEnterBack: () => { numEl.textContent = nums[i] || '0'+(i+1); }
+        });
+      });
+    }
+
+    // Make scroll indicator visible after preloader for capture tool
+    setTimeout(() => {
+      const ind = document.getElementById('scroll-indicator');
+      if (ind) ind.style.visibility = 'visible';
+    }, 4000);
+
+    // ── Navbar scroll ──────────────────────────────
+    ScrollTrigger.create({
+      start: 'top -80',
+      onUpdate: (self) => {
+        const nav = document.getElementById('navbar');
+        if (self.scroll() > 80) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      }
+    });
+
+    // ── Hero init ──────────────────────────────────
+    function initHero() {
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.1
+      });
+
+      const heroTitle = document.getElementById('hero-title');
+      if (heroTitle) {
+        const split = new SplitText(heroTitle);
+        gsap.from(split.chars, {
+          immediateRender: false,
+          y: 28, autoAlpha: 0, duration: 1.1, ease: 'power2.out', stagger: 0.04, delay: 0.2
+        });
+      }
+
+      gsap.from('.hero-sub', {
+        immediateRender: false,
+        y: 20, autoAlpha: 0, duration: 0.9, ease: 'power2.out', delay: 0.6
+      });
+
+      gsap.from('.hero-cta-group', {
+        immediateRender: false,
+        y: 16, autoAlpha: 0, duration: 0.8, ease: 'power2.out', delay: 0.8
+      });
+
+      gsap.from('.hero-img-wrap', {
+        immediateRender: false,
+        x: 60, autoAlpha: 0, duration: 1.2, ease: 'power2.out', delay: 0.3
+      });
+
+      gsap.from('.hero-exhibition-tag', {
+        immediateRender: false,
+        x: -20, autoAlpha: 0, duration: 0.8, ease: 'power2.out', delay: 1.0
+      });
+
+      gsap.from('.hero-stat', {
+        immediateRender: false,
+        y: 20, autoAlpha: 0, duration: 0.7, ease: 'power2.out', stagger: 0.12, delay: 1.1
+      });
+
+      // Parallax hero image
+      gsap.to('#hero-img', {
+        immediateRender: false,
+        y: -60,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1
+        }
+      });
+    }
+
+    // ── Exhibition ────────────────────────────────
+    gsap.from('.exhibition-img-wrap', {
+      immediateRender: false,
+      x: -48, autoAlpha: 0, duration: 1.0, ease: 'power2.out',
+      scrollTrigger: { trigger: '#exhibition', start: 'top 80%' }
+    });
+
+    gsap.from('.exhibition-info > *', {
+      immediateRender: false,
+      y: 24, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '#exhibition', start: 'top 75%' }
+    });
+
+    // ── Artists ──────────────────────────────────
+    gsap.from('.artist-card', {
+      immediateRender: false,
+      y: 40, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '#artists', start: 'top 75%' }
+    });
+
+    gsap.from('.artists-header > *', {
+      immediateRender: false,
+      y: 24, autoAlpha: 0, duration: 0.8, ease: 'power2.out', stagger: 0.12,
+      scrollTrigger: { trigger: '#artists', start: 'top 80%' }
+    });
+
+    // ── Collection ──────────────────────────────
+    gsap.from('.collection-header > *', {
+      immediateRender: false,
+      y: 24, autoAlpha: 0, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '#collection', start: 'top 80%' }
+    });
+
+    gsap.from('.masonry-item', {
+      immediateRender: false,
+      y: 36, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '.masonry-grid', start: 'top 80%' }
+    });
+
+    // ── Art Fairs ────────────────────────────────
+    gsap.from('.fair-item', {
+      immediateRender: false,
+      x: -32, autoAlpha: 0, duration: 0.8, ease: 'power2.out', stagger: 0.12,
+      scrollTrigger: { trigger: '#artfairs', start: 'top 75%' }
+    });
+
+    // ── About ────────────────────────────────────
+    gsap.from('.about-left > *', {
+      immediateRender: false,
+      y: 24, autoAlpha: 0, duration: 0.9, ease: 'power2.out', stagger: 0.08,
+      scrollTrigger: { trigger: '#about', start: 'top 80%' }
+    });
+
+    gsap.from('.about-right', {
+      immediateRender: false,
+      x: 48, autoAlpha: 0, duration: 1.0, ease: 'power2.out',
+      scrollTrigger: { trigger: '#about', start: 'top 75%' }
+    });
+
+    gsap.from('.about-value', {
+      immediateRender: false,
+      y: 20, autoAlpha: 0, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '.about-values', start: 'top 80%' }
+    });
+
+    // ── Contact ──────────────────────────────────
+    gsap.from('.contact-info > *', {
+      immediateRender: false,
+      y: 24, autoAlpha: 0, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '#contact', start: 'top 80%' }
+    });
+
+    gsap.from('.contact-form > *', {
+      immediateRender: false,
+      y: 24, autoAlpha: 0, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '#contact', start: 'top 75%' }
+    });
+
+    // ── Footer ──────────────────────────────────
+    gsap.from('.footer-top > *', {
+      immediateRender: false,
+      y: 20, autoAlpha: 0, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '#footer', start: 'top 85%' }
+    });
+
+    // ── Hero image scale on load ─────────────────
+    window.addEventListener('load', () => {
+      const heroImg = document.querySelector('.hero-img-wrap img');
+      if (heroImg) {
+        gsap.to(heroImg, { scale: 1, duration: 8, ease: 'none' });
+      }
+    });
+  </script>
+</body>
+</html>
