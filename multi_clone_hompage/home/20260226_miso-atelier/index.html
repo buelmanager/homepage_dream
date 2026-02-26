@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KOJI — Patience Transforms Everything</title>
+  <meta name="description" content="Sixth-generation miso and koji fermentation atelier in Nagano, Japan. Twelve varieties of aged miso, koji culture starters, and fermentation immersion retreats." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #1A1510;
+      --surface: #231C14;
+      --accent: #D47840;
+      --accent2: #E8C890;
+      --text: #F0E8D8;
+      --text-muted: #907050;
+      --border: rgba(212, 120, 64, 0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .preloader-inner {
+      position: relative;
+      width: 200px;
+      height: 200px;
+    }
+    .spore {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: spore-float linear infinite;
+    }
+    @keyframes spore-float {
+      0%   { transform: translate(0, 0) scale(1); opacity: 0; }
+      20%  { opacity: 0.8; }
+      80%  { opacity: 0.4; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+    }
+    .preloader-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem;
+      font-weight: 300;
+      letter-spacing: 0.5em;
+      color: var(--text);
+      margin-top: 2rem;
+      opacity: 0;
+      animation: fade-in 0.8s ease 0.5s forwards;
+    }
+    .preloader-tagline {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      opacity: 0;
+      animation: fade-in 0.8s ease 1s forwards;
+    }
+    @keyframes fade-in { to { opacity: 1; } }
+
+    /* ===== SCROLL INDICATOR ===== */
+    .scroll-indicator {
+      position: fixed;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--accent));
+      animation: scroll-line 1.8s ease-in-out infinite;
+    }
+    @keyframes scroll-line {
+      0%, 100% { transform: scaleY(1); opacity: 0.6; }
+      50% { transform: scaleY(1.3); opacity: 1; }
+    }
+    .scroll-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 1.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(26, 21, 16, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.5rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1547592180-85f173990554?w=1800&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.45) saturate(0.7);
+      transform: scale(1.05);
+      transition: transform 8s ease;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(26,21,16,0.3) 0%,
+        rgba(26,21,16,0.1) 40%,
+        rgba(26,21,16,0.6) 80%,
+        rgba(26,21,16,0.95) 100%
+      );
+    }
+    /* Steam wisps */
+    .steam-container {
+      position: absolute;
+      bottom: 35%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 3rem;
+      pointer-events: none;
+    }
+    .steam-wisp {
+      width: 3px;
+      height: 60px;
+      background: linear-gradient(to top, rgba(212,120,64,0.4), transparent);
+      border-radius: 50%;
+      filter: blur(3px);
+      animation: steam-rise 3s ease-in-out infinite;
+    }
+    .steam-wisp:nth-child(2) { animation-delay: 0.8s; height: 80px; }
+    .steam-wisp:nth-child(3) { animation-delay: 1.6s; height: 50px; }
+    @keyframes steam-rise {
+      0%   { transform: translateY(0) scaleX(1); opacity: 0; }
+      30%  { opacity: 0.8; }
+      100% { transform: translateY(-100px) scaleX(2); opacity: 0; }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      display: block;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(5rem, 14vw, 13rem);
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      line-height: 0.9;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      gap: 0.05em;
+      margin-bottom: 2rem;
+    }
+    .hero-title .char {
+      display: inline-block;
+      overflow: hidden;
+    }
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--accent2);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-desc {
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      max-width: 400px;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+    }
+
+    /* Fermentation Timer */
+    .fermentation-timer {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5rem;
+      border: 1px solid var(--border);
+      padding: 1rem 2rem;
+      background: rgba(35, 28, 20, 0.6);
+      backdrop-filter: blur(8px);
+      margin-bottom: 3rem;
+    }
+    .timer-block {
+      text-align: center;
+    }
+    .timer-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+    }
+    .timer-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 0.25rem;
+    }
+    .timer-sep {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      color: var(--border);
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    .btn-primary {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-outline {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      border: 1px solid var(--text-muted);
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ===== SECTION COMMONS ===== */
+    section { padding: 8rem 4rem; }
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .section-title em { color: var(--accent); font-style: italic; }
+    .section-body {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+      max-width: 540px;
+    }
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      margin: 2rem 0;
+    }
+
+    /* ===== MISO RANGE ===== */
+    .miso-range {
+      background: var(--surface);
+    }
+    .miso-range-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 5rem;
+    }
+    .miso-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .miso-card {
+      position: relative;
+      background: var(--bg);
+      padding: 3rem 2.5rem;
+      overflow: hidden;
+      transition: transform 0.4s ease;
+      cursor: default;
+    }
+    .miso-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .miso-card:hover::before { transform: scaleX(1); }
+    .miso-card:hover { transform: translateY(-4px); }
+    .miso-age-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .miso-age-badge::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .miso-card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .miso-card-jp {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .miso-tasting {
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+    .miso-profile {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .miso-profile-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+    }
+    .miso-profile-label { color: var(--text-muted); letter-spacing: 0.1em; }
+    .miso-profile-bar {
+      flex: 1;
+      height: 1px;
+      background: rgba(144,112,80,0.2);
+      margin: 0 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .miso-profile-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: var(--accent);
+    }
+    .miso-profile-val { color: var(--accent2); letter-spacing: 0.05em; }
+
+    /* ===== TRADITION ===== */
+    .tradition {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      max-width: 100%;
+      padding: 0;
+    }
+    .tradition-image {
+      position: relative;
+      overflow: hidden;
+      min-height: 600px;
+    }
+    .tradition-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.7) saturate(0.8);
+    }
+    .tradition-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent, var(--bg));
+    }
+    .tradition-content {
+      background: var(--bg);
+      padding: 8rem 6rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .generation-counter {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 8rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: -2rem;
+    }
+
+    /* ===== KOJI SCIENCE ===== */
+    .koji-science {
+      background: var(--surface);
+    }
+    .koji-science-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .koji-science-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: end;
+      margin-bottom: 5rem;
+    }
+    .fermentation-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .step-card {
+      background: var(--bg);
+      padding: 3rem 2rem;
+      position: relative;
+    }
+    .step-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .step-desc {
+      font-size: 0.78rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+    .step-duration {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .step-connector {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translate(50%, -50%);
+      width: 12px;
+      height: 12px;
+      border: 1px solid var(--accent);
+      background: var(--surface);
+      border-radius: 50%;
+      z-index: 1;
+    }
+    .step-card:last-child .step-connector { display: none; }
+
+    /* ===== COURSES ===== */
+    .courses-section {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .courses-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: end;
+      margin-bottom: 5rem;
+    }
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .course-card {
+      background: var(--surface);
+      padding: 3.5rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s ease;
+    }
+    .course-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .course-card:hover::after { transform: scaleX(1); }
+    .course-card:hover { transform: translateY(-4px); }
+    .course-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      display: block;
+    }
+    .course-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .course-desc {
+      font-size: 0.8rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+    .course-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .course-meta-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .course-meta-key { color: var(--text-muted); }
+    .course-meta-val { color: var(--accent2); }
+    .course-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .course-price span {
+      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+    .btn-course {
+      display: block;
+      text-align: center;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.9rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-course:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ===== RESERVE CTA ===== */
+    .reserve-section {
+      background: var(--surface);
+      text-align: center;
+    }
+    .reserve-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .reserve-barrel-icon {
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 3rem;
+    }
+    .reserve-barrel-icon svg { color: var(--accent); }
+    .reserve-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .reserve-title em { color: var(--accent); font-style: italic; }
+    .reserve-desc {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+    }
+    .reserve-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-bottom: 4rem;
+      text-align: left;
+    }
+    .reserve-opt {
+      background: var(--bg);
+      padding: 2.5rem;
+    }
+    .reserve-opt-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .reserve-opt-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .reserve-opt-price {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+    }
+    .reserve-cta-group {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 5rem 4rem 3rem;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* Cedar motif pattern */
+    .footer-cedar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 4rem;
+    }
+    .cedar-line {
+      flex: 1;
+      height: 1px;
+      background: repeating-linear-gradient(
+        to right,
+        var(--border) 0px,
+        var(--border) 8px,
+        transparent 8px,
+        transparent 14px
+      );
+    }
+    .cedar-motif {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      color: var(--accent);
+      letter-spacing: 0.3em;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .footer-brand-sub {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .footer-about {
+      font-size: 0.78rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+    }
+    .footer-col-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .footer-links a {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .footer-bottom a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      nav { padding: 1.25rem 2rem; }
+      nav.scrolled { padding: 0.8rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+      section { padding: 6rem 2rem; }
+      .miso-grid { grid-template-columns: repeat(2, 1fr); }
+      .tradition { grid-template-columns: 1fr; }
+      .tradition-image { min-height: 400px; }
+      .tradition-content { padding: 4rem 2rem; }
+      .koji-science-header { grid-template-columns: 1fr; gap: 2rem; }
+      .fermentation-steps { grid-template-columns: repeat(2, 1fr); }
+      .courses-header { grid-template-columns: 1fr; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .reserve-options { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    }
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .miso-grid { grid-template-columns: 1fr; }
+      .fermentation-steps { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-cta-group { flex-direction: column; align-items: center; }
+      .scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="preloader-inner" id="sporeContainer"></div>
+    <div class="preloader-logo">KOJI</div>
+    <div class="preloader-tagline">Patience Transforms Everything</div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator" id="scrollIndicator">
+    <div class="scroll-text">Scroll</div>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">K<span>O</span>JI</a>
+    <ul class="nav-links">
+      <li><a href="miso.html">Miso</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta">Reserve</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="steam-container">
+      <div class="steam-wisp"></div>
+      <div class="steam-wisp"></div>
+      <div class="steam-wisp"></div>
+    </div>
+    <div class="hero-content" id="heroContent">
+      <span class="hero-eyebrow">Nagano, Japan — Est. 1769</span>
+      <div class="hero-title">
+        <div class="char">K</div>
+        <div class="char">O</div>
+        <div class="char">J</div>
+        <div class="char">I</div>
+      </div>
+      <div class="hero-subtitle">Patience Transforms Everything</div>
+      <div class="fermentation-timer" id="heroTimer">
+        <div class="timer-block">
+          <span class="timer-num">1,095</span>
+          <span class="timer-label">Days</span>
+        </div>
+        <div class="timer-sep">·</div>
+        <div class="timer-block">
+          <span class="timer-num">36</span>
+          <span class="timer-label">Months</span>
+        </div>
+        <div class="timer-sep">·</div>
+        <div class="timer-block">
+          <span class="timer-num">3</span>
+          <span class="timer-label">Years</span>
+        </div>
+        <div class="timer-sep">·</div>
+        <div class="timer-block">
+          <span class="timer-num">Cedar</span>
+          <span class="timer-label">Barrel</span>
+        </div>
+      </div>
+      <p class="hero-desc">Twelve varieties of aged miso, hand-crafted across six generations in the mountain terroir of Nagano.</p>
+      <div class="hero-cta-group">
+        <a href="miso.html" class="btn-primary">Explore Miso Range</a>
+        <a href="courses.html" class="btn-outline">Book a Retreat</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 1: Miso Range -->
+  <section class="miso-range" id="misoRange">
+    <div class="miso-range-header">
+      <span class="section-label">The Collection</span>
+      <h2 class="section-title">Twelve Varieties,<br><em>One Obsession</em></h2>
+      <div class="divider"></div>
+      <p class="section-body" style="margin:0 auto;">Each miso in our atelier represents a distinct fermentation philosophy — from the youngest three-month summer white to the elder three-year Genmitsu Kuroku.</p>
+    </div>
+    <div class="miso-grid" id="misoGrid">
+      <div class="miso-card">
+        <div class="miso-age-badge">3 Months</div>
+        <div class="miso-card-name">Shiro Shun</div>
+        <div class="miso-card-jp">白旬 — White Season</div>
+        <p class="miso-tasting">Delicate, sweet, and cloud-light. Fermented through summer at low temperature, yielding floral rice notes and a whisper of salt.</p>
+        <div class="miso-profile">
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Umami</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:35%"></div></div>
+            <span class="miso-profile-val">Delicate</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Salt</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:25%"></div></div>
+            <span class="miso-profile-val">Light</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Complexity</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:30%"></div></div>
+            <span class="miso-profile-val">Gentle</span>
+          </div>
+        </div>
+      </div>
+      <div class="miso-card">
+        <div class="miso-age-badge">6 Months</div>
+        <div class="miso-card-name">Tsuyu Kome</div>
+        <div class="miso-card-jp">梅雨米 — Rain Rice</div>
+        <p class="miso-tasting">Fermented through the rainy season, this medium-white carries earthy grain with gentle citrus acidity and creamy finish.</p>
+        <div class="miso-profile">
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Umami</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:50%"></div></div>
+            <span class="miso-profile-val">Balanced</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Salt</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:38%"></div></div>
+            <span class="miso-profile-val">Medium</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Complexity</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:48%"></div></div>
+            <span class="miso-profile-val">Nuanced</span>
+          </div>
+        </div>
+      </div>
+      <div class="miso-card">
+        <div class="miso-age-badge">12 Months</div>
+        <div class="miso-card-name">Aki Mugi</div>
+        <div class="miso-card-jp">秋麦 — Autumn Barley</div>
+        <p class="miso-tasting">Our signature barley miso. One full mountain year produces a deep amber body with roasted grain, caramel, and aged umami depth.</p>
+        <div class="miso-profile">
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Umami</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:70%"></div></div>
+            <span class="miso-profile-val">Rich</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Salt</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:55%"></div></div>
+            <span class="miso-profile-val">Robust</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Complexity</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:72%"></div></div>
+            <span class="miso-profile-val">Deep</span>
+          </div>
+        </div>
+      </div>
+      <div class="miso-card">
+        <div class="miso-age-badge">18 Months</div>
+        <div class="miso-card-name">Fuyu Daizu</div>
+        <div class="miso-card-jp">冬大豆 — Winter Soy</div>
+        <p class="miso-tasting">Pure soybean miso aged through two winters. Smoky depth, dark fruit undercurrent, and a long mineral finish from Nagano spring water.</p>
+        <div class="miso-profile">
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Umami</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:80%"></div></div>
+            <span class="miso-profile-val">Intense</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Salt</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:65%"></div></div>
+            <span class="miso-profile-val">Full</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Complexity</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:82%"></div></div>
+            <span class="miso-profile-val">Profound</span>
+          </div>
+        </div>
+      </div>
+      <div class="miso-card">
+        <div class="miso-age-badge">24 Months</div>
+        <div class="miso-card-name">Sumi Koji</div>
+        <div class="miso-card-jp">炭糀 — Charcoal Koji</div>
+        <p class="miso-tasting">Two full seasons of cedar barrel aging with activated charcoal koji culture. Smoky, complex, with extraordinary amino acid concentration.</p>
+        <div class="miso-profile">
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Umami</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:90%"></div></div>
+            <span class="miso-profile-val">Extraordinary</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Salt</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:70%"></div></div>
+            <span class="miso-profile-val">Commanding</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Complexity</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:92%"></div></div>
+            <span class="miso-profile-val">Transcendent</span>
+          </div>
+        </div>
+      </div>
+      <div class="miso-card" style="border: 1px solid var(--accent);">
+        <div class="miso-age-badge">36 Months</div>
+        <div class="miso-card-name">Genmitsu Kuroku</div>
+        <div class="miso-card-jp">原蜜黒久 — Origin Amber Black</div>
+        <p class="miso-tasting">Our rarest miso. Three years in ancient cedar barrels yields an almost black paste of singular depth — the pinnacle of our sixth-generation craft.</p>
+        <div class="miso-profile">
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Umami</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:100%"></div></div>
+            <span class="miso-profile-val">Legendary</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Salt</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:78%"></div></div>
+            <span class="miso-profile-val">Sovereign</span>
+          </div>
+          <div class="miso-profile-row">
+            <span class="miso-profile-label">Complexity</span>
+            <div class="miso-profile-bar"><div class="miso-profile-fill" style="width:100%"></div></div>
+            <span class="miso-profile-val">Absolute</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Tradition -->
+  <section class="tradition" id="tradition">
+    <div class="tradition-image">
+      <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=900&q=80&auto=format&fit=crop" alt="Traditional miso barrels in Nagano atelier" loading="lazy" />
+      <div class="tradition-image-overlay"></div>
+    </div>
+    <div class="tradition-content">
+      <div class="generation-counter">VI</div>
+      <span class="section-label">The Lineage</span>
+      <h2 class="section-title">Six Generations<br><em>One Craft</em></h2>
+      <div class="divider"></div>
+      <p class="section-body">In 1769, Koji Yamamoto pressed his first wooden barrel into the earth of Nagano. He understood that the mountain's mineral water, alpine soybeans, and cedar forests were not ingredients — they were co-creators.</p>
+      <br>
+      <p class="section-body">Today, Haruka Yamamoto — the sixth generation — carries the same cedar-scented notebooks her ancestor wrote his first miso recipes in. Each batch is still pressed by hand, still turned at dawn, still listened to.</p>
+      <br>
+      <p class="section-body">Patience is not a technique here. It is the entire philosophy.</p>
+      <br>
+      <a href="about.html" class="btn-outline" style="display:inline-block;margin-top:1rem;">Discover the Story</a>
+    </div>
+  </section>
+
+  <!-- Section 3: Koji Science -->
+  <section class="koji-science" id="kojiScience">
+    <div class="koji-science-inner">
+      <div class="koji-science-header">
+        <div>
+          <span class="section-label">The Process</span>
+          <h2 class="section-title">Fermentation<br><em>as Alchemy</em></h2>
+        </div>
+        <div>
+          <div class="divider"></div>
+          <p class="section-body">Aspergillus oryzae — the koji mold — is a living intelligence. Over months and years, it transforms simple ingredients into something beyond what any single season could create alone.</p>
+        </div>
+      </div>
+      <div class="fermentation-steps">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-title">Koji Seeding</div>
+          <p class="step-desc">Steamed rice or barley is inoculated with our 250-year-old Aspergillus oryzae culture, maintained unbroken across six generations.</p>
+          <span class="step-duration">48 Hours</span>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-title">Miso Pressing</div>
+          <p class="step-desc">Koji is blended with cooked soybeans and sea salt at precise ratios. The mixture is pressed into handmade cedar barrels by foot — a ritual unchanged since 1769.</p>
+          <span class="step-duration">1 Day</span>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-title">Mountain Aging</div>
+          <p class="step-desc">Barrels are weighted with river stones and stored in our underground cellars. Alpine temperature cycles drive deep enzyme activity through every season.</p>
+          <span class="step-duration">3–36 Months</span>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <div class="step-title">Hand Harvest</div>
+          <p class="step-desc">Each barrel is opened by hand. We taste, assess, and decide — some miso is ready; some needs another winter. The miso speaks; we listen.</p>
+          <span class="step-duration">At Maturity</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Retreats & Courses -->
+  <section id="retreats">
+    <div class="courses-section">
+      <div class="courses-header">
+        <div>
+          <span class="section-label">Experiences</span>
+          <h2 class="section-title">Learn the Language<br><em>of Fermentation</em></h2>
+        </div>
+        <div>
+          <div class="divider"></div>
+          <p class="section-body">From a single day of hands-on pressing to a full week of koji immersion — we open our atelier to those who wish to understand the patience within fermentation.</p>
+          <a href="courses.html" class="btn-outline" style="display:inline-block;margin-top:2rem;">View All Courses</a>
+        </div>
+      </div>
+      <div class="courses-grid" id="coursesGrid">
+        <div class="course-card">
+          <span class="course-tag">Day Workshop</span>
+          <div class="course-name">Miso Press Day</div>
+          <p class="course-desc">An intimate one-day experience in our atelier. Press your own miso barrel, learn the koji seeding ritual, and leave with 2kg of your own ferment to age at home.</p>
+          <div class="course-meta">
+            <div class="course-meta-item"><span class="course-meta-key">Duration</span><span class="course-meta-val">8 Hours</span></div>
+            <div class="course-meta-item"><span class="course-meta-key">Group Size</span><span class="course-meta-val">Max 8 Guests</span></div>
+            <div class="course-meta-item"><span class="course-meta-key">Includes</span><span class="course-meta-val">Lunch + Miso Kit</span></div>
+          </div>
+          <div class="course-price">¥28,000 <span>per person</span></div>
+          <a href="courses.html" class="btn-course">Reserve Place</a>
+        </div>
+        <div class="course-card">
+          <span class="course-tag">Immersion Retreat</span>
+          <div class="course-name">Fermentation Week</div>
+          <p class="course-desc">Five days living and working in our atelier. Master the complete miso cycle, koji growing, shio-koji, amazake, and traditional Japanese preserves from the seasonal garden.</p>
+          <div class="course-meta">
+            <div class="course-meta-item"><span class="course-meta-key">Duration</span><span class="course-meta-val">5 Days / 4 Nights</span></div>
+            <div class="course-meta-item"><span class="course-meta-key">Group Size</span><span class="course-meta-val">Max 6 Guests</span></div>
+            <div class="course-meta-item"><span class="course-meta-key">Includes</span><span class="course-meta-val">Accommodation + All Meals</span></div>
+          </div>
+          <div class="course-price">¥180,000 <span>per person</span></div>
+          <a href="courses.html" class="btn-course">Reserve Place</a>
+        </div>
+        <div class="course-card">
+          <span class="course-tag">Professional Certification</span>
+          <div class="course-name">Koji Mastery</div>
+          <p class="course-desc">Our rigorous ten-day certification program for culinary professionals and serious practitioners. Covers koji biology, advanced fermentation chemistry, and commercial applications.</p>
+          <div class="course-meta">
+            <div class="course-meta-item"><span class="course-meta-key">Duration</span><span class="course-meta-val">10 Days / 9 Nights</span></div>
+            <div class="course-meta-item"><span class="course-meta-key">Group Size</span><span class="course-meta-val">Max 4 Students</span></div>
+            <div class="course-meta-item"><span class="course-meta-key">Certification</span><span class="course-meta-val">KOJI Atelier Cert.</span></div>
+          </div>
+          <div class="course-price">¥420,000 <span>per person</span></div>
+          <a href="courses.html" class="btn-course">Apply Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Reserve CTA -->
+  <section class="reserve-section" id="reserve">
+    <div class="reserve-inner">
+      <div class="reserve-barrel-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5">
+          <ellipse cx="16" cy="8" rx="10" ry="3.5" />
+          <ellipse cx="16" cy="24" rx="10" ry="3.5" />
+          <line x1="6" y1="8" x2="6" y2="24" />
+          <line x1="26" y1="8" x2="26" y2="24" />
+          <path d="M4 16 Q16 12 28 16" stroke-dasharray="2,2" />
+        </svg>
+      </div>
+      <h2 class="reserve-title">Reserve Your<br><em>Own Barrel</em></h2>
+      <p class="reserve-desc">Commission a personal miso barrel — your name pressed into cedar, your batch aging in our Nagano cellars. Three aging options, delivered to your door at maturity.</p>
+      <div class="reserve-options">
+        <div class="reserve-opt">
+          <div class="reserve-opt-name">Kome Barrel</div>
+          <p class="reserve-opt-desc">White rice miso, 12 months. 5kg personal barrel. Certificate of fermentation timeline.</p>
+          <div class="reserve-opt-price">From ¥85,000</div>
+        </div>
+        <div class="reserve-opt">
+          <div class="reserve-opt-name">Mugi Barrel</div>
+          <p class="reserve-opt-desc">Barley miso, 18–24 months. 5kg personal barrel. Quarterly progress photographs.</p>
+          <div class="reserve-opt-price">From ¥140,000</div>
+        </div>
+        <div class="reserve-opt" style="border: 1px solid var(--accent);">
+          <div class="reserve-opt-name">Genmitsu Barrel</div>
+          <p class="reserve-opt-desc">Rare 3-year soybean miso. 5kg cedar barrel, numbered certificate, Nagano ceremony delivery.</p>
+          <div class="reserve-opt-price">From ¥380,000</div>
+        </div>
+      </div>
+      <div class="reserve-cta-group">
+        <a href="contact.html" class="btn-primary">Commission a Barrel</a>
+        <a href="miso.html" class="btn-outline">Explore the Range</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-cedar">
+        <div class="cedar-line"></div>
+        <div class="cedar-motif">杉 · 麹 · 忍</div>
+        <div class="cedar-line"></div>
+      </div>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">KOJI</div>
+          <div class="footer-brand-sub">Miso &amp; Fermentation Atelier</div>
+          <p class="footer-about">Sixth-generation miso makers in Nagano, Japan. Patience, craft, and the living intelligence of koji since 1769.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Atelier</div>
+          <ul class="footer-links">
+            <li><a href="miso.html">Miso Range</a></li>
+            <li><a href="miso.html">Koji Culture</a></li>
+            <li><a href="miso.html">Seasonal Preserves</a></li>
+            <li><a href="contact.html">Wholesale</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Experiences</div>
+          <ul class="footer-links">
+            <li><a href="courses.html">Day Workshops</a></li>
+            <li><a href="courses.html">Fermentation Week</a></li>
+            <li><a href="courses.html">Koji Mastery</a></li>
+            <li><a href="contact.html">Private Groups</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Visit</div>
+          <ul class="footer-links">
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="contact.html">Atelier Visits</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="contact.html">Reserve a Barrel</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 KOJI Fermentation Atelier. All rights reserved.</span>
+        <span>Shiojiri, Nagano Prefecture, Japan</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ===== PRELOADER =====
+    (function buildSpores() {
+      const container = document.getElementById('sporeContainer');
+      for (let i = 0; i < 24; i++) {
+        const s = document.createElement('div');
+        s.className = 'spore';
+        const size = Math.random() * 6 + 2;
+        const angle = Math.random() * 360;
+        const dist = Math.random() * 80 + 40;
+        const dx = Math.cos(angle * Math.PI / 180) * dist + 'px';
+        const dy = Math.sin(angle * Math.PI / 180) * dist + 'px';
+        s.style.cssText = `
+          width:${size}px;height:${size}px;
+          left:${50 + Math.random() * 40 - 20}%;
+          top:${50 + Math.random() * 40 - 20}%;
+          --dx:${dx};--dy:${dy};
+          animation-duration:${Math.random() * 2 + 1.5}s;
+          animation-delay:${Math.random() * 1}s;
+          opacity:${Math.random() * 0.6 + 0.2};
+          background: hsl(${25 + Math.random() * 20}, 60%, ${50 + Math.random() * 20}%);
+        `;
+        container.appendChild(s);
+      }
+    })();
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        gsap.to('#preloader', {
+          opacity: 0,
+          duration: 1,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            document.getElementById('preloader').style.display = 'none';
+            // Show scroll indicator
+            document.getElementById('scrollIndicator').classList.add('visible');
+            // Hero BG parallax
+            document.getElementById('heroBg').style.transform = 'scale(1)';
+            initAnimations();
+          }
+        });
+      }, 2200);
+
+      // Fallback scroll indicator
+      setTimeout(() => {
+        document.getElementById('scrollIndicator').classList.add('visible');
+      }, 4000);
+    });
+
+    // ===== NAVBAR SCROLL =====
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 80) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // ===== ANIMATIONS =====
+    function initAnimations() {
+      // Hero content chars
+      gsap.from('.hero-title .char', {
+        immediateRender: false,
+        y: 80,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        stagger: 0.12
+      });
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        y: 20,
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 0.3
+      });
+      gsap.from('.hero-subtitle', {
+        immediateRender: false,
+        y: 20,
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 0.6
+      });
+      gsap.from('#heroTimer', {
+        immediateRender: false,
+        y: 20,
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 0.9
+      });
+      gsap.from('.hero-desc', {
+        immediateRender: false,
+        y: 20,
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 1.1
+      });
+      gsap.from('.hero-cta-group', {
+        immediateRender: false,
+        y: 20,
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 1.3
+      });
+
+      // Miso range header
+      gsap.from('#misoRange .miso-range-header > *', {
+        immediateRender: false,
+        y: 28,
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: '#misoRange',
+          start: 'top 80%'
+        }
+      });
+
+      // Miso cards
+      gsap.from('#misoGrid .miso-card', {
+        immediateRender: false,
+        y: 24,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: '#misoGrid',
+          start: 'top 80%'
+        }
+      });
+
+      // Tradition
+      gsap.from('.tradition-image', {
+        immediateRender: false,
+        x: -40,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#tradition',
+          start: 'top 75%'
+        }
+      });
+      gsap.from('.tradition-content > *', {
+        immediateRender: false,
+        y: 24,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: '#tradition',
+          start: 'top 75%'
+        }
+      });
+
+      // Koji Science steps
+      gsap.from('.step-card', {
+        immediateRender: false,
+        y: 24,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: '.fermentation-steps',
+          start: 'top 80%'
+        }
+      });
+
+      // Courses
+      gsap.from('#coursesGrid .course-card', {
+        immediateRender: false,
+        y: 24,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: '#coursesGrid',
+          start: 'top 80%'
+        }
+      });
+
+      // Reserve section
+      gsap.from('#reserve .reserve-inner > *', {
+        immediateRender: false,
+        y: 24,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: '#reserve',
+          start: 'top 80%'
+        }
+      });
+
+      // Hero parallax on scroll
+      gsap.to('#heroBg', {
+        immediateRender: false,
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    }
+  </script>
+</body>
+</html>

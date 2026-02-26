@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — ALTITUDE Aerial Photography</title>
+  <meta name="description" content="Explore ALTITUDE's portfolio of aerial photography and drone cinematography projects — architecture, real estate, events, and cinematic work.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0E1520;
+      --surface: #141C2C;
+      --surface2: #1A2438;
+      --accent: #40C0F0;
+      --accent2: #F0C840;
+      --text: #EEF4FF;
+      --text-muted: #607090;
+      --border: rgba(64,192,240,0.15);
+      --font-head: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 1rem 4rem;
+      background: rgba(14,21,32,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta { background: var(--accent); color: var(--bg) !important; padding: 0.6rem 1.5rem; border-radius: 2px; font-weight: 600; }
+
+    /* PAGE HERO */
+    .page-hero {
+      padding-top: 80px;
+      min-height: 55vh;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(14,21,32,0.2) 0%, rgba(14,21,32,0.7) 60%, var(--bg) 100%),
+        url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;
+    }
+    .page-hero-content { position: relative; z-index: 2; padding: 5rem 4rem 4rem; }
+    .page-label { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .page-title { font-family: var(--font-head); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; line-height: 1.1; }
+
+    /* FILTER */
+    #filter-bar {
+      background: var(--surface);
+      padding: 1.5rem 4rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .filter-label { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-muted); margin-right: 1rem; }
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.2rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 600; }
+
+    /* PORTFOLIO GRID */
+    #portfolio-section { padding: 4rem; background: var(--bg); }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+    .portfolio-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .portfolio-item.wide { grid-column: span 2; }
+    .portfolio-item.tall { grid-row: span 2; }
+    .portfolio-item img {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .portfolio-item:hover img { transform: scale(1.07); }
+    .portfolio-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(14,21,32,0.95) 0%, rgba(14,21,32,0.2) 50%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+    .portfolio-cat { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+    .portfolio-name { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .portfolio-location { font-size: 0.75rem; color: var(--text-muted); }
+    .portfolio-type-tag {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(14,21,32,0.8);
+      border: 1px solid var(--border);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 0.25rem 0.75rem;
+      border-radius: 2px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* FEATURED CASE STUDY */
+    #case-study { padding: 8rem 4rem; background: var(--surface); }
+    .case-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .case-img img { width: 100%; border-radius: 2px; }
+    .case-label { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .case-title { font-family: var(--font-head); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.15; margin-bottom: 1.5rem; }
+    .case-body { font-size: 0.95rem; color: var(--text-muted); line-height: 1.9; margin-bottom: 2rem; }
+    .case-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-val { font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; color: var(--text); }
+    .cs-lbl { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+    .btn-primary {
+      background: var(--accent); color: var(--bg);
+      padding: 1rem 2.5rem;
+      font-family: var(--font-head); font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px;
+      display: inline-block; transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #60D0FF; transform: translateY(-2px); }
+    .btn-outline {
+      border: 1px solid rgba(64,192,240,0.4); color: var(--text);
+      padding: 1rem 2.5rem;
+      font-family: var(--font-head); font-size: 0.85rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px;
+      display: inline-block; transition: border-color 0.3s, color 0.3s, transform 0.2s;
+      margin-left: 1rem;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* AWARDS */
+    #awards { padding: 6rem 4rem; background: var(--bg); }
+    .awards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+    .award-card {
+      padding: 2rem;
+      background: var(--surface);
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      transition: border-color 0.4s;
+      text-align: center;
+    }
+    .award-card:hover { border-color: rgba(240,200,64,0.5); }
+    .award-year { font-family: var(--font-head); font-size: 2rem; font-weight: 700; color: var(--accent2); margin-bottom: 0.5rem; }
+    .award-org { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .award-name { font-family: var(--font-head); font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+    .award-project { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* CTA */
+    .page-cta { background: var(--surface); padding: 7rem 4rem; text-align: center; }
+    .page-cta-title { font-family: var(--font-head); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; margin-bottom: 1.5rem; }
+    .page-cta-title em { color: var(--accent); font-style: normal; }
+    .page-cta-desc { font-size: 1rem; color: var(--text-muted); max-width: 500px; margin: 0 auto 3rem; }
+
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border);
+      padding: 3rem 4rem; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo { font-family: var(--font-head); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text); }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
+
+    @media (max-width: 1024px) {
+      nav { padding: 1rem 2rem; }
+      #filter-bar { padding: 1.5rem 2rem; }
+      #portfolio-section { padding: 2rem; }
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+      .portfolio-item.wide { grid-column: span 1; }
+      #case-study { padding: 5rem 2rem; }
+      .case-layout { grid-template-columns: 1fr; gap: 3rem; }
+      #awards { padding: 5rem 2rem; }
+      .awards-grid { grid-template-columns: repeat(2, 1fr); }
+      .page-cta { padding: 5rem 2rem; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .portfolio-item.tall { grid-row: span 1; }
+      .case-stats { grid-template-columns: 1fr; }
+      .awards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-logo">ALT<span>I</span>TUDE</a>
+    <ul class="nav-links">
+      <li><a href="portfolio.html" class="active">Portfolio</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta">Get Quote</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+      <div class="page-label">Our Work</div>
+      <h1 class="page-title">Projects from<br>Above the Skyline</h1>
+    </div>
+  </div>
+
+  <div id="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" data-filter="all">All Projects</button>
+    <button class="filter-btn" data-filter="architecture">Architecture</button>
+    <button class="filter-btn" data-filter="real-estate">Real Estate</button>
+    <button class="filter-btn" data-filter="events">Events</button>
+    <button class="filter-btn" data-filter="cinematic">Cinematic</button>
+  </div>
+
+  <section id="portfolio-section">
+    <div class="portfolio-grid">
+
+      <div class="portfolio-item wide" data-category="architecture">
+        <div class="portfolio-type-tag">Architecture</div>
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1000&q=80&auto=format&fit=crop" alt="Canary Wharf Towers" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Architecture</div>
+          <div class="portfolio-name">Canary Wharf Tower Complex</div>
+          <div class="portfolio-location">London, UK — 2024</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item tall" data-category="cinematic">
+        <div class="portfolio-type-tag">Cinematic</div>
+        <img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=600&q=80&auto=format&fit=crop" alt="Scottish Highlands" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Cinematic</div>
+          <div class="portfolio-name">Scottish Highlands Expedition</div>
+          <div class="portfolio-location">Scotland, UK — 2023</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="real-estate">
+        <div class="portfolio-type-tag">Real Estate</div>
+        <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=80&auto=format&fit=crop" alt="Surrey Manor Estate" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Real Estate</div>
+          <div class="portfolio-name">Surrey Manor Estate</div>
+          <div class="portfolio-location">Surrey, UK — 2024</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="events">
+        <div class="portfolio-type-tag">Events</div>
+        <img src="https://images.unsplash.com/photo-1531973819741-e27a5ae2cc7b?w=600&q=80&auto=format&fit=crop" alt="Royal Ascot" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Events</div>
+          <div class="portfolio-name">Royal Ascot Aerial Coverage</div>
+          <div class="portfolio-location">Ascot, UK — 2024</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="architecture">
+        <div class="portfolio-type-tag">Architecture</div>
+        <img src="https://images.unsplash.com/photo-1504297050568-910d24c426d3?w=600&q=80&auto=format&fit=crop" alt="Thames Bridge" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Architecture</div>
+          <div class="portfolio-name">Thames Bridge Structural Study</div>
+          <div class="portfolio-location">London, UK — 2023</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="cinematic">
+        <div class="portfolio-type-tag">Cinematic</div>
+        <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=600&q=80&auto=format&fit=crop" alt="London Dawn" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Cinematic</div>
+          <div class="portfolio-name">London at Dawn — Feature Film</div>
+          <div class="portfolio-location">London, UK — 2024</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item wide" data-category="real-estate">
+        <div class="portfolio-type-tag">Real Estate</div>
+        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1000&q=80&auto=format&fit=crop" alt="Cotswolds Development" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Real Estate</div>
+          <div class="portfolio-name">Cotswolds Luxury Development</div>
+          <div class="portfolio-location">Oxfordshire, UK — 2023</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="events">
+        <div class="portfolio-type-tag">Events</div>
+        <img src="https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&q=80&auto=format&fit=crop" alt="Music Festival" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Events</div>
+          <div class="portfolio-name">Glastonbury Festival Overview</div>
+          <div class="portfolio-location">Somerset, UK — 2024</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="architecture">
+        <div class="portfolio-type-tag">Architecture</div>
+        <img src="https://images.unsplash.com/photo-1512327536842-5aa37d1ba3e3?w=600&q=80&auto=format&fit=crop" alt="Stadium Architecture" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Architecture</div>
+          <div class="portfolio-name">New White Hart Lane Aerial</div>
+          <div class="portfolio-location">London, UK — 2023</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="cinematic">
+        <div class="portfolio-type-tag">Cinematic</div>
+        <img src="https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?w=600&q=80&auto=format&fit=crop" alt="Coastal Cinematic" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Cinematic</div>
+          <div class="portfolio-name">Cornish Coast Documentary</div>
+          <div class="portfolio-location">Cornwall, UK — 2024</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="real-estate">
+        <div class="portfolio-type-tag">Real Estate</div>
+        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80&auto=format&fit=crop" alt="Penthouse Aerial" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Real Estate</div>
+          <div class="portfolio-name">Chelsea Penthouse Marketing</div>
+          <div class="portfolio-location">London, UK — 2024</div>
+        </div>
+      </div>
+
+      <div class="portfolio-item" data-category="events">
+        <div class="portfolio-type-tag">Events</div>
+        <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?w=600&q=80&auto=format&fit=crop" alt="Corporate Event" loading="lazy">
+        <div class="portfolio-overlay">
+          <div class="portfolio-cat">Events</div>
+          <div class="portfolio-name">Henley Regatta Coverage</div>
+          <div class="portfolio-location">Henley-on-Thames, UK — 2023</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FEATURED CASE STUDY -->
+  <section id="case-study">
+    <div class="case-layout">
+      <div class="case-img">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80&auto=format&fit=crop" alt="Canary Wharf Case Study" loading="lazy">
+      </div>
+      <div>
+        <div class="case-label">Featured Case Study</div>
+        <h2 class="case-title">Canary Wharf<br>Tower Complex</h2>
+        <p class="case-body">Commissioned by a leading architecture firm to capture a complex of four interconnected high-rises during the final construction phase. The brief called for a comprehensive documentation suite — structural aerials for the engineers, marketing assets for the developers, and time-lapse sequences for the press launch.</p>
+        <p class="case-body">Over three separate flight sessions at sunrise, golden hour, and dusk, we captured 4,200+ frames across 6K RAW and 8K stills. The final deliverable included a 4-minute brand film, 40 hero stills for print, and a photogrammetry point-cloud survey model.</p>
+        <div class="case-stats">
+          <div>
+            <div class="cs-val">3</div>
+            <div class="cs-lbl">Flight Sessions</div>
+          </div>
+          <div>
+            <div class="cs-val">4,200+</div>
+            <div class="cs-lbl">Frames Captured</div>
+          </div>
+          <div>
+            <div class="cs-val">4K</div>
+            <div class="cs-lbl">Final Film</div>
+          </div>
+        </div>
+        <a href="contact.html" class="btn-primary">Start a Project</a>
+        <a href="services.html" class="btn-outline">View Services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS -->
+  <section id="awards">
+    <div class="page-label">Recognition</div>
+    <h2 style="font-family: var(--font-head); font-size: clamp(2rem,4vw,3rem); font-weight: 700; line-height: 1.15; margin-bottom: 1rem;">Award-Winning<br>Aerial Work</h2>
+    <div class="awards-grid">
+      <div class="award-card">
+        <div class="award-year">2024</div>
+        <div class="award-org">BAFTA</div>
+        <div class="award-name">Best Cinematography — Documentary</div>
+        <div class="award-project">London at Dawn</div>
+      </div>
+      <div class="award-card">
+        <div class="award-year">2024</div>
+        <div class="award-org">Aerial Photography Awards</div>
+        <div class="award-name">Gold — Architecture Category</div>
+        <div class="award-project">Canary Wharf Complex</div>
+      </div>
+      <div class="award-card">
+        <div class="award-year">2023</div>
+        <div class="award-org">CIAJ</div>
+        <div class="award-name">Excellence in Aerial Journalism</div>
+        <div class="award-project">Scottish Highlands Series</div>
+      </div>
+      <div class="award-card">
+        <div class="award-year">2023</div>
+        <div class="award-org">Drone Awards</div>
+        <div class="award-name">People's Choice — Real Estate</div>
+        <div class="award-project">Surrey Manor Estate</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="page-cta">
+    <div class="page-label" style="text-align:center; margin-bottom: 1rem;">Commission a Project</div>
+    <h2 class="page-cta-title">Your project.<br>Our <em>perspective</em>.</h2>
+    <p class="page-cta-desc">Tell us about your next aerial project and we'll develop a custom flight plan and proposal within 24 hours.</p>
+    <a href="contact.html" class="btn-primary">Get in Touch</a>
+  </div>
+
+  <footer>
+    <div class="footer-logo">ALT<span>I</span>TUDE</div>
+    <ul class="footer-links">
+      <li><a href="portfolio.html">Portfolio</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="footer-copy">© 2024 ALTITUDE Aerial Studio</div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('.page-title', {
+      immediateRender: false,
+      y: 40, opacity: 0, duration: 1.0, delay: 0.3, ease: 'power2.out'
+    });
+
+    gsap.utils.toArray('.portfolio-item').forEach(function(el, i) {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 92%' },
+        y: 30, opacity: 0,
+        duration: 0.7,
+        delay: (i % 3) * 0.08,
+        ease: 'power2.out'
+      });
+    });
+
+    gsap.from('.case-img', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#case-study', start: 'top 80%' },
+      x: -40, opacity: 0, duration: 1.0, ease: 'power2.out'
+    });
+
+    gsap.from('.case-title', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#case-study', start: 'top 80%' },
+      y: 28, opacity: 0, duration: 0.9, delay: 0.2, ease: 'power2.out'
+    });
+
+    gsap.utils.toArray('.award-card').forEach(function(el, i) {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 88%' },
+        y: 24, opacity: 0,
+        duration: 0.7,
+        delay: (i % 4) * 0.1,
+        ease: 'power2.out'
+      });
+    });
+
+    // Filter functionality
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    var portfolioItems = document.querySelectorAll('.portfolio-item');
+
+    filterBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        filterBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var filter = btn.getAttribute('data-filter');
+        portfolioItems.forEach(function(item) {
+          var cat = item.getAttribute('data-category');
+          if (filter === 'all' || cat === filter) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

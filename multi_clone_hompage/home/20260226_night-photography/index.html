@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OBSCURA — Find the Light in Total Darkness</title>
+  <meta name="description" content="Elite night photography academy offering masterclasses, guided expeditions to dark sky reserves worldwide, and astrophotography workshops." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #15151E;
+      --surface: #1C1C2A;
+      --accent: #8060FF;
+      --accent2: #F0C840;
+      --text: #F0EEFF;
+      --text-muted: #7060A0;
+      --border: rgba(128, 96, 255, 0.15);
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #0A0A12;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .preloader-stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .star-dot {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0;
+      animation: starAppear 0.4s ease forwards;
+    }
+
+    @keyframes starAppear {
+      0% { opacity: 0; transform: scale(0); }
+      60% { opacity: 1; transform: scale(1.3); }
+      100% { opacity: 0.7; transform: scale(1); }
+    }
+
+    .preloader-logo {
+      font-family: var(--font-heading);
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      color: var(--text);
+      z-index: 1;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease 1.8s forwards;
+    }
+
+    .preloader-tagline {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease 2.1s forwards;
+    }
+
+    .preloader-bar {
+      width: 160px;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      z-index: 1;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .preloader-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      animation: barFill 2.4s ease forwards;
+    }
+
+    @keyframes barFill {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    #scroll-indicator {
+      position: fixed;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, transparent, var(--accent));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent2);
+      animation: scrollDown 1.8s ease infinite;
+    }
+
+    @keyframes scrollDown {
+      0% { top: -100%; }
+      100% { top: 200%; }
+    }
+
+    .scroll-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      writing-mode: vertical-rl;
+      text-transform: uppercase;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 0 clamp(24px, 5vw, 80px);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(21, 21, 30, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo-icon {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo-icon::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent2);
+      border-radius: 50%;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(20px, 3vw, 40px);
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-enroll {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 9px 22px;
+      border-radius: 2px;
+      font-size: 0.75rem !important;
+      letter-spacing: 0.15em !important;
+      transition: background 0.3s, transform 0.2s !important;
+    }
+
+    .nav-enroll:hover {
+      background: #9070ff !important;
+      color: #fff !important;
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 40%;
+      filter: brightness(0.5);
+    }
+
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(21, 21, 30, 0.3) 0%,
+        rgba(21, 21, 30, 0.1) 40%,
+        rgba(21, 21, 30, 0.7) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 clamp(24px, 5vw, 80px);
+      max-width: 900px;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      display: block;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(4rem, 12vw, 10rem);
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      line-height: 0.9;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 0.05em;
+      justify-content: center;
+    }
+
+    .hero-title .char {
+      display: inline-block;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      letter-spacing: 0.08em;
+      color: rgba(240, 238, 255, 0.7);
+      max-width: 480px;
+      margin: 0 auto 56px;
+      line-height: 1.8;
+    }
+
+    /* Aperture Icon */
+    .aperture-float {
+      position: absolute;
+      top: 50%;
+      right: clamp(40px, 8vw, 160px);
+      transform: translateY(-50%);
+      z-index: 3;
+      opacity: 0.35;
+    }
+
+    .aperture-svg {
+      width: clamp(80px, 12vw, 160px);
+      height: clamp(80px, 12vw, 160px);
+      animation: apertureSpin 30s linear infinite;
+    }
+
+    @keyframes apertureSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(24px, 5vw, 64px);
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-number {
+      font-family: var(--font-heading);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700;
+      color: var(--accent2);
+      display: block;
+    }
+
+    .hero-stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .hero-stat-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--border);
+    }
+
+    /* ── SECTIONS COMMON ── */
+    section {
+      padding: clamp(80px, 10vw, 140px) clamp(24px, 5vw, 80px);
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    .section-desc {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.8;
+    }
+
+    /* ── PORTFOLIO SECTION ── */
+    #portfolio {
+      background: var(--surface);
+    }
+
+    .portfolio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 280px);
+      gap: 12px;
+    }
+
+    .portfolio-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .portfolio-item:first-child {
+      grid-row: span 2;
+    }
+
+    .portfolio-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: block;
+    }
+
+    .portfolio-item:hover img { transform: scale(1.06); }
+
+    .portfolio-item-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(21,21,30,0.85) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
+    }
+
+    .portfolio-item:hover .portfolio-item-overlay { opacity: 1; }
+
+    .portfolio-item-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent2);
+      text-transform: uppercase;
+    }
+
+    .view-all-link {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-decoration: none;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+      transition: color 0.3s;
+    }
+
+    .view-all-link:hover { color: var(--accent2); border-color: var(--accent2); }
+
+    /* ── ACADEMY SECTION ── */
+    #academy {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 100px);
+      align-items: center;
+    }
+
+    .academy-visual {
+      position: relative;
+    }
+
+    .academy-img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+    }
+
+    .academy-badge {
+      position: absolute;
+      bottom: -24px;
+      right: -24px;
+      width: 120px;
+      height: 120px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .academy-badge-num {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .academy-badge-text {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.75);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .academy-content { padding-left: 16px; }
+
+    .curriculum-list {
+      list-style: none;
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .curriculum-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border-radius: 2px;
+      border-left: 3px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+      cursor: default;
+    }
+
+    .curriculum-item:hover {
+      border-color: var(--accent);
+      background: rgba(128, 96, 255, 0.05);
+    }
+
+    .curriculum-num {
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      color: var(--accent2);
+      font-weight: 700;
+      min-width: 28px;
+    }
+
+    .curriculum-name {
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .curriculum-detail {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── EXPEDITIONS SECTION ── */
+    #expeditions {
+      background: var(--surface);
+    }
+
+    .expeditions-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .expeditions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .expedition-card {
+      position: relative;
+      height: 440px;
+      border-radius: 2px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .expedition-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .expedition-card:hover img { transform: scale(1.08); }
+
+    .expedition-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,18,0.95) 0%, rgba(10,10,18,0.2) 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+    }
+
+    .expedition-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .expedition-name {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+
+    .expedition-dates {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .expedition-btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: background 0.3s, color 0.3s;
+      align-self: flex-start;
+    }
+
+    .expedition-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── MASTERS SECTION ── */
+    #masters {
+      text-align: center;
+    }
+
+    .masters-header {
+      margin-bottom: 64px;
+    }
+
+    .masters-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .master-card {
+      text-align: left;
+    }
+
+    .master-img-wrap {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .master-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 2px;
+      display: block;
+      filter: grayscale(30%);
+      transition: filter 0.4s;
+    }
+
+    .master-card:hover .master-img { filter: grayscale(0%); }
+
+    .master-index {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      font-family: var(--font-heading);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--accent2);
+      background: rgba(21,21,30,0.8);
+      padding: 4px 10px;
+    }
+
+    .master-name {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .master-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .master-bio {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── CTA SECTION ── */
+    #cta {
+      background: linear-gradient(135deg, #1a1030 0%, #15151E 40%, #1a1a10 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 24px;
+    }
+
+    .cta-title em {
+      font-style: normal;
+      color: var(--accent2);
+    }
+
+    .cta-text {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+      line-height: 1.8;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 16px 36px;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-primary:hover { background: #9070ff; transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-block;
+      border: 1px solid var(--text-muted);
+      color: var(--text);
+      padding: 16px 36px;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 64px clamp(24px, 5vw, 80px) 40px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand .nav-logo {
+      margin-bottom: 16px;
+      display: inline-flex;
+    }
+
+    .footer-tagline {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 260px;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--accent2); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer-accent {
+      color: var(--accent2);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .portfolio-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+      .portfolio-item:first-child { grid-row: span 1; }
+      #academy { grid-template-columns: 1fr; }
+      .academy-content { padding-left: 0; }
+      .masters-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      #scroll-indicator { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .expeditions-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-stars" id="preloader-stars"></div>
+    <div class="preloader-logo">OBSCURA</div>
+    <div class="preloader-tagline">Find the Light in Total Darkness</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-text">Scroll</div>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      OBSCURA
+    </a>
+    <ul class="nav-links">
+      <li><a href="workshops.html">Workshops</a></li>
+      <li><a href="expeditions.html">Expeditions</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-enroll">Enroll</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+
+    <!-- Floating aperture -->
+    <div class="aperture-float">
+      <svg class="aperture-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="95" stroke="rgba(240,200,64,0.4)" stroke-width="1"/>
+        <circle cx="100" cy="100" r="70" stroke="rgba(128,96,255,0.3)" stroke-width="1"/>
+        <circle cx="100" cy="100" r="24" stroke="rgba(240,200,64,0.6)" stroke-width="1.5"/>
+        <g opacity="0.5">
+          <line x1="100" y1="5" x2="100" y2="195" stroke="rgba(128,96,255,0.2)" stroke-width="0.5"/>
+          <line x1="5" y1="100" x2="195" y2="100" stroke="rgba(128,96,255,0.2)" stroke-width="0.5"/>
+          <line x1="29" y1="29" x2="171" y2="171" stroke="rgba(128,96,255,0.2)" stroke-width="0.5"/>
+          <line x1="171" y1="29" x2="29" y2="171" stroke="rgba(128,96,255,0.2)" stroke-width="0.5"/>
+        </g>
+        <path d="M100 76 L124 100 L100 124 L76 100 Z" stroke="rgba(240,200,64,0.5)" stroke-width="1" fill="none"/>
+        <circle cx="100" cy="100" r="5" fill="rgba(240,200,64,0.8)"/>
+        <!-- Aperture blades -->
+        <path d="M100 30 A70 70 0 0 1 160 70 L100 100 Z" fill="rgba(21,21,30,0.5)" stroke="rgba(128,96,255,0.3)" stroke-width="0.5"/>
+        <path d="M160 70 A70 70 0 0 1 160 130 L100 100 Z" fill="rgba(21,21,30,0.5)" stroke="rgba(128,96,255,0.3)" stroke-width="0.5"/>
+        <path d="M160 130 A70 70 0 0 1 100 170 L100 100 Z" fill="rgba(21,21,30,0.5)" stroke="rgba(128,96,255,0.3)" stroke-width="0.5"/>
+        <path d="M100 170 A70 70 0 0 1 40 130 L100 100 Z" fill="rgba(21,21,30,0.5)" stroke="rgba(128,96,255,0.3)" stroke-width="0.5"/>
+        <path d="M40 130 A70 70 0 0 1 40 70 L100 100 Z" fill="rgba(21,21,30,0.5)" stroke="rgba(128,96,255,0.3)" stroke-width="0.5"/>
+        <path d="M40 70 A70 70 0 0 1 100 30 L100 100 Z" fill="rgba(21,21,30,0.5)" stroke="rgba(128,96,255,0.3)" stroke-width="0.5"/>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <span class="hero-eyebrow">Night Photography Academy &amp; Expeditions</span>
+      <h1 class="hero-title" id="hero-title">
+        <span class="char">O</span><span class="char">B</span><span class="char">S</span><span class="char">C</span><span class="char">U</span><span class="char">R</span><span class="char">A</span>
+      </h1>
+      <p class="hero-subtitle">Find the Light in Total Darkness. Elite masterclasses, guided dark-sky expeditions, and award-winning astrophotography training.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-number">12</span>
+          <span class="hero-stat-label">Dark Sky Locations</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">3000+</span>
+          <span class="hero-stat-label">Graduates</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">47</span>
+          <span class="hero-stat-label">Awards Won</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PORTFOLIOS -->
+  <section id="portfolio">
+    <div class="portfolio-header">
+      <div>
+        <span class="section-label">Featured Work</span>
+        <h2 class="section-title">Graduate Portfolios</h2>
+      </div>
+      <a href="workshops.html" class="view-all-link">View All Work</a>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-item" style="grid-row: span 2;">
+        <img src="https://images.unsplash.com/photo-1490914327627-9fe8d52f4d90?w=800&q=80&auto=format&fit=crop" alt="Milky Way over mountains" loading="lazy" />
+        <div class="portfolio-item-overlay">
+          <span class="portfolio-item-label">Milky Way — Iceland</span>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <img src="https://images.unsplash.com/photo-1472289065668-ce650ac443d2?w=800&q=80&auto=format&fit=crop" alt="Star trails over desert" loading="lazy" />
+        <div class="portfolio-item-overlay">
+          <span class="portfolio-item-label">Star Trails — Sahara</span>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <img src="https://images.unsplash.com/photo-1555993539-1732b0258235?w=800&q=80&auto=format&fit=crop" alt="Light painting in forest" loading="lazy" />
+        <div class="portfolio-item-overlay">
+          <span class="portfolio-item-label">Light Painting — Oregon</span>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <img src="https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=800&q=80&auto=format&fit=crop" alt="Aurora borealis" loading="lazy" />
+        <div class="portfolio-item-overlay">
+          <span class="portfolio-item-label">Aurora — Norway</span>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <img src="https://images.unsplash.com/photo-1502481851512-e9e2529bfbf9?w=800&q=80&auto=format&fit=crop" alt="Urban night photography" loading="lazy" />
+        <div class="portfolio-item-overlay">
+          <span class="portfolio-item-label">Urban Night — Tokyo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE ACADEMY -->
+  <section id="academy">
+    <div class="academy-visual">
+      <img class="academy-img" src="https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=800&q=80&auto=format&fit=crop" alt="Photography class at night" loading="lazy" />
+      <div class="academy-badge">
+        <span class="academy-badge-num">12</span>
+        <span class="academy-badge-text">Years of Excellence</span>
+      </div>
+    </div>
+    <div class="academy-content">
+      <span class="section-label">The Academy</span>
+      <h2 class="section-title">Masterclass Curriculum</h2>
+      <p class="section-desc">OBSCURA's curriculum is built by award-winning photographers who have shot in the world's darkest locations. Twelve weeks of intensive training that transform passionate amateurs into published professionals.</p>
+      <ul class="curriculum-list">
+        <li class="curriculum-item">
+          <span class="curriculum-num">01</span>
+          <div>
+            <div class="curriculum-name">Night Exposure Fundamentals</div>
+            <div class="curriculum-detail">ISO, aperture, long exposure mastery in zero-light conditions</div>
+          </div>
+        </li>
+        <li class="curriculum-item">
+          <span class="curriculum-num">02</span>
+          <div>
+            <div class="curriculum-name">Milky Way Composition</div>
+            <div class="curriculum-detail">Sky arc framing, foreground integration, stacking techniques</div>
+          </div>
+        </li>
+        <li class="curriculum-item">
+          <span class="curriculum-num">03</span>
+          <div>
+            <div class="curriculum-name">Light Painting Mastery</div>
+            <div class="curriculum-detail">Orb creation, steel wool, kinetic sculpture with light</div>
+          </div>
+        </li>
+        <li class="curriculum-item">
+          <span class="curriculum-num">04</span>
+          <div>
+            <div class="curriculum-name">Astrophotography & Stacking</div>
+            <div class="curriculum-detail">Deep-sky objects, planetary imaging, image stacking in Sequator</div>
+          </div>
+        </li>
+        <li class="curriculum-item">
+          <span class="curriculum-num">05</span>
+          <div>
+            <div class="curriculum-name">Post-Processing: Night Edition</div>
+            <div class="curriculum-detail">Lightroom Milky Way workflow, gradient masking, star reduction</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- EXPEDITIONS -->
+  <section id="expeditions">
+    <div class="expeditions-header">
+      <div>
+        <span class="section-label">Dark Sky Expeditions</span>
+        <h2 class="section-title">Shoot the World's Darkest Places</h2>
+      </div>
+      <a href="expeditions.html" class="view-all-link">All Expeditions</a>
+    </div>
+    <div class="expeditions-grid">
+      <div class="expedition-card">
+        <img src="https://images.unsplash.com/photo-1529968121290-f3d547dbb64e?w=800&q=80&auto=format&fit=crop" alt="Iceland expedition" loading="lazy" />
+        <div class="expedition-card-overlay">
+          <span class="expedition-tag">Bortle Class 2</span>
+          <h3 class="expedition-name">Iceland Aurora Hunt</h3>
+          <div class="expedition-dates">March 2026 · 8 nights · 12 spots</div>
+          <a href="expeditions.html" class="expedition-btn">Explore</a>
+        </div>
+      </div>
+      <div class="expedition-card">
+        <img src="https://images.unsplash.com/photo-1518655048521-f130df041f66?w=800&q=80&auto=format&fit=crop" alt="Sahara expedition" loading="lazy" />
+        <div class="expedition-card-overlay">
+          <span class="expedition-tag">Bortle Class 1</span>
+          <h3 class="expedition-name">Sahara Milky Way</h3>
+          <div class="expedition-dates">April 2026 · 6 nights · 8 spots</div>
+          <a href="expeditions.html" class="expedition-btn">Explore</a>
+        </div>
+      </div>
+      <div class="expedition-card">
+        <img src="https://images.unsplash.com/photo-1524419986249-348e8fa6ad4a?w=800&q=80&auto=format&fit=crop" alt="Atacama expedition" loading="lazy" />
+        <div class="expedition-card-overlay">
+          <span class="expedition-tag">Bortle Class 1</span>
+          <h3 class="expedition-name">Atacama Star Fields</h3>
+          <div class="expedition-dates">June 2026 · 7 nights · 10 spots</div>
+          <a href="expeditions.html" class="expedition-btn">Explore</a>
+        </div>
+      </div>
+      <div class="expedition-card">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&auto=format&fit=crop" alt="Himalayas expedition" loading="lazy" />
+        <div class="expedition-card-overlay">
+          <span class="expedition-tag">Bortle Class 1</span>
+          <h3 class="expedition-name">Himalayan Starfields</h3>
+          <div class="expedition-dates">September 2026 · 10 nights · 6 spots</div>
+          <a href="expeditions.html" class="expedition-btn">Explore</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEET THE MASTERS -->
+  <section id="masters">
+    <div class="masters-header">
+      <span class="section-label">Faculty</span>
+      <h2 class="section-title">Meet the Masters</h2>
+      <p class="section-desc" style="max-width:560px; margin: 0 auto;">Three award-winning photographers with combined decades of experience shooting in the world's darkest skies.</p>
+    </div>
+    <div class="masters-grid">
+      <div class="master-card">
+        <div class="master-img-wrap">
+          <img class="master-img" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80&auto=format&fit=crop&crop=top" alt="Portrait of master photographer" loading="lazy" />
+          <span class="master-index">01 / 03</span>
+        </div>
+        <div class="master-name">Dr. Elena Varek</div>
+        <div class="master-title">Director · Astrophotography</div>
+        <p class="master-bio">Former ESA imaging specialist turned photographic educator. Elena has captured nebulae from six continents and led over 80 international dark-sky expeditions. National Geographic contributing photographer.</p>
+      </div>
+      <div class="master-card">
+        <div class="master-img-wrap">
+          <img class="master-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80&auto=format&fit=crop&crop=top" alt="Portrait of master photographer" loading="lazy" />
+          <span class="master-index">02 / 03</span>
+        </div>
+        <div class="master-name">Marcus Obi</div>
+        <div class="master-title">Lead Instructor · Milky Way</div>
+        <p class="master-bio">Three-time Sony World Photography Award winner specializing in Milky Way composition and galactic center imaging. His course on foreground–sky integration has 40,000+ online enrollments.</p>
+      </div>
+      <div class="master-card">
+        <div class="master-img-wrap">
+          <img class="master-img" src="https://images.unsplash.com/photo-1554151228-14d9def656e4?w=600&q=80&auto=format&fit=crop&crop=top" alt="Portrait of master photographer" loading="lazy" />
+          <span class="master-index">03 / 03</span>
+        </div>
+        <div class="master-name">Hana Sato</div>
+        <div class="master-title">Master · Light Painting & Urban Night</div>
+        <p class="master-bio">Tokyo-based light painter and urban night specialist. Hana pioneered the "Invisible Architecture" technique and exhibits globally. Holds the Guinness record for largest indoor light orb.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <div class="cta-stars" id="cta-stars"></div>
+    <div class="cta-content">
+      <span class="section-label">Begin Your Journey</span>
+      <h2 class="cta-title">The Night Belongs to<br><em>Those Who Seek It</em></h2>
+      <p class="cta-text">Join OBSCURA's next cohort and learn to see what others only dream. Limited enrollment — 12 students per masterclass cycle.</p>
+      <div class="cta-buttons">
+        <a href="contact.html" class="btn-primary">Enroll Now</a>
+        <a href="expeditions.html" class="btn-secondary">View Expeditions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom:16px;">
+          <div class="nav-logo-icon"></div>
+          OBSCURA
+        </a>
+        <p class="footer-tagline">Elite night photography academy and dark-sky expedition operator. Training award-winning photographers since 2013.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Learn</div>
+        <ul class="footer-links">
+          <li><a href="workshops.html">Milky Way Masterclass</a></li>
+          <li><a href="workshops.html">Light Painting Workshop</a></li>
+          <li><a href="workshops.html">Urban Night Program</a></li>
+          <li><a href="workshops.html">Astrophotography Intensive</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="expeditions.html">Iceland Aurora</a></li>
+          <li><a href="expeditions.html">Sahara Milky Way</a></li>
+          <li><a href="expeditions.html">Atacama Star Fields</a></li>
+          <li><a href="expeditions.html">Himalayan Starfields</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About OBSCURA</a></li>
+          <li><a href="about.html">Our Faculty</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="contact.html">Private Hire</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 OBSCURA. All rights reserved. <span class="footer-accent">Find the Light in Total Darkness.</span></span>
+      <span class="footer-copy">Luxury Night Photography Academy</span>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    // ── Preloader star-field generation ──
+    (function() {
+      const container = document.getElementById('preloader-stars');
+      const count = 120;
+      for (let i = 0; i < count; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'star-dot';
+        const size = Math.random() * 2.5 + 0.5;
+        dot.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          left: ${Math.random() * 100}%;
+          top: ${Math.random() * 100}%;
+          animation-delay: ${Math.random() * 1.8}s;
+          animation-duration: ${0.3 + Math.random() * 0.4}s;
+        `;
+        container.appendChild(dot);
+      }
+    })();
+
+    // ── CTA background stars ──
+    (function() {
+      const container = document.getElementById('cta-stars');
+      for (let i = 0; i < 60; i++) {
+        const dot = document.createElement('div');
+        const size = Math.random() * 2 + 0.5;
+        dot.style.cssText = `
+          position: absolute;
+          width: ${size}px;
+          height: ${size}px;
+          background: rgba(255,255,255,${Math.random() * 0.5 + 0.1});
+          border-radius: 50%;
+          left: ${Math.random() * 100}%;
+          top: ${Math.random() * 100}%;
+          animation: starTwinkle ${2 + Math.random() * 3}s ease-in-out ${Math.random() * 3}s infinite alternate;
+        `;
+        container.appendChild(dot);
+      }
+      const style = document.createElement('style');
+      style.textContent = `@keyframes starTwinkle { from { opacity: 0.1; } to { opacity: 0.9; } }`;
+      document.head.appendChild(style);
+    })();
+
+    // ── Preloader exit ──
+    window.addEventListener('load', function() {
+      const preloader = document.getElementById('preloader');
+      setTimeout(function() {
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          onComplete: function() {
+            preloader.style.display = 'none';
+            initScrollIndicator();
+            initAnimations();
+          }
+        });
+      }, 2800);
+    });
+
+    function initScrollIndicator() {
+      const indicator = document.getElementById('scroll-indicator');
+      indicator.classList.add('visible');
+      setTimeout(function() {
+        window.addEventListener('scroll', function() {
+          if (window.scrollY > window.innerHeight * 0.8) {
+            indicator.classList.remove('visible');
+          } else {
+            indicator.classList.add('visible');
+          }
+        });
+      }, 4000);
+    }
+
+    // ── Navbar scroll effect ──
+    window.addEventListener('scroll', function() {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 60) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // ── GSAP Animations ──
+    function initAnimations() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero character entrance
+      gsap.from('.char', {
+        immediateRender: false,
+        opacity: 0,
+        y: 60,
+        duration: 1.0,
+        ease: 'power3.out',
+        stagger: 0.08
+      });
+
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 0.9,
+        ease: 'power2.out',
+        delay: 0.6
+      });
+
+      gsap.from('.hero-subtitle', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 0.9,
+        ease: 'power2.out',
+        delay: 0.9
+      });
+
+      gsap.from('.hero-stats', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 0.9,
+        ease: 'power2.out',
+        delay: 1.2
+      });
+
+      gsap.from('.aperture-float', {
+        immediateRender: false,
+        opacity: 0,
+        scale: 0.8,
+        duration: 1.2,
+        ease: 'power2.out',
+        delay: 0.5
+      });
+
+      // Portfolio
+      gsap.from('.portfolio-header', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#portfolio', start: 'top 80%' },
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.portfolio-item', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.portfolio-grid', start: 'top 85%' },
+        opacity: 0,
+        y: 28,
+        duration: 1.0,
+        ease: 'power2.out',
+        stagger: 0.1
+      });
+
+      // Academy
+      gsap.from('.academy-visual', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#academy', start: 'top 80%' },
+        opacity: 0,
+        x: -40,
+        duration: 1.1,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.academy-content > *', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#academy', start: 'top 80%' },
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.1
+      });
+
+      gsap.from('.curriculum-item', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.curriculum-list', start: 'top 85%' },
+        opacity: 0,
+        x: 24,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.08
+      });
+
+      // Expeditions
+      gsap.from('.expeditions-header', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#expeditions', start: 'top 80%' },
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.expedition-card', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.expeditions-grid', start: 'top 85%' },
+        opacity: 0,
+        y: 28,
+        duration: 1.0,
+        ease: 'power2.out',
+        stagger: 0.12
+      });
+
+      // Masters
+      gsap.from('.masters-header', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#masters', start: 'top 80%' },
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.master-card', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.masters-grid', start: 'top 85%' },
+        opacity: 0,
+        y: 28,
+        duration: 1.0,
+        ease: 'power2.out',
+        stagger: 0.15
+      });
+
+      // CTA
+      gsap.from('.cta-content > *', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#cta', start: 'top 80%' },
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.1
+      });
+    }
+  </script>
+</body>
+</html>

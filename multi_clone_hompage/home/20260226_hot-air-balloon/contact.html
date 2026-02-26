@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Flight — ZEPHYR Balloon Experiences</title>
+  <meta name="description" content="Book your ZEPHYR luxury hot air balloon experience. Select destination, date, experience type, and number of guests." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0E1520;
+      --surface: #161E2E;
+      --accent: #F0A030;
+      --accent2: #E85A30;
+      --text: #F5F0E8;
+      --text-muted: #8090A8;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 4rem; background: rgba(14,21,32,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(240,160,48,0.1); }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.6rem; letter-spacing: 0.25em; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta { padding: 0.6rem 1.6rem; background: var(--accent); color: #0E1520; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--accent2); color: var(--text); }
+
+    /* SUBHERO */
+    .subhero { position: relative; min-height: 58vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .subhero-bg { position: absolute; inset: 0; background: linear-gradient(180deg, #1E0E06 0%, #2A1A0E 25%, #1A1535 60%, #0E1520 100%); }
+    .subhero-img { position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80&auto=format&fit=crop') center/cover no-repeat; opacity: 0.18; }
+    .subhero-content { position: relative; z-index: 5; text-align: center; padding: 0 2rem; max-width: 800px; padding-top: 6rem; }
+    .subhero-eyebrow { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.2rem; }
+    .subhero-title { font-family: var(--font-heading); font-size: clamp(2.8rem, 6vw, 5rem); color: var(--text); line-height: 1.1; margin-bottom: 1.5rem; }
+    .subhero-subtitle { font-size: 1rem; color: var(--text-muted); line-height: 1.7; max-width: 520px; margin: 0 auto; }
+
+    /* SHARED */
+    .section { padding: 7rem 4rem; }
+    .section.surface { background: var(--surface); }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3.2rem); color: var(--text); margin-bottom: 1.5rem; line-height: 1.2; }
+    .section-subtitle { font-size: 1rem; color: var(--text-muted); max-width: 560px; line-height: 1.7; }
+    .divider { width: 60px; height: 2px; background: var(--accent); margin: 1.5rem 0; }
+    .divider.center { margin: 1.5rem auto; }
+    .section-header { margin-bottom: 4rem; }
+    .section-header.center { text-align: center; }
+    .section-header.center .section-subtitle { margin: 0 auto; }
+
+    /* BOOKING FORM LAYOUT */
+    .booking-layout { display: grid; grid-template-columns: 1fr 380px; gap: 5rem; align-items: start; }
+    .booking-form-wrap { background: var(--surface); border-radius: 6px; padding: 3rem; border: 1px solid rgba(255,255,255,0.06); }
+    .form-title { font-family: var(--font-heading); font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
+    .form-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2.5rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+    input, select, textarea {
+      background: var(--bg); border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text); font-family: var(--font-body); font-size: 0.9rem;
+      padding: 0.85rem 1rem; border-radius: 3px; transition: border-color 0.3s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    select option { background: #1A1A2E; }
+    textarea { resize: vertical; min-height: 120px; }
+    .form-submit {
+      width: 100%; padding: 1.1rem; background: var(--accent); color: #0E1520;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; border: none; border-radius: 3px;
+      cursor: pointer; margin-top: 1.5rem; transition: background 0.3s;
+      font-family: var(--font-body);
+    }
+    .form-submit:hover { background: var(--accent2); color: var(--text); }
+    .form-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; text-align: center; line-height: 1.6; }
+
+    /* BOOKING SIDEBAR */
+    .booking-sidebar { display: flex; flex-direction: column; gap: 2rem; }
+    .sidebar-card { background: var(--surface); border-radius: 4px; padding: 2rem; border: 1px solid rgba(255,255,255,0.06); }
+    .sidebar-card-title { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text); margin-bottom: 1.5rem; }
+    .contact-items { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-item { display: flex; align-items: flex-start; gap: 1rem; }
+    .contact-item-icon { width: 36px; height: 36px; background: rgba(240,160,48,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.9rem; }
+    .contact-item-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.25rem; }
+    .contact-item-value { font-size: 0.9rem; color: var(--text); }
+    .weather-note { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+    .weather-note strong { color: var(--text); }
+
+    /* WHAT TO EXPECT */
+    .steps-grid { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex; gap: 2rem; align-items: flex-start; padding: 2.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06); position: relative;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-number {
+      font-family: var(--font-heading); font-size: 3.5rem; color: rgba(240,160,48,0.15);
+      line-height: 1; flex-shrink: 0; width: 80px; text-align: right;
+    }
+    .step-content { padding-top: 0.5rem; }
+    .step-title { font-family: var(--font-heading); font-size: 1.3rem; color: var(--text); margin-bottom: 0.75rem; }
+    .step-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+    .step-time { display: inline-block; margin-top: 0.75rem; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+
+    /* WEATHER POLICY */
+    .weather-section { background: var(--surface); }
+    .weather-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .weather-card { padding: 2rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; background: var(--bg); }
+    .weather-card-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+    .weather-card-title { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text); margin-bottom: 0.75rem; }
+    .weather-card-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid rgba(240,160,48,0.1); padding: 4rem 4rem 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 3rem; }
+    .footer-brand-name { font-family: var(--font-heading); font-size: 1.8rem; letter-spacing: 0.2em; color: var(--text); margin-bottom: 1rem; }
+    .footer-brand-tagline { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+    .footer-col-title { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-links a { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-legal { display: flex; gap: 2rem; }
+    .footer-legal a { font-size: 0.75rem; color: var(--text-muted); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="nav-logo">ZE<span>PH</span>YR</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="experiences.html">Experiences</a></li>
+    <li><a href="destinations.html">Destinations</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Book Flight</a>
+</nav>
+
+<!-- SUBHERO -->
+<section class="subhero">
+  <div class="subhero-bg"></div>
+  <div class="subhero-img"></div>
+  <div class="subhero-content">
+    <p class="subhero-eyebrow" id="subEyebrow">Reserve Your Journey</p>
+    <h1 class="subhero-title" id="subTitle">Book a Flight</h1>
+    <p class="subhero-subtitle" id="subSubtitle">Your sky journey begins with a single enquiry. Our team responds within 24 hours to begin crafting your perfect ascent.</p>
+  </div>
+</section>
+
+<!-- BOOKING FORM -->
+<section class="section" id="formSection">
+  <div class="section-inner">
+    <div class="booking-layout">
+      <div class="booking-form-wrap" id="bookingForm">
+        <h2 class="form-title">Request a Reservation</h2>
+        <p class="form-subtitle">Complete the form and our reservations team will confirm availability within 24 hours.</p>
+        <form id="reservationForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="James" required />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Hartley" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="james@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" />
+            </div>
+            <div class="form-group">
+              <label for="destination">Destination</label>
+              <select id="destination" name="destination" required>
+                <option value="" disabled selected>Select destination</option>
+                <option value="cappadocia">Cappadocia, Turkey</option>
+                <option value="provence">Provence, France</option>
+                <option value="napa">Napa Valley, USA</option>
+                <option value="serengeti">Serengeti, Tanzania</option>
+                <option value="masai">Masai Mara, Kenya</option>
+                <option value="loire">Loire Valley, France</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="experience">Experience Type</label>
+              <select id="experience" name="experience" required>
+                <option value="" disabled selected>Select experience</option>
+                <option value="sunrise">Sunrise Champagne — from $680/person</option>
+                <option value="charter">Private Charter — from $3,800/flight</option>
+                <option value="honeymoon">Honeymoon Package — from $2,200/couple</option>
+                <option value="corporate">Corporate Group — from $8,500/flight</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="date">Preferred Date</label>
+              <input type="date" id="date" name="date" required />
+            </div>
+            <div class="form-group">
+              <label for="guests">Number of Guests</label>
+              <select id="guests" name="guests" required>
+                <option value="" disabled selected>Select guests</option>
+                <option value="1">1 guest</option>
+                <option value="2">2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests</option>
+                <option value="5-8">5–8 guests</option>
+                <option value="9-12">9–12 guests (corporate)</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="occasion">Special Occasion</label>
+              <select id="occasion" name="occasion">
+                <option value="" disabled selected>Select occasion (optional)</option>
+                <option value="none">No special occasion</option>
+                <option value="proposal">Marriage Proposal</option>
+                <option value="honeymoon">Honeymoon</option>
+                <option value="anniversary">Anniversary</option>
+                <option value="birthday">Birthday Celebration</option>
+                <option value="corporate">Corporate Event</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="message">Additional Requests or Questions</label>
+              <textarea id="message" name="message" placeholder="Tell us about any special requirements, dietary needs, accessibility considerations, or questions about your experience..."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="form-submit">Submit Reservation Request</button>
+          <p class="form-note">We respond within 24 hours. No payment required at this stage. Your enquiry is completely confidential.</p>
+        </form>
+      </div>
+
+      <div class="booking-sidebar" id="bookingSidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Contact ZEPHYR</div>
+          <div class="contact-items">
+            <div class="contact-item">
+              <div class="contact-item-icon">✆</div>
+              <div>
+                <div class="contact-item-label">Reservations</div>
+                <div class="contact-item-value">+1 (888) 937-4997</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item-icon">✉</div>
+              <div>
+                <div class="contact-item-label">Email</div>
+                <div class="contact-item-value">reservations@zephyrballoon.com</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item-icon">◷</div>
+              <div>
+                <div class="contact-item-label">Hours</div>
+                <div class="contact-item-value">Mon – Fri, 8am – 8pm GMT</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item-icon">⚑</div>
+              <div>
+                <div class="contact-item-label">Global Offices</div>
+                <div class="contact-item-value">London · Göreme · Napa · Nairobi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Weather Policy</div>
+          <p class="weather-note">
+            <strong>Your safety is absolute.</strong> ZEPHYR reserves the right to cancel or reschedule any flight due to adverse weather conditions. In the event of cancellation, you will receive a <strong>full refund</strong> or complimentary rebooking with no penalty. Weather decisions are made by our Chief Pilot at 5am on flight day.
+          </p>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">What's Included</div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:0.7rem;">
+            <li style="display:flex; gap:0.75rem; font-size:0.85rem; color:var(--text-muted);"><span style="color:var(--accent); flex-shrink:0;">✦</span>Champagne service aloft</li>
+            <li style="display:flex; gap:0.75rem; font-size:0.85rem; color:var(--text-muted);"><span style="color:var(--accent); flex-shrink:0;">✦</span>Flight certificate with GPS</li>
+            <li style="display:flex; gap:0.75rem; font-size:0.85rem; color:var(--text-muted);"><span style="color:var(--accent); flex-shrink:0;">✦</span>Ground crew transport</li>
+            <li style="display:flex; gap:0.75rem; font-size:0.85rem; color:var(--text-muted);"><span style="color:var(--accent); flex-shrink:0;">✦</span>Pre-flight safety briefing</li>
+            <li style="display:flex; gap:0.75rem; font-size:0.85rem; color:var(--text-muted);"><span style="color:var(--accent); flex-shrink:0;">✦</span>Weather rebooking guarantee</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT TO EXPECT -->
+<section class="section surface" id="stepsSection">
+  <div class="section-inner">
+    <div class="section-header center">
+      <p class="section-eyebrow">Your Journey</p>
+      <h2 class="section-title">What to Expect</h2>
+      <div class="divider center"></div>
+      <p class="section-subtitle">From the moment you arrive to the final champagne toast, every detail is attended to.</p>
+    </div>
+    <div class="steps-grid" style="max-width:800px; margin:0 auto;">
+      <div class="step">
+        <div class="step-number">01</div>
+        <div class="step-content">
+          <div class="step-title">Pre-Dawn Arrival</div>
+          <p class="step-desc">Your private driver collects you from your accommodation before dawn. Coffee and warm pastries are served as you travel to the launch site. No rushing — ZEPHYR's timing is calibrated to the sunrise, not a timetable.</p>
+          <span class="step-time">5:00 – 5:30 AM</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">02</div>
+        <div class="step-content">
+          <div class="step-title">Safety Briefing &amp; Inflation</div>
+          <p class="step-desc">Your pilot conducts a detailed, unhurried safety briefing covering all procedures. Watch as the balloon inflates dramatically against the pre-dawn sky — one of the most spectacular sights before the flight even begins.</p>
+          <span class="step-time">5:30 – 6:00 AM</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">03</div>
+        <div class="step-content">
+          <div class="step-title">Ascent &amp; Flight</div>
+          <p class="step-desc">You lift off silently into the dawn sky. Your pilot guides the balloon with expert precision, ascending and descending to give you the best views and wildlife encounters. Champagne is uncorked at altitude as the landscape awakens below.</p>
+          <span class="step-time">6:00 – 9:00 AM</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">04</div>
+        <div class="step-content">
+          <div class="step-title">Gentle Landing</div>
+          <p class="step-desc">Your pilot chooses the optimal landing site based on wind conditions. The ground crew follows from below and assists with your return to earth. A traditional ballooning ceremony marks the occasion with your flight certificate.</p>
+          <span class="step-time">9:00 – 9:30 AM</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">05</div>
+        <div class="step-content">
+          <div class="step-title">Champagne Celebration</div>
+          <p class="step-desc">Return to the launch estate for a full post-flight breakfast or champagne brunch. Receive your personalised flight certificate engraved with altitude, coordinates, and date. Your private transfer returns you to your accommodation at leisure.</p>
+          <span class="step-time">9:30 – 11:00 AM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEATHER POLICY -->
+<section class="section" id="weatherSection">
+  <div class="section-inner">
+    <div class="section-header center">
+      <p class="section-eyebrow">Our Commitment</p>
+      <h2 class="section-title">Weather &amp; Cancellation Policy</h2>
+      <div class="divider center"></div>
+      <p class="section-subtitle">We never fly in unsafe conditions. Our weather policy is built on complete transparency and zero compromise.</p>
+    </div>
+    <div class="weather-grid">
+      <div class="weather-card">
+        <div class="weather-card-icon">⛅</div>
+        <div class="weather-card-title">Three Daily Weather Checks</div>
+        <p class="weather-card-text">Our meteorological team conducts three weather assessments per flight day: 48 hours prior, 24 hours prior, and a final determination at 5am on flight morning by the Chief Pilot.</p>
+      </div>
+      <div class="weather-card">
+        <div class="weather-card-icon">✦</div>
+        <div class="weather-card-title">Full Refund Guarantee</div>
+        <p class="weather-card-text">If ZEPHYR cancels your flight for any weather-related reason, you receive a 100% refund or complimentary rebooking within 12 months. No administration fees. No questions asked.</p>
+      </div>
+      <div class="weather-card">
+        <div class="weather-card-icon">★</div>
+        <div class="weather-card-title">Flight Conditions Required</div>
+        <p class="weather-card-text">We require wind speeds below 25 km/h, visibility exceeding 5 km, no precipitation, and clear thunderstorm margins. These are FAA and EASA minimum requirements — we exceed all of them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">ZEPHYR</div>
+        <p class="footer-brand-tagline">Ultra-luxury hot air balloon experiences across the world's most breathtaking landscapes since 1998.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Experiences</div>
+        <ul class="footer-links">
+          <li><a href="experiences.html">Sunrise Champagne</a></li>
+          <li><a href="experiences.html">Private Charter</a></li>
+          <li><a href="experiences.html">Honeymoon</a></li>
+          <li><a href="experiences.html">Corporate</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Destinations</div>
+        <ul class="footer-links">
+          <li><a href="destinations.html">Cappadocia</a></li>
+          <li><a href="destinations.html">Provence</a></li>
+          <li><a href="destinations.html">Napa Valley</a></li>
+          <li><a href="destinations.html">Serengeti</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html">Safety</a></li>
+          <li><a href="about.html">Our Fleet</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 ZEPHYR. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Safety Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.from('#subEyebrow', { immediateRender: false, duration: 1, opacity: 0, y: 20, delay: 0.3, ease: 'power2.out' });
+  gsap.from('#subTitle', { immediateRender: false, duration: 1.2, opacity: 0, y: 40, delay: 0.5, ease: 'power2.out' });
+  gsap.from('#subSubtitle', { immediateRender: false, duration: 1, opacity: 0, y: 20, delay: 0.8, ease: 'power2.out' });
+
+  gsap.from('#bookingForm', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#formSection', start: 'top 75%' },
+    opacity: 0, x: -40, duration: 1.1, ease: 'power2.out'
+  });
+  gsap.from('#bookingSidebar > *', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#formSection', start: 'top 75%' },
+    opacity: 0, x: 30, duration: 0.9, stagger: 0.12, ease: 'power2.out'
+  });
+
+  gsap.from('.step', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#stepsSection', start: 'top 75%' },
+    opacity: 0, x: -30, duration: 0.9, stagger: 0.12, ease: 'power2.out'
+  });
+
+  gsap.from('.weather-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#weatherSection', start: 'top 75%' },
+    opacity: 0, y: 30, duration: 0.9, stagger: 0.12, ease: 'power2.out'
+  });
+
+  // Form submit handler
+  document.getElementById('reservationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.form-submit');
+    btn.textContent = 'Request Submitted — We\'ll be in touch within 24 hours';
+    btn.style.background = '#2D4A2D';
+    btn.style.color = '#A0D0A0';
+    btn.disabled = true;
+  });
+</script>
+</body>
+</html>

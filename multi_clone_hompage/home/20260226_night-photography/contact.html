@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact &amp; Enroll — OBSCURA Night Photography Academy</title>
+  <meta name="description" content="Enroll in an OBSCURA masterclass, book a dark sky expedition, or inquire about private hire photography experiences." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #15151E;
+      --surface: #1C1C2A;
+      --accent: #8060FF;
+      --accent2: #F0C840;
+      --text: #F0EEFF;
+      --text-muted: #7060A0;
+      --border: rgba(128, 96, 255, 0.15);
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; line-height: 1.6; }
+
+    #scroll-indicator { position: fixed; left: 24px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.5s ease; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 48px; background: linear-gradient(to bottom, transparent, var(--accent)); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent2); animation: scrollDown 1.8s ease infinite; }
+    @keyframes scrollDown { 0% { top: -100%; } 100% { top: 200%; } }
+    .scroll-text { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); writing-mode: vertical-rl; text-transform: uppercase; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 0 clamp(24px, 5vw, 80px); height: 72px; display: flex; align-items: center; justify-content: space-between; background: rgba(21, 21, 30, 0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.3em; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .nav-logo-icon { width: 28px; height: 28px; border: 2px solid var(--accent); border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; }
+    .nav-logo-icon::after { content: ''; width: 8px; height: 8px; background: var(--accent2); border-radius: 50%; }
+    .nav-links { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); list-style: none; }
+    .nav-links a { font-size: 0.8rem; letter-spacing: 0.12em; color: var(--text-muted); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-enroll { background: var(--accent); color: #fff !important; padding: 9px 22px; border-radius: 2px; font-size: 0.75rem !important; letter-spacing: 0.15em !important; transition: background 0.3s !important; }
+    .nav-enroll:hover { background: #9070ff !important; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      height: 52vh;
+      min-height: 400px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 clamp(24px, 5vw, 80px) 72px;
+      margin-top: 72px;
+    }
+
+    .page-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35);
+    }
+
+    .page-hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(21,21,30,0.95) 0%, transparent 55%); }
+    .page-hero-content { position: relative; z-index: 2; }
+    .page-eyebrow { font-size: 0.65rem; letter-spacing: 0.35em; color: var(--accent2); text-transform: uppercase; display: block; margin-bottom: 16px; }
+    .page-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 7vw, 5.5rem); font-weight: 700; line-height: 1.0; margin-bottom: 16px; }
+    .page-subtitle { font-size: 1rem; color: rgba(240,238,255,0.65); max-width: 520px; line-height: 1.8; }
+
+    section { padding: clamp(80px, 10vw, 130px) clamp(24px, 5vw, 80px); }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; display: block; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 24px; }
+    .section-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.8; }
+
+    /* ── INQUIRY TYPE SELECTION ── */
+    #contact-main {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: clamp(48px, 6vw, 100px);
+      align-items: start;
+    }
+
+    .inquiry-types {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .inquiry-type-btn {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.3s, background 0.3s;
+      font-family: var(--font-body);
+      color: var(--text);
+    }
+
+    .inquiry-type-btn:hover, .inquiry-type-btn.active {
+      border-color: var(--accent);
+      background: rgba(128,96,255,0.05);
+    }
+
+    .inquiry-type-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      transition: border-color 0.3s;
+    }
+
+    .inquiry-type-btn.active .inquiry-type-icon { border-color: var(--accent2); }
+
+    .inquiry-type-name {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: block;
+    }
+
+    .inquiry-type-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── CONTACT FORM ── */
+    .contact-form-wrap {
+      background: var(--surface);
+      padding: 40px 40px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      position: sticky;
+      top: 96px;
+    }
+
+    .form-title {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .form-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 12px 16px;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.3s;
+      appearance: none;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .form-input::placeholder, .form-textarea::placeholder {
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    .form-select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237060A0' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+
+    .form-select option { background: var(--surface); }
+
+    .form-textarea { resize: vertical; min-height: 100px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-submit:hover { background: #9070ff; transform: translateY(-1px); }
+
+    .form-note {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── CONTACT INFO ── */
+    .contact-info {
+      margin-top: 56px;
+    }
+
+    .contact-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .contact-card {
+      padding: 28px;
+      background: var(--surface);
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+
+    .contact-card:hover { border-color: rgba(128,96,255,0.3); }
+
+    .contact-card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .contact-card-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .contact-card-value {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .contact-card-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── PRIVATE HIRE ── */
+    #private-hire { background: var(--surface); }
+
+    .private-hire-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 6vw, 100px);
+      align-items: center;
+    }
+
+    .hire-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+    }
+
+    .hire-content { }
+
+    .hire-list {
+      list-style: none;
+      margin: 28px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hire-list li {
+      display: flex;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .hire-list li::before {
+      content: '◈';
+      color: var(--accent2);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .btn-hire {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 13px 32px;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-decoration: none;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .btn-hire:hover { background: var(--accent); color: #fff; }
+
+    /* ── FAQ ── */
+    #faq { }
+
+    .faq-header { text-align: center; margin-bottom: 56px; }
+
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .faq-item {
+      background: var(--bg);
+      border: none;
+      padding: 0;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 20px 24px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: color 0.3s;
+    }
+
+    .faq-question:hover { color: var(--accent2); }
+
+    .faq-toggle {
+      font-size: 1.2rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+
+    .faq-item.open .faq-toggle { transform: rotate(45deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .faq-item.open .faq-answer { max-height: 300px; }
+
+    .faq-answer-inner {
+      padding: 0 24px 20px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+
+    /* footer */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 64px clamp(24px, 5vw, 80px) 40px; }
+    .footer-top { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 48px; margin-bottom: 48px; }
+    .footer-tagline { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; max-width: 260px; }
+    .footer-col-title { font-family: var(--font-heading); font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text); text-transform: uppercase; margin-bottom: 20px; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--accent2); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-accent { color: var(--accent2); }
+
+    @media (max-width: 1000px) {
+      #contact-main { grid-template-columns: 1fr; }
+      .contact-form-wrap { position: static; }
+    }
+
+    @media (max-width: 900px) {
+      .private-hire-grid { grid-template-columns: 1fr; }
+      .contact-info-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      #scroll-indicator { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="scroll-indicator" class="visible">
+    <div class="scroll-text">Scroll</div>
+    <div class="scroll-line"></div>
+  </div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      OBSCURA
+    </a>
+    <ul class="nav-links">
+      <li><a href="workshops.html">Workshops</a></li>
+      <li><a href="expeditions.html">Expeditions</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><a href="contact.html" class="nav-enroll">Enroll</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+      <span class="page-eyebrow">Enroll &amp; Inquire</span>
+      <h1 class="page-title">Let's Talk<br>About the Night</h1>
+      <p class="page-subtitle">Workshop enrollment, expedition booking, private hire. We respond within one business day — or sooner if the moon is full.</p>
+    </div>
+  </div>
+
+  <!-- CONTACT MAIN -->
+  <section id="contact-main">
+
+    <!-- Left: Inquiry types + contact info -->
+    <div>
+      <span class="section-label">I'm Interested In</span>
+      <h2 class="section-title" style="font-size:clamp(1.6rem,3vw,2.4rem);">Choose Your Inquiry</h2>
+
+      <div class="inquiry-types">
+        <button class="inquiry-type-btn active" onclick="selectInquiry(this, 'Workshop Enrollment')">
+          <div class="inquiry-type-icon">◎</div>
+          <div>
+            <span class="inquiry-type-name">Workshop Enrollment</span>
+            <span class="inquiry-type-desc">Milky Way, Light Painting, Urban Night, Astrophotography Intensive</span>
+          </div>
+        </button>
+        <button class="inquiry-type-btn" onclick="selectInquiry(this, 'Expedition Booking')">
+          <div class="inquiry-type-icon">◈</div>
+          <div>
+            <span class="inquiry-type-name">Expedition Booking</span>
+            <span class="inquiry-type-desc">Iceland, Sahara, Atacama, Himalayas, and all 12 dark sky locations</span>
+          </div>
+        </button>
+        <button class="inquiry-type-btn" onclick="selectInquiry(this, 'Private Hire')">
+          <div class="inquiry-type-icon">◆</div>
+          <div>
+            <span class="inquiry-type-name">Private Hire</span>
+            <span class="inquiry-type-desc">Bespoke private expedition or corporate photography experience</span>
+          </div>
+        </button>
+        <button class="inquiry-type-btn" onclick="selectInquiry(this, 'General Inquiry')">
+          <div class="inquiry-type-icon">○</div>
+          <div>
+            <span class="inquiry-type-name">General Inquiry</span>
+            <span class="inquiry-type-desc">Questions about the curriculum, faculty, or dark sky photography</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="contact-info">
+        <span class="section-label">Direct Contact</span>
+        <div class="contact-info-grid">
+          <div class="contact-card">
+            <span class="contact-card-icon">✉</span>
+            <div class="contact-card-label">Email</div>
+            <div class="contact-card-value">hello@obscura.photo</div>
+            <div class="contact-card-note">Responses within 24 hours</div>
+          </div>
+          <div class="contact-card">
+            <span class="contact-card-icon">◎</span>
+            <div class="contact-card-label">Studio</div>
+            <div class="contact-card-value">Los Angeles, CA</div>
+            <div class="contact-card-note">By appointment only</div>
+          </div>
+          <div class="contact-card">
+            <span class="contact-card-icon">◐</span>
+            <div class="contact-card-label">Office Hours</div>
+            <div class="contact-card-value">Mon–Fri, 10am–6pm PST</div>
+            <div class="contact-card-note">After-hours for expedition emergencies</div>
+          </div>
+          <div class="contact-card">
+            <span class="contact-card-icon">★</span>
+            <div class="contact-card-label">Social</div>
+            <div class="contact-card-value">@obscura.photo</div>
+            <div class="contact-card-note">Instagram · 280K followers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="contact-form-wrap">
+      <div class="form-title">Send an Inquiry</div>
+      <div class="form-subtitle">Fill in your details and we'll connect you with the right OBSCURA team member.</div>
+
+      <form id="contact-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="first-name">First Name</label>
+            <input class="form-input" type="text" id="first-name" name="first_name" placeholder="Elena" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="last-name">Last Name</label>
+            <input class="form-input" type="text" id="last-name" name="last_name" placeholder="Varek" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inquiry-type">Inquiry Type</label>
+          <select class="form-select" id="inquiry-type" name="inquiry_type">
+            <option value="workshop">Workshop Enrollment</option>
+            <option value="expedition">Expedition Booking</option>
+            <option value="private">Private Hire</option>
+            <option value="general">General Inquiry</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="program">Program of Interest</label>
+          <select class="form-select" id="program" name="program">
+            <option value="">Select a program...</option>
+            <optgroup label="Workshops">
+              <option>Milky Way Masterclass — April 2026</option>
+              <option>Light Painting Mastery — May 2026</option>
+              <option>Urban Night Program — June 2026 (Tokyo)</option>
+              <option>Astrophotography Intensive — August 2026</option>
+              <option>Milky Way Masterclass — July 2026 (Moab)</option>
+            </optgroup>
+            <optgroup label="Expeditions">
+              <option>Iceland Aurora Hunt — March 2026</option>
+              <option>Sahara Milky Way — April 2026</option>
+              <option>Atacama Star Fields — June 2026</option>
+              <option>Himalayan Starfields — September 2026</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option>Private Hire Expedition</option>
+              <option>Corporate Photography Experience</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="skill-level">Photography Experience</label>
+          <select class="form-select" id="skill-level" name="skill_level">
+            <option value="beginner">Beginner — learning the basics</option>
+            <option value="intermediate">Intermediate — comfortable with manual mode</option>
+            <option value="advanced">Advanced — shooting nights regularly</option>
+            <option value="professional">Professional — published photographer</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="message">Message</label>
+          <textarea class="form-textarea" id="message" name="message" placeholder="Tell us what you're hoping to learn or capture..." rows="4"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn">Send Inquiry</button>
+        <p class="form-note">By submitting, you agree to OBSCURA's privacy policy. We never share your data. Expect a response within one business day.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- PRIVATE HIRE -->
+  <section id="private-hire">
+    <div class="private-hire-grid">
+      <img class="hire-img" src="https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=900&q=80&auto=format&fit=crop" alt="Private night photography experience" loading="lazy" />
+      <div class="hire-content">
+        <span class="section-label">Bespoke Experiences</span>
+        <h2 class="section-title">Private Hire &amp; Corporate</h2>
+        <p class="section-desc">OBSCURA creates completely bespoke night photography experiences for private clients, wedding parties, corporate teams, and luxury travel brands. Each experience is designed from scratch with an OBSCURA master photographer and a dedicated expedition coordinator.</p>
+        <ul class="hire-list">
+          <li>Private Milky Way proposal experiences at dark sky reserves (10 available worldwide)</li>
+          <li>Corporate team-building night photography retreats — from 10 to 100 participants</li>
+          <li>Bespoke expedition to any location on Earth — we handle all logistics</li>
+          <li>Luxury travel brand content creation with OBSCURA master photographers</li>
+          <li>Documentary and editorial commissions for print and digital publications</li>
+          <li>Observatory after-dark exclusive access sessions (partnerships in 6 countries)</li>
+        </ul>
+        <a href="mailto:private@obscura.photo" class="btn-hire">Inquire About Private Hire</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="faq-header">
+      <span class="section-label">Questions</span>
+      <h2 class="section-title">Frequently Asked</h2>
+    </div>
+    <div class="faq-list">
+
+      <div class="faq-item open">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What camera equipment do I need for workshops?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Any mirrorless or DSLR camera with manual exposure controls and a wide-angle lens with a maximum aperture of f/2.8 or wider is sufficient. Full-frame sensors perform better in low light, but APS-C cameras are absolutely acceptable for all workshop levels. A sturdy tripod is essential — do not bring a lightweight travel tripod for overnight outdoor sessions. OBSCURA can arrange camera rental for expedition participants who need a backup body.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What is your cancellation and rescheduling policy?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Cancellations made more than 60 days before the program start date receive a full refund. Between 30 and 60 days, we offer a credit toward any future OBSCURA program. Within 30 days, the fee is non-refundable but transferable to another person. OBSCURA reserves the right to cancel any program due to extreme weather, in which case participants receive a full refund or complimentary rescheduling.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Are expeditions physically demanding?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">It depends on the expedition. Iceland and Sahara expeditions require only moderate fitness — you'll walk on uneven terrain for 1–2 hours per night. The Himalayan Starfields expedition is classified as "demanding" and requires prior trekking experience at altitude. The Atacama expedition involves elevation (3,500m) — acclimatization days are built into the itinerary. We recommend consulting your physician before any high-altitude expedition.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do I need prior photography experience for workshops?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">The Light Painting Mastery and Urban Night Program welcome all levels including beginners. The Milky Way Masterclass requires intermediate skills (comfortable with manual mode, basic Lightroom). The Astrophotography Intensive is advanced only and requires prior night photography experience. If you're unsure, email us and we'll help you find the right program.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What is included in expedition pricing?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">All OBSCURA expeditions include: accommodation (luxury lodges, glamping, or high-altitude tents depending on location), all meals from arrival to departure, ground transportation, local guides, shooting permits, OBSCURA instructor fees, gear support, and post-expedition portfolio editing. International flights to the destination country are not included. Travel insurance is strongly recommended and available through OBSCURA at enrollment.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How are class sizes determined?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">OBSCURA limits class sizes rigorously to ensure instructor attention. Workshops range from 6–12 students depending on the program. Expeditions never exceed 12 participants. The Astrophotography Intensive and Himalayan expedition are capped at 6 participants for maximum personal instruction and to minimize our environmental footprint in sensitive dark sky areas.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom:16px;">
+          <div class="nav-logo-icon"></div>
+          OBSCURA
+        </a>
+        <p class="footer-tagline">Elite night photography academy and dark-sky expedition operator. Training award-winning photographers since 2013.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Learn</div>
+        <ul class="footer-links">
+          <li><a href="workshops.html">Milky Way Masterclass</a></li>
+          <li><a href="workshops.html">Light Painting Workshop</a></li>
+          <li><a href="workshops.html">Urban Night Program</a></li>
+          <li><a href="workshops.html">Astrophotography Intensive</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="expeditions.html">Iceland Aurora</a></li>
+          <li><a href="expeditions.html">Sahara Milky Way</a></li>
+          <li><a href="expeditions.html">Atacama Star Fields</a></li>
+          <li><a href="expeditions.html">Himalayan Starfields</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About OBSCURA</a></li>
+          <li><a href="about.html">Our Faculty</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="contact.html">Private Hire</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 OBSCURA. All rights reserved. <span class="footer-accent">Find the Light in Total Darkness.</span></span>
+      <span class="footer-copy">Luxury Night Photography Academy</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const indicator = document.getElementById('scroll-indicator');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > window.innerHeight * 0.8) {
+        indicator.classList.remove('visible');
+      } else {
+        indicator.classList.add('visible');
+      }
+    });
+
+    gsap.from('.page-hero-content > *', {
+      immediateRender: false,
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      stagger: 0.12,
+      delay: 0.3
+    });
+
+    gsap.from('.inquiry-type-btn', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.inquiry-types', start: 'top 85%' },
+      opacity: 0,
+      x: -20,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+
+    gsap.from('.contact-form-wrap', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#contact-main', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 1.0,
+      ease: 'power2.out',
+      delay: 0.2
+    });
+
+    gsap.from('.contact-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.contact-info-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+
+    gsap.from('.hire-img', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#private-hire', start: 'top 80%' },
+      opacity: 0,
+      x: -40,
+      duration: 1.1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.hire-content > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#private-hire', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+
+    gsap.from('.faq-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.faq-list', start: 'top 85%' },
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.08
+    });
+
+    // Inquiry type selection
+    function selectInquiry(btn, type) {
+      document.querySelectorAll('.inquiry-type-btn').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+      const select = document.getElementById('inquiry-type');
+      const map = {
+        'Workshop Enrollment': 'workshop',
+        'Expedition Booking': 'expedition',
+        'Private Hire': 'private',
+        'General Inquiry': 'general'
+      };
+      select.value = map[type] || 'general';
+    }
+
+    // FAQ toggle
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i) {
+        i.classList.remove('open');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+      }
+    }
+
+    // Form submission
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.textContent = 'Message Sent!';
+      btn.style.background = '#40A060';
+      setTimeout(function() {
+        btn.textContent = 'Send Inquiry';
+        btn.style.background = '';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

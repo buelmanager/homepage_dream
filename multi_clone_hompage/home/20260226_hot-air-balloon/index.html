@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZEPHYR — Rise Above Everything</title>
+  <meta name="description" content="Ultra-luxury hot air balloon experiences. Champagne sunrise flights, private charters across Cappadocia, Provence & Napa Valley." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0E1520;
+      --surface: #161E2E;
+      --accent: #F0A030;
+      --accent2: #E85A30;
+      --text: #F5F0E8;
+      --text-muted: #8090A8;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .preloader-balloon { width: 80px; height: 100px; }
+    .preloader-logo {
+      font-family: var(--font-heading); font-size: 2.4rem; letter-spacing: 0.4em;
+      color: var(--text); margin-top: 2rem; overflow: hidden;
+    }
+    .preloader-logo span { display: inline-block; }
+    .preloader-tagline {
+      font-size: 0.75rem; letter-spacing: 0.25em; color: var(--accent);
+      margin-top: 0.5rem; text-transform: uppercase;
+    }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(14, 21, 32, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(240, 160, 48, 0.1);
+      transition: background 0.4s;
+    }
+    .nav-logo {
+      font-family: var(--font-heading); font-size: 1.6rem; letter-spacing: 0.25em;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-muted); text-decoration: none; transition: color 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta {
+      padding: 0.6rem 1.6rem; background: var(--accent); color: #0E1520;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em;
+      text-transform: uppercase; text-decoration: none; border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .nav-cta:hover { background: var(--accent2); color: var(--text); }
+
+    /* HERO */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        180deg,
+        #1A0A05 0%,
+        #2D1408 15%,
+        #4A2010 30%,
+        #6B3518 45%,
+        #3D2040 65%,
+        #1A1535 80%,
+        #0E1520 100%
+      );
+      animation: sunriseShift 12s ease-in-out infinite alternate;
+    }
+    @keyframes sunriseShift {
+      0% { filter: hue-rotate(0deg) brightness(0.85); }
+      50% { filter: hue-rotate(10deg) brightness(1.05); }
+      100% { filter: hue-rotate(-5deg) brightness(0.9); }
+    }
+    .hero-sun {
+      position: absolute; bottom: 35%; left: 50%; transform: translateX(-50%);
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, #FFE08A 0%, #F0A030 40%, #E85A30 70%, transparent 100%);
+      border-radius: 50%; filter: blur(2px);
+      animation: sunPulse 6s ease-in-out infinite;
+    }
+    @keyframes sunPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+      50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+    }
+    .hero-horizon {
+      position: absolute; bottom: 35%; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #F0A030 30%, #FFE08A 50%, #F0A030 70%, transparent);
+      opacity: 0.6;
+    }
+    .hero-landscape {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 36%;
+      background: linear-gradient(180deg, #1A0A05 0%, #0E1520 100%);
+      clip-path: polygon(0 30%, 8% 20%, 18% 28%, 28% 10%, 40% 22%, 52% 5%, 65% 18%, 75% 8%, 88% 20%, 100% 12%, 100% 100%, 0 100%);
+    }
+    .hero-balloon-wrap {
+      position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+      animation: balloonFloat 6s ease-in-out infinite;
+    }
+    @keyframes balloonFloat {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-18px); }
+    }
+    .hero-balloon-svg { width: 140px; height: 200px; filter: drop-shadow(0 20px 40px rgba(232,90,48,0.4)); }
+    .hero-content {
+      position: relative; z-index: 10; text-align: center; padding: 0 2rem;
+      max-width: 900px;
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: var(--font-heading); font-size: clamp(3.5rem, 8vw, 7rem);
+      line-height: 1; color: var(--text); margin-bottom: 1.5rem;
+    }
+    .hero-subtitle {
+      font-size: 1.05rem; color: var(--text-muted); margin-bottom: 3rem;
+      max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 2rem;
+      padding: 0.8rem 2rem; border: 1px solid rgba(240,160,48,0.3);
+      border-radius: 100px; margin-bottom: 2.5rem;
+    }
+    .hero-badge-item { font-size: 0.75rem; letter-spacing: 0.1em; color: var(--text-muted); }
+    .hero-badge-item strong { color: var(--accent); display: block; font-size: 1rem; font-weight: 600; }
+    .hero-badge-sep { width: 1px; height: 30px; background: rgba(240,160,48,0.3); }
+    .hero-actions { display: flex; align-items: center; justify-content: center; gap: 1.5rem; }
+    .btn-primary {
+      padding: 1rem 2.5rem; background: var(--accent); color: #0E1520;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; text-decoration: none; border-radius: 2px;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-primary:hover { background: var(--accent2); color: var(--text); transform: translateY(-2px); }
+    .btn-outline {
+      padding: 1rem 2.5rem; border: 1px solid rgba(240,160,48,0.5);
+      color: var(--text); font-size: 0.8rem; letter-spacing: 0.15em;
+      text-transform: uppercase; text-decoration: none; border-radius: 2px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .scroll-indicator {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem; z-index: 10;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(180deg, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    .scroll-text { font-size: 0.6rem; letter-spacing: 0.3em; color: var(--text-muted); text-transform: uppercase; }
+
+    /* STATS */
+    .stats { background: var(--surface); padding: 5rem 4rem; }
+    .stats-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; text-align: center; }
+    .stat-number { font-family: var(--font-heading); font-size: 3.5rem; color: var(--accent); line-height: 1; }
+    .stat-label { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-muted); text-transform: uppercase; margin-top: 0.5rem; }
+
+    /* SECTION SHARED */
+    .section { padding: 7rem 4rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2.2rem, 4vw, 3.5rem); color: var(--text); margin-bottom: 1.5rem; line-height: 1.2; }
+    .section-subtitle { font-size: 1rem; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+    .section-header { margin-bottom: 4rem; }
+    .section-header.center { text-align: center; }
+    .section-header.center .section-subtitle { margin: 0 auto; }
+    .divider { width: 60px; height: 2px; background: var(--accent); margin: 1.5rem 0; }
+    .divider.center { margin: 1.5rem auto; }
+
+    /* EXPERIENCES TEASER */
+    .experiences-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .exp-card {
+      background: var(--surface); border-radius: 4px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: transform 0.4s, border-color 0.4s;
+    }
+    .exp-card:hover { transform: translateY(-6px); border-color: rgba(240,160,48,0.3); }
+    .exp-card-img { width: 100%; height: 240px; object-fit: cover; }
+    .exp-card-body { padding: 2rem; }
+    .exp-card-name { font-family: var(--font-heading); font-size: 1.4rem; color: var(--text); margin-bottom: 0.75rem; }
+    .exp-card-desc { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; }
+    .exp-card-meta { display: flex; gap: 1.5rem; }
+    .exp-meta-item { font-size: 0.75rem; color: var(--text-muted); }
+    .exp-meta-item strong { color: var(--accent); display: block; }
+    .exp-card-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); text-decoration: none; margin-top: 1.5rem;
+      transition: gap 0.3s;
+    }
+    .exp-card-link:hover { gap: 1rem; }
+
+    /* DESTINATIONS */
+    .destinations-bg { background: var(--surface); }
+    .destinations-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .dest-card {
+      position: relative; border-radius: 4px; overflow: hidden; cursor: pointer;
+      aspect-ratio: 4/3;
+    }
+    .dest-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+    .dest-card:hover img { transform: scale(1.08); }
+    .dest-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 30%, rgba(14,21,32,0.85) 100%);
+    }
+    .dest-card-content { position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem; }
+    .dest-card-name { font-family: var(--font-heading); font-size: 1.4rem; color: var(--text); }
+    .dest-card-region { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-top: 0.25rem; }
+
+    /* CHAMPAGNE FEATURE */
+    .champagne-feature { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .champagne-img { border-radius: 4px; overflow: hidden; }
+    .champagne-img img { width: 100%; height: 520px; object-fit: cover; }
+    .feature-list { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .feature-list li {
+      display: flex; align-items: flex-start; gap: 1rem;
+      font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;
+    }
+    .feature-list li::before { content: '✦'; color: var(--accent); flex-shrink: 0; margin-top: 0.1rem; font-size: 0.7rem; }
+
+    /* TESTIMONIALS */
+    .testimonials-bg { background: var(--surface); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .testimonial-card { padding: 2.5rem; border: 1px solid rgba(255,255,255,0.07); border-radius: 4px; }
+    .testimonial-stars { color: var(--accent); font-size: 0.9rem; margin-bottom: 1.5rem; letter-spacing: 0.1em; }
+    .testimonial-text { font-family: var(--font-heading); font-size: 1.05rem; color: var(--text); line-height: 1.7; font-style: italic; margin-bottom: 2rem; }
+    .testimonial-author { font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-muted); }
+    .testimonial-author strong { color: var(--text); display: block; font-style: normal; font-family: var(--font-body); }
+
+    /* BOOK CTA */
+    .book-cta {
+      text-align: center; padding: 8rem 4rem;
+      background: linear-gradient(180deg, var(--bg) 0%, #1A1030 50%, var(--bg) 100%);
+    }
+    .book-cta .section-title { font-size: clamp(2.5rem, 5vw, 4rem); }
+    .book-cta .section-subtitle { margin: 0 auto 2.5rem; }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid rgba(240,160,48,0.1);
+      padding: 4rem 4rem 2rem;
+    }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 3rem; }
+    .footer-brand-name { font-family: var(--font-heading); font-size: 1.8rem; letter-spacing: 0.2em; color: var(--text); margin-bottom: 1rem; }
+    .footer-brand-tagline { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+    .footer-col-title { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-links a { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-legal { display: flex; gap: 2rem; }
+    .footer-legal a { font-size: 0.75rem; color: var(--text-muted); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <svg class="preloader-balloon" viewBox="0 0 80 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="40" cy="44" rx="34" ry="38" fill="url(#balloonGrad)" />
+    <path d="M28 76 Q40 82 52 76" stroke="#F0A030" stroke-width="1.5" fill="none"/>
+    <path d="M30 80 L26 96 M50 80 L54 96" stroke="#8090A8" stroke-width="1.2"/>
+    <rect x="24" y="94" width="32" height="10" rx="2" fill="#161E2E" stroke="#F0A030" stroke-width="1"/>
+    <path d="M16 44 Q40 30 64 44" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none"/>
+    <path d="M10 50 Q40 38 70 50" stroke="rgba(255,255,255,0.1)" stroke-width="1" fill="none"/>
+    <defs>
+      <linearGradient id="balloonGrad" x1="40" y1="6" x2="40" y2="82" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#FFE08A"/>
+        <stop offset="40%" stop-color="#F0A030"/>
+        <stop offset="100%" stop-color="#E85A30"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div class="preloader-logo" id="preloaderLogo">ZEPHYR</div>
+  <div class="preloader-tagline">Rise Above Everything</div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">ZE<span>PH</span>YR</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="experiences.html">Experiences</a></li>
+    <li><a href="destinations.html">Destinations</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Book Flight</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-sun"></div>
+  <div class="hero-horizon"></div>
+  <div class="hero-landscape"></div>
+
+  <div class="hero-balloon-wrap" id="heroBalloon">
+    <svg class="hero-balloon-svg" viewBox="0 0 140 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="70" cy="76" rx="62" ry="68" fill="url(#hBalloonGrad)" />
+      <path d="M20 76 Q70 54 120 76" stroke="rgba(255,255,255,0.12)" stroke-width="2" fill="none"/>
+      <path d="M10 88 Q70 68 130 88" stroke="rgba(255,255,255,0.08)" stroke-width="2" fill="none"/>
+      <path d="M14 100 Q70 82 126 100" stroke="rgba(255,255,255,0.06)" stroke-width="2" fill="none"/>
+      <path d="M50 136 Q70 146 90 136" stroke="#F0A030" stroke-width="2" fill="none"/>
+      <path d="M54 142 L48 170 M86 142 L92 170" stroke="#8090A8" stroke-width="1.8"/>
+      <rect x="44" y="168" width="52" height="18" rx="3" fill="#161E2E" stroke="#F0A030" stroke-width="1.5"/>
+      <text x="70" y="181" fill="#F0A030" font-size="8" text-anchor="middle" font-family="serif" letter-spacing="2">ZEPHYR</text>
+      <defs>
+        <linearGradient id="hBalloonGrad" x1="70" y1="8" x2="70" y2="144" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#FFE8A0"/>
+          <stop offset="30%" stop-color="#F0A030"/>
+          <stop offset="70%" stop-color="#E85A30"/>
+          <stop offset="100%" stop-color="#A03020"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow" id="heroEyebrow">Ultra-Luxury Balloon Experiences</p>
+    <h1 class="hero-title" id="heroTitle">Rise Above<br/>Everything</h1>
+    <p class="hero-subtitle" id="heroSubtitle">Where the world falls silent and beauty stretches to every horizon. ZEPHYR invites you to experience the sky as it was meant to be felt.</p>
+    <div class="hero-badge" id="heroBadge">
+      <div class="hero-badge-item"><strong>4,000 ft</strong>Altitude</div>
+      <div class="hero-badge-sep"></div>
+      <div class="hero-badge-item"><strong>3 Hours</strong>Duration</div>
+      <div class="hero-badge-sep"></div>
+      <div class="hero-badge-item"><strong>Champagne</strong>Included</div>
+    </div>
+    <div class="hero-actions" id="heroActions">
+      <a href="contact.html" class="btn-primary">Reserve Your Flight</a>
+      <a href="experiences.html" class="btn-outline">Explore Experiences</a>
+    </div>
+  </div>
+
+  <div class="scroll-indicator" id="scrollIndicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats" id="statsSection">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div class="stat-number" id="stat1">12,000+</div>
+      <div class="stat-label">Flights Completed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" id="stat2">40+</div>
+      <div class="stat-label">Destinations Worldwide</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" id="stat3">0</div>
+      <div class="stat-label">Safety Incidents</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number" id="stat4">22</div>
+      <div class="stat-label">Years of Excellence</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCES TEASER -->
+<section class="section" id="expSection">
+  <div class="section-inner">
+    <div class="section-header">
+      <p class="section-eyebrow">Curated Journeys</p>
+      <h2 class="section-title">Designed for the<br/>Extraordinary</h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">Every ZEPHYR experience is meticulously crafted — from pre-dawn champagne to post-flight celebration.</p>
+    </div>
+    <div class="experiences-grid">
+      <div class="exp-card">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80&auto=format&fit=crop" alt="Sunrise Champagne Flight" class="exp-card-img" />
+        <div class="exp-card-body">
+          <h3 class="exp-card-name">Sunrise Champagne</h3>
+          <p class="exp-card-desc">Ascend before dawn to witness the world painted in amber and gold. A private capsule with Billecart-Salmon awaits.</p>
+          <div class="exp-card-meta">
+            <div class="exp-meta-item"><strong>3 hrs</strong>Duration</div>
+            <div class="exp-meta-item"><strong>From $680</strong>Per person</div>
+          </div>
+          <a href="experiences.html" class="exp-card-link">Discover &rarr;</a>
+        </div>
+      </div>
+      <div class="exp-card">
+        <img src="https://images.unsplash.com/photo-1519659528534-7fd733a832a0?w=1200&q=80&auto=format&fit=crop" alt="Private Charter" class="exp-card-img" />
+        <div class="exp-card-body">
+          <h3 class="exp-card-name">Private Charter</h3>
+          <p class="exp-card-desc">Exclusive use of the entire balloon — your sky, your timeline, your itinerary. Ideal for proposals and celebrations.</p>
+          <div class="exp-card-meta">
+            <div class="exp-meta-item"><strong>4 hrs</strong>Duration</div>
+            <div class="exp-meta-item"><strong>From $3,800</strong>Per flight</div>
+          </div>
+          <a href="experiences.html" class="exp-card-link">Discover &rarr;</a>
+        </div>
+      </div>
+      <div class="exp-card">
+        <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80&auto=format&fit=crop" alt="Honeymoon Package" class="exp-card-img" />
+        <div class="exp-card-body">
+          <h3 class="exp-card-name">Honeymoon Package</h3>
+          <p class="exp-card-desc">The ultimate romantic sky journey — rose petals, a private picnic, and an altitude certificate for your first chapter.</p>
+          <div class="exp-card-meta">
+            <div class="exp-meta-item"><strong>Full Day</strong>Duration</div>
+            <div class="exp-meta-item"><strong>From $2,200</strong>Per couple</div>
+          </div>
+          <a href="experiences.html" class="exp-card-link">Discover &rarr;</a>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:3rem;">
+      <a href="experiences.html" class="btn-outline">View All Experiences</a>
+    </div>
+  </div>
+</section>
+
+<!-- DESTINATIONS -->
+<section class="section destinations-bg" id="destSection">
+  <div class="section-inner">
+    <div class="section-header center">
+      <p class="section-eyebrow">Where We Fly</p>
+      <h2 class="section-title">The World's Most<br/>Beautiful Skies</h2>
+      <div class="divider center"></div>
+      <p class="section-subtitle">Six extraordinary destinations, each chosen for its unique aerial beauty and on-the-ground luxury.</p>
+    </div>
+    <div class="destinations-grid">
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80&auto=format&fit=crop" alt="Cappadocia" />
+        <div class="dest-card-overlay"></div>
+        <div class="dest-card-content">
+          <div class="dest-card-name">Cappadocia</div>
+          <div class="dest-card-region">Turkey</div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80&auto=format&fit=crop" alt="Provence" />
+        <div class="dest-card-overlay"></div>
+        <div class="dest-card-content">
+          <div class="dest-card-name">Provence</div>
+          <div class="dest-card-region">France</div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80&auto=format&fit=crop" alt="Napa Valley" />
+        <div class="dest-card-overlay"></div>
+        <div class="dest-card-content">
+          <div class="dest-card-name">Napa Valley</div>
+          <div class="dest-card-region">California, USA</div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1531366936798-83b03cb3f866?w=1200&q=80&auto=format&fit=crop" alt="Serengeti" />
+        <div class="dest-card-overlay"></div>
+        <div class="dest-card-content">
+          <div class="dest-card-name">Serengeti</div>
+          <div class="dest-card-region">Tanzania</div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80&auto=format&fit=crop" alt="Masai Mara" />
+        <div class="dest-card-overlay"></div>
+        <div class="dest-card-content">
+          <div class="dest-card-name">Masai Mara</div>
+          <div class="dest-card-region">Kenya</div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <img src="https://images.unsplash.com/photo-1502920514313-52581002a659?w=1200&q=80&auto=format&fit=crop" alt="Loire Valley" />
+        <div class="dest-card-overlay"></div>
+        <div class="dest-card-content">
+          <div class="dest-card-name">Loire Valley</div>
+          <div class="dest-card-region">France</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:3rem;">
+      <a href="destinations.html" class="btn-primary">Explore Destinations</a>
+    </div>
+  </div>
+</section>
+
+<!-- CHAMPAGNE FEATURE -->
+<section class="section" id="champSection">
+  <div class="section-inner">
+    <div class="champagne-feature">
+      <div class="champagne-img">
+        <img src="https://images.unsplash.com/photo-1502920514313-52581002a659?w=1200&q=80&auto=format&fit=crop" alt="Champagne service at altitude" />
+      </div>
+      <div class="champagne-text">
+        <p class="section-eyebrow">The ZEPHYR Standard</p>
+        <h2 class="section-title">Champagne at<br/>4,000 Feet</h2>
+        <div class="divider"></div>
+        <p class="section-subtitle">The tradition of toasting at altitude is woven into every ZEPHYR journey. We partner with the finest French houses to ensure every glass tells a story.</p>
+        <ul class="feature-list">
+          <li>Billecart-Salmon Blanc de Blancs served at 8°C</li>
+          <li>Hand-curated artisan cheese and charcuterie boards</li>
+          <li>Crystal flutes engraved with flight date and coordinates</li>
+          <li>Private sommelier certification available on request</li>
+          <li>Complimentary bottle gifted after first ZEPHYR flight</li>
+        </ul>
+        <div style="margin-top:2.5rem;">
+          <a href="experiences.html" class="btn-primary">View All Inclusions</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section testimonials-bg" id="testimSection">
+  <div class="section-inner">
+    <div class="section-header center">
+      <p class="section-eyebrow">What Guests Say</p>
+      <h2 class="section-title">Stories from the Sky</h2>
+      <div class="divider center"></div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+        <p class="testimonial-text">"The moment we lifted off over Cappadocia, time stopped entirely. ZEPHYR didn't just give us a flight — they gave us a memory that will outlast everything."</p>
+        <div class="testimonial-author"><strong>Isabella &amp; Marco R.</strong>Cappadocia Honeymoon Package</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+        <p class="testimonial-text">"I've sailed on private yachts and flown in private jets. Nothing prepared me for the absolute silence and majesty of a ZEPHYR sunrise over Provence."</p>
+        <div class="testimonial-author"><strong>Alexander W.</strong>Private Charter, Provence</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+        <p class="testimonial-text">"The champagne was exquisite, the pilot was extraordinary, but the view over Napa at golden hour was simply beyond language. ZEPHYR is incomparable."</p>
+        <div class="testimonial-author"><strong>Dr. Priya N.</strong>Sunrise Champagne, Napa Valley</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOK CTA -->
+<section class="book-cta" id="ctaSection">
+  <p class="section-eyebrow">Begin Your Journey</p>
+  <h2 class="section-title">The Sky Is Waiting</h2>
+  <div class="divider center"></div>
+  <p class="section-subtitle">Reserve your ZEPHYR experience and join thousands who have discovered the world from above.</p>
+  <div style="display:flex; gap:1.5rem; justify-content:center; margin-top:2.5rem;">
+    <a href="contact.html" class="btn-primary">Book a Flight</a>
+    <a href="about.html" class="btn-outline">Our Story</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">ZEPHYR</div>
+        <p class="footer-brand-tagline">Ultra-luxury hot air balloon experiences across the world's most breathtaking landscapes since 1998.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Experiences</div>
+        <ul class="footer-links">
+          <li><a href="experiences.html">Sunrise Champagne</a></li>
+          <li><a href="experiences.html">Private Charter</a></li>
+          <li><a href="experiences.html">Honeymoon</a></li>
+          <li><a href="experiences.html">Corporate</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Destinations</div>
+        <ul class="footer-links">
+          <li><a href="destinations.html">Cappadocia</a></li>
+          <li><a href="destinations.html">Provence</a></li>
+          <li><a href="destinations.html">Napa Valley</a></li>
+          <li><a href="destinations.html">Serengeti</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html">Safety</a></li>
+          <li><a href="about.html">Our Fleet</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 ZEPHYR. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Safety Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  // PRELOADER
+  const tl = gsap.timeline({
+    onComplete: () => {
+      gsap.to('#preloader', { duration: 0.8, opacity: 0, pointerEvents: 'none', onComplete: () => {
+        document.getElementById('preloader').style.display = 'none';
+      }});
+      document.getElementById('scrollIndicator').style.opacity = '1';
+    }
+  });
+
+  // Balloon ascend
+  tl.fromTo('.preloader-balloon', { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: 'power2.out' })
+    .fromTo('#preloaderLogo', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4')
+    .fromTo('.preloader-tagline', { opacity: 0 }, { opacity: 1, duration: 0.6 }, '-=0.2')
+    .to('.preloader-balloon', { y: -20, duration: 1.2, ease: 'power1.inOut' }, '+=0.5')
+    .to('#preloaderLogo', { opacity: 0, duration: 0.4 }, '-=0.4');
+
+  // scroll indicator fallback
+  setTimeout(() => {
+    if (document.getElementById('scrollIndicator')) {
+      document.getElementById('scrollIndicator').style.opacity = '1';
+    }
+  }, 4000);
+
+  // HERO animations
+  gsap.from('#heroEyebrow', { immediateRender: false, duration: 1, opacity: 0, y: 20, delay: 2.8, ease: 'power2.out' });
+  gsap.from('#heroTitle', { immediateRender: false, duration: 1.2, opacity: 0, y: 40, delay: 3.0, ease: 'power2.out' });
+  gsap.from('#heroSubtitle', { immediateRender: false, duration: 1, opacity: 0, y: 20, delay: 3.3, ease: 'power2.out' });
+  gsap.from('#heroBadge', { immediateRender: false, duration: 1, opacity: 0, y: 20, delay: 3.5, ease: 'power2.out' });
+  gsap.from('#heroActions', { immediateRender: false, duration: 1, opacity: 0, y: 20, delay: 3.7, ease: 'power2.out' });
+
+  // STATS
+  gsap.from('.stat-item', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#statsSection', start: 'top 80%' },
+    opacity: 0, y: 30, duration: 0.9, stagger: 0.1, ease: 'power2.out'
+  });
+
+  // EXPERIENCES
+  gsap.from('.exp-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#expSection', start: 'top 75%' },
+    opacity: 0, y: 40, duration: 1, stagger: 0.12, ease: 'power2.out'
+  });
+
+  // DESTINATIONS
+  gsap.from('.dest-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#destSection', start: 'top 75%' },
+    opacity: 0, y: 30, scale: 0.97, duration: 0.9, stagger: 0.08, ease: 'power2.out'
+  });
+
+  // CHAMPAGNE
+  gsap.from('.champagne-img', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#champSection', start: 'top 75%' },
+    opacity: 0, x: -40, duration: 1.1, ease: 'power2.out'
+  });
+  gsap.from('.champagne-text > *', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#champSection', start: 'top 75%' },
+    opacity: 0, x: 30, duration: 1, stagger: 0.1, ease: 'power2.out'
+  });
+
+  // TESTIMONIALS
+  gsap.from('.testimonial-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#testimSection', start: 'top 75%' },
+    opacity: 0, y: 30, duration: 0.9, stagger: 0.12, ease: 'power2.out'
+  });
+
+  // CTA
+  gsap.from('#ctaSection > *', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '#ctaSection', start: 'top 80%' },
+    opacity: 0, y: 25, duration: 1, stagger: 0.1, ease: 'power2.out'
+  });
+
+  // Balloon parallax
+  gsap.to('#heroBalloon', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
+    y: -80, ease: 'none'
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TERRA FORMA — Shaped by Hand, Fired by Soul</title>
+<meta name="description" content="Luxury artisan pottery & ceramics studio. Bespoke commissions, wheel-throwing classes, gallery." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1E1710;
+  --surface:#271E14;
+  --accent:#C87840;
+  --accent2:#D4C4A0;
+  --text:#F5EDE0;
+  --text-muted:#A08060;
+  --font-heading:'Cormorant Garamond',serif;
+  --font-body:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{text-decoration:none;color:inherit}
+
+/* PRELOADER */
+#preloader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+#preloader .brand-name{font-family:var(--font-heading);font-size:clamp(2rem,5vw,3.5rem);letter-spacing:.3em;color:var(--text);font-weight:300}
+#preloader .tagline{font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text-muted)}
+.clay-wheel{width:80px;height:80px;position:relative}
+.clay-wheel svg{width:100%;height:100%}
+
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:900;padding:1.5rem 4rem;display:flex;align-items:center;justify-content:space-between;transition:background .4s,padding .4s}
+.navbar.scrolled{background:rgba(30,23,16,.95);backdrop-filter:blur(12px);padding:1rem 4rem}
+.nav-logo{font-family:var(--font-heading);font-size:1.6rem;letter-spacing:.15em;color:var(--text);font-weight:400}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:2.5rem;list-style:none}
+.nav-links a{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-cta{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;padding:.7rem 1.8rem;border:1px solid var(--accent);color:var(--accent);transition:all .3s}
+.nav-cta:hover{background:var(--accent);color:var(--bg)}
+
+/* SCROLL INDICATOR */
+.scroll-indicator{position:fixed;left:2rem;top:50%;transform:translateY(-50%);z-index:800;display:flex;flex-direction:column;align-items:center;gap:.75rem;opacity:0;transition:opacity .6s}
+.scroll-indicator.visible{opacity:1}
+.scroll-indicator .si-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);writing-mode:vertical-rl;transform:rotate(180deg)}
+.scroll-dots{display:flex;flex-direction:column;gap:.5rem}
+.si-dot{width:6px;height:6px;border-radius:50%;background:var(--text-muted);transition:background .3s,transform .3s}
+.si-dot.active{background:var(--accent);transform:scale(1.4)}
+
+/* HERO */
+.hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1565193566014-c4d9059a4c22?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;transform:scale(1.08)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(30,23,16,.62) 0%,rgba(30,23,16,.40) 60%,rgba(30,23,16,.58) 100%)}
+.hero-content{position:relative;z-index:2;text-align:center;padding:0 2rem;max-width:900px}
+.hero-eyebrow{font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent2);margin-bottom:1.5rem}
+.hero-title{font-family:var(--font-heading);font-size:clamp(3rem,8vw,7rem);font-weight:300;line-height:1.05;color:var(--text);margin-bottom:1rem}
+.hero-title em{font-style:italic;color:var(--accent2)}
+.hero-sub{font-size:.95rem;letter-spacing:.12em;color:var(--text-muted);margin-bottom:3rem;font-weight:300}
+.hero-ctas{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{display:inline-block;padding:1rem 2.8rem;background:var(--accent);color:var(--bg);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;font-weight:500;transition:all .3s}
+.btn-primary:hover{background:var(--accent2);color:var(--bg)}
+.btn-outline{display:inline-block;padding:1rem 2.8rem;border:1px solid var(--accent2);color:var(--accent2);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;transition:all .3s}
+.btn-outline:hover{background:var(--accent2);color:var(--bg)}
+.hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:var(--text-muted)}
+.hero-scroll span{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase}
+.scroll-line{width:1px;height:60px;background:linear-gradient(to bottom,var(--accent),transparent);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:.4;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.2)}}
+
+/* SECTIONS */
+section{padding:7rem 4rem}
+.section-label{font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
+.section-title{font-family:var(--font-heading);font-size:clamp(2.2rem,5vw,4rem);font-weight:300;line-height:1.1;color:var(--text);margin-bottom:1.5rem}
+.section-title em{font-style:italic;color:var(--accent2)}
+.section-body{font-size:.9rem;color:var(--text-muted);max-width:560px;line-height:1.8}
+.divider{width:60px;height:1px;background:var(--accent);margin:2rem 0}
+
+/* STATS */
+.stats-section{background:var(--surface);border-top:1px solid rgba(200,120,64,.2);border-bottom:1px solid rgba(200,120,64,.2)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
+.stat-item .stat-num{font-family:var(--font-heading);font-size:clamp(3rem,6vw,5rem);color:var(--accent);font-weight:300;line-height:1}
+.stat-item .stat-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text-muted);margin-top:.5rem}
+
+/* COLLECTION */
+.collection-section{}
+.collection-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4rem}
+.collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.collection-card{position:relative;overflow:hidden;cursor:pointer}
+.collection-card img{width:100%;height:380px;object-fit:cover;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
+.collection-card:hover img{transform:scale(1.06)}
+.collection-card .card-info{position:absolute;bottom:0;left:0;right:0;padding:1.5rem;background:linear-gradient(to top,rgba(30,23,16,.9) 0%,transparent 100%)}
+.card-info h3{font-family:var(--font-heading);font-size:1.2rem;color:var(--text);font-weight:400}
+.card-info p{font-size:.7rem;letter-spacing:.15em;color:var(--accent2);text-transform:uppercase}
+
+/* PROCESS */
+.process-section{background:var(--surface)}
+.process-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4rem;margin-top:4rem}
+.process-step{}
+.step-num{font-family:var(--font-heading);font-size:4rem;color:rgba(200,120,64,.25);font-weight:300;line-height:1;margin-bottom:1rem}
+.step-title{font-family:var(--font-heading);font-size:1.5rem;color:var(--text);font-weight:400;margin-bottom:.75rem}
+.step-desc{font-size:.85rem;color:var(--text-muted);line-height:1.8}
+
+/* CLASSES TEASER */
+.classes-section{}
+.classes-inner{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+.classes-img{position:relative}
+.classes-img img{width:100%;height:560px;object-fit:cover}
+.classes-img::before{content:'';position:absolute;top:-1.5rem;left:-1.5rem;right:1.5rem;bottom:1.5rem;border:1px solid var(--accent);z-index:-1}
+.classes-text{}
+
+/* TESTIMONIALS */
+.testimonials-section{background:var(--surface);text-align:center}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3rem;margin-top:4rem}
+.testi-card{padding:2.5rem;border:1px solid rgba(200,120,64,.2);text-align:left}
+.testi-quote{font-family:var(--font-heading);font-size:1.1rem;color:var(--text);line-height:1.7;font-style:italic;margin-bottom:1.5rem}
+.testi-author{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.testi-origin{font-size:.7rem;color:var(--text-muted);margin-top:.25rem}
+
+/* CTA BANNER */
+.cta-section{text-align:center;background:url('https://images.unsplash.com/photo-1530303027-4b2371e7a6f1?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;position:relative}
+.cta-section::before{content:'';position:absolute;inset:0;background:rgba(30,23,16,.72)}
+.cta-section .inner{position:relative;z-index:1}
+.cta-section .section-title{color:var(--text)}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid rgba(200,120,64,.2);padding:5rem 4rem 2rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;margin-bottom:4rem}
+.footer-brand .logo{font-family:var(--font-heading);font-size:1.8rem;letter-spacing:.1em;color:var(--text);margin-bottom:1rem}
+.footer-brand p{font-size:.8rem;color:var(--text-muted);line-height:1.8;max-width:260px}
+.footer-col h4{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:.75rem}
+.footer-col a{font-size:.8rem;color:var(--text-muted);transition:color .3s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{border-top:1px solid rgba(200,120,64,.15);padding-top:2rem;display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:.75rem;color:var(--text-muted)}
+
+@media(max-width:1024px){
+  .navbar,.navbar.scrolled{padding:1.2rem 2rem}
+  section{padding:5rem 2rem}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .collection-grid{grid-template-columns:repeat(2,1fr)}
+  .classes-inner{grid-template-columns:1fr;gap:3rem}
+  .testi-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .process-grid{grid-template-columns:1fr}
+  .scroll-indicator{display:none}
+}
+@media(max-width:640px){
+  .collection-grid{grid-template-columns:1fr}
+  .collection-header{flex-direction:column;align-items:flex-start;gap:1.5rem}
+  .footer-grid{grid-template-columns:1fr}
+  .hero-ctas{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="clay-wheel">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="40" r="36" stroke="#C87840" stroke-width="1" stroke-dasharray="6 4" opacity=".4">
+        <animateTransform attributeName="transform" type="rotate" from="0 40 40" to="360 40 40" dur="6s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="40" cy="40" r="26" stroke="#D4C4A0" stroke-width="1" stroke-dasharray="4 6" opacity=".3">
+        <animateTransform attributeName="transform" type="rotate" from="360 40 40" to="0 40 40" dur="4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="40" cy="40" r="16" stroke="#C87840" stroke-width="1.5" opacity=".6">
+        <animateTransform attributeName="transform" type="rotate" from="0 40 40" to="360 40 40" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="40" cy="40" r="5" fill="#C87840" opacity=".8"/>
+    </svg>
+  </div>
+  <div class="brand-name">TERRA FORMA</div>
+  <div class="tagline">Shaped by Hand, Fired by Soul</div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="nav-logo">TERRA<span>&nbsp;FORMA</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="collection.html">Collection</a></li>
+    <li><a href="classes.html">Classes</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html#commission" class="nav-cta">Commission</a>
+</nav>
+
+<!-- SCROLL INDICATOR -->
+<div class="scroll-indicator" id="scrollIndicator">
+  <div class="si-label">Scroll</div>
+  <div class="scroll-dots" id="scrollDots">
+    <div class="si-dot active" data-section="0"></div>
+    <div class="si-dot" data-section="1"></div>
+    <div class="si-dot" data-section="2"></div>
+    <div class="si-dot" data-section="3"></div>
+    <div class="si-dot" data-section="4"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" data-section="0" id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Est. 1985 — London, England</div>
+    <h1 class="hero-title" id="heroTitle">
+      Every Vessel<br><em>Holds a Story</em>
+    </h1>
+    <p class="hero-sub">Handcrafted ceramics for those who value the irreplaceable</p>
+    <div class="hero-ctas">
+      <a href="collection.html" class="btn-primary">View Collection</a>
+      <a href="classes.html" class="btn-outline">Join a Workshop</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Discover</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section" data-section="1" id="stats">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num" data-target="40">0</div>
+      <div class="stat-label">Years of Craft</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="2000">0</div>
+      <div class="stat-label">Pieces Created</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="12">0</div>
+      <div class="stat-label">International Awards</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="8">0</div>
+      <div class="stat-label">Countries Collected</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED COLLECTION -->
+<section class="collection-section" data-section="2" id="collection">
+  <div class="collection-header">
+    <div>
+      <div class="section-label">Featured Works</div>
+      <h2 class="section-title">The <em>Collection</em></h2>
+    </div>
+    <a href="collection.html" class="btn-outline">View All Pieces</a>
+  </div>
+  <div class="collection-grid">
+    <div class="collection-card">
+      <img src="https://images.unsplash.com/photo-1558618047-3bd4b1f58d89?w=800&q=80&auto=format&fit=crop" alt="Stoneware Vessel" loading="lazy" />
+      <div class="card-info">
+        <h3>Obsidian Vessel</h3>
+        <p>Stoneware · Wood-fired</p>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="https://images.unsplash.com/photo-1473973266408-ed4ce7b43e29?w=800&q=80&auto=format&fit=crop" alt="Glazed Bowl" loading="lazy" />
+      <div class="card-info">
+        <h3>Terra Bowl Series</h3>
+        <p>Earthenware · Ash glaze</p>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="https://images.unsplash.com/photo-1493106641515-6b890b4fe066?w=800&q=80&auto=format&fit=crop" alt="Workshop Ceramics" loading="lazy" />
+      <div class="card-info">
+        <h3>Workshop Edition</h3>
+        <p>Porcelain · Celadon</p>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=800&q=80&auto=format&fit=crop" alt="Studio Piece" loading="lazy" />
+      <div class="card-info">
+        <h3>Studio Triptych</h3>
+        <p>Stoneware · Matte iron</p>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&auto=format&fit=crop" alt="Warm Studio Piece" loading="lazy" />
+      <div class="card-info">
+        <h3>Ember Platter</h3>
+        <p>Earthenware · Terracotta</p>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="https://images.unsplash.com/photo-1565193566014-c4d9059a4c22?w=800&q=80&auto=format&fit=crop" alt="Hand-thrown Piece" loading="lazy" />
+      <div class="card-info">
+        <h3>Hands Series I</h3>
+        <p>Porcelain · Reduction fired</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS TEASER -->
+<section class="process-section" data-section="3" id="process">
+  <div class="section-label">Our Method</div>
+  <h2 class="section-title">From Earth<br>to <em>Heirloom</em></h2>
+  <div class="process-grid">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <h3 class="step-title">The Clay</h3>
+      <p class="step-desc">We source our clay from three distinct quarries in Devon, Cornwall and the Scottish Highlands — each offering a unique mineral fingerprint that shapes the final character of every piece.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <h3 class="step-title">The Wheel</h3>
+      <p class="step-desc">Thrown by hand on traditional kick-wheels, each form emerges through an intimate dialogue between maker and material. No two pieces are ever identical — nor should they be.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <h3 class="step-title">The Fire</h3>
+      <p class="step-desc">Our anagama kiln reaches 1300°C over 72 hours of wood-firing. The flame itself becomes the final artist, leaving its mark in the glaze, the ash deposits, and the quiet perfection of imperfection.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CLASSES TEASER -->
+<section class="classes-section" data-section="4" id="classes">
+  <div class="classes-inner">
+    <div class="classes-img">
+      <img src="https://images.unsplash.com/photo-1504198453519-5f1b2b2b3a5d?w=900&q=80&auto=format&fit=crop" alt="Pottery Class" loading="lazy" />
+    </div>
+    <div class="classes-text">
+      <div class="section-label">Workshops & Classes</div>
+      <h2 class="section-title">Learn the <em>Ancient Art</em></h2>
+      <div class="divider"></div>
+      <p class="section-body">From complete beginners to seasoned makers, our studio offers immersive workshops led by master potters. Experience the meditative rhythm of the wheel and the transformation of raw clay into enduring beauty.</p>
+      <br>
+      <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:2rem;">Beginner · Intermediate · Glazing & Firing · Private Masterclass</p>
+      <a href="classes.html" class="btn-primary">Explore Classes</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-label">What Collectors Say</div>
+  <h2 class="section-title">The <em>Experience</em></h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <p class="testi-quote">"The commission process was extraordinary. They listened to the story of our home and created a piece that feels like it has always belonged there. Beyond craft — it is art."</p>
+      <div class="testi-author">Margaret & Thomas H.</div>
+      <div class="testi-origin">Private Collectors, Edinburgh</div>
+    </div>
+    <div class="testi-card">
+      <p class="testi-quote">"I attended the three-day intensive and it changed how I relate to making things entirely. The mastery of the instructors is matched only by their generosity in sharing it."</p>
+      <div class="testi-author">Yuki Tanaka</div>
+      <div class="testi-origin">Intermediate Workshop Graduate, Tokyo</div>
+    </div>
+    <div class="testi-card">
+      <p class="testi-quote">"We sourced twelve pieces for our restaurant's private dining room. Every guest notices them. They anchor the space with a quiet authority that no other object could achieve."</p>
+      <div class="testi-author">Alain Mercier</div>
+      <div class="testi-origin">Head of Curation, Maison Blanche, Paris</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-section" style="padding:8rem 4rem">
+  <div class="inner">
+    <div class="section-label">Begin Your Commission</div>
+    <h2 class="section-title" style="color:var(--text)">Something Made<br><em>Only for You</em></h2>
+    <p style="font-size:.9rem;color:var(--accent2);margin-bottom:3rem;font-weight:300;max-width:480px;margin-left:auto;margin-right:auto;">Every bespoke commission begins with a conversation. Tell us about your space, your story, your vision.</p>
+    <a href="contact.html#commission" class="btn-primary">Start a Conversation</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">TERRA FORMA</div>
+      <p>Shaped by Hand, Fired by Soul. Luxury artisan pottery & ceramics studio in the heart of London since 1985.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="collection.html">Collection</a></li>
+        <li><a href="classes.html">Classes</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Studio</h4>
+      <ul>
+        <li><a href="#">12 Kiln Lane</a></li>
+        <li><a href="#">Shoreditch, London</a></li>
+        <li><a href="#">EC2A 3BT</a></li>
+        <li><a href="#">+44 20 7123 4567</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hours</h4>
+      <ul>
+        <li><a href="#">Mon–Fri 9am–6pm</a></li>
+        <li><a href="#">Sat 10am–5pm</a></li>
+        <li><a href="#">Sun Closed</a></li>
+        <li style="margin-top:1rem"><a href="contact.html">Book a Visit</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Terra Forma. All rights reserved.</p>
+    <p>Shaped by Hand, Fired by Soul</p>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+// SplitText polyfill
+class SplitText {
+  constructor(el, opts={}) {
+    this.el = typeof el === 'string' ? document.querySelector(el) : el;
+    this.type = opts.type || 'words,chars';
+    this.chars = [];
+    this.words = [];
+    this._split();
+  }
+  _split() {
+    if (!this.el) return;
+    const text = this.el.innerText;
+    this.el.innerHTML = '';
+    const wordArr = text.split(' ');
+    wordArr.forEach((word, wi) => {
+      const wSpan = document.createElement('span');
+      wSpan.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:top';
+      const cSpan = document.createElement('span');
+      cSpan.style.cssText = 'display:inline-block';
+      cSpan.textContent = word;
+      wSpan.appendChild(cSpan);
+      this.el.appendChild(wSpan);
+      if (wi < wordArr.length - 1) this.el.appendChild(document.createTextNode(' '));
+      this.words.push(cSpan);
+      this.chars.push(cSpan);
+    });
+  }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+// Preloader
+window.addEventListener('load', () => {
+  const pre = document.getElementById('preloader');
+  gsap.to(pre, { opacity: 0, duration: 1.2, delay: 1.6, ease: 'power2.inOut', onComplete: () => {
+    pre.style.display = 'none';
+    initScrollIndicator();
+    setTimeout(() => initScrollIndicator(), 4000);
+    animateHero();
+  }});
+});
+
+function animateHero() {
+  const title = document.getElementById('heroTitle');
+  if (title) {
+    const split = new SplitText(title, { type: 'words' });
+    gsap.from(split.words, {
+      immediateRender: false,
+      y: 32,
+      opacity: 0,
+      duration: 1.1,
+      stagger: 0.1,
+      ease: 'power2.out',
+      delay: 0.2
+    });
+  }
+  gsap.from('.hero-eyebrow', { immediateRender: false, y: 20, opacity: 0, duration: 1, delay: 0.1, ease: 'power2.out' });
+  gsap.from('.hero-sub', { immediateRender: false, y: 20, opacity: 0, duration: 1, delay: 0.7, ease: 'power2.out' });
+  gsap.from('.hero-ctas', { immediateRender: false, y: 20, opacity: 0, duration: 1, delay: 0.9, ease: 'power2.out' });
+  // Parallax hero
+  gsap.to('#heroBg', {
+    immediateRender: false,
+    yPercent: 20,
+    ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+  });
+}
+
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 80) navbar.classList.add('scrolled');
+  else navbar.classList.remove('scrolled');
+}, { passive: true });
+
+// Stats counter
+gsap.utils.toArray('.stat-num').forEach(el => {
+  const target = +el.dataset.target;
+  const suffix = target >= 2000 ? '+' : (target === 40 ? '' : '');
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 85%',
+    once: true,
+    onEnter: () => {
+      gsap.to({ val: 0 }, {
+        val: target,
+        duration: 2,
+        ease: 'power2.out',
+        onUpdate: function() { el.textContent = Math.round(this.targets()[0].val) + (target >= 2000 ? '+' : ''); }
+      });
+    }
+  });
+});
+
+// Collection cards
+gsap.from('.collection-card', {
+  immediateRender: false,
+  y: 40,
+  opacity: 0,
+  duration: 1,
+  stagger: 0.12,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.collection-grid', start: 'top 80%' }
+});
+
+// Process steps
+gsap.from('.process-step', {
+  immediateRender: false,
+  y: 32,
+  opacity: 0,
+  duration: 1,
+  stagger: 0.15,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.process-grid', start: 'top 80%' }
+});
+
+// Classes section
+gsap.from('.classes-img', {
+  immediateRender: false,
+  x: -40,
+  opacity: 0,
+  duration: 1.1,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.classes-inner', start: 'top 80%' }
+});
+gsap.from('.classes-text', {
+  immediateRender: false,
+  x: 40,
+  opacity: 0,
+  duration: 1.1,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.classes-inner', start: 'top 80%' }
+});
+
+// Testimonials
+gsap.from('.testi-card', {
+  immediateRender: false,
+  y: 32,
+  opacity: 0,
+  duration: 1,
+  stagger: 0.12,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.testi-grid', start: 'top 80%' }
+});
+
+// Section headings
+gsap.utils.toArray('.section-title').forEach(el => {
+  gsap.from(el, {
+    immediateRender: false,
+    y: 24,
+    opacity: 0,
+    duration: 1,
+    ease: 'power2.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+});
+
+// Scroll indicator
+function initScrollIndicator() {
+  const indicator = document.getElementById('scrollIndicator');
+  if (indicator) indicator.classList.add('visible');
+}
+
+const sections = document.querySelectorAll('[data-section]');
+const dots = document.querySelectorAll('.si-dot');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = entry.target.dataset.section;
+      dots.forEach(d => d.classList.remove('active'));
+      if (dots[idx]) dots[idx].classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

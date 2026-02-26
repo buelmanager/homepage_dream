@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Chef — TABLE PRIVÉE</title>
+  <meta name="description" content="Book a Michelin-trained private chef. Enquire about private dinner parties, yacht catering, estate events and weekly private chef services." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #181210;
+      --surface: #221810;
+      --accent: #D4A060;
+      --accent2: #8B1A1A;
+      --text: #F5ECD8;
+      --text-muted: #9A8060;
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Lato', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-weight: 300; overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 4rem;
+      background: rgba(24, 18, 16, 0.96);
+      backdrop-filter: blur(12px);
+    }
+    .nav-brand { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 400; letter-spacing: 0.3em; color: var(--accent); text-decoration: none; text-transform: uppercase; }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: var(--text); text-decoration: none; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-body); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 0.7rem 1.8rem; cursor: pointer; transition: background 0.3s, color 0.3s; text-decoration: none; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    #subhero {
+      position: relative; height: 60vh; min-height: 450px;
+      display: flex; align-items: flex-end; justify-content: flex-start; overflow: hidden;
+    }
+    .subhero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=80&auto=format&fit=crop');
+      background-size: cover; background-position: center;
+    }
+    .subhero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(24,18,16,0.95) 0%, rgba(24,18,16,0.5) 60%, rgba(24,18,16,0.3) 100%); }
+    .subhero-content { position: relative; z-index: 2; padding: 4rem; max-width: 700px; }
+    .subhero-eyebrow { font-size: 0.6rem; letter-spacing: 0.4em; color: var(--accent); text-transform: uppercase; margin-bottom: 1rem; }
+    .subhero-title { font-family: var(--font-heading); font-size: clamp(3rem, 6vw, 5rem); font-weight: 300; color: var(--text); line-height: 1.1; }
+    .subhero-title em { font-style: italic; color: var(--accent); }
+
+    section { background: var(--bg); }
+    .section-inner { max-width: 1200px; margin: 0 auto; padding: 6rem 4rem; }
+    .section-label { font-size: 0.6rem; letter-spacing: 0.4em; color: var(--accent); text-transform: uppercase; margin-bottom: 1rem; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 300; color: var(--text); line-height: 1.15; margin-bottom: 1.5rem; }
+    .section-title em { font-style: italic; color: var(--accent); }
+    .section-body { font-size: 0.95rem; line-height: 1.9; color: var(--text-muted); max-width: 560px; }
+    .divider { width: 60px; height: 1px; background: var(--accent); margin: 1.5rem 0; }
+
+    .btn-primary { background: var(--accent); color: var(--bg); border: 1px solid var(--accent); font-family: var(--font-body); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 1rem 2.5rem; cursor: pointer; transition: background 0.3s, color 0.3s; text-decoration: none; display: inline-block; font-weight: 400; }
+    .btn-primary:hover { background: transparent; color: var(--accent); }
+
+    /* BOOKING FORM */
+    #booking { background: var(--bg); }
+    #booking .section-inner {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label { display: block; font-size: 0.58rem; letter-spacing: 0.25em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.6rem; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; background: var(--surface); border: 1px solid rgba(212,160,96,0.2); color: var(--text);
+      font-family: var(--font-body); font-size: 0.85rem; padding: 0.9rem 1rem;
+      outline: none; transition: border-color 0.3s; -webkit-appearance: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+    .form-textarea { min-height: 100px; resize: vertical; }
+    .form-select option { background: var(--bg); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+    .form-submit-note {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+
+    /* SUCCESS MESSAGE */
+    #form-success {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+      border: 1px solid rgba(212,160,96,0.3);
+    }
+
+    .success-title {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .success-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* AVAILABILITY CALENDAR */
+    #availability { background: var(--surface); }
+    #availability .section-inner { text-align: center; }
+
+    .calendar-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 1rem 0 3rem;
+      line-height: 1.7;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .calendar-wrapper {
+      max-width: 700px;
+      margin: 0 auto;
+      border: 1px solid rgba(212,160,96,0.2);
+    }
+
+    .cal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(212,160,96,0.15);
+    }
+
+    .cal-month {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--text);
+      letter-spacing: 0.1em;
+    }
+
+    .cal-nav {
+      background: none;
+      border: 1px solid rgba(212,160,96,0.3);
+      color: var(--accent);
+      width: 2.5rem;
+      height: 2.5rem;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    .cal-nav:hover { background: rgba(212,160,96,0.1); }
+
+    .cal-days-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 1rem 2rem 0.5rem;
+    }
+
+    .cal-days-header span {
+      text-align: center;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0;
+      padding: 0.5rem 2rem 2rem;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-radius: 50%;
+      cursor: default;
+      position: relative;
+    }
+
+    .cal-day.booked {
+      color: rgba(245,236,216,0.2);
+    }
+
+    .cal-day.booked::after {
+      content: '';
+      position: absolute;
+      inset: 15%;
+      border-radius: 50%;
+      background: rgba(139,26,26,0.35);
+    }
+
+    .cal-day.available {
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .cal-day.available:hover {
+      background: rgba(212,160,96,0.15);
+      color: var(--accent);
+    }
+
+    .cal-day.today {
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .cal-day.empty { opacity: 0; pointer-events: none; }
+
+    .cal-legend {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid rgba(212,160,96,0.15);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.available { background: rgba(212,160,96,0.5); }
+    .legend-dot.booked { background: rgba(139,26,26,0.5); }
+    .legend-dot.today { border: 1px solid var(--accent); background: transparent; }
+
+    /* HOW IT WORKS */
+    #how-it-works { background: var(--bg); }
+    #how-it-works .section-inner { text-align: center; }
+
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      margin-top: 4rem;
+    }
+
+    .how-step {
+      padding: 2.5rem 2rem;
+      border: 1px solid rgba(212,160,96,0.12);
+      text-align: center;
+    }
+
+    .how-step-num {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      line-height: 1;
+    }
+
+    .how-step-title {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 0.8rem;
+    }
+
+    .how-step-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* CONTACT INFO */
+    #contact-info { background: var(--surface); }
+    #contact-info .section-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .contact-block {
+      padding: 2.5rem;
+      border: 1px solid rgba(212,160,96,0.15);
+    }
+
+    .contact-block-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .contact-block-title {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 0.8rem;
+    }
+
+    .contact-block-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .contact-block-text a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.3s;
+    }
+
+    .contact-block-text a:hover { opacity: 0.7; }
+
+    /* OFFICES */
+    .offices-list {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .office-item {
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(212,160,96,0.1);
+    }
+
+    .office-city {
+      font-family: var(--font-heading);
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .office-detail {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    footer { background: var(--bg); padding: 4rem; border-top: 1px solid rgba(212,160,96,0.15); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; }
+    .footer-brand { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 400; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 1rem; }
+    .footer-tagline { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .footer-desc { font-size: 0.8rem; line-height: 1.8; color: var(--text-muted); }
+    .footer-heading { font-family: var(--font-body); font-size: 0.6rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 1.5rem; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom { max-width: 1200px; margin: 3rem auto 0; padding-top: 2rem; border-top: 1px solid rgba(212,160,96,0.1); display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.1em; }
+    .footer-legal { display: flex; gap: 2rem; }
+    .footer-legal a { font-size: 0.7rem; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--accent); }
+
+    @media (max-width: 1024px) {
+      nav { padding: 1.5rem 2rem; }
+      .section-inner { padding: 5rem 2rem; }
+      .subhero-content { padding: 3rem 2rem; }
+      #booking .section-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .how-steps { grid-template-columns: 1fr; }
+      #contact-info .section-inner { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .cal-header { padding: 1rem; }
+      .cal-days-header { padding: 0.5rem 0.5rem 0.25rem; }
+      .cal-grid { padding: 0.25rem 0.5rem 1rem; }
+      .cal-legend { flex-direction: column; align-items: center; gap: 1rem; }
+      footer { padding: 3rem 1.5rem; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-brand">TABLE PRIVÉE</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">The Chefs</a></li>
+      <li><a href="menu.html">Menus</a></li>
+      <li><a href="process.html">Our Process</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Book Now</a>
+  </nav>
+
+  <section id="subhero">
+    <div class="subhero-bg"></div>
+    <div class="subhero-overlay"></div>
+    <div class="subhero-content">
+      <p class="subhero-eyebrow" id="sh-eyebrow">Begin Your Experience</p>
+      <h1 class="subhero-title" id="sh-title">Book a <em>Chef</em></h1>
+    </div>
+  </section>
+
+  <!-- BOOKING FORM -->
+  <section id="booking">
+    <div class="section-inner">
+      <div id="booking-form-wrapper">
+        <p class="section-label">Reservation</p>
+        <h2 class="section-title">Your Private<br /><em>Table Awaits</em></h2>
+        <div class="divider"></div>
+        <p class="section-body" style="margin-bottom: 3rem;">Complete the form below and our reservations team will respond personally within four hours. All enquiries are handled with complete discretion.</p>
+
+        <form id="booking-form" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="b-name">Full Name</label>
+              <input class="form-input" type="text" id="b-name" placeholder="Your full name" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-email">Email Address</label>
+              <input class="form-input" type="email" id="b-email" placeholder="your@email.com" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="b-phone">Phone Number</label>
+              <input class="form-input" type="tel" id="b-phone" placeholder="+1 (000) 000 0000" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-type">Event Type</label>
+              <select class="form-select" id="b-type" required>
+                <option value="" disabled selected>Select event type</option>
+                <option>Private Dinner Party</option>
+                <option>Yacht Catering</option>
+                <option>Estate Event</option>
+                <option>Weekly Private Chef</option>
+                <option>Corporate Dining</option>
+                <option>Special Occasion</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="b-date">Preferred Date</label>
+              <input class="form-input" type="date" id="b-date" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="b-guests">Number of Guests</label>
+              <input class="form-input" type="number" id="b-guests" placeholder="Guests" min="1" max="500" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="b-location">Event Location</label>
+            <input class="form-input" type="text" id="b-location" placeholder="City, Country — or Yacht / Estate name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="b-dietary">Dietary Requirements</label>
+            <input class="form-input" type="text" id="b-dietary" placeholder="e.g. vegan, gluten-free, kosher, halal, allergies" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="b-budget">Approximate Budget</label>
+            <select class="form-select" id="b-budget">
+              <option value="" disabled selected>Select budget range</option>
+              <option>£1,000 – £3,000</option>
+              <option>£3,000 – £7,500</option>
+              <option>£7,500 – £20,000</option>
+              <option>£20,000 – £50,000</option>
+              <option>£50,000+</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="b-notes">Additional Notes</label>
+            <textarea class="form-textarea" id="b-notes" placeholder="Tell us more about your occasion, preferences, special requests or how you heard about us..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width:100%;">Send Reservation Request</button>
+          <p class="form-submit-note">We respond personally within four hours. All information treated in strictest confidence.</p>
+        </form>
+
+        <div id="form-success">
+          <div class="success-title">Request Received</div>
+          <p class="success-text">Thank you for your enquiry. A member of our reservations team will contact you personally within four hours. We look forward to creating an extraordinary experience for you.</p>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div id="booking-sidebar">
+        <p class="section-label">Why Table Privée</p>
+        <h3 class="section-title" style="font-size: 2rem; margin-bottom: 1rem;">The <em>Assurance</em></h3>
+        <div class="divider"></div>
+
+        <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
+          <div style="display: flex; gap: 1.2rem; align-items: flex-start;">
+            <div style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--accent); min-width: 30px;">1</div>
+            <div>
+              <div style="font-family: var(--font-heading); font-size: 1rem; color: var(--text); margin-bottom: 0.3rem;">Personal Response</div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.7;">Every enquiry is answered by a member of our team — never a bot, never a template.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 1.2rem; align-items: flex-start;">
+            <div style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--accent); min-width: 30px;">2</div>
+            <div>
+              <div style="font-family: var(--font-heading); font-size: 1rem; color: var(--text); margin-bottom: 0.3rem;">Complete Discretion</div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.7;">Your privacy is paramount. We never discuss clients or events. GDPR compliant.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 1.2rem; align-items: flex-start;">
+            <div style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--accent); min-width: 30px;">3</div>
+            <div>
+              <div style="font-family: var(--font-heading); font-size: 1rem; color: var(--text); margin-bottom: 0.3rem;">Michelin Guarantee</div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.7;">Every engagement is led by a Michelin-trained chef with a minimum of twelve years of fine dining experience.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 1.2rem; align-items: flex-start;">
+            <div style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--accent); min-width: 30px;">4</div>
+            <div>
+              <div style="font-family: var(--font-heading); font-size: 1rem; color: var(--text); margin-bottom: 0.3rem;">Worldwide Service</div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.7;">We operate in 18 countries. Wherever your table is set, we will be there.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 3rem; padding: 2rem; border: 1px solid rgba(212,160,96,0.2); background: var(--surface);">
+          <p class="section-label" style="margin-bottom: 0.5rem;">Direct Contact</p>
+          <div style="font-family: var(--font-heading); font-size: 1rem; color: var(--text); margin-bottom: 0.5rem;">Prefer to speak directly?</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem;">Our reservations line is attended Monday to Saturday, 9am–9pm (GMT).</p>
+          <a href="tel:+442071234567" style="color: var(--accent); font-family: var(--font-heading); font-size: 1.1rem; text-decoration: none;">+44 207 123 4567</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AVAILABILITY CALENDAR -->
+  <section id="availability">
+    <div class="section-inner">
+      <p class="section-label">Availability</p>
+      <h2 class="section-title">Current <em>Calendar</em></h2>
+      <p class="calendar-note">The calendar below shows indicative availability for our lead chef. For specific availability enquiries, please submit the booking form above or call us directly.</p>
+
+      <div class="calendar-wrapper" id="calendar-wrapper">
+        <div class="cal-header">
+          <button class="cal-nav" id="prev-month">&lt;</button>
+          <div class="cal-month" id="cal-month-label">March 2026</div>
+          <button class="cal-nav" id="next-month">&gt;</button>
+        </div>
+        <div class="cal-days-header">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend">
+          <div class="legend-item"><div class="legend-dot available"></div> Available</div>
+          <div class="legend-item"><div class="legend-dot booked"></div> Booked</div>
+          <div class="legend-item"><div class="legend-dot today"></div> Today</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="section-inner">
+      <p class="section-label">The Process</p>
+      <h2 class="section-title">From Enquiry to<br /><em>Experience</em></h2>
+      <div class="divider" style="margin: 1.5rem auto;"></div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-num">01</div>
+          <div class="how-step-title">Submit Your Enquiry</div>
+          <p class="how-step-text">Complete the booking form with your event details. We review every submission personally and respond within four hours during business hours.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-step-num">02</div>
+          <div class="how-step-title">Private Consultation</div>
+          <p class="how-step-text">A brief telephone or video call with our reservations manager and your chef to understand your vision, dietary requirements, kitchen and occasion.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-step-num">03</div>
+          <div class="how-step-title">Your Evening Unfolds</div>
+          <p class="how-step-text">We arrive, set up and deliver an extraordinary meal — then vanish. You are left with nothing but memories and a perfectly restored kitchen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT INFO -->
+  <section id="contact-info">
+    <div class="section-inner">
+      <div class="contact-block">
+        <div class="contact-block-label">Email</div>
+        <div class="contact-block-title">Reservations</div>
+        <p class="contact-block-text"><a href="mailto:reservations@tableprivee.com">reservations@tableprivee.com</a></p>
+        <br />
+        <p class="contact-block-text">Response within four hours, Monday to Saturday.</p>
+      </div>
+      <div class="contact-block">
+        <div class="contact-block-label">Telephone</div>
+        <div class="contact-block-title">Direct Line</div>
+        <p class="contact-block-text"><a href="tel:+442071234567">+44 207 123 4567</a></p>
+        <br />
+        <p class="contact-block-text">Answered personally Monday – Saturday, 9am – 9pm GMT.</p>
+      </div>
+      <div class="contact-block">
+        <div class="contact-block-label">Offices</div>
+        <div class="contact-block-title">Locations</div>
+        <div class="offices-list">
+          <div class="office-item">
+            <div class="office-city">London</div>
+            <div class="office-detail">14 Mayfair Mews, London W1K 4AB</div>
+          </div>
+          <div class="office-item">
+            <div class="office-city">Monaco</div>
+            <div class="office-detail">Le Metropole, Av. de la Madone, Monaco</div>
+          </div>
+          <div class="office-item">
+            <div class="office-city">New York</div>
+            <div class="office-detail">432 Park Avenue South, New York NY 10016</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">TABLE PRIVÉE</div>
+        <div class="footer-tagline">Your Kitchen, Our Canvas</div>
+        <p class="footer-desc">Ultra-luxury private chef and catering services. In-home fine dining, yacht catering and estate events worldwide.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">The Chefs</a></li>
+          <li><a href="menu.html">Menus</a></li>
+          <li><a href="process.html">Our Process</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Services</div>
+        <ul class="footer-links">
+          <li><a href="contact.html">Private Dinner</a></li>
+          <li><a href="contact.html">Yacht Catering</a></li>
+          <li><a href="contact.html">Estate Events</a></li>
+          <li><a href="contact.html">Weekly Chef</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Contact</div>
+        <ul class="footer-links">
+          <li><a href="mailto:reservations@tableprivee.com">reservations@tableprivee.com</a></li>
+          <li><a href="tel:+442071234567">+44 207 123 4567</a></li>
+          <li><a href="contact.html">London · Monaco · New York</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 Table Privée. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="contact.html">Privacy Policy</a>
+        <a href="contact.html">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Subhero
+    gsap.from('#sh-eyebrow', { immediateRender: false, y: 20, duration: 1, ease: 'power2.out', delay: 0.3 });
+    gsap.from('#sh-title', { immediateRender: false, y: 28, duration: 1.1, ease: 'power2.out', delay: 0.5 });
+
+    // Booking form
+    gsap.from('#booking-form-wrapper > *', {
+      immediateRender: false,
+      y: 24,
+      stagger: 0.1,
+      duration: 0.9,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '#booking', start: 'top 80%' }
+    });
+    gsap.from('#booking-sidebar', {
+      immediateRender: false,
+      x: 32,
+      duration: 1.1,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '#booking', start: 'top 80%' }
+    });
+
+    // Calendar
+    gsap.from('.calendar-wrapper', {
+      immediateRender: false,
+      y: 28,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '#availability', start: 'top 85%' }
+    });
+
+    // How it works
+    gsap.from('.how-step', {
+      immediateRender: false,
+      y: 28,
+      stagger: 0.12,
+      duration: 0.9,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.how-steps', start: 'top 85%' }
+    });
+
+    // Contact blocks
+    gsap.from('.contact-block', {
+      immediateRender: false,
+      y: 24,
+      stagger: 0.12,
+      duration: 0.9,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '#contact-info', start: 'top 85%' }
+    });
+
+    // FORM SUBMISSION
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('booking-form');
+      const success = document.getElementById('form-success');
+      gsap.to(form, { duration: 0.3, ease: 'power2.in', onComplete: () => {
+        form.style.display = 'none';
+        success.style.display = 'block';
+        gsap.from(success, { immediateRender: false, y: 20, duration: 0.6, ease: 'power2.out' });
+      }});
+    }
+
+    // CALENDAR
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    let currentYear = 2026;
+    let currentMonth = 2; // 0-indexed: February = 1, March = 2
+
+    // Some booked days per month (simulated)
+    const bookedDays = {
+      '2026-2': [1,5,8,9,14,15,21,22,28],
+      '2026-3': [3,4,11,17,18,25,26],
+      '2026-4': [1,7,8,12,19,20,26],
+      '2026-5': [2,3,10,16,17,24,25,31]
+    };
+
+    function buildCalendar(year, month) {
+      const label = document.getElementById('cal-month-label');
+      label.textContent = months[month] + ' ' + year;
+
+      const grid = document.getElementById('cal-grid');
+      grid.innerHTML = '';
+
+      const today = new Date();
+      const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      // Convert Sunday-start to Monday-start
+      const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+
+      const key = year + '-' + month;
+      const booked = bookedDays[key] || [];
+
+      // Empty cells
+      for (let i = 0; i < startOffset; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'cal-day empty';
+        empty.textContent = '';
+        grid.appendChild(empty);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cell = document.createElement('div');
+        const isToday = (today.getFullYear() === year && today.getMonth() === month && today.getDate() === d);
+        const isBooked = booked.includes(d);
+
+        cell.className = 'cal-day ' + (isBooked ? 'booked' : 'available') + (isToday ? ' today' : '');
+        cell.textContent = d;
+
+        if (!isBooked) {
+          cell.addEventListener('click', () => {
+            // Pre-fill date input
+            const dateInput = document.getElementById('b-date');
+            if (dateInput) {
+              const mm = String(month + 1).padStart(2, '0');
+              const dd = String(d).padStart(2, '0');
+              dateInput.value = year + '-' + mm + '-' + dd;
+            }
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+          });
+        }
+
+        grid.appendChild(cell);
+      }
+    }
+
+    buildCalendar(currentYear, currentMonth);
+
+    document.getElementById('prev-month').addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      buildCalendar(currentYear, currentMonth);
+    });
+
+    document.getElementById('next-month').addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      buildCalendar(currentYear, currentMonth);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — OBSCURA Night Photography Academy</title>
+  <meta name="description" content="The story of OBSCURA — founded by award-winning night photographers on a mission to teach the world to see in the dark." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #15151E;
+      --surface: #1C1C2A;
+      --accent: #8060FF;
+      --accent2: #F0C840;
+      --text: #F0EEFF;
+      --text-muted: #7060A0;
+      --border: rgba(128, 96, 255, 0.15);
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    #scroll-indicator {
+      position: fixed;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 48px; background: linear-gradient(to bottom, transparent, var(--accent)); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent2); animation: scrollDown 1.8s ease infinite; }
+    @keyframes scrollDown { 0% { top: -100%; } 100% { top: 200%; } }
+    .scroll-text { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); writing-mode: vertical-rl; text-transform: uppercase; }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 0 clamp(24px, 5vw, 80px);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(21, 21, 30, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo-icon {
+      width: 28px; height: 28px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-logo-icon::after { content: ''; width: 8px; height: 8px; background: var(--accent2); border-radius: 50%; }
+
+    .nav-links { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); list-style: none; }
+    .nav-links a { font-size: 0.8rem; letter-spacing: 0.12em; color: var(--text-muted); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-enroll { background: var(--accent); color: #fff !important; padding: 9px 22px; border-radius: 2px; font-size: 0.75rem !important; letter-spacing: 0.15em !important; transition: background 0.3s !important; }
+    .nav-enroll:hover { background: #9070ff !important; color: #fff !important; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      height: 60vh;
+      min-height: 480px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 clamp(24px, 5vw, 80px) 80px;
+      margin-top: 72px;
+    }
+
+    .page-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1447433819943-74a20887a81e?w=1600&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.45);
+    }
+
+    .page-hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(21,21,30,0.9) 0%, transparent 60%);
+    }
+
+    .page-hero-content { position: relative; z-index: 2; }
+
+    .page-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .page-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.0;
+      margin-bottom: 16px;
+    }
+
+    .page-subtitle {
+      font-size: 1rem;
+      color: rgba(240,238,255,0.65);
+      max-width: 520px;
+      line-height: 1.8;
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: clamp(80px, 10vw, 130px) clamp(24px, 5vw, 80px); }
+
+    .section-label { font-size: 0.65rem; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; display: block; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 24px; }
+    .section-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.8; }
+
+    /* ── STORY ── */
+    #story {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 6vw, 100px);
+      align-items: center;
+    }
+
+    .story-content { }
+
+    .story-text {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+      margin-top: 24px;
+    }
+
+    .story-text + .story-text { margin-top: 16px; }
+
+    .story-quote {
+      border-left: 3px solid var(--accent2);
+      padding: 20px 24px;
+      margin: 32px 0;
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--text);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .story-visual { position: relative; }
+
+    .story-img-primary {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+    }
+
+    .story-img-inset {
+      position: absolute;
+      bottom: -32px;
+      left: -32px;
+      width: 55%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border-radius: 2px;
+      border: 4px solid var(--bg);
+    }
+
+    /* ── TIMELINE ── */
+    #timeline { background: var(--surface); }
+
+    .timeline-header { text-align: center; margin-bottom: 64px; }
+    .timeline-header .section-desc { margin: 0 auto; max-width: 500px; }
+
+    .timeline {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 64px;
+      position: relative;
+    }
+
+    .timeline-item:nth-child(even) .timeline-left { order: 2; }
+    .timeline-item:nth-child(even) .timeline-right { order: 1; text-align: right; }
+
+    .timeline-dot {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      background: var(--accent2);
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+
+    .timeline-year {
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .timeline-event {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .timeline-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── AWARDS ── */
+    #awards { }
+
+    .awards-header { text-align: center; margin-bottom: 64px; }
+
+    .awards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .award-card {
+      background: var(--surface);
+      padding: 32px;
+      border-radius: 2px;
+      border-top: 3px solid var(--accent);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .award-card:hover { border-color: var(--accent2); transform: translateY(-4px); }
+
+    .award-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .award-name {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .award-org {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .award-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ── FACULTY FULL ── */
+    #faculty { background: var(--surface); }
+
+    .faculty-header { margin-bottom: 64px; }
+
+    .faculty-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+    }
+
+    .faculty-card {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 24px;
+      align-items: start;
+      padding: 28px;
+      background: var(--bg);
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+
+    .faculty-card:hover { border-color: var(--accent); }
+
+    .faculty-img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 2px;
+    }
+
+    .faculty-name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .faculty-role {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .faculty-bio {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .faculty-awards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .faculty-award-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--accent2);
+      border: 1px solid rgba(240, 200, 64, 0.3);
+      padding: 3px 8px;
+      border-radius: 1px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 64px clamp(24px, 5vw, 80px) 40px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-tagline { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; max-width: 260px; }
+    .footer-col-title { font-family: var(--font-heading); font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text); text-transform: uppercase; margin-bottom: 20px; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--accent2); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-accent { color: var(--accent2); }
+
+    @media (max-width: 900px) {
+      #story { grid-template-columns: 1fr; }
+      .story-img-inset { display: none; }
+      .timeline::before { left: 0; }
+      .timeline-item { grid-template-columns: 1fr; gap: 16px; }
+      .timeline-dot { left: 0; }
+      .timeline-item:nth-child(even) .timeline-left { order: 0; }
+      .timeline-item:nth-child(even) .timeline-right { order: 0; text-align: left; }
+      .faculty-card { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      #scroll-indicator { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator" class="visible">
+    <div class="scroll-text">Scroll</div>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      OBSCURA
+    </a>
+    <ul class="nav-links">
+      <li><a href="workshops.html">Workshops</a></li>
+      <li><a href="expeditions.html">Expeditions</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-enroll">Enroll</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+      <span class="page-eyebrow">Our Story</span>
+      <h1 class="page-title">Born in Darkness,<br>Built for Light</h1>
+      <p class="page-subtitle">OBSCURA began in the back of a Toyota Land Cruiser somewhere between Joshua Tree and the Milky Way. Twelve years later, we train the world's finest night photographers.</p>
+    </div>
+  </div>
+
+  <!-- STORY -->
+  <section id="story">
+    <div class="story-content">
+      <span class="section-label">The Origin</span>
+      <h2 class="section-title">From Obsession to Academy</h2>
+      <p class="story-text">In 2013, Dr. Elena Varek and Marcus Obi drove into the Mojave Desert with two Canon EOS 5D bodies and one borrowed tripod. They had both left careers — astrophysics and commercial photography respectively — chasing the same impossible image: the Milky Way reflected in a perfectly still desert lake.</p>
+      <blockquote class="story-quote">"We didn't plan an academy. We planned a photograph. Everything else followed the light."<br>— Dr. Elena Varek, Founder</blockquote>
+      <p class="story-text">What started as two obsessives sharing camera settings on Reddit morphed into informal workshops, then sold-out retreats, then an application-only academy with a 14-week curriculum refined over a decade of teaching. Today, OBSCURA graduates hold positions at National Geographic, NASA's JPL imaging division, and every major photography publication.</p>
+      <p class="story-text">We don't teach photography. We teach you to see. The night sky is the canvas — long exposure, light discipline, and post-processing mastery are your brushes. We hand you those brushes and take you to the darkest places on Earth to use them.</p>
+    </div>
+    <div class="story-visual">
+      <img class="story-img-primary" src="https://images.unsplash.com/photo-1456428746267-a1756408f782?w=800&q=80&auto=format&fit=crop" alt="Photographer under the stars" loading="lazy" />
+      <img class="story-img-inset" src="https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=600&q=80&auto=format&fit=crop" alt="Dark sky landscape" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section id="timeline">
+    <div class="timeline-header">
+      <span class="section-label">History</span>
+      <h2 class="section-title">Twelve Years of Dark Skies</h2>
+      <p class="section-desc">From a desert road trip to the world's leading night photography institution.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-left">
+          <div class="timeline-year">2013</div>
+          <div class="timeline-event">Founded in Joshua Tree</div>
+          <p class="timeline-desc">Elena Varek and Marcus Obi lead the first informal night photography retreat with 6 photographers. All sold out within 48 hours of posting online.</p>
+        </div>
+        <div class="timeline-right"></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-left"></div>
+        <div class="timeline-right">
+          <div class="timeline-year">2015</div>
+          <div class="timeline-event">First International Expedition</div>
+          <p class="timeline-desc">OBSCURA leads its inaugural Iceland Aurora Hunt. The resulting graduate portfolios are published in Digital Camera World, launching the academy's international reputation.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-left">
+          <div class="timeline-year">2017</div>
+          <div class="timeline-event">Hana Sato Joins as Master</div>
+          <p class="timeline-desc">Tokyo-based light painting pioneer Hana Sato joins OBSCURA faculty, adding the Light Painting and Urban Night specializations. Enrollment triples within one year.</p>
+        </div>
+        <div class="timeline-right"></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-left"></div>
+        <div class="timeline-right">
+          <div class="timeline-year">2019</div>
+          <div class="timeline-event">47th International Photography Award</div>
+          <p class="timeline-desc">OBSCURA graduates sweep the night photography category at IPA 2019, placing 1st, 2nd, and 3rd. The academy is named "World's Best Photography Education Program" by PetaPixel.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-left">
+          <div class="timeline-year">2022</div>
+          <div class="timeline-event">Atacama Observatory Partnership</div>
+          <p class="timeline-desc">Partnership established with the Atacama Cosmology Telescope facility, giving OBSCURA exclusive access to observatory grounds during dark moon windows. The darkest classroom on Earth.</p>
+        </div>
+        <div class="timeline-right"></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-left"></div>
+        <div class="timeline-right">
+          <div class="timeline-year">2026</div>
+          <div class="timeline-event">3,000th Graduate</div>
+          <p class="timeline-desc">OBSCURA celebrates its 3,000th graduate — a retired teacher from Osaka who entered the Sony World Photography Awards and took second place in her first year of shooting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS -->
+  <section id="awards">
+    <div class="awards-header">
+      <span class="section-label">Recognition</span>
+      <h2 class="section-title">47 Awards. One Mission.</h2>
+      <p class="section-desc" style="max-width:500px; margin:0 auto;">Our graduates and faculty have won every major night photography award on the circuit. Here's a selection of the awards that mean the most to us.</p>
+    </div>
+    <div class="awards-grid">
+      <div class="award-card">
+        <span class="award-icon">★</span>
+        <div class="award-name">Sony World Photography — Educator of the Year</div>
+        <div class="award-org">Sony / World Photography Organisation · 2024</div>
+        <p class="award-desc">Awarded to OBSCURA for outstanding contribution to night photography education and the record number of SWPA graduate entrants in a single cycle.</p>
+      </div>
+      <div class="award-card">
+        <span class="award-icon">◆</span>
+        <div class="award-name">National Geographic — Best Astrophotography Series</div>
+        <div class="award-org">National Geographic Society · 2023</div>
+        <p class="award-desc">Elena Varek's "Dark Sky Atlas" — shot exclusively during OBSCURA expeditions — was named best astrophotography editorial series of the year.</p>
+      </div>
+      <div class="award-card">
+        <span class="award-icon">●</span>
+        <div class="award-name">IPA — Best Photography Academy (3× winner)</div>
+        <div class="award-org">International Photography Awards · 2019, 2021, 2023</div>
+        <p class="award-desc">Three consecutive gold awards from the IPA for photography education excellence. The only academy to win this category more than once.</p>
+      </div>
+      <div class="award-card">
+        <span class="award-icon">▲</span>
+        <div class="award-name">Guinness World Records — Largest Indoor Light Orb</div>
+        <div class="award-org">Guinness World Records · 2021</div>
+        <p class="award-desc">Hana Sato, OBSCURA's Light Painting Master, set the world record for the largest indoor light orb (18.4 meters diameter) using techniques taught in the OBSCURA curriculum.</p>
+      </div>
+      <div class="award-card">
+        <span class="award-icon">✦</span>
+        <div class="award-name">Astronomy Photographer of the Year — Education Partner</div>
+        <div class="award-org">Royal Observatory Greenwich · 2022–2025</div>
+        <p class="award-desc">Official education partner to the world's most prestigious astrophotography competition, with OBSCURA graduates entering as a cohort annually.</p>
+      </div>
+      <div class="award-card">
+        <span class="award-icon">◉</span>
+        <div class="award-name">Dark Sky Association — Conservation Award</div>
+        <div class="award-org">International Dark-Sky Association · 2024</div>
+        <p class="award-desc">Recognized for OBSCURA's $200,000 contribution to dark sky preservation advocacy and our commitment to zero-impact expedition protocols.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FACULTY FULL -->
+  <section id="faculty">
+    <div class="faculty-header">
+      <span class="section-label">Faculty</span>
+      <h2 class="section-title">The Masters Behind OBSCURA</h2>
+      <p class="section-desc">Practitioners first, educators second. Every OBSCURA instructor is an active working photographer with current exhibition credits and expedition experience.</p>
+    </div>
+    <div class="faculty-grid">
+      <div class="faculty-card">
+        <img class="faculty-img" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&q=80&auto=format&fit=crop&crop=top" alt="Dr. Elena Varek" loading="lazy" />
+        <div>
+          <div class="faculty-name">Dr. Elena Varek</div>
+          <div class="faculty-role">Founder &amp; Director · Astrophotography</div>
+          <p class="faculty-bio">Former ESA imaging specialist with a PhD in Observational Astrophysics. Contributed images to six National Geographic features and led 80+ international expeditions across 6 continents.</p>
+          <div class="faculty-awards">
+            <span class="faculty-award-tag">NatGeo Contributor</span>
+            <span class="faculty-award-tag">ESA Alumni</span>
+            <span class="faculty-award-tag">SWPA Educator 2024</span>
+          </div>
+        </div>
+      </div>
+      <div class="faculty-card">
+        <img class="faculty-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&q=80&auto=format&fit=crop&crop=top" alt="Marcus Obi" loading="lazy" />
+        <div>
+          <div class="faculty-name">Marcus Obi</div>
+          <div class="faculty-role">Co-Founder &amp; Lead Instructor · Milky Way</div>
+          <p class="faculty-bio">Three-time SWPA winner whose galactic center compositions have been exhibited at the Tate Modern. His online Milky Way masterclass has 40,000+ enrollments globally.</p>
+          <div class="faculty-awards">
+            <span class="faculty-award-tag">3× SWPA Winner</span>
+            <span class="faculty-award-tag">Tate Modern Alumni</span>
+            <span class="faculty-award-tag">40K+ Students</span>
+          </div>
+        </div>
+      </div>
+      <div class="faculty-card">
+        <img class="faculty-img" src="https://images.unsplash.com/photo-1554151228-14d9def656e4?w=300&q=80&auto=format&fit=crop&crop=top" alt="Hana Sato" loading="lazy" />
+        <div>
+          <div class="faculty-name">Hana Sato</div>
+          <div class="faculty-role">Master · Light Painting &amp; Urban Night</div>
+          <p class="faculty-bio">Tokyo-based light artist and urban night pioneer. Guinness record holder. Global exhibition credits in London, Seoul, Berlin, and São Paulo. Created OBSCURA's signature Light Painting curriculum.</p>
+          <div class="faculty-awards">
+            <span class="faculty-award-tag">Guinness Record</span>
+            <span class="faculty-award-tag">Global Exhibitions</span>
+            <span class="faculty-award-tag">IPA Light Painting 1st</span>
+          </div>
+        </div>
+      </div>
+      <div class="faculty-card">
+        <img class="faculty-img" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80&auto=format&fit=crop&crop=top" alt="Ravi Menon" loading="lazy" />
+        <div>
+          <div class="faculty-name">Ravi Menon</div>
+          <div class="faculty-role">Instructor · Urban Night &amp; Street</div>
+          <p class="faculty-bio">Mumbai-born, now based in Zurich. Ravi's urban night photography captures the invisible souls of megacities. Canon Ambassador and documentary filmmaker for Netflix's "Dark Cities" series.</p>
+          <div class="faculty-awards">
+            <span class="faculty-award-tag">Canon Ambassador</span>
+            <span class="faculty-award-tag">Netflix Contributor</span>
+            <span class="faculty-award-tag">IPA Urban 1st</span>
+          </div>
+        </div>
+      </div>
+      <div class="faculty-card">
+        <img class="faculty-img" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80&auto=format&fit=crop&crop=top" alt="Dr. Yuki Tanaka" loading="lazy" />
+        <div>
+          <div class="faculty-name">Dr. Yuki Tanaka</div>
+          <div class="faculty-role">Post-Processing &amp; Computational Imaging</div>
+          <p class="faculty-bio">Computer vision PhD and Lightroom power user. Yuki developed OBSCURA's proprietary noise-reduction workflow and created the Milky Way Gradient Masking technique used by 200,000+ photographers worldwide.</p>
+          <div class="faculty-awards">
+            <span class="faculty-award-tag">PhD Computer Vision</span>
+            <span class="faculty-award-tag">Adobe Expert</span>
+            <span class="faculty-award-tag">200K Technique Users</span>
+          </div>
+        </div>
+      </div>
+      <div class="faculty-card">
+        <img class="faculty-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80&auto=format&fit=crop&crop=top" alt="James Thornton" loading="lazy" />
+        <div>
+          <div class="faculty-name">James Thornton</div>
+          <div class="faculty-role">Expedition Leader · Field Operations</div>
+          <p class="faculty-bio">Former Royal Geographic Society expedition coordinator turned night photography guide. James has led over 200 overnight shoots across every OBSCURA expedition location.</p>
+          <div class="faculty-awards">
+            <span class="faculty-award-tag">RGS Fellow</span>
+            <span class="faculty-award-tag">200+ Expeditions</span>
+            <span class="faculty-award-tag">Wilderness First Responder</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom:16px;">
+          <div class="nav-logo-icon"></div>
+          OBSCURA
+        </a>
+        <p class="footer-tagline">Elite night photography academy and dark-sky expedition operator. Training award-winning photographers since 2013.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Learn</div>
+        <ul class="footer-links">
+          <li><a href="workshops.html">Milky Way Masterclass</a></li>
+          <li><a href="workshops.html">Light Painting Workshop</a></li>
+          <li><a href="workshops.html">Urban Night Program</a></li>
+          <li><a href="workshops.html">Astrophotography Intensive</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="expeditions.html">Iceland Aurora</a></li>
+          <li><a href="expeditions.html">Sahara Milky Way</a></li>
+          <li><a href="expeditions.html">Atacama Star Fields</a></li>
+          <li><a href="expeditions.html">Himalayan Starfields</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About OBSCURA</a></li>
+          <li><a href="about.html">Our Faculty</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="contact.html">Private Hire</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 OBSCURA. All rights reserved. <span class="footer-accent">Find the Light in Total Darkness.</span></span>
+      <span class="footer-copy">Luxury Night Photography Academy</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Scroll indicator
+    const indicator = document.getElementById('scroll-indicator');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > window.innerHeight * 0.8) {
+        indicator.classList.remove('visible');
+      } else {
+        indicator.classList.add('visible');
+      }
+    });
+
+    // Page hero
+    gsap.from('.page-hero-content > *', {
+      immediateRender: false,
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      stagger: 0.12,
+      delay: 0.3
+    });
+
+    // Story
+    gsap.from('.story-content > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#story', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+
+    gsap.from('.story-visual', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#story', start: 'top 80%' },
+      opacity: 0,
+      x: 40,
+      duration: 1.1,
+      ease: 'power2.out'
+    });
+
+    // Timeline
+    gsap.from('.timeline-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.timeline', start: 'top 85%' },
+      opacity: 0,
+      y: 28,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.15
+    });
+
+    // Awards
+    gsap.from('.award-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.awards-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+
+    // Faculty
+    gsap.from('.faculty-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.faculty-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+  </script>
+</body>
+</html>

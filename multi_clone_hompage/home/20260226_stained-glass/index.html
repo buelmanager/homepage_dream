@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUMINIS — Light As Architecture</title>
+  <meta name="description" content="LUMINIS is a bespoke architectural stained glass atelier crafting monumental installations for cathedrals, private residences, and cultural institutions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #131820;
+      --surface: #1A2030;
+      --surface2: #212840;
+      --accent: #F0B050;
+      --accent2: #80C8F0;
+      --text: #F0EADC;
+      --text-muted: #8090A8;
+      --border: rgba(240,176,80,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2rem;
+    }
+    #preloader svg { width: 80px; height: 80px; }
+    .pl-ring { stroke-dasharray: 220; stroke-dashoffset: 220; animation: ringFill 2s ease-in-out forwards; }
+    @keyframes ringFill { to { stroke-dashoffset: 0; } }
+    .pl-inner { animation: innerSpin 2s linear infinite; transform-origin: center; }
+    #plText { font-family: 'Bodoni Moda', serif; letter-spacing: .4em; font-size: .7rem; color: var(--accent); text-transform: uppercase; }
+    #preloader.hidden { opacity: 0; pointer-events: none; transition: opacity .8s ease; }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      padding: 1.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background .4s, backdrop-filter .4s;
+    }
+    nav.scrolled { background: rgba(19,24,32,.92); backdrop-filter: blur(12px); }
+    .nav-logo {
+      font-family: 'Bodoni Moda', serif; font-size: 1.4rem; letter-spacing: .2em;
+      color: var(--accent); text-decoration: none; font-weight: 600;
+    }
+    .nav-logo span { color: var(--text-muted); font-size: .7rem; display: block; letter-spacing: .3em; font-family: 'Inter', sans-serif; font-weight: 300; }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; font-size: .8rem;
+      letter-spacing: .15em; text-transform: uppercase;
+      transition: color .3s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 1px; background: var(--accent); transform: scaleX(0);
+      transform-origin: left; transition: transform .3s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+    .btn-commission {
+      background: transparent; border: 1px solid var(--accent);
+      color: var(--accent); padding: .6rem 1.6rem;
+      font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+      text-decoration: none; transition: background .3s, color .3s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-commission:hover { background: var(--accent); color: var(--bg); }
+
+    /* ── SCROLL INDICATOR ── */
+    #scrollIndicator {
+      position: fixed; left: 2rem; top: 50%; transform: translateY(-50%);
+      z-index: 800; display: flex; flex-direction: column;
+      align-items: center; gap: .75rem; opacity: 0; transition: opacity .6s;
+    }
+    #siLine { width: 1px; height: 60px; background: var(--text-muted); position: relative; }
+    #siLineFill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: var(--accent); transition: height .3s; }
+    #siNum { font-size: .6rem; letter-spacing: .2em; color: var(--accent); font-family: 'Inter', sans-serif; }
+    #siName { font-size: .55rem; letter-spacing: .15em; text-transform: uppercase; color: var(--text-muted); writing-mode: vertical-rl; transform: rotate(180deg); font-family: 'Inter', sans-serif; }
+
+    /* ── HERO ── */
+    #hero {
+      height: 100vh; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    #heroBg {
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=1800&q=80&auto=format&fit=crop') center/cover no-repeat;
+    }
+    #heroBg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(19,24,32,.88) 0%, rgba(19,24,32,.6) 50%, rgba(19,24,32,.85) 100%);
+    }
+    /* Floating glass fragments */
+    .glass-frag {
+      position: absolute; pointer-events: none;
+      will-change: transform;
+    }
+    .glass-frag svg { display: block; }
+    #heroContent {
+      position: relative; z-index: 2;
+      text-align: center; max-width: 1100px;
+      padding: 0 2rem;
+    }
+    .hero-eyebrow {
+      font-size: .7rem; letter-spacing: .4em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 2rem;
+      font-family: 'Inter', sans-serif; font-weight: 400;
+    }
+    #heroHeadline {
+      font-family: 'Bodoni Moda', serif; font-size: clamp(3.5rem, 9vw, 8rem);
+      font-weight: 700; line-height: .92; letter-spacing: -.01em;
+      color: var(--text); margin-bottom: 2.5rem;
+    }
+    .split-char { display: inline-block; }
+    .hero-sub {
+      font-size: clamp(.9rem, 1.5vw, 1.1rem); color: var(--text-muted);
+      max-width: 480px; margin: 0 auto 3rem;
+      font-weight: 300; line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: var(--bg);
+      padding: .9rem 2.8rem; font-size: .8rem; letter-spacing: .2em;
+      text-transform: uppercase; text-decoration: none; font-weight: 600;
+      transition: background .3s, transform .2s;
+    }
+    .btn-primary:hover { background: #d9993e; transform: translateY(-2px); }
+    .btn-outline {
+      border: 1px solid rgba(240,234,220,.3); color: var(--text);
+      padding: .9rem 2.8rem; font-size: .8rem; letter-spacing: .2em;
+      text-transform: uppercase; text-decoration: none;
+      transition: border-color .3s, color .3s;
+    }
+    .btn-outline:hover { border-color: var(--accent2); color: var(--accent2); }
+    .hero-scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
+      color: var(--text-muted); font-size: .65rem; letter-spacing: .25em; text-transform: uppercase;
+    }
+    .scroll-line { width: 1px; height: 40px; background: var(--text-muted); animation: scrollDown 1.8s ease infinite; }
+    @keyframes scrollDown { 0%,100%{transform:scaleY(1);transform-origin:top} 50%{transform:scaleY(.5);transform-origin:bottom} }
+
+    /* ── SECTIONS COMMON ── */
+    section { position: relative; }
+    .section-label {
+      font-size: .65rem; letter-spacing: .4em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem; font-family: 'Inter', sans-serif;
+    }
+    .section-title {
+      font-family: 'Bodoni Moda', serif; font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 600; line-height: 1.1; color: var(--text);
+    }
+    .section-title em { font-style: italic; color: var(--accent); }
+
+    /* ── FEATURED WORKS ── */
+    #works {
+      padding: 8rem 3rem;
+      background: var(--bg);
+    }
+    #works .works-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 4rem; gap: 2rem; flex-wrap: wrap;
+    }
+    #works .works-header-left { max-width: 560px; }
+    .works-link {
+      color: var(--accent); text-decoration: none; font-size: .75rem;
+      letter-spacing: .2em; text-transform: uppercase; border-bottom: 1px solid var(--accent);
+      padding-bottom: .2rem; white-space: nowrap;
+    }
+    .masonry-grid {
+      columns: 3; column-gap: 1.5rem;
+    }
+    .masonry-item {
+      break-inside: avoid; margin-bottom: 1.5rem;
+      position: relative; overflow: hidden; cursor: pointer;
+    }
+    .masonry-item img {
+      width: 100%; display: block; transition: transform .6s ease;
+    }
+    .masonry-item:hover img { transform: scale(1.05); }
+    .masonry-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(19,24,32,.9) 0%, transparent 60%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1.5rem; opacity: 0; transition: opacity .4s;
+    }
+    .masonry-item:hover .masonry-overlay { opacity: 1; }
+    .masonry-overlay h3 { font-family: 'Bodoni Moda', serif; font-size: 1.1rem; color: var(--text); }
+    .masonry-overlay p { font-size: .7rem; color: var(--accent); letter-spacing: .15em; text-transform: uppercase; margin-top: .3rem; }
+    .masonry-tag {
+      position: absolute; top: 1rem; right: 1rem;
+      background: rgba(240,176,80,.15); border: 1px solid var(--accent);
+      color: var(--accent); font-size: .6rem; letter-spacing: .15em;
+      text-transform: uppercase; padding: .3rem .7rem;
+    }
+
+    /* ── CRAFT HERITAGE ── */
+    #heritage {
+      padding: 8rem 3rem;
+      background: var(--surface);
+    }
+    .heritage-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: center;
+    }
+    .heritage-img { position: relative; }
+    .heritage-img img { width: 100%; display: block; }
+    .heritage-img-frame {
+      position: absolute; bottom: -1.5rem; right: -1.5rem;
+      width: 60%; height: 60%; border: 1px solid var(--accent);
+      pointer-events: none; z-index: 2;
+    }
+    .heritage-img-accent {
+      position: absolute; top: -1rem; left: -1rem;
+      width: 3rem; height: 3rem; background: var(--accent); z-index: 2;
+    }
+    .heritage-content { padding-right: 2rem; }
+    .heritage-content p { color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem; font-weight: 300; }
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2rem; margin-top: 3rem; padding-top: 3rem;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item {}
+    .stat-num {
+      font-family: 'Bodoni Moda', serif; font-size: 3rem; font-weight: 700;
+      color: var(--accent); line-height: 1;
+    }
+    .stat-label { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--text-muted); margin-top: .5rem; }
+
+    /* ── LIGHT STUDY ── */
+    #lightstudy {
+      height: 85vh; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #lightBg {
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1464983953574-0892a716854b?w=1800&q=80&auto=format&fit=crop') center/cover no-repeat;
+    }
+    #lightBg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(19,24,32,.9) 0%, rgba(19,24,32,.3) 50%, rgba(19,24,32,.85) 100%);
+    }
+    #lightContent {
+      position: relative; z-index: 2;
+      max-width: 700px; text-align: center; padding: 0 2rem;
+    }
+    #lightContent blockquote {
+      font-family: 'Bodoni Moda', serif; font-size: clamp(1.8rem, 4vw, 3rem);
+      font-style: italic; line-height: 1.3; color: var(--text); margin-bottom: 2rem;
+    }
+    #lightContent cite { font-size: .7rem; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); }
+
+    /* ── SERVICES ── */
+    #services {
+      padding: 8rem 3rem;
+      background: var(--bg);
+    }
+    #services .services-header { text-align: center; max-width: 600px; margin: 0 auto 5rem; }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2rem; max-width: 1200px; margin: 0 auto;
+    }
+    .service-card {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 3rem 2rem; position: relative; overflow: hidden;
+      transition: border-color .3s, transform .3s;
+    }
+    .service-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left; transition: transform .4s;
+    }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-icon { width: 52px; height: 52px; margin-bottom: 2rem; }
+    .service-icon svg { width: 100%; height: 100%; }
+    .service-card h3 { font-family: 'Bodoni Moda', serif; font-size: 1.4rem; margin-bottom: 1rem; color: var(--text); }
+    .service-card p { color: var(--text-muted); font-size: .9rem; line-height: 1.7; font-weight: 300; }
+    .service-num {
+      position: absolute; bottom: 1.5rem; right: 1.5rem;
+      font-family: 'Bodoni Moda', serif; font-size: 4rem; font-weight: 700;
+      color: rgba(240,176,80,.06); line-height: 1; pointer-events: none;
+    }
+
+    /* ── COMMISSION CTA ── */
+    #cta {
+      padding: 10rem 3rem;
+      background: var(--surface);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    #cta::before {
+      content: 'LUMINIS'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      font-family: 'Bodoni Moda', serif; font-size: 18vw; font-weight: 700;
+      color: rgba(240,176,80,.03); white-space: nowrap; pointer-events: none; letter-spacing: .05em;
+    }
+    #cta .cta-inner { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
+    #cta p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin: 2rem auto 3rem; max-width: 500px; font-weight: 300; }
+    .divider-line {
+      width: 60px; height: 1px; background: var(--accent);
+      margin: 2rem auto 0;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg); padding: 4rem 3rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem; max-width: 1200px; margin: 0 auto 3rem;
+    }
+    .footer-brand .nav-logo { font-size: 1.2rem; }
+    .footer-brand p { color: var(--text-muted); font-size: .85rem; line-height: 1.7; margin-top: 1rem; max-width: 260px; font-weight: 300; }
+    .footer-col h4 { font-size: .65rem; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: .75rem; }
+    .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: .85rem; transition: color .3s; }
+    .footer-col ul li a:hover { color: var(--text); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1200px; margin: 0 auto;
+      font-size: .75rem; color: var(--text-muted);
+    }
+    .footer-tagline { font-family: 'Bodoni Moda', serif; font-style: italic; color: var(--accent); font-size: .9rem; }
+
+    /* ── UTILITIES ── */
+    .container { max-width: 1200px; margin: 0 auto; }
+    .reveal { will-change: transform, opacity; }
+
+    @media (max-width: 1024px) {
+      .masonry-grid { columns: 2; }
+      .heritage-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .heritage-content { padding-right: 0; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      #scrollIndicator { display: none; }
+      .masonry-grid { columns: 1; }
+      .services-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      #works, #heritage, #services { padding: 5rem 1.5rem; }
+      #cta { padding: 6rem 1.5rem; }
+      footer { padding: 3rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Outer ring -->
+      <circle cx="40" cy="40" r="35" stroke="rgba(240,176,80,0.15)" stroke-width="1.5"/>
+      <circle cx="40" cy="40" r="35" stroke="#F0B050" stroke-width="1.5"
+        stroke-linecap="round" class="pl-ring"
+        style="transform-origin:center;transform:rotate(-90deg)"/>
+      <!-- Inner spinning fragments -->
+      <g class="pl-inner">
+        <polygon points="40,15 50,30 40,32" fill="#F0B050" opacity=".8"/>
+        <polygon points="40,65 30,50 40,48" fill="#80C8F0" opacity=".6"/>
+        <polygon points="15,40 30,30 32,40" fill="#F0B050" opacity=".5"/>
+        <polygon points="65,40 50,50 48,40" fill="#80C8F0" opacity=".5"/>
+      </g>
+    </svg>
+    <div id="plText">Luminis — Loading</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      LUMINIS
+      <span>Architectural Glass</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="portfolio.html">Portfolio</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="btn-commission">Commission</a></li>
+    </ul>
+  </nav>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scrollIndicator">
+    <div id="siLine"><div id="siLineFill"></div></div>
+    <div id="siNum">01</div>
+    <div id="siName">Home</div>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div id="heroBg"></div>
+
+    <!-- Floating glass fragments -->
+    <div class="glass-frag" id="frag1" style="top:15%;left:8%">
+      <svg width="120" height="140" viewBox="0 0 120 140">
+        <polygon points="60,0 120,40 100,140 20,130 0,60" fill="rgba(240,176,80,0.07)" stroke="rgba(240,176,80,0.25)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="glass-frag" id="frag2" style="top:20%;right:10%">
+      <svg width="90" height="110" viewBox="0 0 90 110">
+        <polygon points="45,0 90,30 80,110 0,100 10,30" fill="rgba(128,200,240,0.06)" stroke="rgba(128,200,240,0.2)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="glass-frag" id="frag3" style="bottom:20%;left:12%">
+      <svg width="70" height="90" viewBox="0 0 70 90">
+        <polygon points="0,0 70,10 60,90 10,80" fill="rgba(240,176,80,0.05)" stroke="rgba(240,176,80,0.18)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="glass-frag" id="frag4" style="bottom:30%;right:8%">
+      <svg width="100" height="80" viewBox="0 0 100 80">
+        <polygon points="50,0 100,30 80,80 20,80 0,30" fill="rgba(128,200,240,0.05)" stroke="rgba(128,200,240,0.18)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="glass-frag" id="frag5" style="top:50%;left:4%">
+      <svg width="50" height="70" viewBox="0 0 50 70">
+        <polygon points="25,0 50,20 40,70 10,65 0,20" fill="rgba(240,176,80,0.04)" stroke="rgba(240,176,80,0.15)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="glass-frag" id="frag6" style="top:55%;right:5%">
+      <svg width="80" height="60" viewBox="0 0 80 60">
+        <polygon points="0,0 80,15 70,60 10,55" fill="rgba(128,200,240,0.04)" stroke="rgba(128,200,240,0.15)" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div id="heroContent">
+      <p class="hero-eyebrow">Est. 1987 &nbsp;·&nbsp; London &nbsp;·&nbsp; Atelier</p>
+      <h1 id="heroHeadline">LIGHT AS<br>ARCHITECTURE</h1>
+      <p class="hero-sub">Bespoke architectural stained glass for cathedrals, cultural institutions, and private residences of distinction.</p>
+      <div class="hero-actions">
+        <a href="portfolio.html" class="btn-primary">View Commissions</a>
+        <a href="process.html" class="btn-outline">Our Process</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+      Scroll to explore
+    </div>
+  </section>
+
+  <!-- SECTION 1: FEATURED WORKS -->
+  <section id="works">
+    <div class="container">
+      <div class="works-header">
+        <div class="works-header-left reveal">
+          <p class="section-label">Selected Commissions</p>
+          <h2 class="section-title">Installations That<br><em>Transcend</em> Time</h2>
+        </div>
+        <a href="portfolio.html" class="works-link reveal">View All Works &rarr;</a>
+      </div>
+
+      <div class="masonry-grid">
+        <!-- Item 1 -->
+        <div class="masonry-item reveal">
+          <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=600&q=80&auto=format&fit=crop" alt="Sacred Light — Cathedral Commission" loading="lazy" />
+          <div class="masonry-overlay">
+            <h3>St. Bartholomew's Cathedral</h3>
+            <p>Sacred — London, 2023</p>
+          </div>
+          <span class="masonry-tag">Sacred</span>
+        </div>
+        <!-- Item 2 -->
+        <div class="masonry-item reveal">
+          <img src="https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=600&q=80&auto=format&fit=crop" alt="Residence — Private Commission" loading="lazy" />
+          <div class="masonry-overlay">
+            <h3>Mayfair Residence</h3>
+            <p>Residential — London, 2022</p>
+          </div>
+          <span class="masonry-tag">Residential</span>
+        </div>
+        <!-- Item 3 -->
+        <div class="masonry-item reveal">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&auto=format&fit=crop" alt="Cultural Institution" loading="lazy" />
+          <div class="masonry-overlay">
+            <h3>National Arts Centre</h3>
+            <p>Public — Edinburgh, 2021</p>
+          </div>
+          <span class="masonry-tag">Public</span>
+        </div>
+        <!-- Item 4 -->
+        <div class="masonry-item reveal">
+          <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=80&auto=format&fit=crop" alt="Private Chapel Commission" loading="lazy" />
+          <div class="masonry-overlay">
+            <h3>Private Estate Chapel</h3>
+            <p>Sacred — Cotswolds, 2022</p>
+          </div>
+          <span class="masonry-tag">Sacred</span>
+        </div>
+        <!-- Item 5 -->
+        <div class="masonry-item reveal">
+          <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80&auto=format&fit=crop" alt="Hotel Atrium Commission" loading="lazy" />
+          <div class="masonry-overlay">
+            <h3>Claridge's Atrium</h3>
+            <p>Hospitality — London, 2020</p>
+          </div>
+          <span class="masonry-tag">Public</span>
+        </div>
+        <!-- Item 6 -->
+        <div class="masonry-item reveal">
+          <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80&auto=format&fit=crop" alt="Heritage Restoration" loading="lazy" />
+          <div class="masonry-overlay">
+            <h3>Westminster Restoration</h3>
+            <p>Heritage — London, 2019</p>
+          </div>
+          <span class="masonry-tag">Restoration</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: CRAFT HERITAGE -->
+  <section id="heritage">
+    <div class="container">
+      <div class="heritage-grid">
+        <div class="heritage-img reveal">
+          <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?w=800&q=80&auto=format&fit=crop" alt="Master glazier at work" loading="lazy" />
+          <div class="heritage-img-frame"></div>
+          <div class="heritage-img-accent"></div>
+        </div>
+        <div class="heritage-content">
+          <p class="section-label reveal">Our Heritage</p>
+          <h2 class="section-title reveal">Craft Perfected<br>Over <em>Generations</em></h2>
+          <p class="reveal" style="margin-top:2rem">Founded in 1987 by master glazier Edmund Voss, LUMINIS has spent four decades refining the ancient art of leaded glass into a living architectural medium.</p>
+          <p class="reveal">We source antique mouth-blown glass from Lamberts of Bavaria, hand-mix pigments using medieval recipes, and join every panel with hand-cut lead came — a process unchanged since the Gothic masters.</p>
+
+          <div class="stats-grid">
+            <div class="stat-item reveal">
+              <div class="stat-num">38+</div>
+              <div class="stat-label">Years in practice</div>
+            </div>
+            <div class="stat-item reveal">
+              <div class="stat-num">214</div>
+              <div class="stat-label">Commissions completed</div>
+            </div>
+            <div class="stat-item reveal">
+              <div class="stat-num">19</div>
+              <div class="stat-label">Countries served</div>
+            </div>
+            <div class="stat-item reveal">
+              <div class="stat-num">6</div>
+              <div class="stat-label">Master glaziers</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: LIGHT STUDY -->
+  <section id="lightstudy">
+    <div id="lightBg"></div>
+    <div id="lightContent">
+      <p class="section-label reveal">The Philosophy</p>
+      <blockquote class="reveal">"Glass is not a barrier to light — it is light's instrument, its vocabulary, its voice."</blockquote>
+      <cite class="reveal">— Edmund Voss, Founder</cite>
+      <div class="divider-line reveal"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SERVICES -->
+  <section id="services">
+    <div class="container">
+      <div class="services-header">
+        <p class="section-label reveal">What We Offer</p>
+        <h2 class="section-title reveal">Complete Atelier<br><em>Services</em></h2>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="26,2 50,15 50,37 26,50 2,37 2,15" stroke="#F0B050" stroke-width="1.5" fill="rgba(240,176,80,0.06)"/>
+              <circle cx="26" cy="26" r="8" stroke="#80C8F0" stroke-width="1" fill="none"/>
+              <line x1="26" y1="2" x2="26" y2="18" stroke="#F0B050" stroke-width="1" stroke-dasharray="2 2"/>
+              <line x1="26" y1="34" x2="26" y2="50" stroke="#F0B050" stroke-width="1" stroke-dasharray="2 2"/>
+            </svg>
+          </div>
+          <h3>Sacred Spaces</h3>
+          <p>Monumental windows for cathedrals, chapels, and houses of worship. Liturgical programs developed in close collaboration with clergy and conservation architects.</p>
+          <div class="service-num">01</div>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="6" width="40" height="40" stroke="#F0B050" stroke-width="1.5" fill="rgba(240,176,80,0.06)"/>
+              <rect x="14" y="14" width="10" height="24" stroke="#80C8F0" stroke-width="1" fill="rgba(128,200,240,0.06)"/>
+              <rect x="28" y="14" width="10" height="14" stroke="#80C8F0" stroke-width="1" fill="rgba(128,200,240,0.04)"/>
+              <rect x="28" y="32" width="10" height="6" stroke="#80C8F0" stroke-width="1" fill="rgba(128,200,240,0.04)"/>
+            </svg>
+          </div>
+          <h3>Private Residences</h3>
+          <p>Bespoke installations for private homes, penthouses, and country estates. We transform architectural apertures into personal artistic statements of enduring value.</p>
+          <div class="service-num">02</div>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="26" cy="26" r="22" stroke="#F0B050" stroke-width="1.5" fill="rgba(240,176,80,0.04)"/>
+              <polygon points="26,8 32,20 26,26 20,20" fill="rgba(128,200,240,0.1)" stroke="#80C8F0" stroke-width="1"/>
+              <polygon points="44,26 32,26 26,32 26,20" fill="rgba(240,176,80,0.06)" stroke="#F0B050" stroke-width="1"/>
+              <polygon points="26,44 20,32 26,26 32,32" fill="rgba(128,200,240,0.08)" stroke="#80C8F0" stroke-width="1"/>
+              <polygon points="8,26 20,26 26,20 26,32" fill="rgba(240,176,80,0.05)" stroke="#F0B050" stroke-width="1"/>
+            </svg>
+          </div>
+          <h3>Public Institutions</h3>
+          <p>Large-scale commissions for museums, civic buildings, hotels, and cultural venues. Durability, public engagement, and architectural harmony guide every decision.</p>
+          <div class="service-num">03</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: COMMISSION CTA -->
+  <section id="cta">
+    <div class="cta-inner">
+      <p class="section-label reveal">Begin Your Commission</p>
+      <h2 class="section-title reveal">Every Great Work<br>Begins With <em>Light</em></h2>
+      <p class="reveal">We accept a limited number of commissions each year, ensuring each project receives our complete devotion. Begin with a conversation.</p>
+      <div class="hero-actions reveal">
+        <a href="contact.html" class="btn-primary">Start Your Commission</a>
+        <a href="process.html" class="btn-outline">Learn Our Process</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">LUMINIS</a>
+        <p>Bespoke architectural stained glass for spaces that demand the extraordinary. Light as Architecture.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="about.html">Master Glaziers</a></li>
+          <li><a href="about.html">Philosophy</a></li>
+          <li><a href="about.html">Heritage</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Work</h4>
+        <ul>
+          <li><a href="portfolio.html">Sacred</a></li>
+          <li><a href="portfolio.html">Residential</a></li>
+          <li><a href="portfolio.html">Public</a></li>
+          <li><a href="portfolio.html">Restoration</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Commission</h4>
+        <ul>
+          <li><a href="process.html">Our Process</a></li>
+          <li><a href="contact.html">Enquire</a></li>
+          <li><a href="contact.html">Studio Visits</a></li>
+          <li><a href="contact.html">Press</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 LUMINIS Architectural Glass. All rights reserved.</span>
+      <span class="footer-tagline">Light As Architecture.</span>
+    </div>
+  </footer>
+
+  <!-- GSAP from cdnjs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    /* ─── SPLITTEXT INLINE POLYFILL ─── */
+    class SplitText {
+      constructor(el, {type='chars'}={}) {
+        this.el = typeof el === 'string' ? document.querySelector(el) : el;
+        this.chars = [];
+        this.words = [];
+        if (type.includes('chars')) {
+          const t = this.el.textContent;
+          this.el.innerHTML = '';
+          t.split('').forEach(c => {
+            const s = document.createElement('span');
+            s.className = 'split-char';
+            s.style.cssText = 'display:inline-block;';
+            s.textContent = c === ' ' ? '\u00A0' : c;
+            this.el.appendChild(s);
+            this.chars.push(s);
+          });
+        }
+        if (type.includes('words')) {
+          const words = this.el.textContent.split(/\s+/);
+          this.el.innerHTML = '';
+          words.forEach((w, i) => {
+            const s = document.createElement('span');
+            s.className = 'split-word';
+            s.style.cssText = 'display:inline-block;overflow:hidden;';
+            const inner = document.createElement('span');
+            inner.style.cssText = 'display:inline-block;';
+            inner.textContent = w;
+            s.appendChild(inner);
+            this.el.appendChild(s);
+            if (i < words.length - 1) this.el.appendChild(document.createTextNode(' '));
+            this.words.push(inner);
+          });
+        }
+      }
+    }
+
+    /* ─── PRELOADER ─── */
+    window.addEventListener('load', () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      const pl = document.getElementById('preloader');
+      gsap.to(pl, {
+        opacity: 0, duration: .8, delay: 2.2, ease: 'power2.inOut',
+        onComplete: () => {
+          pl.style.display = 'none';
+          initAnimations();
+        }
+      });
+
+      // Show scroll indicator after preloader
+      setTimeout(() => {
+        document.getElementById('scrollIndicator').style.opacity = '1';
+      }, 4000);
+    });
+
+    /* ─── SCROLL INDICATOR ─── */
+    const sections = [
+      { el: document.getElementById('hero'), num: '01', name: 'Home' },
+      { el: document.getElementById('works'), num: '02', name: 'Works' },
+      { el: document.getElementById('heritage'), num: '03', name: 'Heritage' },
+      { el: document.getElementById('lightstudy'), num: '04', name: 'Light' },
+      { el: document.getElementById('services'), num: '05', name: 'Services' },
+      { el: document.getElementById('cta'), num: '06', name: 'Commission' },
+    ];
+    const siNum = document.getElementById('siNum');
+    const siName = document.getElementById('siName');
+    const siLineFill = document.getElementById('siLineFill');
+
+    function updateScrollIndicator() {
+      const scrollY = window.scrollY;
+      const winH = window.innerHeight;
+      let active = sections[0];
+      sections.forEach(s => {
+        if (s.el && s.el.getBoundingClientRect().top <= winH * .5) active = s;
+      });
+      siNum.textContent = active.num;
+      siName.textContent = active.name;
+      const total = document.body.scrollHeight - winH;
+      siLineFill.style.height = (scrollY / total * 100) + '%';
+    }
+    window.addEventListener('scroll', updateScrollIndicator, { passive: true });
+
+    /* ─── NAVBAR ─── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ─── MAIN ANIMATIONS ─── */
+    function initAnimations() {
+      /* Hero — SplitText word-by-word reveal */
+      const headline = document.getElementById('heroHeadline');
+      const split = new SplitText(headline, { type: 'words' });
+      gsap.from(split.words, {
+        immediateRender: false,
+        y: 60,
+        opacity: 0,
+        duration: 1.1,
+        stagger: 0.12,
+        ease: 'power3.out',
+        delay: 0.3
+      });
+
+      gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 20, duration: 1, delay: 0.1 });
+      gsap.from('.hero-sub', { immediateRender: false, opacity: 0, y: 20, duration: 1, delay: 0.6 });
+      gsap.from('.hero-actions', { immediateRender: false, opacity: 0, y: 20, duration: 1, delay: 0.8 });
+
+      /* Floating glass fragments parallax */
+      [
+        { id:'frag1', yStart:-30 },
+        { id:'frag2', yStart: 30 },
+        { id:'frag3', yStart:-20 },
+        { id:'frag4', yStart: 20 },
+        { id:'frag5', yStart:-15 },
+        { id:'frag6', yStart: 15 },
+      ].forEach(f => {
+        gsap.to('#' + f.id, {
+          y: f.yStart,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1.5
+          }
+        });
+      });
+
+      /* Scroll-triggered reveals */
+      gsap.utils.toArray('.reveal').forEach(el => {
+        gsap.from(el, {
+          immediateRender: false,
+          y: 24,
+          opacity: 0,
+          duration: 0.9,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            once: true
+          }
+        });
+      });
+
+      /* Masonry stagger */
+      gsap.from('.masonry-item', {
+        immediateRender: false,
+        opacity: 0,
+        y: 28,
+        duration: 1,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.masonry-grid',
+          start: 'top 80%',
+          once: true
+        }
+      });
+
+      /* Stats count-up */
+      gsap.from('.stat-num', {
+        immediateRender: false,
+        opacity: 0,
+        scale: 0.8,
+        duration: 1.2,
+        stagger: 0.12,
+        ease: 'back.out(1.7)',
+        scrollTrigger: {
+          trigger: '.stats-grid',
+          start: 'top 80%',
+          once: true
+        }
+      });
+
+      /* Light study parallax */
+      gsap.to('#lightBg', {
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#lightstudy',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      /* Service cards stagger */
+      gsap.from('.service-card', {
+        immediateRender: false,
+        opacity: 0,
+        y: 28,
+        duration: 1,
+        stagger: 0.15,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.services-grid',
+          start: 'top 80%',
+          once: true
+        }
+      });
+    }
+  </script>
+</body>
+</html>

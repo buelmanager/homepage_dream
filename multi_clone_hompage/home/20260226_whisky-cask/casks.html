@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Available Casks — CASK SOCIÉTÉ</title>
+<meta name="description" content="Browse available whisky casks from Scotland's finest distilleries. Highland, Speyside, Islay, Island and Lowland expressions from 3 to 25 years.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#201508;--surface:#2A1C0E;
+  --accent:#D4820A;--accent2:#F0C870;
+  --text:#F5EDD8;--text-muted:#906040;
+  --border:rgba(212,130,10,0.2);
+  --ff-head:'Cormorant Garamond',serif;
+  --ff-body:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--ff-body);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:1.5rem 3rem;display:flex;align-items:center;justify-content:space-between;background:rgba(32,21,8,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--ff-head);font-size:1.25rem;letter-spacing:0.3em;color:var(--text);text-decoration:none;text-transform:uppercase;font-weight:300}
+.nav-links{display:flex;align-items:center;gap:2.5rem;list-style:none}
+.nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;transition:color 0.3s}
+.nav-links a:hover,.nav-links a.active{color:var(--accent)}
+.nav-join{background:var(--accent);color:#fff;padding:0.55rem 1.4rem;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;transition:background 0.3s}
+.nav-join:hover{background:var(--accent2);color:var(--bg)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
+.nav-toggle span{display:block;width:24px;height:1px;background:var(--text)}
+.mobile-menu{position:fixed;inset:0;z-index:400;background:rgba(32,21,8,0.98);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.mobile-menu.open{opacity:1;pointer-events:all}
+.mobile-menu a{font-family:var(--ff-head);font-size:2rem;color:var(--text);text-decoration:none;letter-spacing:0.1em;transition:color 0.3s}
+.mobile-menu a:hover{color:var(--accent)}
+
+/* SUB HERO */
+.sub-hero{position:relative;height:58vh;min-height:450px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5rem;overflow:hidden}
+.sub-hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1600&q=80&auto=format&fit=crop') center 40%/cover no-repeat;transform:scale(1.06)}
+.sub-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(32,21,8,0.35) 0%,rgba(32,21,8,0.75) 65%,rgba(32,21,8,1) 100%)}
+.sub-hero-content{position:relative;z-index:2;text-align:center}
+.sub-eyebrow{font-size:0.65rem;letter-spacing:0.4em;color:var(--accent);text-transform:uppercase;margin-bottom:1rem}
+.sub-title{font-family:var(--ff-head);font-size:clamp(3rem,6vw,5.5rem);font-weight:300;color:var(--text);letter-spacing:0.02em}
+
+/* COMMON */
+section{padding:6rem 0}
+.container{max-width:1280px;margin:0 auto;padding:0 3rem}
+.section-eyebrow{font-size:0.65rem;letter-spacing:0.4em;color:var(--accent);text-transform:uppercase;margin-bottom:1rem}
+.section-title{font-family:var(--ff-head);font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;line-height:1.1;color:var(--text);margin-bottom:1.5rem}
+.section-divider{width:60px;height:1px;background:var(--accent);margin:1.5rem 0}
+
+/* FILTERS */
+#filters-bar{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:1.5rem 0;
+  position:sticky;top:75px;z-index:200;
+}
+.filters-inner{
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+}
+.filter-label{font-size:0.65rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-right:0.5rem}
+.filter-btn{
+  background:none;border:1px solid var(--border);
+  color:var(--text-muted);font-size:0.7rem;letter-spacing:0.15em;
+  text-transform:uppercase;padding:0.45rem 1rem;cursor:pointer;
+  font-family:var(--ff-body);transition:all 0.3s;
+}
+.filter-btn:hover,.filter-btn.active{
+  border-color:var(--accent);color:var(--accent);background:rgba(212,130,10,0.08);
+}
+
+/* CASK GRID */
+#inventory{background:var(--bg)}
+.cask-grid-full{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;
+  background:var(--border);
+}
+.cask-card{
+  background:var(--bg);padding:2.5rem 2rem;
+  border-bottom:2px solid transparent;
+  transition:background 0.3s,border-color 0.3s,transform 0.3s;
+  display:flex;flex-direction:column;
+}
+.cask-card:hover{background:var(--surface);border-color:var(--accent);transform:translateY(-4px)}
+.cask-tag{
+  display:inline-block;font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;
+  padding:0.25rem 0.7rem;border:1px solid var(--border);color:var(--text-muted);
+  margin-bottom:1.2rem;
+}
+.cask-tag.featured{border-color:var(--accent);color:var(--accent)}
+.cask-num{font-size:0.65rem;letter-spacing:0.3em;color:var(--accent);font-family:var(--ff-head);margin-bottom:0.8rem}
+.cask-distillery{font-family:var(--ff-head);font-size:1.4rem;font-weight:400;color:var(--text);margin-bottom:0.2rem;line-height:1.1}
+.cask-region{font-size:0.62rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:1.5rem}
+.cask-specs{list-style:none;margin-bottom:1.5rem;flex:1}
+.cask-specs li{display:flex;justify-content:space-between;padding:0.45rem 0;border-bottom:1px solid rgba(144,96,64,0.15);font-size:0.77rem}
+.spec-key{color:var(--text-muted)}
+.spec-val{color:var(--accent2);font-family:var(--ff-head);font-size:0.85rem}
+.cask-notes{font-size:0.78rem;color:var(--text-muted);font-style:italic;line-height:1.7;margin-bottom:1.5rem}
+.cask-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto}
+.cask-price-big{font-family:var(--ff-head);font-size:1.7rem;color:var(--accent2)}
+.cask-est{font-size:0.62rem;color:var(--text-muted);letter-spacing:0.05em;margin-top:0.3rem}
+.btn-enquire{
+  font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;
+  border:1px solid var(--border);color:var(--text-muted);
+  padding:0.5rem 1rem;text-decoration:none;
+  transition:all 0.3s;white-space:nowrap;
+}
+.btn-enquire:hover{border-color:var(--accent);color:var(--accent)}
+.cask-availability{
+  font-size:0.6rem;letter-spacing:0.15em;color:var(--accent);
+  text-transform:uppercase;margin-bottom:0.8rem;
+}
+
+/* PRICING TIERS */
+#pricing{background:var(--surface)}
+.pricing-header{text-align:center;margin-bottom:4rem}
+.pricing-header .section-divider{margin:1.5rem auto}
+.tiers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border)}
+.tier{
+  padding:3rem 2.5rem;border-right:1px solid var(--border);
+  position:relative;transition:background 0.3s;
+}
+.tier:last-child{border-right:none}
+.tier.featured-tier{background:var(--bg)}
+.tier-badge{
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  background:var(--accent);color:#fff;font-size:0.55rem;letter-spacing:0.2em;
+  text-transform:uppercase;padding:0.3rem 1rem;
+}
+.tier-name{font-family:var(--ff-head);font-size:1.5rem;color:var(--accent2);margin-bottom:0.3rem}
+.tier-tagline{font-size:0.72rem;color:var(--text-muted);margin-bottom:2rem}
+.tier-price-label{font-size:0.62rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.3rem}
+.tier-price{font-family:var(--ff-head);font-size:2.5rem;color:var(--text);line-height:1;margin-bottom:0.3rem}
+.tier-price-sub{font-size:0.7rem;color:var(--text-muted);margin-bottom:2.5rem}
+.tier-features{list-style:none;margin-bottom:2.5rem}
+.tier-features li{
+  display:flex;align-items:flex-start;gap:0.8rem;
+  padding:0.6rem 0;border-bottom:1px solid rgba(144,96,64,0.15);
+  font-size:0.78rem;color:var(--text-muted);line-height:1.5;
+}
+.tier-features li::before{content:'—';color:var(--accent);flex-shrink:0}
+.btn-tier{
+  display:block;text-align:center;text-decoration:none;
+  padding:0.85rem;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
+  border:1px solid var(--border);color:var(--text-muted);
+  transition:all 0.3s;
+}
+.btn-tier:hover,.btn-tier.primary-tier{
+  background:var(--accent);border-color:var(--accent);color:#fff;
+}
+
+/* SPECS GLOSSARY */
+#glossary{background:var(--bg)}
+.gloss-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;margin-top:3rem}
+.gloss-item{border-left:1px solid var(--border);padding-left:1.2rem}
+.gloss-term{font-family:var(--ff-head);font-size:1rem;color:var(--accent2);margin-bottom:0.5rem}
+.gloss-def{font-size:0.78rem;color:var(--text-muted);line-height:1.7}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 0 2rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;padding-bottom:3rem;border-bottom:1px solid var(--border);margin-bottom:2rem}
+.footer-desc{font-size:0.8rem;color:var(--text-muted);line-height:1.8;max-width:240px;margin-top:0.8rem}
+.footer-col-title{font-family:var(--ff-head);font-size:0.8rem;letter-spacing:0.25em;color:var(--accent);text-transform:uppercase;margin-bottom:1.2rem}
+.footer-links{list-style:none}
+.footer-links li{margin-bottom:0.6rem}
+.footer-links a{font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.3s}
+.footer-links a:hover{color:var(--accent)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em}
+
+@media(max-width:1024px){
+  .cask-grid-full{grid-template-columns:1fr 1fr}
+  .tiers-grid{grid-template-columns:1fr}
+  .tier{border-right:none;border-bottom:1px solid var(--border)}
+  .tier:last-child{border-bottom:none}
+  .gloss-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem}
+  .nav-links,.nav-join{display:none}
+  .nav-toggle{display:flex}
+  .container{padding:0 1.5rem}
+  section{padding:5rem 0}
+  .cask-grid-full{grid-template-columns:1fr}
+  .gloss-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:0.5rem;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="casks.html">Casks</a>
+  <a href="process.html">Process</a>
+  <a href="about.html">About</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" style="color:var(--accent)">Join</a>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">Cask Société</a>
+  <ul class="nav-links">
+    <li><a href="casks.html" class="active">Casks</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-join">Join the Programme</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- SUB HERO -->
+<div class="sub-hero">
+  <div class="sub-hero-bg"></div>
+  <div class="sub-hero-overlay"></div>
+  <div class="sub-hero-content">
+    <p class="sub-eyebrow">Current Availability</p>
+    <h1 class="sub-title">Available Casks</h1>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div id="filters-bar">
+  <div class="container">
+    <div class="filters-inner">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" data-region="all">All Regions</button>
+      <button class="filter-btn" data-region="highland">Highland</button>
+      <button class="filter-btn" data-region="speyside">Speyside</button>
+      <button class="filter-btn" data-region="islay">Islay</button>
+      <button class="filter-btn" data-region="island">Island</button>
+      <button class="filter-btn" data-region="lowland">Lowland</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVENTORY -->
+<section id="inventory">
+  <div class="container">
+    <div class="cask-grid-full" id="caskGrid">
+
+      <!-- 1 -->
+      <div class="cask-card" data-region="highland">
+        <span class="cask-tag featured">Featured</span>
+        <div class="cask-availability">2 Remaining</div>
+        <div class="cask-num">CS — 0118</div>
+        <div class="cask-distillery">Ardmore Highland</div>
+        <div class="cask-region">Highland</div>
+        <ul class="cask-specs">
+          <li><span class="spec-key">Distilled</span><span class="spec-val">2009</span></li>
+          <li><span class="spec-key">Age</span><span class="spec-val">16 Years</span></li>
+          <li><span class="spec-key">Cask Type</span><span class="spec-val">Ex-Bourbon</span></li>
+          <li><span class="spec-key">Volume</span><span class="spec-val">190L</span></li>
+          <li><span class="spec-key">ABV (Est.)</span><span class="spec-val">58.3%</span></li>
+          <li><span class="spec-key">Warehouse</span><span class="spec-val">Dunnage, Banff</span></li>
+        </ul>
+        <p class="cask-notes">Vanilla, heather honey, a whisper of smoke. Long-aged in first-fill American oak with gentle Highland water influence.</p>
+        <div class="cask-footer">
+          <div>
+            <div class="cask-price-big">£38,500</div>
+            <div class="cask-est">Est. bottling value: £72,000+</div>
+          </div>
+          <a href="contact.html" class="btn-enquire">Enquire</a>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="cask-card" data-region="speyside">
+        <span class="cask-tag featured">Featured</span>
+        <div class="cask-availability">1 Remaining</div>
+        <div class="cask-num">CS — 0134</div>
+        <div class="cask-distillery">Glennach Speyside</div>
+        <div class="cask-region">Speyside</div>
+        <ul class="cask-specs">
+          <li><span class="spec-key">Distilled</span><span class="spec-val">2004</span></li>
+          <li><span class="spec-key">Age</span><span class="spec-val">21 Years</span></li>
+          <li><span class="spec-key">Cask Type</span><span class="spec-val">Sherry Butt</span></li>
+          <li><span class="spec-key">Volume</span><span class="spec-val">480L</span></li>
+          <li><span class="spec-key">ABV (Est.)</span><span class="spec-val">54.1%</span></li>
+          <li><span class="spec-key">Warehouse</span><span class="spec-val">Racked, Rothes</span></li>
+        </ul>
+        <p class="cask-notes">Dried fruit, dark chocolate, Christmas cake. A lavish Speyside expression with twenty-one years of patience.</p>
+        <div class="cask-footer">
+          <div>
+            <div class="cask-price-big">£94,000</div>
+            <div class="cask-est">Est. bottling value: £180,000+</div>
+          </div>
+          <a href="contact.html" class="btn-enquire">Enquire</a>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="cask-card" data-region="island">
+        <span class="cask-tag featured">Featured</span>
+        <div class="cask-availability">3 Remaining</div>
+        <div class="cask-num">CS — 0147</div>
+        <div class="cask-distillery">Isle of Morven</div>
+        <div class="cask-region">Island</div>
+        <ul class="cask-specs">
+          <li><span class="spec-key">Distilled</span><span class="spec-val">2011</span></li>
+          <li><span class="spec-key">Age</span><span class="spec-val">14 Years</span></li>
+          <li><span class="spec-key">Cask Type</span><span class="spec-val">STR Barrique</span></li>
+          <li><span class="spec-key">Volume</span><span class="spec-val">230L</span></li>
+          <li><span class="spec-key">ABV (Est.)</span><span class="spec-val">60.7%</span></li>
+          <li><span class="spec-key">Warehouse</span><span class="spec-val">Dunnage, Mull</span></li>
+        </ul>
+        <p class="cask-notes">Sea salt, iodine, red berry, warm spice. The raw Atlantic influence tamed over fourteen years into something remarkable.</p>
+        <div class="cask-footer">
+          <div>
+            <div class="cask-price-big">£44,000</div>
+            <div class="cask-est">Est. bottling value: £82,000+</div>
+          </div>
+          <a href="contact.html" class="btn-enquire">Enquire</a>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="cask-card" data-region="highland">
+        <span class="cask-tag featured">Featured</span>
+        <div class="cask-availability">Sole Cask</div>
+        <div class="cask-num">CS — 0162</div>
+        <div class="cask-distillery">Lochaber Malt</div>
+        <div class="cask-region">Highland — West</div>
+        <ul class="cask-specs">
+          <li><span class="spec-key">Distilled</span><span class="spec-val">2000</span></li>
+          <li><span class="spec-key">Age</span><span class="spec-val">25 Years</span></li>
+          <li><span class="spec-key">Cask Type</span><span class="spec-val">Port Pipe</span></li>
+          <li><span class="spec-key">Volume</span><span class="spec-val">560L</span></li>
+          <li><span class="spec-key">ABV (Est.)</span><span class="spec-val">49.2%</span></li>
+          <li><span class="spec-key">Warehouse</span><span class="spec-val">Palletised, Fort William</span></li>
+        </ul>
+        <p class="cask-notes">Plum, rose petal, beeswax, ancient oak. A 25-year journey culminating in one of the finest Highland expressions available today.</p>
+        <div class="cask-footer">
+          <div>
+            <div class="cask-price-big">£165,000</div>
+            <div class="cask-est">Est. bottling value: £320,000+</div>
+          </div>
+          <a href="contact.html" class="btn-enquire">Enquire</a>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="cask-card" data-region="islay">
+        <span class="cask-tag">Available</span>
+        <div class="cask-availability">4 Remaining</div>
+        <div class="cask-num">CS — 0173</div>
+        <div class="cask-distillery">Caol Rùm</div>
+        <div class="cask-region">Islay</div>
+        <ul class="cask-specs">
+          <li><span class="spec-key">Distilled</span><span class="spec-val">2014</span></li>
+          <li><span class="spec-key">Age</span><span class="spec-val">11 Years</span></li>
+          <li><span class="spec-key">Cask Type</span><span class="spec-val">Ex-Bourbon Hogshead</span></li>
+          <li><span class="spec-key">Volume</span><span class="spec-val">250L</span></li>
+          <li><span class="spec-key">ABV (Est.)</span><span class="spec-val">62.4%</span></li>
+          <li><span class="spec-key">Warehouse</span><span class="spec-val">Dunnage, Islay</span></li>
+        </ul>
+        <p class="cask-notes">Dense peat smoke, medicinal iodine, subtle citrus peel behind the fire. Heavy and uncompromising — Islay in its purest form.</p>
+        <div class="cask-footer">
+          <div>
+            <div class="cask-price-big">£29,000</div>
+            <div class="cask-est">Est. bottling value: £54,000+</div>
+          </div>
+          <a href="contact.html" class="btn-enquire">Enquire</a>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="cask-card" data-region="lowland">
+        <span class="cask-tag">Available</span>
+        <div class="cask-availability">6 Remaining</div>
+        <div class="cask-num">CS — 0181</div>
+        <div class="cask-distillery">Benvane Springs</div>
+        <div class="cask-region">Lowland</div>
+        <ul class="cask-specs">
+          <li><span class="spec-key">Distilled</span><span class="spec-val">2016</span></li>
+          <li><span class="spec-key">Age</span><span class="spec-val">9 Years</span></li>
+          <li><span class="spec-key">Cask Type</span><span class="spec-val">Wine Puncheon</span></li>
+          <li><span class="spec-key">Volume</span><span class="spec-val">500L</span></li>
+          <li><span class="spec-key">ABV (Est.)</span><span class="spec-val">63.1%</span></li>
+          <li><span class="spec-key">Warehouse</span><span class="spec-val">Palletised, Strathclyde</span></li>
+        </ul>
+        <p class="cask-notes">Light grain sweetness, green apple, delicate floral meadow notes. The elegance of the Lowland style at cask strength — a connoisseur's curiosity.</p>
+        <div class="cask-footer">
+          <div>
+            <div class="cask-price-big">£18,500</div>
+            <div class="cask-est">Est. bottling value: £34,000+</div>
+          </div>
+          <a href="contact.html" class="btn-enquire">Enquire</a>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="cask-card" data-region="speyside">
+        <span class="cask-tag">Available</span>
+        <div class="cask-availability">5 Remaining</div>
+        <div class="cask-num">CS — 0195</div>
+        <div class="cask-distillery">Strathnaim</div>
+        <div class="cask-region">Speyside</div>
+        <ul class="cask-specs">
+          <li><span class="spec-key">Distilled</span><span class="spec-val">2018</span></li>
+          <li><span class="spec-key">Age</span><span class="spec-val">7 Years</span></li>
+          <li><span class="spec-key">Cask Type</span><span class="spec-val">Madeira Drum</span></li>
+          <li><span class="spec-key">Volume</span><span class="spec-val">650L</span></li>
+          <li><span class="spec-key">ABV (Est.)</span><span class="spec-val">64.8%</span></li>
+          <li><span class="spec-key">Warehouse</span><span class="spec-val">Racked, Craigellachie</span></li>
+        </ul>
+        <p class="cask-notes">Toffee apple, marzipan, candied citrus. A younger holding with exceptional early development trajectory — one for patient investors.</p>
+        <div class="cask-footer">
+          <div>
+            <div class="cask-price-big">£12,000</div>
+            <div class="cask-est">Est. 15yr value: £48,000+</div>
+          </div>
+          <a href="contact.html" class="btn-enquire">Enquire</a>
+        </div>
+      </div>
+
+      <!-- 8 -->
+      <div class="cask-card" data-region="highland">
+        <span class="cask-tag">Available</span>
+        <div class="cask-availability">2 Remaining</div>
+        <div class="cask-num">CS — 0208</div>
+        <div class="cask-distillery">Glencairnie</div>
+        <div class="cask-region">Highland — North</div>
+        <ul class="cask-specs">
+          <li><span class="spec-key">Distilled</span><span class="spec-val">2007</span></li>
+          <li><span class="spec-key">Age</span><span class="spec-val">18 Years</span></li>
+          <li><span class="spec-key">Cask Type</span><span class="spec-val">Refill Sherry Puncheon</span></li>
+          <li><span class="spec-key">Volume</span><span class="spec-val">500L</span></li>
+          <li><span class="spec-key">ABV (Est.)</span><span class="spec-val">52.7%</span></li>
+          <li><span class="spec-key">Warehouse</span><span class="spec-val">Dunnage, Inverness</span></li>
+        </ul>
+        <p class="cask-notes">Rich toffee, roasted hazelnut, blackcurrant leaf, coastal herbs. An 18-year Northern Highland masterwork with restrained oak and persistent fruit.</p>
+        <div class="cask-footer">
+          <div>
+            <div class="cask-price-big">£58,000</div>
+            <div class="cask-est">Est. bottling value: £110,000+</div>
+          </div>
+          <a href="contact.html" class="btn-enquire">Enquire</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRICING TIERS -->
+<section id="pricing">
+  <div class="container">
+    <div class="pricing-header">
+      <p class="section-eyebrow">Membership Tiers</p>
+      <h2 class="section-title">Choose Your Programme Level</h2>
+      <div class="section-divider"></div>
+      <p style="font-size:0.88rem;color:var(--text-muted);max-width:540px;margin:0 auto">Three levels of participation, each with increasing cask access, advisory depth, and exclusive distillery privilege.</p>
+    </div>
+    <div class="tiers-grid">
+      <div class="tier">
+        <div class="tier-name">Collector</div>
+        <div class="tier-tagline">For the enthusiast beginning their cask journey</div>
+        <div class="tier-price-label">Minimum Cask Value</div>
+        <div class="tier-price">£12,000</div>
+        <div class="tier-price-sub">+ £850 annual custody fee</div>
+        <ul class="tier-features">
+          <li>One personally named cask</li>
+          <li>Annual 50ml tasting sample</li>
+          <li>Digital cask certificate</li>
+          <li>Annual valuation report</li>
+          <li>Bottling coordination service</li>
+          <li>Access to member auction platform</li>
+        </ul>
+        <a href="contact.html" class="btn-tier">Enquire — Collector</a>
+      </div>
+      <div class="tier featured-tier">
+        <div class="tier-badge">Most Popular</div>
+        <div class="tier-name">Investor</div>
+        <div class="tier-tagline">For the serious investor building a cask portfolio</div>
+        <div class="tier-price-label">Minimum Portfolio Value</div>
+        <div class="tier-price">£50,000</div>
+        <div class="tier-price-sub">+ £1,400 annual custody fee</div>
+        <ul class="tier-features">
+          <li>Up to five named casks</li>
+          <li>Bi-annual 100ml tasting samples</li>
+          <li>Embossed physical certificate</li>
+          <li>Bi-annual valuation &amp; portfolio report</li>
+          <li>Dedicated member advisor</li>
+          <li>Priority access to new distillery fillings</li>
+          <li>Invitation to annual member tasting event</li>
+          <li>Bottling design consultation</li>
+        </ul>
+        <a href="contact.html" class="btn-tier primary-tier">Enquire — Investor</a>
+      </div>
+      <div class="tier">
+        <div class="tier-name">Connoisseur</div>
+        <div class="tier-tagline">For the collector who demands the extraordinary</div>
+        <div class="tier-price-label">Minimum Portfolio Value</div>
+        <div class="tier-price">£150,000</div>
+        <div class="tier-price-sub">+ bespoke custody arrangement</div>
+        <ul class="tier-features">
+          <li>Unlimited cask holdings</li>
+          <li>Quarterly 150ml samples per cask</li>
+          <li>Framed vellum certificate &amp; wax seal</li>
+          <li>Quarterly portfolio valuations</li>
+          <li>Senior advisor on retainer</li>
+          <li>Pre-market access to all new fillings</li>
+          <li>Annual private distillery expedition</li>
+          <li>Bespoke label &amp; bottling design</li>
+          <li>Private cellar placement service</li>
+        </ul>
+        <a href="contact.html" class="btn-tier">Enquire — Connoisseur</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GLOSSARY -->
+<section id="glossary">
+  <div class="container">
+    <p class="section-eyebrow">Cask Terminology</p>
+    <h2 class="section-title">Understanding Your Cask</h2>
+    <div class="section-divider"></div>
+    <div class="gloss-grid">
+      <div class="gloss-item">
+        <div class="gloss-term">Cask Type</div>
+        <p class="gloss-def">The previous contents of the oak vessel. First-fill bourbon barrels, Oloroso sherry butts, port pipes, Madeira drums — each imparts distinct flavour characteristics.</p>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">ABV (Cask Strength)</div>
+        <p class="gloss-def">Alcohol by volume at the time of sampling or bottling, before dilution. Cask strength whiskies are valued at a premium, typically bottled between 52–68%.</p>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Outturn</div>
+        <p class="gloss-def">The estimated number of bottles produceable from a given cask, calculated from volume, density, and ABV. Outturn decreases as whisky evaporates — the "angel's share."</p>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-term">Dunnage Warehouse</div>
+        <p class="gloss-def">The traditional earth-floored, low-ceilinged stone warehouse considered optimal for gentle, consistent maturation. Contrasted with modern racked or palletised warehouses.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="nav-logo">Cask Société</a>
+        <p class="footer-desc">An exclusive whisky cask investment programme for collectors, connoisseurs, and forward-thinking investors. Edinburgh, Scotland.</p>
+      </div>
+      <div>
+        <p class="footer-col-title">Navigate</p>
+        <ul class="footer-links">
+          <li><a href="casks.html">Available Casks</a></li>
+          <li><a href="process.html">The Process</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Programme</p>
+        <ul class="footer-links">
+          <li><a href="casks.html">Collector Tier</a></li>
+          <li><a href="casks.html">Investor Tier</a></li>
+          <li><a href="casks.html">Connoisseur Tier</a></li>
+          <li><a href="process.html">Exit Options</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Legal</p>
+        <ul class="footer-links">
+          <li><a href="contact.html">Terms</a></li>
+          <li><a href="contact.html">Privacy</a></li>
+          <li><a href="contact.html">Risk Disclosure</a></li>
+          <li><a href="contact.html">HMRC Compliance</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Cask Société. All rights reserved.</span>
+      <span>Edinburgh, Scotland — EH2 4RW</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* Mobile nav */
+const toggle = document.getElementById('navToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+toggle.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+/* Sub hero */
+gsap.from('.sub-hero-content', {
+  immediateRender: false,
+  y: 40,
+  opacity: 0,
+  duration: 1.2,
+  ease: 'power2.out',
+  delay: 0.3
+});
+gsap.from('.sub-hero-bg', {
+  immediateRender: false,
+  scale: 1.1,
+  duration: 2,
+  ease: 'power2.out'
+});
+
+/* Filter buttons */
+const filterBtns = document.querySelectorAll('.filter-btn');
+const caskCards = document.querySelectorAll('.cask-card');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const region = btn.dataset.region;
+    caskCards.forEach(card => {
+      if (region === 'all' || card.dataset.region === region) {
+        card.style.display = 'flex';
+        gsap.from(card, {
+          immediateRender: false,
+          opacity: 0,
+          y: 20,
+          duration: 0.5,
+          ease: 'power2.out'
+        });
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+
+/* Cask cards entrance */
+gsap.from('.cask-card', {
+  immediateRender: false,
+  y: 40,
+  opacity: 0,
+  duration: 0.8,
+  stagger: 0.1,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '#inventory', start: 'top 80%' }
+});
+
+/* Tiers */
+gsap.from('.tier', {
+  immediateRender: false,
+  y: 30,
+  opacity: 0,
+  duration: 0.9,
+  stagger: 0.15,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.tiers-grid', start: 'top 80%' }
+});
+
+/* Glossary */
+gsap.from('.gloss-item', {
+  immediateRender: false,
+  y: 20,
+  opacity: 0,
+  duration: 0.8,
+  stagger: 0.1,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.gloss-grid', start: 'top 85%' }
+});
+
+/* Section titles */
+document.querySelectorAll('.section-title').forEach(el => {
+  gsap.from(el, {
+    immediateRender: false,
+    y: 25,
+    opacity: 0,
+    duration: 1,
+    ease: 'power2.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+});
+</script>
+</body>
+</html>

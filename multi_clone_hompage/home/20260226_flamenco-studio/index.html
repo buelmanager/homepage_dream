@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DUENDE — Where Passion Becomes Precision | Seville Flamenco Academy</title>
+  <meta name="description" content="DUENDE is a world-class flamenco dance academy in Seville. Master pure flamenco technique, cante, and toque from absolute beginner to professional level." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #231010;
+      --surface: #2D1414;
+      --accent: #CC2020;
+      --accent2: #F0C040;
+      --text: #F5E8D0;
+      --text-muted: #A07060;
+      --border: rgba(204,32,32,0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 400;
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #0f0606;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .preloader-rose {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      animation: roseSpin 2s linear infinite;
+    }
+
+    .preloader-rose svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes roseSpin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .preloader-text {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.4em;
+      color: var(--accent2);
+      text-transform: uppercase;
+    }
+
+    .preloader-bar {
+      width: 200px;
+      height: 1px;
+      background: rgba(240,192,64,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent2);
+      transform: translateX(-100%);
+      animation: barLoad 2.2s ease forwards;
+    }
+
+    @keyframes barLoad {
+      to { transform: translateX(0); }
+    }
+
+    /* ============================================================
+       SCROLL INDICATOR
+    ============================================================ */
+    #scroll-indicator {
+      position: fixed;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.6s;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--accent2), transparent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent2);
+      animation: scrollDrop 2s ease infinite;
+    }
+
+    @keyframes scrollDrop {
+      0% { top: -100%; }
+      100% { top: 200%; }
+    }
+
+    .scroll-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 1.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, padding 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(15, 6, 6, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      text-decoration: none;
+      position: relative;
+    }
+
+    .nav-logo span { color: var(--accent2); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--text); }
+
+    .nav-enroll {
+      background: var(--accent);
+      color: var(--text) !important;
+      padding: 0.6rem 1.5rem !important;
+      border: 1px solid var(--accent);
+      transition: background 0.3s, color 0.3s !important;
+    }
+
+    .nav-enroll:hover {
+      background: transparent !important;
+      color: var(--accent) !important;
+    }
+
+    /* ============================================================
+       HERO — Diagonal Split
+    ============================================================ */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .hero-left::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, var(--bg) 100%);
+    }
+
+    .hero-divider {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 100%;
+      z-index: 10;
+      background: linear-gradient(to right, transparent, rgba(204,32,32,0.15), transparent);
+      clip-path: polygon(40% 0, 60% 0, 60% 100%, 40% 100%);
+    }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 5rem 5rem 4rem;
+      position: relative;
+      background: linear-gradient(135deg, rgba(45,20,20,0.4) 0%, var(--bg) 60%);
+    }
+
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--accent2);
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(4rem, 8vw, 8rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title .letter {
+      display: inline-block;
+      position: relative;
+    }
+
+    .hero-title .accent-letter {
+      color: var(--accent);
+      -webkit-text-stroke: 1px var(--accent);
+    }
+
+    .hero-accent-line {
+      width: 80px;
+      height: 3px;
+      background: var(--accent);
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .hero-accent-line::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -20px;
+      width: 12px;
+      height: 3px;
+      background: var(--accent2);
+    }
+
+    .hero-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero-tagline {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text);
+      font-style: italic;
+      margin-bottom: 3rem;
+      line-height: 1.6;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--text);
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 1rem 2.5rem;
+      border: 1px solid var(--accent);
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent2);
+      transform: translateX(-100%);
+      transition: transform 0.4s;
+      z-index: 0;
+    }
+
+    .btn-primary:hover::before { transform: translateX(0); }
+    .btn-primary:hover { color: #231010; border-color: var(--accent2); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-muted);
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .btn-secondary::after {
+      content: '→';
+      transition: transform 0.3s;
+    }
+
+    .btn-secondary:hover { color: var(--accent2); }
+    .btn-secondary:hover::after { transform: translateX(4px); }
+
+    /* ============================================================
+       SECTION BASE
+    ============================================================ */
+    section {
+      padding: 8rem 4rem;
+      position: relative;
+    }
+
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.45em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 30px;
+      height: 1px;
+      background: var(--accent2);
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 50ch;
+    }
+
+    /* ============================================================
+       FEATURED PERFORMANCES
+    ============================================================ */
+    .performances-section {
+      background: var(--bg);
+    }
+
+    .performances-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+    }
+
+    .performances-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .event-card {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      cursor: pointer;
+    }
+
+    .event-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+      display: block;
+    }
+
+    .event-card:hover img { transform: scale(1.06); }
+
+    .event-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15,6,6,0.95) 0%, rgba(15,6,6,0.3) 50%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem;
+    }
+
+    .event-date {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .event-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .event-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .event-tag {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid var(--accent);
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    /* ============================================================
+       THE ART — History/Philosophy
+    ============================================================ */
+    .art-section {
+      background: var(--surface);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .art-image-wrap {
+      position: relative;
+    }
+
+    .art-image-wrap img {
+      width: 100%;
+      height: 600px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .art-image-accent {
+      position: absolute;
+      bottom: -2rem;
+      right: -2rem;
+      width: 60%;
+      height: 60%;
+      border: 2px solid var(--accent);
+      z-index: -1;
+    }
+
+    .art-quote {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--accent2);
+      line-height: 1.5;
+      margin: 2rem 0;
+      padding-left: 1.5rem;
+      border-left: 3px solid var(--accent);
+    }
+
+    .art-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 2;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ============================================================
+       CLASS TIERS
+    ============================================================ */
+    .classes-section {
+      background: var(--bg);
+      text-align: center;
+    }
+
+    .classes-header {
+      margin-bottom: 4rem;
+    }
+
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .class-card {
+      background: var(--bg);
+      padding: 3rem 2rem;
+      position: relative;
+      text-align: left;
+      transition: background 0.4s;
+    }
+
+    .class-card:hover { background: var(--surface); }
+
+    .class-level {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.4em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .class-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+
+    .class-price {
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    .class-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .class-features {
+      list-style: none;
+      margin-bottom: 2.5rem;
+    }
+
+    .class-features li {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .class-features li::before {
+      content: '◆';
+      color: var(--accent);
+      font-size: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .class-card-link {
+      display: inline-block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-decoration: none;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    .class-card-link:hover { color: var(--accent2); border-color: var(--accent2); }
+
+    /* ============================================================
+       MAESTROS
+    ============================================================ */
+    .maestros-section {
+      background: var(--surface);
+      text-align: center;
+    }
+
+    .maestros-header {
+      margin-bottom: 5rem;
+    }
+
+    .maestros-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+
+    .maestro-card {
+      position: relative;
+    }
+
+    .maestro-portrait {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .maestro-portrait img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(30%);
+      transition: filter 0.5s, transform 0.5s;
+    }
+
+    .maestro-card:hover .maestro-portrait img {
+      filter: grayscale(0%);
+      transform: scale(1.03);
+    }
+
+    .maestro-portrait::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15,6,6,0.7) 0%, transparent 50%);
+    }
+
+    .maestro-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .maestro-title {
+      font-size: 0.75rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .maestro-bio {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ============================================================
+       BOOKING CTA
+    ============================================================ */
+    .cta-section {
+      background: var(--accent);
+      text-align: center;
+      padding: 7rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: 'DUENDE';
+      position: absolute;
+      font-family: 'Cinzel', serif;
+      font-size: 20vw;
+      font-weight: 900;
+      color: rgba(255,255,255,0.04);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .cta-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      color: rgba(240,192,64,0.9);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .cta-text {
+      font-size: 1rem;
+      color: rgba(245,232,208,0.85);
+      max-width: 50ch;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-dark {
+      display: inline-block;
+      background: #231010;
+      color: var(--text);
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 1rem 2.5rem;
+      border: 1px solid #231010;
+      transition: all 0.4s;
+    }
+
+    .btn-dark:hover {
+      background: transparent;
+      border-color: rgba(255,255,255,0.5);
+      color: #fff;
+    }
+
+    .btn-outline-white {
+      display: inline-block;
+      background: transparent;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 1rem 2.5rem;
+      border: 1px solid rgba(255,255,255,0.5);
+      transition: all 0.4s;
+    }
+
+    .btn-outline-white:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg);
+      padding: 5rem 4rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+    }
+
+    .footer-brand-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+    }
+
+    .footer-brand-logo span { color: var(--accent2); }
+
+    .footer-tagline {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      max-width: 30ch;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-link {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .social-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .footer-col h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-col ul li a {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-col ul li a:hover { color: var(--text); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer-address {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-rose">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Rose/fan petals -->
+        <g opacity="0.9">
+          <ellipse cx="50" cy="30" rx="8" ry="22" fill="#CC2020" transform="rotate(0 50 50)" opacity="0.9"/>
+          <ellipse cx="50" cy="30" rx="8" ry="22" fill="#CC2020" transform="rotate(45 50 50)" opacity="0.8"/>
+          <ellipse cx="50" cy="30" rx="8" ry="22" fill="#CC2020" transform="rotate(90 50 50)" opacity="0.7"/>
+          <ellipse cx="50" cy="30" rx="8" ry="22" fill="#CC2020" transform="rotate(135 50 50)" opacity="0.8"/>
+          <ellipse cx="50" cy="30" rx="8" ry="22" fill="#CC2020" transform="rotate(180 50 50)" opacity="0.9"/>
+          <ellipse cx="50" cy="30" rx="8" ry="22" fill="#CC2020" transform="rotate(225 50 50)" opacity="0.8"/>
+          <ellipse cx="50" cy="30" rx="8" ry="22" fill="#CC2020" transform="rotate(270 50 50)" opacity="0.7"/>
+          <ellipse cx="50" cy="30" rx="8" ry="22" fill="#CC2020" transform="rotate(315 50 50)" opacity="0.8"/>
+          <circle cx="50" cy="50" r="8" fill="#F0C040"/>
+        </g>
+      </svg>
+    </div>
+    <div class="preloader-text">DUENDE</div>
+    <div class="preloader-bar"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">DUEN<span>DE</span></a>
+    <ul class="nav-links">
+      <li><a href="classes.html">Classes</a></li>
+      <li><a href="performances.html">Performances</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-enroll">Enroll</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO — Diagonal Split -->
+  <section class="hero">
+    <div class="hero-left">
+      <img
+        src="https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=900&q=85&auto=format&fit=crop"
+        alt="Dramatic flamenco dancer in mid-performance, Seville"
+        loading="eager"
+      />
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-right">
+      <div class="hero-eyebrow">Seville, Spain — Est. 1987</div>
+      <h1 class="hero-title">
+        <span class="letter">D</span><span class="letter">U</span><span class="letter accent-letter">E</span><span class="letter">N</span><span class="letter">D</span><span class="letter">E</span>
+      </h1>
+      <div class="hero-accent-line"></div>
+      <p class="hero-subtitle">Seville Academy of Flamenco</p>
+      <p class="hero-tagline">"Where Passion Becomes Precision."</p>
+      <div class="hero-cta">
+        <a href="classes.html" class="btn-primary"><span>Explore Classes</span></a>
+        <a href="performances.html" class="btn-secondary">Upcoming Shows</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1 — Featured Performances -->
+  <section class="performances-section">
+    <div class="performances-header">
+      <div>
+        <div class="section-label">Live Events</div>
+        <h2 class="section-title">Featured<br/>Performances</h2>
+      </div>
+      <a href="performances.html" class="btn-secondary">View All Events</a>
+    </div>
+    <div class="performances-grid">
+      <div class="event-card">
+        <img
+          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&auto=format&fit=crop"
+          alt="Tablao night flamenco performance"
+          loading="lazy"
+        />
+        <div class="event-overlay">
+          <div class="event-date">March 15, 2026</div>
+          <div class="event-name">Tablao Night at La Carbonería</div>
+          <div class="event-desc">An intimate evening of pure flamenco in one of Seville's most legendary tablaos.</div>
+          <div class="event-tag">Tablao</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <img
+          src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&q=80&auto=format&fit=crop"
+          alt="Student showcase flamenco event"
+          loading="lazy"
+        />
+        <div class="event-overlay">
+          <div class="event-date">April 2, 2026</div>
+          <div class="event-name">Spring Student Showcase</div>
+          <div class="event-desc">Watch advanced students present their semester projects in a curated theater setting.</div>
+          <div class="event-tag">Showcase</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <img
+          src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80&auto=format&fit=crop"
+          alt="Maestro performance gala"
+          loading="lazy"
+        />
+        <div class="event-overlay">
+          <div class="event-date">April 18, 2026</div>
+          <div class="event-name">Maestros Gala Evening</div>
+          <div class="event-desc">An exclusive performance by DUENDE's master faculty — a rare and extraordinary event.</div>
+          <div class="event-tag">Gala</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2 — The Art -->
+  <section class="art-section">
+    <div class="art-image-wrap">
+      <img
+        src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80&auto=format&fit=crop"
+        alt="Flamenco art and tradition at DUENDE Academy"
+        loading="lazy"
+      />
+      <div class="art-image-accent"></div>
+    </div>
+    <div class="art-content">
+      <div class="section-label">Philosophy</div>
+      <h2 class="section-title">The Art of<br/>Flamenco</h2>
+      <blockquote class="art-quote">"Duende is the spirit that cannot be taught — only summoned."</blockquote>
+      <p class="art-text">
+        Rooted in the soul of Andalusia, flamenco is not merely dance — it is a living language of the body, born from centuries of joy, suffering, and transcendence. At DUENDE, we preserve the purity of this tradition while welcoming students from every corner of the world.
+      </p>
+      <p class="art-text">
+        Our curriculum draws from the Escuela Bolera, the Gypsy traditions of Triana, and the grand theatrical stages of Madrid. Every movement carries history. Every stamp echoes the earth.
+      </p>
+      <a href="about.html" class="btn-secondary">Our Story</a>
+    </div>
+  </section>
+
+  <!-- SECTION 3 — Class Tiers -->
+  <section class="classes-section">
+    <div class="classes-header">
+      <div class="section-label" style="justify-content:center;">Programs</div>
+      <h2 class="section-title">Choose Your Path</h2>
+      <p class="section-subtitle" style="margin: 0 auto;">From your very first stamp to the professional stage, our structured curriculum guides every dancer's journey.</p>
+    </div>
+    <div class="classes-grid">
+      <div class="class-card">
+        <div class="class-level">Level I</div>
+        <h3 class="class-name">Foundations</h3>
+        <div class="class-price">€180 / month</div>
+        <p class="class-desc">An immersive introduction to flamenco posture, footwork, and the essential palmas. No experience required.</p>
+        <ul class="class-features">
+          <li>4 classes per week</li>
+          <li>Technique & musicality</li>
+          <li>Introduction to cante</li>
+          <li>Open studio access</li>
+        </ul>
+        <a href="classes.html" class="class-card-link">Enroll Now</a>
+      </div>
+      <div class="class-card">
+        <div class="class-level">Level II–III</div>
+        <h3 class="class-name">Intermediate<br/>Atelier</h3>
+        <div class="class-price">€260 / month</div>
+        <p class="class-desc">Deepen your technique with advanced footwork sequences, arm styling, and full choreographic studies.</p>
+        <ul class="class-features">
+          <li>6 classes per week</li>
+          <li>Full choreography focus</li>
+          <li>Live guitar accompaniment</li>
+          <li>Tablao preparation</li>
+        </ul>
+        <a href="classes.html" class="class-card-link">Enroll Now</a>
+      </div>
+      <div class="class-card">
+        <div class="class-level">Professional</div>
+        <h3 class="class-name">Maestría<br/>Intensive</h3>
+        <div class="class-price">€480 / month</div>
+        <p class="class-desc">An elite, invitation-only program for dancers ready to perform at professional venues and international festivals.</p>
+        <ul class="class-features">
+          <li>Daily intensive sessions</li>
+          <li>1-on-1 maestro coaching</li>
+          <li>Performance opportunities</li>
+          <li>Artist residency pathway</li>
+        </ul>
+        <a href="classes.html" class="class-card-link">Apply Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4 — Maestros -->
+  <section class="maestros-section">
+    <div class="maestros-header">
+      <div class="section-label" style="justify-content:center;">Faculty</div>
+      <h2 class="section-title">Our Maestros</h2>
+      <p class="section-subtitle" style="margin: 0 auto;">Each master teacher brings decades of performance and pedagogy from the highest stages of flamenco.</p>
+    </div>
+    <div class="maestros-grid">
+      <div class="maestro-card">
+        <div class="maestro-portrait">
+          <img
+            src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=500&q=80&auto=format&fit=crop"
+            alt="Maestro Rafael Morales, artistic director"
+            loading="lazy"
+          />
+        </div>
+        <h3 class="maestro-name">Rafael Morales</h3>
+        <div class="maestro-title">Artistic Director & Baile</div>
+        <p class="maestro-bio">A former principal dancer of the Ballet Flamenco de Andalucía, Rafael has performed in 43 countries and brings four decades of deep tradition to DUENDE's curriculum.</p>
+      </div>
+      <div class="maestro-card">
+        <div class="maestro-portrait">
+          <img
+            src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500&q=80&auto=format&fit=crop"
+            alt="Maestra Lucía Fuentes, cante teacher"
+            loading="lazy"
+          />
+        </div>
+        <h3 class="maestro-name">Lucía Fuentes</h3>
+        <div class="maestro-title">Cante & Musicality</div>
+        <p class="maestro-bio">Born into a gitano family in Triana, Lucía is one of the most respected cantaoras of her generation. She teaches the living soul of flamenco song — from siguiriyas to bulerías.</p>
+      </div>
+      <div class="maestro-card">
+        <div class="maestro-portrait">
+          <img
+            src="https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=500&q=80&auto=format&fit=crop"
+            alt="Maestro Antonio Herrera, guitar teacher"
+            loading="lazy"
+          />
+        </div>
+        <h3 class="maestro-name">Antonio Herrera</h3>
+        <div class="maestro-title">Toque & Guitar</div>
+        <p class="maestro-bio">A concert guitarist trained under Paco de Lucía's school, Antonio demystifies the complex rhythmic world of flamenco guitar for dancers and musicians alike.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5 — CTA -->
+  <section class="cta-section">
+    <div class="cta-label">Begin Your Journey</div>
+    <h2 class="cta-title">The Stage Awaits<br/>Your First Step</h2>
+    <p class="cta-text">Enroll in DUENDE's next intake and discover why dancers from 60 nations choose Seville's finest academy as their home.</p>
+    <div class="cta-btns">
+      <a href="contact.html" class="btn-dark">Start Enrollment</a>
+      <a href="classes.html" class="btn-outline-white">View All Programs</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-brand-logo">DUEN<span>DE</span></div>
+        <p class="footer-tagline">Where Passion Becomes Precision. Seville's world-class academy of flamenco since 1987.</p>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Instagram">IG</a>
+          <a href="#" class="social-link" aria-label="YouTube">YT</a>
+          <a href="#" class="social-link" aria-label="Facebook">FB</a>
+          <a href="#" class="social-link" aria-label="TikTok">TK</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Academy</h4>
+        <ul>
+          <li><a href="about.html">About DUENDE</a></li>
+          <li><a href="about.html">Our Faculty</a></li>
+          <li><a href="about.html">Philosophy</a></li>
+          <li><a href="about.html">History</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="classes.html">Foundations</a></li>
+          <li><a href="classes.html">Intermediate</a></li>
+          <li><a href="classes.html">Maestría</a></li>
+          <li><a href="classes.html">Intensive Weeks</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <ul>
+          <li><a href="performances.html">Performances</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="contact.html">Book a Class</a></li>
+          <li><a href="contact.html">Directions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 DUENDE Flamenco Academy. All rights reserved.</div>
+      <div class="footer-address">Calle Betis 14, Triana, 41010 Sevilla, España</div>
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── PRELOADER ──────────────────────────────────────────
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        gsap.to('#preloader', {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            document.getElementById('preloader').style.display = 'none';
+            // Scroll indicator — visible after preloader
+            document.getElementById('scroll-indicator').classList.add('visible');
+            // Animate hero letters
+            animateHero();
+          }
+        });
+      }, 2400);
+
+      // Backup: also show scroll indicator after 4000ms
+      setTimeout(() => {
+        document.getElementById('scroll-indicator').classList.add('visible');
+      }, 4000);
+    });
+
+    // ── HERO ANIMATION ─────────────────────────────────────
+    function animateHero() {
+      const tl = gsap.timeline();
+
+      tl.from('.hero-left img', {
+        immediateRender: false,
+        scale: 1.1,
+        duration: 1.4,
+        ease: 'power3.out'
+      });
+
+      tl.from('.hero-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, '-=0.6');
+
+      tl.from('.hero-title .letter', {
+        immediateRender: false,
+        opacity: 0,
+        y: 60,
+        stagger: 0.08,
+        duration: 0.9,
+        ease: 'power3.out'
+      }, '-=0.5');
+
+      tl.from(['.hero-accent-line', '.hero-subtitle', '.hero-tagline', '.hero-cta'], {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        stagger: 0.12,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, '-=0.4');
+    }
+
+    // ── NAVBAR SCROLL ──────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── SCROLL ANIMATIONS ──────────────────────────────────
+    // Performances header
+    gsap.from('.performances-header > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.performances-section', start: 'top 80%' },
+      opacity: 0,
+      y: 28,
+      stagger: 0.12,
+      duration: 1,
+      ease: 'power2.out'
+    });
+
+    // Event cards
+    gsap.from('.event-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.performances-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 40,
+      stagger: 0.15,
+      duration: 1,
+      ease: 'power2.out'
+    });
+
+    // Art section
+    gsap.from('.art-image-wrap', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.art-section', start: 'top 75%' },
+      opacity: 0,
+      x: -40,
+      duration: 1.2,
+      ease: 'power3.out'
+    });
+
+    gsap.from('.art-content > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.art-section', start: 'top 75%' },
+      opacity: 0,
+      y: 24,
+      stagger: 0.12,
+      duration: 1,
+      ease: 'power2.out'
+    });
+
+    // Class cards
+    gsap.from('.class-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.classes-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 40,
+      stagger: 0.15,
+      duration: 1,
+      ease: 'power2.out'
+    });
+
+    // Classes header
+    gsap.from('.classes-header > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.classes-section', start: 'top 80%' },
+      opacity: 0,
+      y: 28,
+      stagger: 0.1,
+      duration: 1,
+      ease: 'power2.out'
+    });
+
+    // Maestros
+    gsap.from('.maestros-header > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.maestros-section', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      stagger: 0.1,
+      duration: 1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.maestro-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.maestros-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 40,
+      stagger: 0.18,
+      duration: 1.1,
+      ease: 'power2.out'
+    });
+
+    // CTA
+    gsap.from('.cta-section > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.cta-section', start: 'top 80%' },
+      opacity: 0,
+      y: 28,
+      stagger: 0.1,
+      duration: 1,
+      ease: 'power2.out'
+    });
+  </script>
+
+</body>
+</html>

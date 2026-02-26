@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KURABITO — The Art of Japanese Sake</title>
+  <meta name="description" content="Fifth-generation toji master brewers. Sake certification courses, private tastings, and seasonal brewery immersions in Kyoto since 1872." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #1A1510;
+      --surface: #231C14;
+      --accent: #C87840;
+      --accent2: #E8D8B0;
+      --text: #F0E8D8;
+      --text-muted: #907050;
+      --border: rgba(200,120,64,0.18);
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .preloader-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--accent2);
+      text-transform: uppercase;
+    }
+
+    .sake-cup-wrapper {
+      width: 64px;
+      height: 80px;
+      position: relative;
+    }
+
+    .sake-cup-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .sake-fill {
+      clip-path: inset(100% 0 0 0);
+      animation: fillCup 2.4s var(--ease) 0.4s forwards;
+    }
+
+    @keyframes fillCup {
+      0%   { clip-path: inset(100% 0 0 0); }
+      100% { clip-path: inset(0% 0 0 0); }
+    }
+
+    .preloader-line {
+      width: 80px;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .preloader-line::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: lineSlide 2.4s var(--ease) 0.4s forwards;
+    }
+    @keyframes lineSlide {
+      to { left: 0; }
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    #scroll-indicator {
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.6s;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+
+    .si-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+
+    .si-line {
+      width: 1px;
+      height: 60px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .si-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: siPulse 2s ease-in-out infinite;
+    }
+    @keyframes siPulse {
+      0%   { top: -100%; }
+      100% { top: 100%; }
+    }
+
+    .si-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 900;
+      padding: 0 48px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: transparent;
+      transition: background 0.5s, backdrop-filter 0.5s;
+    }
+    nav.scrolled {
+      background: rgba(26,21,16,0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      color: var(--text);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent2); }
+
+    .nav-book {
+      padding: 10px 24px;
+      border: 1px solid var(--accent);
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-book:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1577803645773-f96470509666?w=1600&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.42) saturate(0.7);
+      transform: scale(1.08);
+      transition: transform 12s ease;
+    }
+    .hero-bg.loaded { transform: scale(1.0); }
+
+    .hero-mist {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(26,21,16,0.85) 0%,
+        rgba(26,21,16,0.35) 55%,
+        rgba(26,21,16,0.6) 100%
+      );
+    }
+
+    .hero-bottom-fade {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 220px;
+      background: linear-gradient(to bottom, transparent, var(--bg));
+    }
+
+    /* Rice grain decorative pattern */
+    .rice-pattern {
+      position: absolute;
+      right: 80px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      opacity: 0.18;
+    }
+
+    .rice-grain {
+      width: 6px;
+      height: 14px;
+      background: var(--accent2);
+      border-radius: 50%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding-left: 100px;
+      max-width: 680px;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .hero-eyebrow-line {
+      width: 48px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-eyebrow-text {
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .hero-jp {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+      writing-mode: horizontal-tb;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 8vw, 9rem);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .hero-title span {
+      display: block;
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    .hero-subtitle {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--accent2);
+      margin-bottom: 48px;
+      opacity: 0.85;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      padding: 16px 40px;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      padding: 16px 40px;
+      border: 1px solid rgba(240,232,216,0.3);
+      color: var(--text);
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      padding: 120px 100px;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .section-label-line {
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-label-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 4vw, 4.2rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+
+    /* ── SAKE GRADES SECTION ── */
+    #sake-grades {
+      background: var(--surface);
+    }
+
+    .grades-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .grades-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+
+    .grade-card {
+      position: relative;
+      padding: 64px 40px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      overflow: hidden;
+      transition: background 0.4s;
+    }
+    .grade-card:hover { background: rgba(35,28,20,0.9); }
+
+    .grade-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.5s var(--ease);
+    }
+    .grade-card:hover::before { height: 100%; }
+
+    .grade-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 24px;
+      transition: color 0.4s;
+    }
+    .grade-card:hover .grade-num { color: rgba(200,120,64,0.2); }
+
+    .grade-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .grade-jp {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .grade-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .grade-detail {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .grade-card:hover .grade-detail {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── KURA HISTORY ── */
+    #kura-history {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      padding: 0;
+      min-height: 680px;
+    }
+
+    .kura-image-side {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kura-image-side img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.6) saturate(0.6);
+      transition: transform 8s ease;
+    }
+    .kura-image-side:hover img { transform: scale(1.04); }
+
+    .kura-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent 60%, var(--bg));
+    }
+
+    .kura-text-side {
+      background: var(--bg);
+      padding: 100px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .kura-year {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 6rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 32px;
+    }
+
+    .kura-body {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.9;
+      margin-bottom: 32px;
+    }
+
+    .kura-stats {
+      display: flex;
+      gap: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .kura-stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--accent);
+    }
+
+    .kura-stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── TASTING EXPERIENCES ── */
+    #tasting {
+      background: var(--surface);
+    }
+
+    .tasting-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .tasting-card {
+      position: relative;
+      background: var(--bg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: border-color 0.4s, transform 0.4s;
+    }
+    .tasting-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-6px);
+    }
+
+    .tasting-card-img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      filter: brightness(0.55) saturate(0.6);
+      transition: transform 0.8s var(--ease), filter 0.5s;
+    }
+    .tasting-card:hover .tasting-card-img {
+      transform: scale(1.06);
+      filter: brightness(0.65) saturate(0.8);
+    }
+
+    .tasting-card-body {
+      padding: 36px;
+    }
+
+    .tasting-tag {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .tasting-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .tasting-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .tasting-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .tasting-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: var(--accent2);
+    }
+
+    .tasting-duration {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── COURSES SECTION ── */
+    #courses-preview {
+      background: var(--bg);
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+      border: 1px solid var(--border);
+    }
+
+    .course-card {
+      padding: 56px 40px;
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      position: relative;
+      transition: background 0.4s;
+    }
+    .course-card:last-child { border-right: none; }
+    .course-card:hover { background: var(--surface); }
+
+    .course-badge {
+      display: inline-block;
+      padding: 5px 14px;
+      border: 1px solid var(--accent);
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .course-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .course-jp {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .course-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .course-features {
+      list-style: none;
+      margin-bottom: 36px;
+    }
+
+    .course-features li {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .course-features li::before {
+      content: '—';
+      color: var(--accent);
+      font-size: 0.7rem;
+    }
+
+    .course-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      color: var(--accent2);
+      margin-bottom: 4px;
+    }
+
+    .course-price-note {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    .course-link {
+      display: inline-block;
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .course-link:hover {
+      color: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    /* ── CTA SECTION ── */
+    #cta {
+      position: relative;
+      text-align: center;
+      padding: 160px 100px;
+      overflow: hidden;
+    }
+
+    .cta-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1400&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.22) saturate(0.4);
+    }
+
+    .cta-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26,21,16,0.6);
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5vw, 5.5rem);
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 24px;
+      line-height: 1.05;
+    }
+
+    .cta-body {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      padding: 80px 100px 40px;
+      position: relative;
+    }
+
+    .footer-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--accent) 0px,
+        var(--accent) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 64px;
+      padding-bottom: 64px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+
+    .footer-brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      color: var(--text);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .footer-brand-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .footer-brand-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .footer-col-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .footer-col-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col-links a {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-col-links a:hover { color: var(--accent2); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .footer-address {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    /* ── UTILITIES ── */
+    .reveal { opacity: 0; }
+
+    @media (max-width: 1024px) {
+      section { padding: 80px 48px; }
+      .grades-grid { grid-template-columns: repeat(2, 1fr); }
+      #kura-history { grid-template-columns: 1fr; }
+      .kura-image-side { height: 380px; }
+      .tasting-grid { grid-template-columns: 1fr; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero-content { padding-left: 32px; padding-right: 32px; }
+      #scroll-indicator { display: none; }
+      section { padding: 60px 24px; }
+      footer { padding: 60px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-brand">Kurabito</div>
+    <div class="sake-cup-wrapper">
+      <svg class="sake-cup-svg" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cup outline -->
+        <path d="M8 10 L12 70 Q12 74 20 74 L44 74 Q52 74 52 70 L56 10 Z" stroke="#C87840" stroke-width="1.5" fill="none"/>
+        <!-- Handle left -->
+        <path d="M12 20 Q4 20 4 30 Q4 40 12 40" stroke="#C87840" stroke-width="1" fill="none"/>
+        <path d="M52 20 Q60 20 60 30 Q60 40 52 40" stroke="#C87840" stroke-width="1" fill="none"/>
+        <!-- Liquid fill -->
+        <g class="sake-fill">
+          <path d="M13 45 L12.5 70 Q12.5 73 20 73 L44 73 Q51.5 73 51.5 70 L51 45 Z" fill="#C87840" opacity="0.7"/>
+          <!-- Shimmer line -->
+          <line x1="18" y1="47" x2="46" y2="47" stroke="#E8D8B0" stroke-width="0.5" opacity="0.5"/>
+        </g>
+      </svg>
+    </div>
+    <div class="preloader-line"></div>
+    <div class="preloader-brand" style="font-size:0.75rem; letter-spacing:0.5em;">SINCE 1872</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="si-num" id="si-num">01</div>
+    <div class="si-line"></div>
+    <div class="si-label" id="si-label">The Sake</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">Kurabito</a>
+    <ul class="nav-links">
+      <li><a href="sake.html">Sake</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-book">Book Experience</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-mist"></div>
+    <div class="hero-bottom-fade"></div>
+
+    <div class="rice-pattern" aria-hidden="true">
+      <!-- 48 rice grains -->
+      <div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div>
+      <div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div>
+      <div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div>
+      <div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div>
+      <div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div>
+      <div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div>
+      <div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div>
+      <div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div><div class="rice-grain"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-line"></div>
+        <span class="hero-eyebrow-text">Fifth Generation · Kyoto · Est. 1872</span>
+      </div>
+      <div class="hero-jp">蔵人 — 清酒の芸術</div>
+      <h1 class="hero-title">
+        KURA<span>BITO</span>
+      </h1>
+      <p class="hero-subtitle">Fifth Generation · Kyoto · Since 1872</p>
+      <p class="hero-tagline">"The Soul of the Rice, the Spirit of the Toji."</p>
+      <div class="hero-ctas">
+        <a href="courses.html" class="btn-primary">Begin Your Journey</a>
+        <a href="sake.html" class="btn-ghost">Explore the Sake</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAKE GRADES -->
+  <section id="sake-grades" data-section="01" data-label="The Sake">
+    <div class="grades-header">
+      <div class="section-label" style="justify-content: center;">
+        <div class="section-label-line"></div>
+        <span class="section-label-text">The Art of Classification</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2 class="section-title" style="text-align:center;">The Sake of Kurabito</h2>
+      <p class="section-subtitle" style="margin: 0 auto; text-align:center;">Each bottle carries the memory of the season, the character of the water, and the vision of the toji.</p>
+    </div>
+    <div class="grades-grid">
+      <div class="grade-card reveal">
+        <div class="grade-num">01</div>
+        <div class="grade-name">Junmai</div>
+        <div class="grade-jp">純米</div>
+        <div class="grade-desc">Pure rice sake. No added alcohol, no shortcuts. Full-bodied, rich, and deeply savory — the honest expression of the earth.</div>
+        <div class="grade-detail">Rice polished to 70% or less</div>
+      </div>
+      <div class="grade-card reveal">
+        <div class="grade-num">02</div>
+        <div class="grade-name">Ginjo</div>
+        <div class="grade-jp">吟醸</div>
+        <div class="grade-desc">Slow-fermented at low temperatures. Delicate floral aromas, a silken texture that dissolves on the palate like morning mist.</div>
+        <div class="grade-detail">Rice polished to 60% or less</div>
+      </div>
+      <div class="grade-card reveal">
+        <div class="grade-num">03</div>
+        <div class="grade-name">Daiginjo</div>
+        <div class="grade-jp">大吟醸</div>
+        <div class="grade-desc">The pinnacle of the brewer's art. Extraordinary aromatic complexity, transcendent clarity. Reserved for the most discerning of palates.</div>
+        <div class="grade-detail">Rice polished to 50% or less</div>
+      </div>
+      <div class="grade-card reveal">
+        <div class="grade-num">04</div>
+        <div class="grade-name">Nigori</div>
+        <div class="grade-jp">濁り酒</div>
+        <div class="grade-desc">Cloudy and unfiltered. Lush, creamy, with the raw vitality of the fermentation tank. A taste of sake before it is tamed.</div>
+        <div class="grade-detail">Coarsely filtered, unrefined</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KURA HISTORY -->
+  <section id="kura-history" data-section="02" data-label="The Kura">
+    <div class="kura-image-side">
+      <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=900&q=80&auto=format&fit=crop" alt="Traditional sake brewery interior" loading="lazy" />
+      <div class="kura-image-overlay"></div>
+    </div>
+    <div class="kura-text-side">
+      <div class="section-label">
+        <div class="section-label-line"></div>
+        <span class="section-label-text">The Kura</span>
+      </div>
+      <div class="kura-year">1872</div>
+      <h2 class="section-title">Five Generations of Craft</h2>
+      <p class="kura-body">
+        In the Fushimi district of Kyoto, where the water runs pure and ancient, the Nakamura family has brewed sake since the Meiji era. The kura — the brewery — is not a factory. It is a living organism, a temple to patience and precision, where the toji reads the seasons and the rice speaks first.
+      </p>
+      <p class="kura-body">
+        Today, Takeshi Nakamura — fifth-generation toji — continues the tradition, blending ancestral techniques with a contemporary understanding of fermentation science. His sake does not merely taste; it transports.
+      </p>
+      <div class="kura-stats">
+        <div>
+          <div class="kura-stat-val">154</div>
+          <div class="kura-stat-label">Years Brewing</div>
+        </div>
+        <div>
+          <div class="kura-stat-val">5th</div>
+          <div class="kura-stat-label">Generation Toji</div>
+        </div>
+        <div>
+          <div class="kura-stat-val">23</div>
+          <div class="kura-stat-label">Awards Won</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TASTING EXPERIENCES -->
+  <section id="tasting" data-section="03" data-label="Tasting">
+    <div class="section-label">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Experiences</span>
+    </div>
+    <h2 class="section-title">Tasting Experiences</h2>
+    <p class="section-subtitle">Each tasting is curated by our toji and guided by Kurabito-certified sommeliers in the heart of our century-old kura.</p>
+    <div class="tasting-grid">
+      <div class="tasting-card reveal">
+        <img class="tasting-card-img" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&q=75&auto=format&fit=crop" alt="Sake tasting flight" loading="lazy" />
+        <div class="tasting-card-body">
+          <div class="tasting-tag">Introduction</div>
+          <div class="tasting-name">The Sake Flight</div>
+          <p class="tasting-desc">Four curated pours — Junmai through Daiginjo — with tasting notes, food pairings, and an introduction to the language of sake.</p>
+          <div class="tasting-meta">
+            <span class="tasting-price">¥8,500</span>
+            <span class="tasting-duration">90 minutes</span>
+          </div>
+        </div>
+      </div>
+      <div class="tasting-card reveal">
+        <img class="tasting-card-img" src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=75&auto=format&fit=crop" alt="Private kura tour" loading="lazy" />
+        <div class="tasting-card-body">
+          <div class="tasting-tag">Private</div>
+          <div class="tasting-name">Kura Immersion</div>
+          <p class="tasting-desc">A private tour of the brewery followed by a tasting directly from the cedar tanks. Reserved for groups of four or fewer.</p>
+          <div class="tasting-meta">
+            <span class="tasting-price">¥24,000</span>
+            <span class="tasting-duration">3 hours</span>
+          </div>
+        </div>
+      </div>
+      <div class="tasting-card reveal">
+        <img class="tasting-card-img" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=75&auto=format&fit=crop" alt="Seasonal sake ceremony" loading="lazy" />
+        <div class="tasting-card-body">
+          <div class="tasting-tag">Seasonal</div>
+          <div class="tasting-name">Hatsuzake Ceremony</div>
+          <p class="tasting-desc">A once-yearly ceremony celebrating the first sake of the winter brewing season. Traditional ritual, new-press sake, and a kaiseki dinner.</p>
+          <div class="tasting-meta">
+            <span class="tasting-price">¥48,000</span>
+            <span class="tasting-duration">Full day</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COURSES PREVIEW -->
+  <section id="courses-preview" data-section="04" data-label="Courses">
+    <div class="section-label">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Certification</span>
+    </div>
+    <h2 class="section-title">Sake Sommelier Courses</h2>
+    <p class="section-subtitle">From curious newcomer to certified sake sommelier — our curriculum is endorsed by the Japan Sake Sommelier Association.</p>
+    <div class="courses-grid">
+      <div class="course-card reveal">
+        <div class="course-badge">Foundation</div>
+        <div class="course-name">Sake Passport</div>
+        <div class="course-jp">酒パスポート</div>
+        <p class="course-desc">A weekend deep-dive into the world of sake. Perfect for enthusiasts beginning their journey into nihonshu.</p>
+        <ul class="course-features">
+          <li>Sake history &amp; culture</li>
+          <li>12 guided tastings</li>
+          <li>Food pairing fundamentals</li>
+          <li>Certificate of completion</li>
+        </ul>
+        <div class="course-price">¥38,000</div>
+        <div class="course-price-note">2-day weekend course</div>
+        <a href="courses.html" class="course-link">View curriculum</a>
+      </div>
+      <div class="course-card reveal">
+        <div class="course-badge">Sommelier</div>
+        <div class="course-name">Sake Expert</div>
+        <div class="course-jp">日本酒エキスパート</div>
+        <p class="course-desc">A rigorous five-day program for professionals seeking sommelier certification in nihonshu service and assessment.</p>
+        <ul class="course-features">
+          <li>Advanced sensory evaluation</li>
+          <li>Sake service &amp; ceremony</li>
+          <li>40+ structured tastings</li>
+          <li>JSSA-endorsed certificate</li>
+        </ul>
+        <div class="course-price">¥128,000</div>
+        <div class="course-price-note">5-day intensive course</div>
+        <a href="courses.html" class="course-link">View curriculum</a>
+      </div>
+      <div class="course-card reveal">
+        <div class="course-badge">Master</div>
+        <div class="course-name">Toji Fellowship</div>
+        <div class="course-jp">杜氏フェローシップ</div>
+        <p class="course-desc">A ten-day immersion with Toji Nakamura himself. Participants brew sake under his guidance, learning from the source.</p>
+        <ul class="course-features">
+          <li>Live brewing participation</li>
+          <li>Private toji mentorship</li>
+          <li>Blend your own sake</li>
+          <li>Kurabito Master certificate</li>
+        </ul>
+        <div class="course-price">¥380,000</div>
+        <div class="course-price-note">10-day residential program</div>
+        <a href="courses.html" class="course-link">Apply for fellowship</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta" data-section="05" data-label="Journey">
+    <div class="cta-bg"></div>
+    <div class="cta-overlay"></div>
+    <div class="cta-content">
+      <div class="section-label" style="justify-content: center; margin-bottom: 24px;">
+        <div class="section-label-line"></div>
+        <span class="section-label-text">Begin</span>
+        <div class="section-label-line"></div>
+      </div>
+      <h2 class="cta-title">Begin Your Journey into the Kura</h2>
+      <p class="cta-body">The seat at our tasting table is limited. The experience of a lifetime is not. Reserve yours now.</p>
+      <div class="cta-btns">
+        <a href="contact.html" class="btn-primary">Reserve a Tasting</a>
+        <a href="courses.html" class="btn-ghost">Explore Courses</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-pattern"></div>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">Kurabito</div>
+        <div class="footer-brand-tagline">"The Soul of the Rice, the Spirit of the Toji."</div>
+        <p class="footer-brand-desc">Fifth-generation sake school and tasting house in Fushimi, Kyoto. Est. 1872. Every experience is personal, every tasting intentional.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Experience</div>
+        <ul class="footer-col-links">
+          <li><a href="sake.html">Our Sake</a></li>
+          <li><a href="contact.html">Sake Flight</a></li>
+          <li><a href="contact.html">Kura Immersion</a></li>
+          <li><a href="contact.html">Hatsuzake Ceremony</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Learn</div>
+        <ul class="footer-col-links">
+          <li><a href="courses.html">Sake Passport</a></li>
+          <li><a href="courses.html">Sake Expert</a></li>
+          <li><a href="courses.html">Toji Fellowship</a></li>
+          <li><a href="about.html">Our Philosophy</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Visit</div>
+        <ul class="footer-col-links">
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html">The Toji</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="contact.html">Directions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 Kurabito Sake School. Kyoto, Japan. All rights reserved.</p>
+      <div class="footer-address">
+        <p>〒612-0829 Kyoto, Fushimi-ku</p>
+        <p>Nakamura Sake Kura · info@kurabito.co.jp</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── PRELOADER ──
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        gsap.to('#preloader', {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onComplete: function() {
+            document.getElementById('preloader').style.display = 'none';
+            document.getElementById('hero-bg').classList.add('loaded');
+            showScrollIndicator();
+          }
+        });
+      }, 2800);
+    });
+
+    function showScrollIndicator() {
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }
+
+    setTimeout(function() {
+      var pre = document.getElementById('preloader');
+      if (pre && pre.style.display !== 'none') {
+        pre.style.display = 'none';
+        showScrollIndicator();
+      }
+    }, 4000);
+
+    // ── NAVBAR ──
+    var nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 80) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // ── SCROLL INDICATOR ──
+    var sections = document.querySelectorAll('section[data-section]');
+    var siNum = document.getElementById('si-num');
+    var siLabel = document.getElementById('si-label');
+
+    sections.forEach(function(sec) {
+      ScrollTrigger.create({
+        trigger: sec,
+        start: 'top center',
+        end: 'bottom center',
+        onEnter: function() {
+          siNum.textContent = sec.dataset.section;
+          siLabel.textContent = sec.dataset.label;
+        },
+        onEnterBack: function() {
+          siNum.textContent = sec.dataset.section;
+          siLabel.textContent = sec.dataset.label;
+        }
+      });
+    });
+
+    // ── HERO ANIMATIONS ──
+    var heroTl = gsap.timeline({ delay: 3.0 });
+    heroTl.from('.hero-eyebrow', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out'
+    });
+    heroTl.from('.hero-jp', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out'
+    }, '-=0.6');
+    heroTl.from('.hero-title', {
+      immediateRender: false,
+      opacity: 0,
+      y: 28,
+      duration: 1.1,
+      ease: 'power2.out'
+    }, '-=0.6');
+    heroTl.from('.hero-subtitle', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out'
+    }, '-=0.7');
+    heroTl.from('.hero-tagline', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out'
+    }, '-=0.7');
+    heroTl.from('.hero-ctas', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out'
+    }, '-=0.6');
+    heroTl.from('.rice-pattern', {
+      immediateRender: false,
+      opacity: 0,
+      x: 30,
+      duration: 1.4,
+      ease: 'power2.out'
+    }, '-=1.0');
+
+    // ── GRADE CARDS ──
+    gsap.from('.grade-card', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.grades-grid',
+        start: 'top 80%'
+      },
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+
+    // ── KURA STATS ──
+    gsap.from('.kura-stat-val', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.kura-stats',
+        start: 'top 85%'
+      },
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+
+    gsap.from('.kura-text-side .section-label, .kura-year, .kura-text-side .section-title, .kura-body', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.kura-text-side',
+        start: 'top 80%'
+      },
+      opacity: 0,
+      y: 24,
+      duration: 1.0,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+
+    // ── TASTING CARDS ──
+    gsap.from('.tasting-card', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.tasting-grid',
+        start: 'top 80%'
+      },
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      stagger: 0.12
+    });
+
+    // ── COURSE CARDS ──
+    gsap.from('.course-card', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.courses-grid',
+        start: 'top 80%'
+      },
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      stagger: 0.12
+    });
+
+    // ── CTA ──
+    gsap.from('.cta-title', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#cta',
+        start: 'top 80%'
+      },
+      opacity: 0,
+      y: 24,
+      duration: 1.0,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.cta-body, .cta-btns', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#cta',
+        start: 'top 75%'
+      },
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.15
+    });
+
+    // ── FOOTER ──
+    gsap.from('.footer-brand-name, .footer-brand-tagline, .footer-brand-desc', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: 'footer',
+        start: 'top 85%'
+      },
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.1
+    });
+  </script>
+</body>
+</html>

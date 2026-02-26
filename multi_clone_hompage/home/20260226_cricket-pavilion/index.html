@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE CREASE — The Game. The Ground. The Brotherhood.</title>
+  <meta name="description" content="An ultra-exclusive private members' cricket pavilion in the English countryside. Founded 1891. Less than 200 members worldwide." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141E12;
+      --surface: #1C2A18;
+      --accent: #D4C080;
+      --accent2: #8CB060;
+      --text: #F0EEE0;
+      --text-muted: #708050;
+      --border: rgba(212,192,128,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .preloader-ball {
+      width: 64px;
+      height: 64px;
+      animation: spinBall 1.2s linear infinite;
+    }
+
+    @keyframes spinBall {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .preloader-text {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator {
+      position: fixed;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    .scroll-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* NAVBAR */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, padding 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(20,30,18,0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-apply {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.6rem 1.4rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .nav-apply:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* HERO */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=1800&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 40%;
+      filter: brightness(0.45);
+      transform: scale(1.05);
+      transition: transform 8s ease-out;
+    }
+
+    .hero-bg.loaded { transform: scale(1); }
+
+    .hero-mist {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background: linear-gradient(to top, var(--bg) 0%, rgba(20,30,18,0.6) 50%, transparent 100%);
+    }
+
+    .hero-top-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: linear-gradient(to bottom, rgba(20,30,18,0.5) 0%, transparent 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 2rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--accent);
+      letter-spacing: 0.3em;
+      border: 1px solid rgba(212,192,128,0.4);
+      padding: 0.4rem 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+    }
+
+    .hero-title {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title .word {
+      display: inline-block;
+      opacity: 0;
+      margin-right: 0.3em;
+    }
+
+    .hero-tagline {
+      font-size: 0.9rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      opacity: 0;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      gap: 1.5rem;
+      opacity: 0;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      padding: 1rem 2.5rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: var(--text);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 1rem 2.5rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+    }
+
+    .scroll-chevron {
+      width: 20px;
+      height: 20px;
+      border-right: 1px solid var(--accent);
+      border-bottom: 1px solid var(--accent);
+      transform: rotate(45deg);
+      animation: chevronBounce 1.5s ease-in-out infinite;
+    }
+
+    @keyframes chevronBounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(6px); }
+    }
+
+    /* SECTION BASE */
+    section {
+      padding: 8rem 4rem;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-desc {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      line-height: 1.8;
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      margin: 1.5rem 0;
+    }
+
+    /* GROUNDS SECTION */
+    #grounds {
+      background: var(--surface);
+    }
+
+    .grounds-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 4rem;
+    }
+
+    .ground-card {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+
+    .ground-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+      filter: brightness(0.55);
+    }
+
+    .ground-card:hover img {
+      transform: scale(1.06);
+      filter: brightness(0.65);
+    }
+
+    .ground-card-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2.5rem;
+      background: linear-gradient(to top, rgba(20,30,18,0.95) 0%, transparent 100%);
+    }
+
+    .ground-card-number {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.3em;
+      margin-bottom: 0.5rem;
+    }
+
+    .ground-card-name {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.8rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .ground-card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .grounds-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    /* FIXTURES SECTION */
+    #fixtures {
+      background: var(--bg);
+    }
+
+    .fixtures-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 4rem;
+    }
+
+    .fixture-card {
+      border: 1px solid var(--border);
+      padding: 2rem;
+      background: var(--surface);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .fixture-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .fixture-date {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+    }
+
+    .fixture-match {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .fixture-ground {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+    }
+
+    .fixture-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
+
+    /* PAVILION SECTION */
+    #pavilion {
+      background: var(--surface);
+    }
+
+    .pavilion-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      margin-top: 4rem;
+    }
+
+    .pavilion-image {
+      position: relative;
+    }
+
+    .pavilion-image img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      filter: brightness(0.8);
+    }
+
+    .pavilion-image-badge {
+      position: absolute;
+      bottom: -1.5rem;
+      right: -1.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 1.5rem;
+      font-family: 'EB Garamond', serif;
+      font-size: 0.85rem;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .pavilion-text .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+      padding-top: 3rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-item {}
+
+    .stat-number {
+      font-family: 'EB Garamond', serif;
+      font-size: 2.5rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* MEMBERSHIP SECTION */
+    #membership {
+      background: var(--bg);
+    }
+
+    .membership-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 4rem;
+    }
+
+    .membership-card {
+      background: var(--surface);
+      padding: 3rem 2.5rem;
+      border-top: 2px solid transparent;
+      transition: border-color 0.3s;
+    }
+
+    .membership-card.featured {
+      border-top-color: var(--accent);
+    }
+
+    .membership-card:hover {
+      border-top-color: var(--accent);
+    }
+
+    .membership-tier {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+
+    .membership-name {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .membership-price {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-bottom: 2rem;
+    }
+
+    .membership-features {
+      list-style: none;
+      margin-bottom: 2.5rem;
+    }
+
+    .membership-features li {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .membership-features li::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background: var(--accent2);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .membership-link {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 2px;
+      transition: color 0.3s;
+    }
+
+    .membership-link:hover { color: var(--text); border-color: var(--text); }
+
+    /* ACADEMY SECTION */
+    #academy {
+      background: var(--surface);
+    }
+
+    .academy-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      margin-top: 4rem;
+    }
+
+    .academy-image img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      filter: brightness(0.7);
+    }
+
+    .academy-programs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .program-item {
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+
+    .program-item:hover { border-color: var(--accent2); }
+
+    .program-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .program-name {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .program-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* CTA SECTION */
+    #cta {
+      background: var(--bg);
+      text-align: center;
+      padding: 10rem 4rem;
+    }
+
+    .cta-title {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .cta-desc {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 550px;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--surface);
+      padding: 4rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer-brand {}
+
+    .footer-logo {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.5rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .footer-tagline {
+      font-style: italic;
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-coa {
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .coa-placeholder {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      opacity: 0.5;
+    }
+
+    .footer-col-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .footer-links a {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .footer-founding {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1.5rem 2rem; }
+      nav.scrolled { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+
+      section { padding: 5rem 2rem; }
+
+      .grounds-grid { grid-template-columns: 1fr; }
+      .fixtures-grid { grid-template-columns: 1fr; }
+      .membership-grid { grid-template-columns: 1fr; }
+      .pavilion-layout { grid-template-columns: 1fr; }
+      .academy-layout { grid-template-columns: 1fr; }
+      .academy-programs { grid-template-columns: 1fr 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+
+      #scroll-indicator { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hero-cta { flex-direction: column; align-items: center; }
+      .academy-programs { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .pavilion-text .stat-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="preloader-ball" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="30" stroke="#D4C080" stroke-width="1.5"/>
+      <path d="M32 2 Q44 8 44 32 Q44 56 32 62" stroke="#D4C080" stroke-width="1" fill="none"/>
+      <path d="M32 2 Q20 8 20 32 Q20 56 32 62" stroke="#D4C080" stroke-width="1" fill="none"/>
+      <path d="M2 32 Q14 24 32 24 Q50 24 62 32" stroke="#8CB060" stroke-width="1" fill="none"/>
+      <path d="M2 32 Q14 40 32 40 Q50 40 62 32" stroke="#8CB060" stroke-width="1" fill="none"/>
+      <circle cx="32" cy="32" r="2" fill="#D4C080"/>
+    </svg>
+    <div class="preloader-text">The Crease — Est. MDCCCXCI</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">The Crease</a>
+    <ul class="nav-links">
+      <li><a href="grounds.html">Grounds</a></li>
+      <li><a href="membership.html">Membership</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="membership.html" class="nav-apply">Apply</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-top-gradient"></div>
+    <div class="hero-mist"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge" id="heroBadge">Est. MDCCCXCI &nbsp;·&nbsp; Since 1891</div>
+      <h1 class="hero-title">
+        <span class="word" id="word1">The</span>
+        <span class="word" id="word2">Crease</span>
+      </h1>
+      <p class="hero-tagline" id="heroTagline">The Game. The Ground. The Brotherhood.</p>
+      <div class="hero-cta" id="heroCta">
+        <a href="membership.html" class="btn-primary">Seek Membership</a>
+        <a href="grounds.html" class="btn-outline">The Grounds</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint" id="heroScrollHint">
+      <div class="scroll-chevron"></div>
+    </div>
+  </section>
+
+  <!-- GROUNDS SECTION -->
+  <section id="grounds">
+    <div class="grounds-header">
+      <div>
+        <p class="section-label">Heritage Grounds</p>
+        <h2 class="section-title">Two Grounds.<br/>One Legacy.</h2>
+        <div class="divider"></div>
+        <p class="section-desc">Our grounds have hosted county cricketers, touring sides, and The Ashes preparatory matches since 1891. Each pitch tells a story.</p>
+      </div>
+      <a href="grounds.html" class="btn-outline">View Grounds</a>
+    </div>
+
+    <div class="grounds-grid">
+      <div class="ground-card gsap-reveal">
+        <img src="https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?w=900&q=80&auto=format&fit=crop" alt="The Pavilion Ground" loading="lazy" />
+        <div class="ground-card-content">
+          <div class="ground-card-number">Ground I</div>
+          <div class="ground-card-name">The Pavilion Ground</div>
+          <div class="ground-card-desc">Est. 1891 · Capacity 800 · Championship Pitch</div>
+        </div>
+      </div>
+      <div class="ground-card gsap-reveal">
+        <img src="https://images.unsplash.com/photo-1512327536842-5aa37d1ba3e3?w=900&q=80&auto=format&fit=crop" alt="The Meadow Ground" loading="lazy" />
+        <div class="ground-card-content">
+          <div class="ground-card-number">Ground II</div>
+          <div class="ground-card-name">The Meadow Ground</div>
+          <div class="ground-card-desc">Est. 1923 · Capacity 300 · Members & Coaching</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIXTURES SECTION -->
+  <section id="fixtures">
+    <p class="section-label">Season 2026</p>
+    <h2 class="section-title">This Season's Fixtures</h2>
+    <div class="divider"></div>
+
+    <div class="fixtures-grid">
+      <div class="fixture-card gsap-reveal">
+        <div class="fixture-date">April 18, 2026</div>
+        <div class="fixture-match">The Crease XI vs Surrey Heritage CC</div>
+        <div class="fixture-ground">The Pavilion Ground · 10:30 AM</div>
+        <span class="fixture-tag">Members Match</span>
+      </div>
+      <div class="fixture-card gsap-reveal">
+        <div class="fixture-date">May 3–4, 2026</div>
+        <div class="fixture-match">Spring Invitational · Two-Day Match</div>
+        <div class="fixture-ground">The Pavilion Ground · All Day</div>
+        <span class="fixture-tag">Invitational</span>
+      </div>
+      <div class="fixture-card gsap-reveal">
+        <div class="fixture-date">May 17, 2026</div>
+        <div class="fixture-match">Academy Showcase Day</div>
+        <div class="fixture-ground">The Meadow Ground · 11:00 AM</div>
+        <span class="fixture-tag">Academy</span>
+      </div>
+      <div class="fixture-card gsap-reveal">
+        <div class="fixture-date">June 7, 2026</div>
+        <div class="fixture-match">The Crease vs Lord's Taverners</div>
+        <div class="fixture-ground">The Pavilion Ground · 10:00 AM</div>
+        <span class="fixture-tag">Charity</span>
+      </div>
+      <div class="fixture-card gsap-reveal">
+        <div class="fixture-date">July 12, 2026</div>
+        <div class="fixture-match">Midsummer Gala — Pairs Tournament</div>
+        <div class="fixture-ground">Both Grounds · All Day</div>
+        <span class="fixture-tag">Annual Gala</span>
+      </div>
+      <div class="fixture-card gsap-reveal">
+        <div class="fixture-date">August 29, 2026</div>
+        <div class="fixture-match">Season Finale &amp; Dining Evening</div>
+        <div class="fixture-ground">The Pavilion Ground · 12:00 PM</div>
+        <span class="fixture-tag">Season Finale</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAVILION SECTION -->
+  <section id="pavilion">
+    <div class="pavilion-layout">
+      <div class="pavilion-image gsap-reveal">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&auto=format&fit=crop" alt="The Pavilion Interior" loading="lazy" />
+        <div class="pavilion-image-badge">
+          Michelin<br/>Dining Room<br/>Since 1953
+        </div>
+      </div>
+
+      <div class="pavilion-text gsap-reveal">
+        <p class="section-label">The Pavilion</p>
+        <h2 class="section-title">Where Cricket Meets Civilisation</h2>
+        <div class="divider"></div>
+        <p class="section-desc" style="max-width:100%">Constructed in 1891 and sympathetically restored in 2008, the Grade II listed pavilion houses our long room, members' library, Michelin-recognised dining room, and a private bar stocked exclusively with single-estate bottles.</p>
+        <p class="section-desc" style="max-width:100%;margin-top:1rem">The Long Room overlooks the Pavilion Ground directly — so every luncheon is accompanied by the sound of leather on willow.</p>
+
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-number">135</div>
+            <div class="stat-label">Years of History</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">&lt;200</div>
+            <div class="stat-label">Members Worldwide</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">2</div>
+            <div class="stat-label">Heritage Grounds</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMBERSHIP SECTION -->
+  <section id="membership">
+    <div style="text-align:center;margin-bottom:4rem;">
+      <p class="section-label">Membership</p>
+      <h2 class="section-title">An Invitation to the Brotherhood</h2>
+      <div class="divider" style="margin:1.5rem auto;"></div>
+      <p class="section-desc" style="margin:0 auto;">Three membership categories. All require nomination by two existing members and endorsement by the Committee. Annual intake of no more than twelve new members.</p>
+    </div>
+
+    <div class="membership-grid">
+      <div class="membership-card gsap-reveal">
+        <div class="membership-tier">Associate</div>
+        <div class="membership-name">Fielder</div>
+        <div class="membership-price">£2,400 / year</div>
+        <ul class="membership-features">
+          <li>Access to The Meadow Ground</li>
+          <li>16 match-day seats per season</li>
+          <li>Pavilion dining (weekdays)</li>
+          <li>Academy programme access</li>
+          <li>Members' newsletter</li>
+        </ul>
+        <a href="membership.html" class="membership-link">Learn More</a>
+      </div>
+      <div class="membership-card featured gsap-reveal">
+        <div class="membership-tier">Full Member</div>
+        <div class="membership-name">Pavilion</div>
+        <div class="membership-price">£5,800 / year</div>
+        <ul class="membership-features">
+          <li>Both grounds, unlimited access</li>
+          <li>Long Room privileges</li>
+          <li>Michelin dining — all services</li>
+          <li>Guest invitations (4 per season)</li>
+          <li>Library &amp; archive access</li>
+          <li>Coat of arms enrolment</li>
+        </ul>
+        <a href="membership.html" class="membership-link">Apply Now</a>
+      </div>
+      <div class="membership-card gsap-reveal">
+        <div class="membership-tier">Founding Legacy</div>
+        <div class="membership-name">Patron</div>
+        <div class="membership-price">By Selection</div>
+        <ul class="membership-features">
+          <li>All Pavilion Member benefits</li>
+          <li>Permanent seat at The Long Room</li>
+          <li>Private dining room access</li>
+          <li>Named scholarship endowment</li>
+          <li>Governance &amp; committee vote</li>
+          <li>Legacy plaque in pavilion</li>
+        </ul>
+        <a href="contact.html" class="membership-link">Enquire</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACADEMY SECTION -->
+  <section id="academy">
+    <div class="academy-layout">
+      <div class="academy-image gsap-reveal">
+        <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900&q=80&auto=format&fit=crop" alt="The Crease Academy" loading="lazy" />
+      </div>
+      <div class="academy-text gsap-reveal">
+        <p class="section-label">The Academy</p>
+        <h2 class="section-title">Developing the Next Generation of Cricketers</h2>
+        <div class="divider"></div>
+        <p class="section-desc" style="max-width:100%">Since 1968, The Crease Academy has produced three England Test cricketers and over forty county professionals. Our coaching faculty comprises former Test players committed to the classical traditions of the game.</p>
+
+        <div class="academy-programs">
+          <div class="program-item">
+            <div class="program-icon">🏏</div>
+            <div class="program-name">Junior Academy</div>
+            <div class="program-desc">Ages 8–16 · Seasonal intake</div>
+          </div>
+          <div class="program-item">
+            <div class="program-icon">📚</div>
+            <div class="program-name">Masters Programme</div>
+            <div class="program-desc">Members-only coaching residency</div>
+          </div>
+          <div class="program-item">
+            <div class="program-icon">🎯</div>
+            <div class="program-name">Specialist Clinics</div>
+            <div class="program-desc">Batting, Bowling, Wicket-Keeping</div>
+          </div>
+          <div class="program-item">
+            <div class="program-icon">🏆</div>
+            <div class="program-name">Scholarship</div>
+            <div class="program-desc">Full bursary for exceptional talent</div>
+          </div>
+        </div>
+
+        <div style="margin-top:2.5rem;">
+          <a href="about.html" class="btn-outline">Discover the Academy</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section id="cta">
+    <p class="section-label gsap-reveal">Limited Membership</p>
+    <h2 class="cta-title gsap-reveal">An Invitation Cannot<br/>Be Purchased. Only Earned.</h2>
+    <p class="cta-desc gsap-reveal">The Crease admits no more than twelve new members in any calendar year. If you believe you share our values — for the game, for the land, and for the brotherhood — we invite you to enquire.</p>
+    <div class="cta-actions gsap-reveal">
+      <a href="membership.html" class="btn-primary">Seek Membership</a>
+      <a href="contact.html" class="btn-outline">Contact the Secretary</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">The Crease</div>
+        <div class="footer-tagline">"The Game. The Ground. The Brotherhood."</div>
+        <div class="footer-coa">
+          <span class="coa-placeholder">⚜</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="grounds.html">The Grounds</a></li>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="membership.html">Membership</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">The Crease</div>
+        <ul class="footer-links">
+          <li><a href="about.html">The Pavilion</a></li>
+          <li><a href="about.html">The Academy</a></li>
+          <li><a href="grounds.html">Match Calendar</a></li>
+          <li><a href="membership.html">Apply</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <ul class="footer-links">
+          <li><a href="contact.html">The Secretary</a></li>
+          <li><a href="contact.html">Membership Enquiry</a></li>
+          <li><a href="contact.html">Match Booking</a></li>
+          <li><a href="contact.html">Pavilion Visit</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 The Crease. All rights reserved. A private members' institution.</span>
+      <span class="footer-founding">Founded 1891 — Berkshire, England</span>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // PRELOADER
+    window.addEventListener('load', function () {
+      gsap.to('#preloader', {
+        opacity: 0,
+        duration: 0.8,
+        delay: 1.5,
+        onComplete: function () {
+          document.getElementById('preloader').style.display = 'none';
+          initHeroAnimations();
+          showScrollIndicator();
+        }
+      });
+    });
+
+    function showScrollIndicator() {
+      const indicator = document.getElementById('scroll-indicator');
+      indicator.classList.add('visible');
+      setTimeout(function () {
+        const indicator2 = document.getElementById('scroll-indicator');
+        if (indicator2) indicator2.classList.add('visible');
+      }, 4000);
+    }
+
+    function initHeroAnimations() {
+      // Hero bg zoom
+      document.getElementById('heroBg').classList.add('loaded');
+
+      // Badge
+      gsap.to('#heroBadge', { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: 'power2.out' });
+
+      // Word reveal
+      gsap.to('#word1', { immediateRender: false, opacity: 1, y: 0, duration: 1, delay: 0.5, ease: 'power2.out' });
+      gsap.to('#word2', { immediateRender: false, opacity: 1, y: 0, duration: 1, delay: 0.75, ease: 'power2.out' });
+
+      // Tagline
+      gsap.to('#heroTagline', { immediateRender: false, opacity: 1, duration: 1, delay: 1.1, ease: 'power2.out' });
+
+      // CTA
+      gsap.to('#heroCta', { immediateRender: false, opacity: 1, y: 0, duration: 1, delay: 1.4, ease: 'power2.out' });
+
+      // Scroll hint
+      gsap.to('#heroScrollHint', { immediateRender: false, opacity: 1, duration: 1, delay: 2, ease: 'power2.out' });
+    }
+
+    // NAVBAR scroll
+    window.addEventListener('scroll', function () {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 80) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      // Hide scroll indicator after first scroll
+      if (window.scrollY > 200) {
+        document.getElementById('scroll-indicator').classList.remove('visible');
+      }
+    });
+
+    // SCROLL ANIMATIONS
+    document.querySelectorAll('.gsap-reveal').forEach(function (el, i) {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          once: true
+        },
+        opacity: 0,
+        y: 24,
+        duration: 1,
+        ease: 'power2.out',
+        delay: (i % 3) * 0.1
+      });
+    });
+
+    // Ground cards stagger
+    gsap.from('.ground-card', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.grounds-grid',
+        start: 'top 80%',
+        once: true
+      },
+      opacity: 0,
+      y: 30,
+      duration: 1,
+      stagger: 0.15,
+      ease: 'power2.out'
+    });
+
+    // Fixture cards stagger
+    gsap.from('.fixture-card', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.fixtures-grid',
+        start: 'top 80%',
+        once: true
+      },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    // Membership cards
+    gsap.from('.membership-card', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.membership-grid',
+        start: 'top 80%',
+        once: true
+      },
+      opacity: 0,
+      y: 28,
+      duration: 1,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    // Stats counter
+    ScrollTrigger.create({
+      trigger: '.stat-row',
+      start: 'top 85%',
+      once: true,
+      onEnter: function () {
+        gsap.from('.stat-number', {
+          immediateRender: false,
+          opacity: 0,
+          y: 20,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power2.out'
+        });
+      }
+    });
+  </script>
+</body>
+</html>

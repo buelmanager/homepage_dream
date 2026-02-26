@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ENTOMO — The Future of Flavor</title>
+  <meta name="description" content="Progressive insect fine dining in Copenhagen. 12-course tasting menus featuring ethically sourced insects. Science, sustainability, and extraordinary flavor." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #131F13;
+      --surface: #1A2A1A;
+      --accent: #80D040;
+      --accent2: #F0C840;
+      --text: #F0F5E8;
+      --text-muted: #608050;
+      --border: rgba(128,208,64,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── PRELOADER ─── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #141A14;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .preloader-insect {
+      width: 80px;
+      height: 80px;
+    }
+
+    .preloader-dots {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .preloader-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: dotPulse 1.4s ease-in-out infinite both;
+    }
+
+    .preloader-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .preloader-dots span:nth-child(3) { animation-delay: 0.4s; }
+    .preloader-dots span:nth-child(4) { animation-delay: 0.6s; }
+    .preloader-dots span:nth-child(5) { animation-delay: 0.8s; }
+
+    @keyframes dotPulse {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+      40% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .preloader-label {
+      font-family: 'Fraunces', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ─── SCROLL INDICATOR ─── */
+    #scroll-indicator {
+      position: fixed;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--accent));
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    .scroll-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      writing-mode: vertical-lr;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(0.8); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 1.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, backdrop-filter 0.4s, padding 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(19,31,19,0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-reserve {
+      background: var(--accent);
+      color: #0A140A !important;
+      padding: 0.6rem 1.5rem;
+      border-radius: 2px;
+      font-weight: 600 !important;
+      transition: background 0.3s !important;
+    }
+
+    .nav-reserve:hover { background: var(--accent2) !important; color: #0A140A !important; }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.1);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(8,15,8,0.88) 0%, rgba(19,31,19,0.75) 50%, rgba(8,15,8,0.85) 100%);
+    }
+
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+    }
+
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(5rem, 14vw, 11rem);
+      font-weight: 700;
+      line-height: 0.9;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      opacity: 0;
+    }
+
+    .hero-title span { color: var(--accent); }
+
+    .hero-tagline {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      opacity: 0;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      margin-top: 3rem;
+      opacity: 0;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-family: 'Fraunces', serif;
+      font-size: 2.2rem;
+      color: var(--accent);
+      font-weight: 300;
+    }
+
+    .hero-stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      opacity: 0;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #0A140A;
+      text-decoration: none;
+      padding: 1rem 2rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: background 0.3s, transform 0.3s;
+      border-radius: 2px;
+    }
+
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      padding: 1rem 2rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 400;
+      transition: border-color 0.3s, background 0.3s;
+      border-radius: 2px;
+    }
+
+    .btn-outline:hover { border-color: var(--accent); background: rgba(128,208,64,0.08); }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+    }
+
+    .hero-scroll-hint span {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .hero-scroll-arrow {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: arrowDrop 2s ease-in-out infinite;
+    }
+
+    @keyframes arrowDrop {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+    }
+
+    /* ─── SECTIONS COMMON ─── */
+    section { padding: 8rem 0; }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 3rem;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+
+    /* ─── MENU SECTION ─── */
+    #menu-preview {
+      background: var(--bg);
+    }
+
+    .menu-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 5rem;
+    }
+
+    .menu-header-right {
+      text-align: right;
+    }
+
+    .menu-price {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      color: var(--accent2);
+    }
+
+    .menu-price-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5px;
+    }
+
+    .course-card {
+      background: var(--surface);
+      padding: 2.5rem;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s;
+      cursor: default;
+    }
+
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+
+    .course-card:hover::before { transform: scaleX(1); }
+    .course-card:hover { border-color: rgba(128,208,64,0.3); }
+
+    .course-num {
+      font-family: 'Fraunces', serif;
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: rgba(128,208,64,0.12);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .course-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      font-weight: 400;
+    }
+
+    .course-insect {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(128,208,64,0.1);
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      margin-bottom: 1rem;
+    }
+
+    .course-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .menu-footer {
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    /* ─── SCIENCE SECTION ─── */
+    #science {
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #science::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(128,208,64,0.05) 0%, transparent 70%);
+    }
+
+    .science-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .comparison-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      margin-top: 3rem;
+    }
+
+    .bar-item {}
+
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .bar-label-name {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .bar-label-value {
+      font-family: 'Fraunces', serif;
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+
+    .bar-track {
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      width: 0;
+      transition: width 1.5s ease;
+    }
+
+    .bar-fill.beef { background: #8B4513; }
+    .bar-fill.pork { background: #CD853F; }
+    .bar-fill.insect { background: var(--accent); }
+
+    .science-visual {
+      position: relative;
+    }
+
+    .science-img-wrap {
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .science-img-wrap img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+    }
+
+    .science-badge {
+      position: absolute;
+      bottom: 2rem;
+      right: -1.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      width: 180px;
+      text-align: center;
+    }
+
+    .science-badge-num {
+      font-family: 'Fraunces', serif;
+      font-size: 2.5rem;
+      color: var(--accent);
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .science-badge-text {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    .science-facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .fact-card {
+      background: rgba(128,208,64,0.05);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      border-radius: 4px;
+    }
+
+    .fact-num {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      font-weight: 300;
+    }
+
+    .fact-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+      line-height: 1.5;
+    }
+
+    /* ─── FARM SECTION ─── */
+    #farm {
+      background: var(--bg);
+    }
+
+    .farm-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .farm-img-stack {
+      position: relative;
+      height: 560px;
+    }
+
+    .farm-img-main {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 75%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .farm-img-accent {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 60%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 4px solid var(--bg);
+    }
+
+    .farm-tag {
+      position: absolute;
+      top: 2rem;
+      right: 0;
+      background: var(--accent);
+      color: #0A140A;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 2px;
+    }
+
+    .farm-partners {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    .partner-badge {
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-radius: 2px;
+    }
+
+    /* ─── CHEFS SECTION ─── */
+    #chefs {
+      background: var(--surface);
+    }
+
+    .chefs-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .chefs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .chef-card {
+      position: relative;
+    }
+
+    .chef-img-wrap {
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .chef-img-wrap img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .chef-card:hover .chef-img-wrap img { transform: scale(1.04); }
+
+    .chef-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(8,15,8,0.95) 0%, transparent 60%);
+      padding: 2.5rem;
+    }
+
+    .chef-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.6rem;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .chef-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: 0.25rem;
+    }
+
+    .chef-bio {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-top: 1.5rem;
+    }
+
+    .chef-awards {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .chef-award {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      border: 1px solid rgba(240,200,64,0.3);
+      padding: 0.3rem 0.6rem;
+      border-radius: 2px;
+    }
+
+    /* ─── RESERVE CTA ─── */
+    #reserve-cta {
+      background: var(--bg);
+      text-align: center;
+      padding: 10rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #reserve-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?w=1400&q=70&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.08;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 2;
+    }
+
+    .cta-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      color: var(--text);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .cta-note {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .cta-availability {
+      margin-top: 2.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .cta-availability span {
+      color: var(--accent);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #141A14;
+      padding: 5rem 0 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer-brand-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.8rem;
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand-name span { color: var(--accent); }
+
+    .footer-brand-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 280px;
+    }
+
+    .footer-certs {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cert-badge {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid rgba(128,208,64,0.3);
+      color: var(--accent);
+      padding: 0.4rem 0.7rem;
+      border-radius: 2px;
+    }
+
+    .footer-col-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 2rem;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer-tagline {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .courses-grid { grid-template-columns: 1fr 1fr; }
+      .science-inner,
+      .farm-inner,
+      .chefs-grid { grid-template-columns: 1fr; gap: 4rem; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .science-badge { right: 1rem; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1.25rem 1.5rem; }
+      nav.scrolled { padding: 0.75rem 1.5rem; }
+      .nav-links { display: none; }
+      .container { padding: 0 1.5rem; }
+      section { padding: 5rem 0; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .menu-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+      .footer-top { grid-template-columns: 1fr; }
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="preloader-insect" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Cricket SVG animation -->
+      <circle cx="40" cy="40" r="6" fill="#80D040" opacity="0.9"/>
+      <ellipse cx="40" cy="40" rx="20" ry="10" stroke="#80D040" stroke-width="1" opacity="0.3" fill="none">
+        <animateTransform attributeName="transform" type="scale" values="1;1.3;1" dur="2s" repeatCount="indefinite" additive="sum"/>
+      </ellipse>
+      <ellipse cx="40" cy="40" rx="32" ry="16" stroke="#80D040" stroke-width="0.5" opacity="0.15" fill="none">
+        <animateTransform attributeName="transform" type="scale" values="1;1.2;1" dur="2s" begin="0.3s" repeatCount="indefinite" additive="sum"/>
+      </ellipse>
+      <!-- Antenna -->
+      <line x1="35" y1="35" x2="22" y2="22" stroke="#80D040" stroke-width="1" opacity="0.6"/>
+      <line x1="45" y1="35" x2="58" y2="22" stroke="#80D040" stroke-width="1" opacity="0.6"/>
+      <!-- Legs -->
+      <line x1="32" y1="42" x2="18" y2="50" stroke="#80D040" stroke-width="0.8" opacity="0.5"/>
+      <line x1="36" y1="44" x2="24" y2="56" stroke="#80D040" stroke-width="0.8" opacity="0.5"/>
+      <line x1="48" y1="42" x2="62" y2="50" stroke="#80D040" stroke-width="0.8" opacity="0.5"/>
+      <line x1="44" y1="44" x2="56" y2="56" stroke="#80D040" stroke-width="0.8" opacity="0.5"/>
+    </svg>
+    <div class="preloader-dots">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="preloader-label">Preparing your experience</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">ENT<span>O</span>MO</a>
+    <ul class="nav-links">
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="reservations.html">Reservations</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="reservations.html" class="nav-reserve">Reserve</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <canvas class="hero-particles" id="particleCanvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Copenhagen · Est. 2021 · 20 Covers Nightly</div>
+      <h1 class="hero-title" id="heroTitle">ENTOMO</h1>
+      <p class="hero-tagline">"The Future of Flavor"</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">90%</div>
+          <div class="hero-stat-label">Less Water</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">80%</div>
+          <div class="hero-stat-label">Less Land</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">Zero</div>
+          <div class="hero-stat-label">Waste</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">12</div>
+          <div class="hero-stat-label">Courses</div>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <a href="reservations.html" class="btn-primary">Reserve a Journey</a>
+        <a href="menu.html" class="btn-outline">View the Menu</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <span>Discover</span>
+      <div class="hero-scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- MENU PREVIEW -->
+  <section id="menu-preview">
+    <div class="container">
+      <div class="menu-header">
+        <div>
+          <p class="section-label">The Experience</p>
+          <h2 class="section-title">A Journey Through<br><em style="font-family:'Fraunces',serif;font-style:italic;color:var(--accent)">Insect Gastronomy</em></h2>
+          <p class="section-subtitle">Each course tells the story of a creature — its habitat, its flavor, its role in a sustainable future.</p>
+        </div>
+        <div class="menu-header-right">
+          <div class="menu-price">DKK 1,850 / €248</div>
+          <div class="menu-price-label">12-Course Tasting Menu</div>
+          <div class="menu-price-label" style="margin-top:0.25rem;">Wine pairing DKK 950</div>
+        </div>
+      </div>
+
+      <div class="courses-grid">
+        <div class="course-card">
+          <div class="course-num">01</div>
+          <div class="course-title">Cricket Powder Pasta</div>
+          <div class="course-insect">&#9679; Acheta domesticus</div>
+          <div class="course-desc">Hand-rolled pappardelle with 40% cricket flour, cured egg yolk, preserved lemon, and foraged sorrel. The earthy nuttiness of the cricket flour creates an umami depth that no wheat pasta can replicate.</div>
+        </div>
+        <div class="course-card">
+          <div class="course-num">04</div>
+          <div class="course-title">Silkworm Risotto</div>
+          <div class="course-insect">&#9679; Bombyx mori</div>
+          <div class="course-desc">Carnaroli rice cooked in silkworm broth, finished with silkworm pupae confit, black truffle shavings, and aged parmigiano. Silkworms offer a delicate mushroom-like richness.</div>
+        </div>
+        <div class="course-card">
+          <div class="course-num">07</div>
+          <div class="course-title">Grasshopper Tempura</div>
+          <div class="course-insect">&#9679; Locusta migratoria</div>
+          <div class="course-desc">Flash-fried migratory locust in dashima batter, served with yuzu kosho aioli, pickled daikon, and micro shiso. Crunchy, savory, and utterly addictive.</div>
+        </div>
+        <div class="course-card">
+          <div class="course-num">11</div>
+          <div class="course-title">Mealworm Miso</div>
+          <div class="course-insect">&#9679; Tenebrio molitor</div>
+          <div class="course-desc">Proprietary mealworm miso aged 18 months, prepared as a warm consommé with koji-cured celeriac, pine needle oil, and dehydrated mealworm crumbles. Transcendent umami.</div>
+        </div>
+      </div>
+
+      <div class="menu-footer">
+        <a href="menu.html" class="btn-outline">View All 12 Courses</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE SCIENCE -->
+  <section id="science">
+    <div class="container">
+      <div class="science-inner">
+        <div class="science-left">
+          <p class="section-label">The Science</p>
+          <h2 class="section-title">Why Insects<br>Change Everything</h2>
+          <p class="section-subtitle">Producing 1kg of protein tells a very different story depending on the species. The numbers are staggering.</p>
+
+          <div class="comparison-bars">
+            <div class="bar-item">
+              <div class="bar-labels">
+                <span class="bar-label-name">Beef</span>
+                <span class="bar-label-value">15,400 L water / kg</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill beef" data-width="100%"></div>
+              </div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-labels">
+                <span class="bar-label-name">Pork</span>
+                <span class="bar-label-value">5,988 L water / kg</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill pork" data-width="39%"></div>
+              </div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-labels">
+                <span class="bar-label-name">Insects</span>
+                <span class="bar-label-value">~1 L water / kg</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill insect" data-width="0.7%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="science-facts">
+            <div class="fact-card">
+              <div class="fact-num">12×</div>
+              <div class="fact-label">More protein per gram than beef, gram for gram</div>
+            </div>
+            <div class="fact-card">
+              <div class="fact-num">100%</div>
+              <div class="fact-label">Of the insect is edible — zero offal waste</div>
+            </div>
+            <div class="fact-card">
+              <div class="fact-num">40%</div>
+              <div class="fact-label">Less CO₂ emissions vs conventional livestock</div>
+            </div>
+            <div class="fact-card">
+              <div class="fact-num">8B+</div>
+              <div class="fact-label">Humans already eat insects across 80+ cultures</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="science-visual">
+          <div class="science-img-wrap">
+            <img src="https://images.unsplash.com/photo-1512327536842-5aa37d1ba3e3?w=700&q=80&auto=format&fit=crop" alt="Microscopic nature detail" loading="lazy" />
+            <div class="science-badge">
+              <div class="science-badge-num">2021</div>
+              <div class="science-badge-text">EU Novel Food Approved</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE FARM -->
+  <section id="farm">
+    <div class="container">
+      <div class="farm-inner">
+        <div class="farm-img-stack">
+          <img class="farm-img-main" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80&auto=format&fit=crop" alt="Insect farm" loading="lazy" />
+          <img class="farm-img-accent" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&q=80&auto=format&fit=crop" alt="Natural ingredients" loading="lazy" />
+          <div class="farm-tag">Certified Organic</div>
+        </div>
+
+        <div class="farm-right">
+          <p class="section-label">The Farm</p>
+          <h2 class="section-title">From Controlled<br>Habitat to Table</h2>
+          <p class="section-subtitle">Every insect on the ENTOMO menu is raised in certified organic micro-farms within 200km of Copenhagen. We partner exclusively with farms that adhere to insect welfare standards developed by our culinary science team.</p>
+          <p class="section-subtitle" style="margin-top:1rem;">The insects are fed on organic vegetable offcuts, brewer's grains, and seasonal greens — closing the food loop completely.</p>
+
+          <div class="farm-partners">
+            <div class="partner-badge">BioKraft Farms · Malmö</div>
+            <div class="partner-badge">Nordic Protein Lab · Aarhus</div>
+            <div class="partner-badge">Insekta · Copenhagen</div>
+            <div class="partner-badge">Grøn Larve · Odense</div>
+          </div>
+
+          <div style="margin-top:2rem;">
+            <a href="about.html" class="btn-outline">Our Sourcing Story</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHEFS -->
+  <section id="chefs">
+    <div class="container">
+      <div class="chefs-header">
+        <p class="section-label">The Architects</p>
+        <h2 class="section-title" style="max-width:500px;margin:0 auto 1rem;">The Minds Behind<br>the Menu</h2>
+        <p class="section-subtitle" style="margin:0 auto;text-align:center;">Two visionaries from opposite sides of the culinary world, united by a conviction that the future of flavor belongs to the small and the many.</p>
+      </div>
+
+      <div class="chefs-grid">
+        <div class="chef-card">
+          <div class="chef-img-wrap">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=700&q=80&auto=format&fit=crop" alt="Chef portrait" loading="lazy" />
+            <div class="chef-overlay">
+              <div class="chef-name">Astrid Lundqvist</div>
+              <div class="chef-title">Executive Chef & Co-Founder</div>
+            </div>
+          </div>
+          <div class="chef-bio">Formerly of Noma and El Celler de Can Roca, Astrid spent three years traveling Southeast Asia studying traditional insect cookery before founding ENTOMO. Her philosophy: insects are not a novelty — they are humanity's oldest protein source, reclaimed.</div>
+          <div class="chef-awards">
+            <span class="chef-award">Michelin Star 2023</span>
+            <span class="chef-award">Nordic Chef of Year</span>
+            <span class="chef-award">James Beard Nominee</span>
+          </div>
+        </div>
+
+        <div class="chef-card">
+          <div class="chef-img-wrap">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=700&q=80&auto=format&fit=crop" alt="Chef portrait" loading="lazy" />
+            <div class="chef-overlay">
+              <div class="chef-name">Keiichi Yamamoto</div>
+              <div class="chef-title">Head Chef & Research Director</div>
+            </div>
+          </div>
+          <div class="chef-bio">A trained biochemist turned chef, Keiichi's dual expertise allows him to approach insect cuisine with scientific precision. He developed ENTOMO's proprietary fermentation techniques for mealworm miso and cricket garum, unlocking flavor compounds previously undocumented in food science.</div>
+          <div class="chef-awards">
+            <span class="chef-award">Food Innovation Award</span>
+            <span class="chef-award">Nature Food Publication</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESERVE CTA -->
+  <section id="reserve-cta">
+    <div class="container cta-inner">
+      <p class="cta-eyebrow">Begin Your Journey</p>
+      <h2 class="cta-title">20 Seats.<br><em>One Night.</em><br>Zero Compromise.</h2>
+      <p class="cta-note">ENTOMO operates Wednesday through Saturday. Each seating begins at 19:00.<br>The experience lasts approximately 4 hours.</p>
+      <div class="cta-buttons">
+        <a href="reservations.html" class="btn-primary">Request a Reservation</a>
+        <a href="contact.html" class="btn-outline">Private Events</a>
+      </div>
+      <p class="cta-availability">Next availability: <span>March 2026</span> · Waitlist open for February</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-brand-name">ENT<span>O</span>MO</div>
+          <p class="footer-brand-desc">Progressive insect fine dining in the heart of Copenhagen. Where science meets flavor, and sustainability becomes the highest form of luxury.</p>
+          <div class="footer-certs">
+            <span class="cert-badge">EU Novel Food</span>
+            <span class="cert-badge">Organic Certified</span>
+            <span class="cert-badge">B Corp Pending</span>
+            <span class="cert-badge">Zero Waste Kitchen</span>
+          </div>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Navigate</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="menu.html">The Menu</a></li>
+            <li><a href="reservations.html">Reservations</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Information</div>
+          <ul class="footer-links">
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="about.html">Sustainability</a></li>
+            <li><a href="contact.html">Press</a></li>
+            <li><a href="contact.html">Partnerships</a></li>
+            <li><a href="contact.html">Private Dining</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Visit</div>
+          <ul class="footer-links">
+            <li><a href="contact.html">Kronprinsessegade 46</a></li>
+            <li><a href="contact.html">1306 Copenhagen K</a></li>
+            <li><a href="contact.html">Wed–Sat, 19:00</a></li>
+            <li><a href="contact.html">+45 33 12 88 70</a></li>
+            <li><a href="contact.html">table@entomo.dk</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2026 ENTOMO Restaurant · Copenhagen · All rights reserved</p>
+        <p class="footer-tagline">"The Future of Flavor"</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── PARTICLE SYSTEM ──
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function createParticle() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2.5 + 0.5,
+        speedX: (Math.random() - 0.5) * 0.4,
+        speedY: (Math.random() - 0.5) * 0.4,
+        opacity: Math.random() * 0.5 + 0.1,
+        pulse: Math.random() * Math.PI * 2
+      };
+    }
+
+    for (let i = 0; i < 80; i++) particles.push(createParticle());
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.pulse += 0.02;
+        const op = p.opacity * (0.7 + 0.3 * Math.sin(p.pulse));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(128,208,64,${op})`;
+        ctx.fill();
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+          Object.assign(p, createParticle());
+        }
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // ── PRELOADER ──
+    window.addEventListener('load', () => {
+      // Scroll to bottom and back to fire ScrollTrigger once animations
+      window.scrollTo(0, document.body.scrollHeight);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        gsap.to('#preloader', {
+          opacity: 0,
+          duration: 0.8,
+          delay: 0.2,
+          onComplete: () => {
+            document.getElementById('preloader').style.display = 'none';
+            // Show scroll indicator
+            document.getElementById('scroll-indicator').classList.add('visible');
+            // Hero entrance
+            gsap.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 1, delay: 0.2 });
+            gsap.to('#heroTitle', { opacity: 1, y: 0, duration: 1.2, delay: 0.4, ease: 'power2.out' });
+            gsap.to('.hero-tagline', { opacity: 1, y: 0, duration: 1, delay: 0.7 });
+            gsap.to('.hero-stats', { opacity: 1, y: 0, duration: 1, delay: 0.9 });
+            gsap.to('.hero-cta', { opacity: 1, y: 0, duration: 1, delay: 1.1 });
+            gsap.to('.hero-scroll-hint', { opacity: 1, duration: 1, delay: 1.5 });
+            // Hero bg parallax
+            gsap.fromTo('#heroBg', { scale: 1.1 }, { scale: 1.05, duration: 8, ease: 'none' });
+          }
+        });
+      }, 300);
+
+      // Backup scroll indicator
+      setTimeout(() => {
+        document.getElementById('scroll-indicator').classList.add('visible');
+      }, 4000);
+    });
+
+    // ── NAVBAR ──
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── HERO PARALLAX ──
+    gsap.to('#heroBg', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true },
+      y: '25%',
+      ease: 'none'
+    });
+
+    // ── MENU CARDS ──
+    gsap.from('.course-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.courses-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 28,
+      duration: 0.9,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    // ── SCIENCE BARS ──
+    ScrollTrigger.create({
+      trigger: '#science',
+      start: 'top 70%',
+      onEnter: () => {
+        document.querySelectorAll('.bar-fill').forEach(el => {
+          el.style.width = el.dataset.width;
+        });
+      }
+    });
+
+    gsap.from('.science-left .section-label, .science-left .section-title, .science-left .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#science', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.science-visual', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#science', start: 'top 80%' },
+      opacity: 0,
+      x: 40,
+      duration: 1.1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.fact-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.science-facts', start: 'top 85%' },
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      stagger: 0.09,
+      ease: 'power2.out'
+    });
+
+    // ── FARM ──
+    gsap.from('.farm-img-main', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#farm', start: 'top 80%' },
+      opacity: 0,
+      x: -30,
+      duration: 1.1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.farm-img-accent', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#farm', start: 'top 80%' },
+      opacity: 0,
+      x: 30,
+      duration: 1.1,
+      delay: 0.2,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.farm-right .section-label, .farm-right .section-title, .farm-right .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#farm', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    // ── CHEFS ──
+    gsap.from('.chefs-header > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#chefs', start: 'top 85%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.chef-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.chefs-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 28,
+      duration: 1,
+      stagger: 0.15,
+      ease: 'power2.out'
+    });
+
+    // ── CTA ──
+    gsap.from('.cta-inner > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#reserve-cta', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+  </script>
+</body>
+</html>

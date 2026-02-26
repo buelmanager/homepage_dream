@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOLIO — Pressed from Water, Dried by Air, Held for Centuries</title>
+  <meta name="description" content="FOLIO is a luxury washi paper-making and stationery atelier in Echizen, Japan. Handcrafted washi sheets, bespoke wedding stationery, and immersive workshops." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #1E1A14;
+      --surface: #28221C;
+      --surface2: #322A22;
+      --accent: #C0A060;
+      --accent2: #E8D8B8;
+      --text: #F0EAD8;
+      --text-muted: #907860;
+      --border: rgba(192,160,96,0.18);
+      --nav-h: 72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .preloader-logo {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      opacity: 0;
+      animation: fadeInUp 0.8s 0.3s forwards;
+    }
+
+    .fiber-canvas {
+      width: 280px;
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .fiber-progress {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      border-radius: 2px;
+      width: 0%;
+      animation: fiberLoad 1.8s ease-in-out forwards;
+    }
+
+    .fiber-threads {
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      animation: fadeIn 0.6s 0.5s forwards;
+    }
+
+    .fiber-thread {
+      width: 2px;
+      background: var(--accent);
+      opacity: 0.4;
+      border-radius: 1px;
+      animation: fiberPulse 1.4s ease-in-out infinite;
+    }
+
+    .fiber-thread:nth-child(1) { height: 18px; animation-delay: 0s; }
+    .fiber-thread:nth-child(2) { height: 28px; animation-delay: 0.1s; }
+    .fiber-thread:nth-child(3) { height: 22px; animation-delay: 0.2s; }
+    .fiber-thread:nth-child(4) { height: 32px; animation-delay: 0.05s; }
+    .fiber-thread:nth-child(5) { height: 20px; animation-delay: 0.15s; }
+    .fiber-thread:nth-child(6) { height: 26px; animation-delay: 0.25s; }
+    .fiber-thread:nth-child(7) { height: 16px; animation-delay: 0.08s; }
+    .fiber-thread:nth-child(8) { height: 30px; animation-delay: 0.18s; }
+
+    .preloader-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 0.6s 0.8s forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes fiberLoad {
+      0%   { width: 0%; }
+      100% { width: 100%; }
+    }
+    @keyframes fiberPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.85); }
+      50%       { opacity: 0.7; transform: scaleY(1); }
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    #scroll-indicator {
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.6s;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(180deg, transparent, var(--accent));
+      animation: scrollDown 2s ease-in-out infinite;
+    }
+
+    .scroll-text {
+      writing-mode: vertical-rl;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    @keyframes scrollDown {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      padding: 0 48px;
+      justify-content: space-between;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(30,26,20,0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 1.6rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      padding: 9px 22px;
+      border: 1px solid var(--accent);
+      color: var(--accent) !important;
+      border-radius: 2px;
+      transition: background 0.25s, color 0.25s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent) !important;
+      color: var(--bg) !important;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=1800&auto=format&fit=crop&q=85');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.08);
+      transition: transform 0.1s;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(30,26,20,0.88) 0%,
+        rgba(30,26,20,0.55) 50%,
+        rgba(30,26,20,0.72) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 10vw;
+      max-width: 900px;
+    }
+
+    .hero-kicker {
+      font-size: 0.72rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero-kicker::before {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: clamp(4rem, 9vw, 8rem);
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    .hero-title span { color: var(--accent); }
+
+    .hero-tagline {
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      color: var(--accent2);
+      letter-spacing: 0.08em;
+      font-style: italic;
+      margin-bottom: 48px;
+      opacity: 0.85;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-stat-num {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.8rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .water-drop {
+      position: absolute;
+      right: 12vw;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 180px;
+      height: 220px;
+      z-index: 2;
+    }
+
+    .drop-shape {
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(192,160,96,0.3);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      position: relative;
+      animation: dropFloat 6s ease-in-out infinite;
+    }
+
+    .drop-inner {
+      position: absolute;
+      inset: 20px;
+      border: 1px solid rgba(192,160,96,0.15);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    }
+
+    .drop-text {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.7rem;
+      color: var(--accent);
+      white-space: nowrap;
+      letter-spacing: 0.12em;
+    }
+
+    @keyframes dropFloat {
+      0%, 100% { transform: translateY(-50%) translateY(0); }
+      50%       { transform: translateY(-50%) translateY(-14px); }
+    }
+
+    /* ── SECTIONS SHARED ── */
+    section { padding: 110px 48px; }
+
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-family: 'IM Fell English', serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+
+    .section-header { margin-bottom: 64px; }
+
+    /* ── PAPERS SECTION ── */
+    #papers {
+      background: var(--surface);
+    }
+
+    .papers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .paper-card {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      cursor: pointer;
+    }
+
+    .paper-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+
+    .paper-card:hover .paper-card-img {
+      transform: scale(1.06);
+    }
+
+    .paper-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(30,26,20,0.9) 0%, transparent 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px;
+    }
+
+    .paper-card-name {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .paper-card-meta {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .paper-card-weight {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 12px;
+      border: 1px solid rgba(192,160,96,0.35);
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      color: var(--accent2);
+      text-transform: uppercase;
+    }
+
+    /* ── HERITAGE SECTION ── */
+    #heritage {
+      background: var(--bg);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      padding: 110px 8vw;
+    }
+
+    .heritage-image {
+      position: relative;
+    }
+
+    .heritage-img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      display: block;
+    }
+
+    .heritage-img-accent {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      width: 60%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border: 4px solid var(--bg);
+    }
+
+    .heritage-badge {
+      position: absolute;
+      top: 30px;
+      left: -30px;
+      width: 100px;
+      height: 100px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      text-align: center;
+      gap: 2px;
+    }
+
+    .heritage-badge-num {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.5rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .heritage-badge-text {
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 40px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 24px;
+      position: relative;
+    }
+
+    .timeline-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 48px;
+    }
+
+    .timeline-year {
+      font-family: 'IM Fell English', serif;
+      font-size: 0.8rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .timeline-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin: 8px 0;
+      flex-shrink: 0;
+    }
+
+    .timeline-line {
+      flex: 1;
+      width: 1px;
+      background: var(--border);
+      min-height: 40px;
+    }
+
+    .timeline-content {
+      padding-bottom: 32px;
+    }
+
+    .timeline-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .timeline-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── WEDDINGS SECTION ── */
+    #weddings {
+      background: var(--surface);
+      padding: 110px 8vw;
+    }
+
+    .weddings-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-top: 64px;
+    }
+
+    .weddings-gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .weddings-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+    }
+
+    .weddings-img.tall {
+      aspect-ratio: 3/5;
+      margin-top: 36px;
+    }
+
+    .weddings-text {}
+
+    .weddings-features {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .weddings-feature {
+      display: flex;
+      gap: 16px;
+    }
+
+    .weddings-feature-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
+
+    .weddings-feature-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .weddings-feature-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 36px;
+      padding: 13px 30px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ── WORKSHOPS SECTION ── */
+    #workshops-preview {
+      background: var(--bg);
+      padding: 110px 8vw;
+    }
+
+    .workshops-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .workshop-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    .workshop-card:hover { border-color: var(--accent); }
+
+    .workshop-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .workshop-card:hover::before { transform: scaleX(1); }
+
+    .workshop-number {
+      font-family: 'IM Fell English', serif;
+      font-size: 3rem;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .workshop-name {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .workshop-duration {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .workshop-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .workshop-price {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.4rem;
+      color: var(--accent2);
+    }
+
+    .workshop-price span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+
+    /* ── COMMISSION CTA ── */
+    #commission {
+      background: var(--surface);
+      padding: 120px 8vw;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .commission-bg-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: clamp(6rem, 15vw, 14rem);
+      color: rgba(192,160,96,0.04);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .commission-content {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .commission-title {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+
+    .commission-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 44px;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.8rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.25s, transform 0.25s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      padding: 72px 8vw 36px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
+    }
+
+    .footer-brand-logo {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 2rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    .footer-brand-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--accent2); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .footer-location {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ── UTILITIES ── */
+    .overflow-hidden { overflow: hidden; }
+
+    @media (max-width: 1024px) {
+      #heritage { grid-template-columns: 1fr; }
+      .heritage-image { display: none; }
+      .weddings-layout { grid-template-columns: 1fr; }
+      .papers-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 80px 24px; }
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .papers-grid { grid-template-columns: 1fr 1fr; }
+      .workshops-grid { grid-template-columns: 1fr; }
+      #scroll-indicator { display: none; }
+      .water-drop { display: none; }
+      .hero-content { padding: 0 24px; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="fiber-threads">
+      <div class="fiber-thread"></div>
+      <div class="fiber-thread"></div>
+      <div class="fiber-thread"></div>
+      <div class="fiber-thread"></div>
+      <div class="fiber-thread"></div>
+      <div class="fiber-thread"></div>
+      <div class="fiber-thread"></div>
+      <div class="fiber-thread"></div>
+    </div>
+    <div class="preloader-logo">Folio</div>
+    <div class="fiber-canvas"><div class="fiber-progress"></div></div>
+    <div class="preloader-tagline">Echizen &nbsp;·&nbsp; Est. 794 CE</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-text">Scroll</div>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">Folio</a>
+    <ul class="nav-links">
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="workshops.html">Workshops</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta">Commission</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-kicker">Echizen, Japan &nbsp;·&nbsp; Since 794 CE</div>
+      <h1 class="hero-title">
+        <span>Folio</span>
+      </h1>
+      <p class="hero-tagline">"Pressed from Water, Dried by Air, Held for Centuries."</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">1,200</div>
+          <div class="hero-stat-label">Years of Tradition</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">40+</div>
+          <div class="hero-stat-label">Paper Varieties</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">Echizen</div>
+          <div class="hero-stat-label">UNESCO Heritage Town</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">12</div>
+          <div class="hero-stat-label">Master Craftspeople</div>
+        </div>
+      </div>
+    </div>
+    <div class="water-drop">
+      <div class="drop-shape">
+        <div class="drop-inner"></div>
+        <div class="drop-text">和紙 · Washi</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PAPERS -->
+  <section id="papers">
+    <div style="padding: 0 calc(8vw - 48px); margin-bottom: 64px;">
+      <div class="section-label">Our Papers</div>
+      <h2 class="section-title">Forty Varieties,<br>One Tradition</h2>
+      <p class="section-subtitle">Each sheet is pulled by hand from kozo-fiber vats, pressed, and air-dried on cedar boards under the Echizen sun.</p>
+    </div>
+    <div class="papers-grid">
+      <div class="paper-card">
+        <img class="paper-card-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=80" alt="Kozo Natural" loading="lazy" />
+        <div class="paper-card-overlay">
+          <div class="paper-card-name">Kozo Natural</div>
+          <div class="paper-card-meta">Unbleached Mulberry</div>
+          <div class="paper-card-weight">35 gsm &nbsp;·&nbsp; Translucent</div>
+        </div>
+      </div>
+      <div class="paper-card">
+        <img class="paper-card-img" src="https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?w=600&auto=format&fit=crop&q=80" alt="Gampi Silk" loading="lazy" />
+        <div class="paper-card-overlay">
+          <div class="paper-card-name">Gampi Silk</div>
+          <div class="paper-card-meta">Lustrous Gampi Fiber</div>
+          <div class="paper-card-weight">28 gsm &nbsp;·&nbsp; Lustrous</div>
+        </div>
+      </div>
+      <div class="paper-card">
+        <img class="paper-card-img" src="https://images.unsplash.com/photo-1512327536842-5aa37d1ba3e3?w=600&auto=format&fit=crop&q=80" alt="Torchon Rough" loading="lazy" />
+        <div class="paper-card-overlay">
+          <div class="paper-card-name">Torchon Rough</div>
+          <div class="paper-card-meta">Cold-Press Texture</div>
+          <div class="paper-card-weight">200 gsm &nbsp;·&nbsp; Rough Grain</div>
+        </div>
+      </div>
+      <div class="paper-card">
+        <img class="paper-card-img" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&auto=format&fit=crop&q=80" alt="Indigo Cloud" loading="lazy" />
+        <div class="paper-card-overlay">
+          <div class="paper-card-name">Indigo Cloud</div>
+          <div class="paper-card-meta">Plant-Dyed Kozo</div>
+          <div class="paper-card-weight">45 gsm &nbsp;·&nbsp; Medium</div>
+        </div>
+      </div>
+      <div class="paper-card">
+        <img class="paper-card-img" src="https://images.unsplash.com/photo-1485125639709-a60c3a500bf1?w=600&auto=format&fit=crop&q=80" alt="Ochre Mitsumata" loading="lazy" />
+        <div class="paper-card-overlay">
+          <div class="paper-card-name">Ochre Mitsumata</div>
+          <div class="paper-card-meta">Warm-Toned Fiber</div>
+          <div class="paper-card-weight">55 gsm &nbsp;·&nbsp; Soft</div>
+        </div>
+      </div>
+      <div class="paper-card">
+        <img class="paper-card-img" src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&auto=format&fit=crop&q=80" alt="Parchment Gold" loading="lazy" />
+        <div class="paper-card-overlay">
+          <div class="paper-card-name">Parchment Gold</div>
+          <div class="paper-card-meta">Gold-Flecked Washi</div>
+          <div class="paper-card-weight">80 gsm &nbsp;·&nbsp; Premium</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WASHI HERITAGE -->
+  <section id="heritage">
+    <div class="heritage-image">
+      <img class="heritage-img" src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=700&auto=format&fit=crop&q=80" alt="Echizen paper-making" loading="lazy" />
+      <img class="heritage-img-accent" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&auto=format&fit=crop&q=80" alt="Washi fiber detail" loading="lazy" />
+      <div class="heritage-badge">
+        <div class="heritage-badge-num">794</div>
+        <div class="heritage-badge-text">CE Origin</div>
+      </div>
+    </div>
+    <div class="heritage-text">
+      <div class="section-label">Heritage</div>
+      <h2 class="section-title">Thirteen Centuries<br>of Paper Memory</h2>
+      <p class="section-subtitle" style="margin-bottom: 16px;">
+        Echizen, Fukui Prefecture — a town where paper-making has been an unbroken living tradition since the Nara Period. Designated a UNESCO Intangible Cultural Heritage, our craft is passed down through the <em>sukibune</em>, the wooden paper-making vat.
+      </p>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-left">
+            <div class="timeline-year">794</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">Imperial Origins</div>
+            <div class="timeline-desc">A goddess appeared to local papermakers in Echizen, teaching them the art of washi — paper production for the Imperial Court begins.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-left">
+            <div class="timeline-year">1300s</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">Merchant Distribution</div>
+            <div class="timeline-desc">Echizen paper merchants establish routes across Japan. Washi becomes the preferred medium for Buddhist sutras and official documents.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-left">
+            <div class="timeline-year">2014</div>
+            <div class="timeline-dot"></div>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">UNESCO Recognition</div>
+            <div class="timeline-desc">Traditional Japanese washi craftsmanship inscribed on UNESCO's Representative List of the Intangible Cultural Heritage of Humanity.</div>
+          </div>
+        </div>
+      </div>
+      <a href="about.html" class="btn-outline">Discover Our Story</a>
+    </div>
+  </section>
+
+  <!-- FOR WEDDINGS -->
+  <section id="weddings">
+    <div class="section-label">Bespoke Stationery</div>
+    <h2 class="section-title">For Your Most<br>Treasured Moments</h2>
+    <p class="section-subtitle">Invitation suites, ceremony programs, place cards, and keepsake folios — each piece letterpress-printed on our finest washi.</p>
+    <div class="weddings-layout">
+      <div class="weddings-gallery">
+        <img class="weddings-img" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&auto=format&fit=crop&q=80" alt="Wedding stationery" loading="lazy" />
+        <img class="weddings-img tall" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500&auto=format&fit=crop&q=80" alt="Luxury paper detail" loading="lazy" />
+      </div>
+      <div class="weddings-text">
+        <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.85; margin-bottom:8px;">
+          A FOLIO wedding suite begins with a conversation about your story. We source the paper to match your mood — translucent gampi for a misty ceremony, textured kozo for a garden celebration.
+        </p>
+        <div class="weddings-features">
+          <div class="weddings-feature">
+            <div class="weddings-feature-icon">✦</div>
+            <div>
+              <div class="weddings-feature-title">Letterpress Printing</div>
+              <div class="weddings-feature-desc">Deep-impression printing on 400+ gsm handmade washi — each card carries the physical memory of the press.</div>
+            </div>
+          </div>
+          <div class="weddings-feature">
+            <div class="weddings-feature-icon">✦</div>
+            <div>
+              <div class="weddings-feature-title">Wax Seal & Ribbon</div>
+              <div class="weddings-feature-desc">Custom wax seals, hand-dyed silk ribbons, and handwritten calligraphy envelopes available.</div>
+            </div>
+          </div>
+          <div class="weddings-feature">
+            <div class="weddings-feature-icon">✦</div>
+            <div>
+              <div class="weddings-feature-title">Keepsake Portfolio</div>
+              <div class="weddings-feature-desc">Every suite includes a linen-bound folio to preserve your invitation suite for generations.</div>
+            </div>
+          </div>
+        </div>
+        <a href="contact.html" class="btn-outline">Begin Your Commission</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKSHOPS PREVIEW -->
+  <section id="workshops-preview">
+    <div class="section-label">Immersive Experiences</div>
+    <h2 class="section-title">Learn the Ancient Art<br>of Washi-Making</h2>
+    <p class="section-subtitle">Step into the <em>sukibune</em> hall and draw your first sheet of paper from water — an experience that connects you to 1,200 years of craft.</p>
+    <div class="workshops-grid">
+      <div class="workshop-card">
+        <div class="workshop-number">01</div>
+        <div class="workshop-name">Half-Day Washi Immersion</div>
+        <div class="workshop-duration">4 Hours &nbsp;·&nbsp; Beginner</div>
+        <p class="workshop-desc">Prepare kozo fiber, pull sheets from the vat, press and dry your washi. Leave with 8 handmade sheets to take home.</p>
+        <div class="workshop-price">¥18,000 <span>Per Person</span></div>
+      </div>
+      <div class="workshop-card">
+        <div class="workshop-number">02</div>
+        <div class="workshop-name">Stationery Design Masterclass</div>
+        <div class="workshop-duration">Full Day &nbsp;·&nbsp; Intermediate</div>
+        <p class="workshop-desc">Combine paper-making with letterpress printing. Design and produce a set of 10 notecards using your handmade washi.</p>
+        <div class="workshop-price">¥36,000 <span>Per Person</span></div>
+      </div>
+      <div class="workshop-card">
+        <div class="workshop-number">03</div>
+        <div class="workshop-name">Two-Day Atelier Retreat</div>
+        <div class="workshop-duration">2 Days &nbsp;·&nbsp; Immersive</div>
+        <p class="workshop-desc">A full creative residency: paper-making, natural dyeing, bookbinding, and an exclusive studio dinner with our master papermakers.</p>
+        <div class="workshop-price">¥95,000 <span>Per Person</span></div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:48px;">
+      <a href="workshops.html" class="btn-outline">View All Workshops</a>
+    </div>
+  </section>
+
+  <!-- COMMISSION CTA -->
+  <section id="commission">
+    <div class="commission-bg-text">Folio</div>
+    <div class="commission-content">
+      <div class="section-label" style="justify-content:center;">Bespoke Commission</div>
+      <h2 class="commission-title">Every Sheet Begins<br>with a Conversation</h2>
+      <p class="commission-desc">
+        Whether you seek a single ream of custom washi or a complete stationery system for your brand or ceremony — our atelier takes on a limited number of bespoke commissions each season.
+      </p>
+      <a href="contact.html" class="btn-primary">Begin Your Commission</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">Folio</div>
+        <p class="footer-brand-desc">A luxury washi paper-making and stationery atelier rooted in the ancient papermaking traditions of Echizen, Fukui, Japan.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="collection.html">Paper Collection</a></li>
+          <li><a href="workshops.html">Workshops</a></li>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-links">
+          <li><a href="contact.html">Wedding Stationery</a></li>
+          <li><a href="contact.html">Bespoke Commission</a></li>
+          <li><a href="contact.html">Wholesale Inquiry</a></li>
+          <li><a href="workshops.html">Private Workshops</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Atelier</div>
+        <ul class="footer-links">
+          <li><a href="about.html">Echizen, Fukui</a></li>
+          <li><a href="about.html">Meet the Makers</a></li>
+          <li><a href="workshops.html">Visit Us</a></li>
+          <li><a href="contact.html">Newsletter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 FOLIO Atelier. All rights reserved.</div>
+      <div class="footer-location">
+        <span>Echizen, Fukui Prefecture, Japan</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── PRELOADER
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        gsap.to('#preloader', {
+          opacity: 0,
+          duration: 0.9,
+          ease: 'power2.inOut',
+          onComplete: function() {
+            document.getElementById('preloader').style.display = 'none';
+            showScrollIndicator();
+          }
+        });
+      }, 2000);
+    });
+
+    function showScrollIndicator() {
+      const si = document.getElementById('scroll-indicator');
+      if (si) si.classList.add('visible');
+    }
+
+    setTimeout(showScrollIndicator, 4000);
+
+    // ── NAVBAR
+    window.addEventListener('scroll', function() {
+      const nav = document.getElementById('main-nav');
+      if (window.scrollY > 60) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    });
+
+    // ── HERO PARALLAX
+    window.addEventListener('scroll', function() {
+      const bg = document.getElementById('hero-bg');
+      if (bg) {
+        const offset = window.scrollY * 0.3;
+        bg.style.transform = 'scale(1.08) translateY(' + offset + 'px)';
+      }
+    });
+
+    // ── HIDE SCROLL INDICATOR ON SCROLL
+    window.addEventListener('scroll', function() {
+      const si = document.getElementById('scroll-indicator');
+      if (!si) return;
+      if (window.scrollY > 200) si.classList.remove('visible');
+      else si.classList.add('visible');
+    });
+
+    // ── HERO ANIMATIONS
+    gsap.from('.hero-kicker', {
+      immediateRender: false,
+      opacity: 0,
+      y: 24,
+      duration: 1.0,
+      delay: 2.2,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.hero-title', {
+      immediateRender: false,
+      opacity: 0,
+      y: 36,
+      duration: 1.1,
+      delay: 2.4,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.hero-tagline', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 1.0,
+      delay: 2.6,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.hero-stat', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      delay: 2.8,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.water-drop', {
+      immediateRender: false,
+      opacity: 0,
+      scale: 0.85,
+      duration: 1.2,
+      delay: 3.0,
+      ease: 'power2.out'
+    });
+
+    // ── SCROLL ANIMATIONS
+    gsap.from('.section-label', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#papers', start: 'top 85%' },
+      opacity: 0,
+      x: -20,
+      duration: 0.9,
+      ease: 'power2.out'
+    });
+
+    gsap.from('#papers .section-title, #papers .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#papers', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 1.0,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.paper-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.papers-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('#heritage .section-label, #heritage .section-title, #heritage .section-subtitle', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#heritage', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 1.0,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.timeline-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.timeline', start: 'top 85%' },
+      opacity: 0,
+      x: -20,
+      duration: 0.9,
+      stagger: 0.15,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.weddings-img', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#weddings', start: 'top 80%' },
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      stagger: 0.15,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.weddings-feature', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.weddings-features', start: 'top 85%' },
+      opacity: 0,
+      x: 20,
+      duration: 0.9,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.workshop-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.workshops-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.commission-content', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission', start: 'top 80%' },
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.heritage-image', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#heritage', start: 'top 80%' },
+      opacity: 0,
+      x: -30,
+      duration: 1.1,
+      ease: 'power2.out'
+    });
+  </script>
+</body>
+</html>

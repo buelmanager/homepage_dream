@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUMMITS — The Mountain Remembers No One. We Remember You.</title>
+  <meta name="description" content="Ultra-exclusive alpine ski concierge curating private powder experiences in Verbier, Chamonix, Zermatt, and Aspen." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D1520;
+      --surface: #141C2C;
+      --accent: #60C0F0;
+      --accent2: #F0F0F0;
+      --text: #EEF4FF;
+      --text-muted: #607090;
+      --border: rgba(96,192,240,0.15);
+      --gutter: clamp(1.5rem, 5vw, 4rem);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #070D16;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #preloader .mountain-svg {
+      width: 200px;
+      height: 120px;
+    }
+
+    #preloader .brand-text {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      letter-spacing: 0.6em;
+      font-size: 1rem;
+      color: var(--accent);
+      margin-top: 1.5rem;
+      text-transform: uppercase;
+    }
+
+    #preloader .loading-bar {
+      width: 160px;
+      height: 1px;
+      background: rgba(96,192,240,0.2);
+      margin-top: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #preloader .loading-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: loadBar 1.6s cubic-bezier(.4,0,.2,1) forwards;
+    }
+
+    @keyframes loadBar { to { left: 0; } }
+
+    /* ── SCROLL INDICATOR ── */
+    #scroll-indicator {
+      position: fixed;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+    }
+
+    #scroll-indicator .si-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--accent));
+      position: relative;
+      overflow: hidden;
+    }
+
+    #scroll-indicator .si-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: scrollDrop 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollDrop { 0% { top: -100%; } 100% { top: 200%; } }
+
+    #scroll-indicator .si-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem var(--gutter);
+      transition: background 0.4s, padding 0.4s;
+    }
+
+    .navbar.scrolled {
+      background: rgba(13,21,32,0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem var(--gutter);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 1.4rem;
+      letter-spacing: 0.5em;
+      color: var(--accent2);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .navbar .logo span { color: var(--accent); }
+
+    .navbar nav {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .navbar nav a {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .navbar nav a:hover { color: var(--accent); }
+
+    .navbar .btn-book {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 0.7rem 1.6rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .navbar .btn-book:hover {
+      background: var(--accent2);
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1551524559-8af4e6624178?w=1800&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 30%;
+      transform: scale(1.05);
+      transition: transform 8s ease;
+    }
+
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(7,13,22,0.75) 0%,
+        rgba(13,21,32,0.5) 40%,
+        rgba(7,13,22,0.8) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 var(--gutter);
+      max-width: 1000px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.5em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: clamp(4rem, 12vw, 9rem);
+      letter-spacing: 0.15em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      line-height: 0.95;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title .word { display: inline-block; overflow: hidden; }
+    .hero-title .word .inner { display: inline-block; }
+
+    .hero-tagline {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      max-width: 480px;
+      margin: 0 auto 3rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(2rem, 5vw, 5rem);
+      flex-wrap: wrap;
+    }
+
+    .hero-stat { text-align: center; }
+
+    .hero-stat .num {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .hero-stat .label {
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+    }
+
+    .hero-stat-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--border);
+    }
+
+    .altitude-badge {
+      position: absolute;
+      bottom: 3rem;
+      right: var(--gutter);
+      z-index: 2;
+      border: 1px solid var(--border);
+      background: rgba(20,28,44,0.7);
+      backdrop-filter: blur(8px);
+      padding: 1rem 1.5rem;
+      text-align: center;
+    }
+
+    .altitude-badge .alt-num {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 1.6rem;
+      color: var(--accent);
+    }
+
+    .altitude-badge .alt-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ── SECTION COMMON ── */
+    section { padding: clamp(5rem, 10vh, 8rem) var(--gutter); }
+
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.4em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--accent2);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.8;
+    }
+
+    /* ── DESTINATIONS ── */
+    .destinations { background: var(--surface); }
+
+    .dest-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5px;
+      margin-top: 4rem;
+    }
+
+    .dest-card {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .dest-card-img {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.8s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    .dest-card:hover .dest-card-img { transform: scale(1.07); }
+
+    .dest-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7,13,22,0.95) 0%, rgba(7,13,22,0.2) 60%);
+    }
+
+    .dest-card-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 1.5rem;
+    }
+
+    .dest-card-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+      color: var(--accent2);
+    }
+
+    .dest-card-country {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .dest-card-alt {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.8rem;
+    }
+
+    .dest-card-arrow {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .dest-card:hover .dest-card-arrow {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── CHALETS ── */
+    .chalets { background: var(--bg); }
+
+    .chalet-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: end;
+      margin-bottom: 4rem;
+    }
+
+    .chalet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .chalet-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .chalet-card:first-child { grid-row: span 2; }
+
+    .chalet-card-img {
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.7s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    .chalet-card:first-child .chalet-card-img { min-height: 580px; }
+
+    .chalet-card:hover .chalet-card-img { transform: scale(1.05); }
+
+    .chalet-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7,13,22,0.9) 0%, transparent 60%);
+    }
+
+    .chalet-card-info {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      right: 1.5rem;
+    }
+
+    .chalet-card-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 1rem;
+      color: var(--accent2);
+      letter-spacing: 0.05em;
+    }
+
+    .chalet-card-loc {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    .chalet-card-price {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* ── GUIDES ── */
+    .guides { background: var(--surface); }
+
+    .guides-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-bottom: 4rem;
+    }
+
+    .guides-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .guide-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .guide-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .guide-card-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background-size: cover;
+      background-position: center top;
+    }
+
+    .guide-card-body { padding: 1.5rem; }
+
+    .guide-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 1rem;
+      color: var(--accent2);
+    }
+
+    .guide-spec {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .guide-bio {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.8rem;
+      line-height: 1.7;
+    }
+
+    .guide-years {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 1.8rem;
+      color: var(--accent);
+      margin-top: 1rem;
+    }
+
+    .guide-years-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ── HELISKI ── */
+    .heliski {
+      position: relative;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .heliski-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1800&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .heliski-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(7,13,22,0.92) 0%,
+        rgba(7,13,22,0.6) 50%,
+        rgba(7,13,22,0.3) 100%
+      );
+    }
+
+    .heliski-content {
+      position: relative;
+      z-index: 2;
+      padding: clamp(5rem, 10vh, 8rem) var(--gutter);
+      max-width: 700px;
+    }
+
+    .heliski-content .section-title { margin-bottom: 1.5rem; }
+
+    .heliski-list {
+      list-style: none;
+      margin: 2rem 0 3rem;
+    }
+
+    .heliski-list li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .heliski-list li::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 1rem 2.5rem;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.9rem 2rem;
+      text-decoration: none;
+      margin-left: 1.2rem;
+      transition: background 0.3s, color 0.3s, transform 0.2s;
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: var(--bg);
+      transform: translateY(-2px);
+    }
+
+    /* ── CTA SEASON PASS ── */
+    .season-cta {
+      background: var(--surface);
+      text-align: center;
+    }
+
+    .cta-divider {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+      margin: 0 auto 3rem;
+    }
+
+    .season-cta .section-title { max-width: 700px; margin: 0 auto 1.5rem; }
+    .season-cta .section-desc { max-width: 500px; margin: 0 auto 3rem; }
+
+    .cta-tiers {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 2px;
+      max-width: 900px;
+      margin: 0 auto 3rem;
+    }
+
+    .cta-tier {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      transition: border-color 0.3s;
+    }
+
+    .cta-tier:hover { border-color: var(--accent); }
+
+    .cta-tier.featured {
+      background: rgba(96,192,240,0.05);
+      border-color: var(--accent);
+      transform: scaleY(1.02);
+    }
+
+    .tier-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .tier-price {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 2.5rem;
+      color: var(--accent2);
+      margin-top: 0.8rem;
+    }
+
+    .tier-price sup { font-size: 1rem; vertical-align: super; }
+
+    .tier-period {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    .tier-features {
+      list-style: none;
+      margin: 1.5rem 0;
+      text-align: left;
+    }
+
+    .tier-features li {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(96,192,240,0.08);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .tier-features li::before {
+      content: '—';
+      color: var(--accent);
+      font-size: 0.7rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #070D16;
+      padding: 4rem var(--gutter) 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-brand .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 1.2rem;
+      letter-spacing: 0.5em;
+      color: var(--accent2);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .footer-brand p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+      line-height: 1.8;
+      max-width: 280px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-col ul { list-style: none; }
+
+    .footer-col ul li { margin-bottom: 0.6rem; }
+
+    .footer-col ul li a {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-col ul li a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 1024px) {
+      .dest-grid { grid-template-columns: repeat(2, 1fr); }
+      .chalet-header { grid-template-columns: 1fr; gap: 2rem; }
+      .chalet-grid { grid-template-columns: 1fr; }
+      .chalet-card:first-child { grid-row: span 1; }
+      .guides-intro { grid-template-columns: 1fr; }
+      .guides-grid { grid-template-columns: repeat(2, 1fr); }
+      .cta-tiers { flex-direction: column; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .navbar nav { display: none; }
+      .dest-grid { grid-template-columns: 1fr; }
+      .guides-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="mountain-svg" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path id="mountain-path" d="M10 110 L60 30 L80 60 L100 15 L120 50 L140 35 L190 110 Z"
+        stroke="#60C0F0" stroke-width="1.5" fill="none" stroke-dasharray="600" stroke-dashoffset="600"/>
+      <path d="M80 60 L100 15 L120 50" stroke="#F0F0F0" stroke-width="1" fill="none" opacity="0.4"/>
+    </svg>
+    <div class="brand-text">SUMMITS</div>
+    <div class="loading-bar"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="si-line"></div>
+    <span class="si-label">Scroll</span>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="navbar" id="navbar">
+    <a href="index.html" class="logo">SUMM<span>I</span>TS</a>
+    <nav>
+      <a href="destinations.html">Destinations</a>
+      <a href="chalets.html">Chalets</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="contact.html" class="btn-book">Book Now</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Alpine Ski Concierge — Est. 2009</p>
+      <h1 class="hero-title">
+        <span class="word"><span class="inner">SUMMITS</span></span>
+      </h1>
+      <p class="hero-tagline">The Mountain Remembers No One. We Remember You.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num" data-target="4">4</div>
+          <div class="label">Private Resorts</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="num" data-target="84">84</div>
+          <div class="label">Elite Guides</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="num" data-target="200">200</div>
+          <div class="label">km Private Runs</div>
+        </div>
+      </div>
+    </div>
+    <div class="altitude-badge">
+      <div class="alt-num">4,807m</div>
+      <div class="alt-label">Max Altitude</div>
+    </div>
+  </section>
+
+  <!-- DESTINATIONS -->
+  <section class="destinations" id="destinations">
+    <div style="max-width:1400px;margin:0 auto;">
+      <p class="section-label">Where We Ski</p>
+      <h2 class="section-title">The World's<br>Finest Terrain</h2>
+      <div class="dest-grid">
+        <a href="destinations.html#verbier" class="dest-card">
+          <div class="dest-card-img" style="background-image:url('https://images.unsplash.com/photo-1512327536842-5aa37d1ba3e3?w=800&q=80&auto=format&fit=crop')"></div>
+          <div class="dest-card-overlay"></div>
+          <div class="dest-card-content">
+            <div class="dest-card-name">Verbier</div>
+            <div class="dest-card-country">Switzerland</div>
+            <div class="dest-card-alt">3,330m · Freeride Capital</div>
+          </div>
+          <div class="dest-card-arrow">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7H12M8 3L12 7L8 11" stroke="#60C0F0" stroke-width="1.2"/>
+            </svg>
+          </div>
+        </a>
+        <a href="destinations.html#chamonix" class="dest-card">
+          <div class="dest-card-img" style="background-image:url('https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80&auto=format&fit=crop')"></div>
+          <div class="dest-card-overlay"></div>
+          <div class="dest-card-content">
+            <div class="dest-card-name">Chamonix</div>
+            <div class="dest-card-country">France</div>
+            <div class="dest-card-alt">3,842m · Legendary Altitude</div>
+          </div>
+          <div class="dest-card-arrow">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7H12M8 3L12 7L8 11" stroke="#60C0F0" stroke-width="1.2"/>
+            </svg>
+          </div>
+        </a>
+        <a href="destinations.html#zermatt" class="dest-card">
+          <div class="dest-card-img" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&auto=format&fit=crop')"></div>
+          <div class="dest-card-overlay"></div>
+          <div class="dest-card-content">
+            <div class="dest-card-name">Zermatt</div>
+            <div class="dest-card-country">Switzerland</div>
+            <div class="dest-card-alt">3,883m · Matterhorn Views</div>
+          </div>
+          <div class="dest-card-arrow">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7H12M8 3L12 7L8 11" stroke="#60C0F0" stroke-width="1.2"/>
+            </svg>
+          </div>
+        </a>
+        <a href="destinations.html#aspen" class="dest-card">
+          <div class="dest-card-img" style="background-image:url('https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?w=800&q=80&auto=format&fit=crop')"></div>
+          <div class="dest-card-overlay"></div>
+          <div class="dest-card-content">
+            <div class="dest-card-name">Aspen</div>
+            <div class="dest-card-country">Colorado, USA</div>
+            <div class="dest-card-alt">3,418m · Rocky Mountain Powder</div>
+          </div>
+          <div class="dest-card-arrow">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7H12M8 3L12 7L8 11" stroke="#60C0F0" stroke-width="1.2"/>
+            </svg>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHALETS -->
+  <section class="chalets" id="chalets">
+    <div style="max-width:1400px;margin:0 auto;">
+      <div class="chalet-header">
+        <div>
+          <p class="section-label">Private Residences</p>
+          <h2 class="section-title">Ski-In, Ski-Out<br>Estates</h2>
+        </div>
+        <div>
+          <p class="section-desc">Each property is personally curated — warm stone, burnished wood, and floor-to-ceiling mountain panoramas. Private butler, in-chalet spa, and a dedicated SUMMITS liaison on call.</p>
+          <a href="chalets.html" class="btn-outline" style="margin-left:0;margin-top:2rem;display:inline-block;">View Portfolio</a>
+        </div>
+      </div>
+      <div class="chalet-grid">
+        <a href="chalets.html" class="chalet-card">
+          <div class="chalet-card-img" style="background-image:url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&q=80&auto=format&fit=crop')"></div>
+          <div class="chalet-card-overlay"></div>
+          <div class="chalet-card-info">
+            <div class="chalet-card-name">Maison Blanche des Alpes</div>
+            <div class="chalet-card-loc">Verbier, Switzerland</div>
+            <div class="chalet-card-price">From CHF 24,000 / week</div>
+          </div>
+        </a>
+        <a href="chalets.html" class="chalet-card">
+          <div class="chalet-card-img" style="background-image:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80&auto=format&fit=crop')"></div>
+          <div class="chalet-card-overlay"></div>
+          <div class="chalet-card-info">
+            <div class="chalet-card-name">Glacier's Edge</div>
+            <div class="chalet-card-loc">Chamonix, France</div>
+            <div class="chalet-card-price">From €18,500 / week</div>
+          </div>
+        </a>
+        <a href="chalets.html" class="chalet-card">
+          <div class="chalet-card-img" style="background-image:url('https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=800&q=80&auto=format&fit=crop')"></div>
+          <div class="chalet-card-overlay"></div>
+          <div class="chalet-card-info">
+            <div class="chalet-card-name">Summit House Aspen</div>
+            <div class="chalet-card-loc">Aspen, Colorado</div>
+            <div class="chalet-card-price">From $21,000 / week</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUIDES -->
+  <section class="guides" id="guides">
+    <div style="max-width:1400px;margin:0 auto;">
+      <div class="guides-intro">
+        <div>
+          <p class="section-label">Private Guiding</p>
+          <h2 class="section-title">Your Mountain,<br>Their Expertise</h2>
+        </div>
+        <p class="section-desc">Each SUMMITS guide holds IFMGA/UIAGM mountain guide certification — the highest standard in the world. They know the hidden couloirs, the secret powder bowls, and the right moment to drop in. They also know when not to.</p>
+      </div>
+      <div class="guides-grid">
+        <div class="guide-card">
+          <div class="guide-card-img" style="background-image:url('https://images.unsplash.com/photo-1485125639709-a60c3a500bf1?w=600&q=80&auto=format&fit=crop')"></div>
+          <div class="guide-card-body">
+            <div class="guide-name">Marc Dubois</div>
+            <div class="guide-spec">Verbier · Freeride Specialist</div>
+            <div class="guide-bio">18 seasons in Verbier's legendary off-piste terrain. Former Swiss national freeride champion and IFMGA-certified guide.</div>
+            <div class="guide-years">18</div>
+            <div class="guide-years-label">Seasons Alpine</div>
+          </div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card-img" style="background-image:url('https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=600&q=80&auto=format&fit=crop')"></div>
+          <div class="guide-card-body">
+            <div class="guide-name">Isabelle Morin</div>
+            <div class="guide-spec">Chamonix · Haute Route</div>
+            <div class="guide-bio">Pioneer of women's heliski guiding in the French Alps. Completed the Chamonix–Zermatt Haute Route 34 times.</div>
+            <div class="guide-years">34</div>
+            <div class="guide-years-label">Haute Route Crossings</div>
+          </div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card-img" style="background-image:url('https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=600&q=80&auto=format&fit=crop')"></div>
+          <div class="guide-card-body">
+            <div class="guide-name">Kyle Ashford</div>
+            <div class="guide-spec">Aspen · Backcountry Expert</div>
+            <div class="guide-bio">Colorado-born mountain guide with 22 seasons in the Elk Mountains. Snowpack science specialist and avalanche educator.</div>
+            <div class="guide-years">22</div>
+            <div class="guide-years-label">Rocky Mountain Seasons</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HELISKI -->
+  <section class="heliski" id="heliski">
+    <div class="heliski-bg"></div>
+    <div class="heliski-content">
+      <p class="section-label">Helicopter Access</p>
+      <h2 class="section-title">First Tracks on<br>Untouched Powder</h2>
+      <p class="section-desc">We operate a fleet of private helicopters with exclusive landing permits on summits closed to commercial operations. Wake at dawn. Fly. Ski terrain no one else will ever touch.</p>
+      <ul class="heliski-list">
+        <li>Dedicated Bell 429 and AS350 fleet</li>
+        <li>EASA/FAA certified heli-operators</li>
+        <li>Real-time snowpack and weather analysis</li>
+        <li>Private summit picnic or Michelin-starred delivery</li>
+        <li>Exclusive landing zones: 40+ private permits</li>
+      </ul>
+      <a href="contact.html" class="btn-primary">Request Heliski Access</a>
+      <a href="about.html" class="btn-outline">Our Philosophy</a>
+    </div>
+  </section>
+
+  <!-- SEASON PASS CTA -->
+  <section class="season-cta" id="season">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="cta-divider"></div>
+      <p class="section-label">Season Membership</p>
+      <h2 class="section-title">Ski Every Resort.<br>Every Season. Infinitely.</h2>
+      <p class="section-desc">SUMMITS membership unlocks the entire portfolio — guides, helicopters, chalets, and cuisine — for the full winter season.</p>
+      <div class="cta-tiers">
+        <div class="cta-tier">
+          <div class="tier-name">Alpine</div>
+          <div class="tier-price"><sup>CHF </sup>38,000</div>
+          <div class="tier-period">/ season · single resort</div>
+          <ul class="tier-features">
+            <li>1 resort access</li>
+            <li>Dedicated guide (3 days/week)</li>
+            <li>Priority chalet booking</li>
+            <li>Snow concierge line</li>
+          </ul>
+          <a href="contact.html" class="btn-outline" style="margin-left:0;">Inquire</a>
+        </div>
+        <div class="cta-tier featured">
+          <div class="tier-name">Summit</div>
+          <div class="tier-price"><sup>CHF </sup>95,000</div>
+          <div class="tier-period">/ season · all 4 resorts</div>
+          <ul class="tier-features">
+            <li>All 4 resort access</li>
+            <li>Personal guide (unlimited days)</li>
+            <li>Complimentary heliski days (×12)</li>
+            <li>Chalet suite included</li>
+            <li>Michelin dining curation</li>
+          </ul>
+          <a href="contact.html" class="btn-primary" style="display:inline-block;">Book This Season</a>
+        </div>
+        <div class="cta-tier">
+          <div class="tier-name">Bespoke</div>
+          <div class="tier-price">Private</div>
+          <div class="tier-period">/ custom · full concierge</div>
+          <ul class="tier-features">
+            <li>Custom destination portfolio</li>
+            <li>Private aircraft coordination</li>
+            <li>Family / group programmes</li>
+            <li>Year-round lifestyle concierge</li>
+          </ul>
+          <a href="contact.html" class="btn-outline" style="margin-left:0;">Speak With Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="max-width:1400px;margin:0 auto;">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">SUMMITS</a>
+          <p>The mountain remembers no one. We remember you. Private powder experiences curated for those who ski where others cannot.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Destinations</h4>
+          <ul>
+            <li><a href="destinations.html#verbier">Verbier</a></li>
+            <li><a href="destinations.html#chamonix">Chamonix</a></li>
+            <li><a href="destinations.html#zermatt">Zermatt</a></li>
+            <li><a href="destinations.html#aspen">Aspen</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="chalets.html">Private Chalets</a></li>
+            <li><a href="about.html#guides">Guide Team</a></li>
+            <li><a href="index.html#heliski">Helicopter Access</a></li>
+            <li><a href="index.html#season">Season Pass</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="about.html#philosophy">Philosophy</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="contact.html#private">Private Consultation</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 SUMMITS Alpine Concierge. All rights reserved.</span>
+        <span>IFMGA Certified · EASA Registered · Member of ILTM</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Preloader
+    const preloader = document.getElementById('preloader');
+    const mountainPath = document.getElementById('mountain-path');
+
+    gsap.to(mountainPath, {
+      strokeDashoffset: 0,
+      duration: 1.4,
+      ease: 'power2.inOut'
+    });
+
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onComplete: function() {
+            preloader.style.display = 'none';
+            initScrollIndicator();
+            initHeroAnimations();
+          }
+        });
+      }, 1800);
+    });
+
+    function initScrollIndicator() {
+      var si = document.getElementById('scroll-indicator');
+      gsap.to(si, { opacity: 1, duration: 0.6, delay: 0.5 });
+      setTimeout(function() {
+        gsap.to(si, { opacity: 1, duration: 0.6 });
+      }, 4000);
+    }
+
+    function initHeroAnimations() {
+      // Hero bg parallax
+      gsap.to('#hero-bg', {
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      // Hero content
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.hero-title .inner', {
+        immediateRender: false,
+        y: '100%',
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        delay: 0.2
+      });
+
+      gsap.from('.hero-tagline', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 0.5
+      });
+
+      gsap.from('.hero-stat', {
+        immediateRender: false,
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: 'power2.out',
+        stagger: 0.1,
+        delay: 0.8
+      });
+
+      gsap.from('.altitude-badge', {
+        immediateRender: false,
+        opacity: 0,
+        x: 20,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 1.2
+      });
+    }
+
+    // Navbar scroll
+    var navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      // Hide scroll indicator when scrolled
+      var si = document.getElementById('scroll-indicator');
+      if (window.scrollY > 200) {
+        gsap.to(si, { opacity: 0, duration: 0.4 });
+      }
+    });
+
+    // Destinations
+    gsap.from('.destinations .section-label', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 0.9,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.destinations', start: 'top 85%' }
+    });
+
+    gsap.from('.destinations .section-title', {
+      immediateRender: false,
+      opacity: 0,
+      y: 28,
+      duration: 1.1,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.destinations', start: 'top 80%' }
+    });
+
+    gsap.from('.dest-card', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      ease: 'power2.out',
+      stagger: 0.12,
+      scrollTrigger: { trigger: '.dest-grid', start: 'top 85%' }
+    });
+
+    // Chalets
+    gsap.from('.chalet-header', {
+      immediateRender: false,
+      opacity: 0,
+      y: 28,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.chalets', start: 'top 80%' }
+    });
+
+    gsap.from('.chalet-card', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      ease: 'power2.out',
+      stagger: 0.1,
+      scrollTrigger: { trigger: '.chalet-grid', start: 'top 85%' }
+    });
+
+    // Guides
+    gsap.from('.guides-intro', {
+      immediateRender: false,
+      opacity: 0,
+      y: 28,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.guides', start: 'top 80%' }
+    });
+
+    gsap.from('.guide-card', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      ease: 'power2.out',
+      stagger: 0.12,
+      scrollTrigger: { trigger: '.guides-grid', start: 'top 85%' }
+    });
+
+    // Heliski
+    gsap.from('.heliski-content .section-label', {
+      immediateRender: false,
+      opacity: 0,
+      x: -20,
+      duration: 0.9,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.heliski', start: 'top 80%' }
+    });
+
+    gsap.from('.heliski-content .section-title', {
+      immediateRender: false,
+      opacity: 0,
+      x: -28,
+      duration: 1.1,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '.heliski', start: 'top 75%' }
+    });
+
+    gsap.from('.heliski-list li', {
+      immediateRender: false,
+      opacity: 0,
+      x: -20,
+      duration: 0.8,
+      ease: 'power2.out',
+      stagger: 0.08,
+      scrollTrigger: { trigger: '.heliski-list', start: 'top 85%' }
+    });
+
+    // Season CTA
+    gsap.from('.cta-tier', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      ease: 'power2.out',
+      stagger: 0.12,
+      scrollTrigger: { trigger: '.cta-tiers', start: 'top 85%' }
+    });
+
+    // Heliski parallax
+    gsap.to('.heliski-bg', {
+      yPercent: 15,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.heliski',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GALLOP & GRACE — Where Nobility Meets Nature</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1A1510;
+      --surface: #231C14;
+      --accent: #C8903C;
+      --accent2: #6B8C3A;
+      --text: #F5EDD8;
+      --text-muted: #9A8060;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Lato', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .horse-svg { width: 120px; height: 80px; }
+    .horse-body { animation: gallop 0.5s steps(1) infinite; }
+    @keyframes gallop {
+      0%   { transform: translateY(0) rotate(0deg); }
+      25%  { transform: translateY(-4px) rotate(-2deg); }
+      50%  { transform: translateY(0) rotate(0deg); }
+      75%  { transform: translateY(-2px) rotate(1deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+    .preloader-brand {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+    }
+    .preloader-tagline {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .preloader-bar {
+      width: 200px;
+      height: 1px;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .preloader-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: barSlide 2s ease-in-out forwards;
+    }
+    @keyframes barSlide { to { left: 0; } }
+
+    /* NAVBAR */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1.2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: transparent;
+      transition: background 0.4s, padding 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(26,21,16,0.96);
+      padding: 0.8rem 3rem;
+      border-bottom: 1px solid rgba(200,144,60,0.2);
+    }
+    .nav-brand {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a.active { color: var(--accent); }
+    .nav-cta {
+      padding: 0.6rem 1.6rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.05);
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(26,21,16,0.55) 0%, rgba(26,21,16,0.3) 50%, rgba(26,21,16,0.75) 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 2rem;
+    }
+    .hero-est {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(200,144,60,0.5);
+      padding: 0.4rem 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-subtitle {
+      font-size: 1rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+    }
+    .hero-actions { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 0.9rem 2.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    .btn-primary:hover { background: #d9a452; }
+    .btn-outline {
+      padding: 0.9rem 2.5rem;
+      border: 1px solid var(--text);
+      color: var(--text);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 2;
+    }
+    .scroll-indicator span {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse { 0%,100%{opacity:0.3;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.1)} }
+
+    /* STATS */
+    .stats {
+      background: var(--surface);
+      padding: 5rem 3rem;
+    }
+    .stats-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3rem;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 3.5rem;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .stat-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+      margin: 0.8rem auto;
+    }
+
+    /* SECTION BASE */
+    section { padding: 7rem 3rem; }
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .section-body {
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 600px;
+    }
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      margin: 1.5rem 0;
+    }
+
+    /* PROGRAMS TEASER */
+    .programs-teaser { background: var(--bg); }
+    .programs-teaser-inner { max-width: 1200px; margin: 0 auto; }
+    .programs-header { text-align: center; margin-bottom: 4rem; }
+    .programs-header .divider { margin: 1.5rem auto; }
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .program-card {
+      background: var(--surface);
+      padding: 3rem 2.5rem;
+      border: 1px solid rgba(200,144,60,0.1);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .program-card:hover { border-color: rgba(200,144,60,0.4); }
+    .program-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--accent);
+      transition: height 0.4s;
+    }
+    .program-card:hover::before { height: 100%; }
+    .program-number {
+      font-family: var(--font-heading);
+      font-size: 4rem;
+      color: rgba(200,144,60,0.15);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+    .program-name {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+    .program-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .program-link {
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .program-link::after { content: '→'; transition: transform 0.3s; }
+    .program-link:hover::after { transform: translateX(4px); }
+
+    /* HORSES TEASER */
+    .horses-teaser { background: var(--surface); }
+    .horses-inner { max-width: 1200px; margin: 0 auto; }
+    .horses-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .horses-img {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+    }
+    .horses-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .horses-img-badge {
+      position: absolute;
+      bottom: 2rem; right: -1.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 1.2rem 1.8rem;
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .horses-img-badge span {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      font-family: var(--font-body);
+      font-weight: 400;
+    }
+    .horses-text { }
+    .breed-list { list-style: none; margin: 2rem 0; }
+    .breed-list li {
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(200,144,60,0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .breed-list li strong { color: var(--text); font-family: var(--font-heading); font-size: 1rem; }
+
+    /* FACILITIES */
+    .facilities { background: var(--bg); }
+    .facilities-inner { max-width: 1200px; margin: 0 auto; }
+    .facilities-header { text-align: center; margin-bottom: 4rem; }
+    .facilities-header .divider { margin: 1.5rem auto; }
+    .fac-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .fac-item {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+    .fac-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s; }
+    .fac-item:hover img { transform: scale(1.06); }
+    .fac-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(26,21,16,0.9) 0%, rgba(26,21,16,0.1) 60%);
+      display: flex;
+      align-items: flex-end;
+      padding: 2rem;
+    }
+    .fac-label {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+    .fac-sub { font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; margin-top: 0.3rem; }
+
+    /* TESTIMONIALS */
+    .testimonials { background: var(--surface); }
+    .testimonials-inner { max-width: 1100px; margin: 0 auto; }
+    .testimonials-header { text-align: center; margin-bottom: 4rem; }
+    .testimonials-header .divider { margin: 1.5rem auto; }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .testi-card {
+      background: var(--bg);
+      padding: 2.5rem;
+      border-left: 3px solid var(--accent);
+    }
+    .testi-quote {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .testi-quote::before { content: '\201C'; color: var(--accent); font-size: 1.5rem; }
+    .testi-author { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+    .testi-role { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+    /* MEMBERSHIP CTA */
+    .membership-cta {
+      background: var(--bg);
+      text-align: center;
+      padding: 8rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .membership-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+    }
+    .membership-cta::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(26,21,16,0.82);
+    }
+    .membership-cta-inner { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
+    .membership-cta .section-title { margin-bottom: 1.5rem; }
+    .membership-cta .section-body { margin: 0 auto 2.5rem; text-align: center; }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid rgba(200,144,60,0.2);
+      padding: 5rem 3rem 2.5rem;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+    }
+    .footer-brand-name {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .footer-brand-desc {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      max-width: 280px;
+    }
+    .footer-col h4 {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.75rem; }
+    .footer-col ul li a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.3s;
+    }
+    .footer-col ul li a:hover { color: var(--accent); }
+    .footer-col address { font-style: normal; color: var(--text-muted); font-size: 0.85rem; line-height: 1.8; }
+    .footer-bottom {
+      border-top: 1px solid rgba(200,144,60,0.15);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy { color: var(--text-muted); font-size: 0.75rem; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .programs-grid, .testi-grid { grid-template-columns: 1fr; }
+      .horses-layout { grid-template-columns: 1fr; }
+      .fac-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <svg class="horse-svg" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g class="horse-body" fill="#C8903C">
+      <!-- Body -->
+      <ellipse cx="60" cy="48" rx="28" ry="16" />
+      <!-- Neck -->
+      <path d="M72 35 Q82 22 78 12 Q74 8 70 12 Q66 20 68 35Z" />
+      <!-- Head -->
+      <ellipse cx="76" cy="10" rx="8" ry="6" />
+      <!-- Ear -->
+      <path d="M79 5 L83 0 L81 6Z" />
+      <!-- Mane -->
+      <path d="M74 16 Q70 20 68 28 Q72 24 76 20Z" fill="#A0702A" />
+      <!-- Legs -->
+      <rect x="42" y="60" width="5" height="16" rx="2" />
+      <rect x="52" y="62" width="5" height="14" rx="2" />
+      <rect x="65" y="60" width="5" height="16" rx="2" />
+      <rect x="76" y="58" width="5" height="18" rx="2" />
+      <!-- Tail -->
+      <path d="M32 48 Q18 44 14 52 Q18 56 28 54Z" />
+      <!-- Eye -->
+      <circle cx="79" cy="9" r="1.5" fill="#1A1510" />
+    </g>
+  </svg>
+  <div class="preloader-brand">GALLOP & GRACE</div>
+  <div class="preloader-tagline">Where Nobility Meets Nature</div>
+  <div class="preloader-bar"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-brand">GALLOP & GRACE</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="horses.html">Horses</a></li>
+    <li><a href="programs.html">Programs</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Enquire</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-est">Est. 1952 &nbsp;·&nbsp; Private Equestrian Club</div>
+    <h1 class="hero-title">
+      Where <em>Nobility</em><br>Meets Nature
+    </h1>
+    <p class="hero-subtitle">GALLOP & GRACE — 340 Acres of Equestrian Excellence</p>
+    <div class="hero-actions">
+      <a href="programs.html" class="btn-primary">Explore Programs</a>
+      <a href="about.html" class="btn-outline">Our Heritage</a>
+    </div>
+  </div>
+  <div class="scroll-indicator" id="scrollIndicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">85</div>
+      <div class="stat-divider"></div>
+      <div class="stat-label">Exceptional Horses</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">340</div>
+      <div class="stat-divider"></div>
+      <div class="stat-label">Acres of Estate</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">70+</div>
+      <div class="stat-divider"></div>
+      <div class="stat-label">Years of Heritage</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">14</div>
+      <div class="stat-divider"></div>
+      <div class="stat-label">Disciplines Offered</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRAMS TEASER -->
+<section class="programs-teaser">
+  <div class="programs-teaser-inner">
+    <div class="programs-header">
+      <div class="section-label">Excellence in Training</div>
+      <h2 class="section-title">Our Signature Programs</h2>
+      <div class="divider"></div>
+      <p class="section-body" style="margin:0 auto;text-align:center;">From the first trot to championship dressage, our programs are crafted for every stage of the equestrian journey.</p>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="program-number">01</div>
+        <h3 class="program-name">Beginner Equestrian</h3>
+        <p class="program-desc">An introduction to the art of horsemanship. Learn fundamental seat position, basic aids, and stable management in a nurturing, expert-guided environment.</p>
+        <a href="programs.html" class="program-link">Learn More</a>
+      </div>
+      <div class="program-card">
+        <div class="program-number">02</div>
+        <h3 class="program-name">Intermediate Dressage</h3>
+        <p class="program-desc">Elevate your technique with classical dressage principles. Develop harmony, precision, and elegance through structured weekly sessions on competition-ready horses.</p>
+        <a href="programs.html" class="program-link">Learn More</a>
+      </div>
+      <div class="program-card">
+        <div class="program-number">03</div>
+        <h3 class="program-name">Show Jumping</h3>
+        <p class="program-desc">Develop athleticism, timing, and courage over carefully graded fences. Our show jumping curriculum guides riders from cross-rails to FEI-level competition.</p>
+        <a href="programs.html" class="program-link">Learn More</a>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:3rem;">
+      <a href="programs.html" class="btn-outline">View All Programs</a>
+    </div>
+  </div>
+</section>
+
+<!-- HORSES TEASER -->
+<section class="horses-teaser">
+  <div class="horses-inner">
+    <div class="horses-layout">
+      <div class="horses-img">
+        <img src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=1200&q=80&auto=format&fit=crop" alt="Gallop & Grace horses" loading="lazy" />
+        <div class="horses-img-badge">
+          85+
+          <span>Exceptional Horses</span>
+        </div>
+      </div>
+      <div class="horses-text">
+        <div class="section-label">Our Equine Family</div>
+        <h2 class="section-title">Horses of<br><em style="font-style:italic;color:var(--accent);">Distinction</em></h2>
+        <div class="divider"></div>
+        <p class="section-body">Each horse at Gallop & Grace is carefully selected for temperament, athleticism, and lineage. Our collection spans four celebrated breeds, each representing a pillar of equestrian heritage.</p>
+        <ul class="breed-list">
+          <li><strong>Dutch Warmbloods</strong> <span>28 horses</span></li>
+          <li><strong>Irish Thoroughbreds</strong> <span>22 horses</span></li>
+          <li><strong>Pure Spanish Andalusians</strong> <span>18 horses</span></li>
+          <li><strong>Hanoverian Sport Horses</strong> <span>17 horses</span></li>
+        </ul>
+        <a href="horses.html" class="btn-primary" style="display:inline-block;">Meet Our Horses</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FACILITIES -->
+<section class="facilities">
+  <div class="facilities-inner">
+    <div class="facilities-header">
+      <div class="section-label">World-Class Infrastructure</div>
+      <h2 class="section-title">Estate Facilities</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="fac-grid">
+      <div class="fac-item">
+        <img src="https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=800&q=80&auto=format&fit=crop" alt="Grand stables" loading="lazy" />
+        <div class="fac-overlay">
+          <div>
+            <div class="fac-label">Grand Stables</div>
+            <div class="fac-sub">85-stall heated facility</div>
+          </div>
+        </div>
+      </div>
+      <div class="fac-item">
+        <img src="https://images.unsplash.com/photo-1508094584510-5b72e65e7a13?w=800&q=80&auto=format&fit=crop" alt="Dressage arenas" loading="lazy" />
+        <div class="fac-overlay">
+          <div>
+            <div class="fac-label">Dressage Arenas</div>
+            <div class="fac-sub">3 competition-standard arenas</div>
+          </div>
+        </div>
+      </div>
+      <div class="fac-item">
+        <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&auto=format&fit=crop" alt="Estate trails" loading="lazy" />
+        <div class="fac-overlay">
+          <div>
+            <div class="fac-label">Estate Trails</div>
+            <div class="fac-sub">40 miles of private rides</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="testimonials-header">
+      <div class="section-label">Member Voices</div>
+      <h2 class="section-title">What Our Members Say</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <p class="testi-quote">Gallop & Grace is unlike any equestrian club I have ever joined. The level of care for both horse and rider is extraordinary. My warmblood Aurelius is thriving here.</p>
+        <div class="testi-author">Lady Charlotte Pemberton</div>
+        <div class="testi-role">Full Member since 2019</div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-quote">The dressage program transformed my riding within a single season. Head Trainer Ashworth has an exceptional eye and a rare gift for communicating subtle corrections.</p>
+        <div class="testi-author">Oliver Whitfield-Crane</div>
+        <div class="testi-role">Patron Member since 2021</div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-quote">The estate is breathtaking — 340 acres of pristine countryside, impeccable facilities, and a community that shares a genuine passion for equestrian excellence.</p>
+        <div class="testi-author">Isabelle de Montfort</div>
+        <div class="testi-role">Patron Member since 2017</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERSHIP CTA -->
+<section class="membership-cta">
+  <div class="membership-cta-inner">
+    <div class="section-label">Exclusive Access</div>
+    <h2 class="section-title">Become a Member</h2>
+    <p class="section-body">Join a legacy of aristocratic horsemanship. Day Member, Full Member, and Patron tiers available — each offering privileged access to one of England's finest private equestrian estates.</p>
+    <div class="hero-actions" style="margin-top:2.5rem;">
+      <a href="contact.html" class="btn-primary">Apply for Membership</a>
+      <a href="about.html" class="btn-outline">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">GALLOP & GRACE</div>
+        <p class="footer-brand-desc">An ultra-luxury private equestrian club and riding school, established in 1952 on 340 acres of English countryside. Home to 85 exceptional horses and 70 years of heritage.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="about.html">Our Heritage</a></li>
+          <li><a href="horses.html">Our Horses</a></li>
+          <li><a href="programs.html">Programs</a></li>
+          <li><a href="contact.html">Membership</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="programs.html">Beginner Equestrian</a></li>
+          <li><a href="programs.html">Dressage</a></li>
+          <li><a href="programs.html">Show Jumping</a></li>
+          <li><a href="programs.html">Private Coaching</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <address>
+          Gallop & Grace Estate<br>
+          Hartfield Lane, Surrey<br>
+          GU5 0BX, England<br><br>
+          +44 (0)1483 920 100<br>
+          enquiries@gallopandgrace.co.uk
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 Gallop & Grace. All rights reserved.</div>
+      <div class="footer-copy">Est. 1952 &nbsp;·&nbsp; Surrey, England</div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  // PRELOADER
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      gsap.to('#preloader', {
+        duration: 0.8,
+        autoAlpha: 0,
+        ease: 'power2.inOut',
+        onComplete: function() {
+          document.getElementById('preloader').style.display = 'none';
+          document.getElementById('scrollIndicator').style.visibility = 'visible';
+          initAnimations();
+        }
+      });
+    }, 2200);
+  });
+
+  setTimeout(function() {
+    document.getElementById('scrollIndicator').style.visibility = 'visible';
+  }, 4000);
+
+  // NAVBAR SCROLL
+  window.addEventListener('scroll', function() {
+    var nav = document.getElementById('navbar');
+    if (window.scrollY > 60) { nav.classList.add('scrolled'); }
+    else { nav.classList.remove('scrolled'); }
+  });
+
+  // HERO PARALLAX
+  window.addEventListener('scroll', function() {
+    var bg = document.getElementById('heroBg');
+    if (bg) { bg.style.transform = 'scale(1.05) translateY(' + (window.scrollY * 0.3) + 'px)'; }
+  });
+
+  function initAnimations() {
+    // Hero
+    gsap.from('.hero-est', { immediateRender: false, scrollTrigger: { trigger: '.hero', start: 'top 80%' }, duration: 1, y: 20, autoAlpha: 0, ease: 'power2.out' });
+    gsap.from('.hero-title', { immediateRender: false, scrollTrigger: { trigger: '.hero', start: 'top 80%' }, duration: 1.1, y: 28, autoAlpha: 0, ease: 'power2.out', delay: 0.2 });
+    gsap.from('.hero-subtitle', { immediateRender: false, scrollTrigger: { trigger: '.hero', start: 'top 80%' }, duration: 1, y: 20, autoAlpha: 0, ease: 'power2.out', delay: 0.4 });
+    gsap.from('.hero-actions', { immediateRender: false, scrollTrigger: { trigger: '.hero', start: 'top 80%' }, duration: 1, y: 20, autoAlpha: 0, ease: 'power2.out', delay: 0.6 });
+
+    // Stats
+    gsap.from('.stat-item', { immediateRender: false, scrollTrigger: { trigger: '.stats', start: 'top 85%' }, duration: 0.9, y: 24, autoAlpha: 0, stagger: 0.1, ease: 'power2.out' });
+
+    // Programs
+    gsap.from('.programs-header', { immediateRender: false, scrollTrigger: { trigger: '.programs-teaser', start: 'top 85%' }, duration: 1, y: 24, autoAlpha: 0, ease: 'power2.out' });
+    gsap.from('.program-card', { immediateRender: false, scrollTrigger: { trigger: '.programs-grid', start: 'top 85%' }, duration: 0.9, y: 28, autoAlpha: 0, stagger: 0.12, ease: 'power2.out' });
+
+    // Horses
+    gsap.from('.horses-img', { immediateRender: false, scrollTrigger: { trigger: '.horses-teaser', start: 'top 85%' }, duration: 1.1, x: -30, autoAlpha: 0, ease: 'power2.out' });
+    gsap.from('.horses-text', { immediateRender: false, scrollTrigger: { trigger: '.horses-teaser', start: 'top 85%' }, duration: 1.1, x: 30, autoAlpha: 0, ease: 'power2.out', delay: 0.2 });
+
+    // Facilities
+    gsap.from('.fac-item', { immediateRender: false, scrollTrigger: { trigger: '.fac-grid', start: 'top 85%' }, duration: 0.9, y: 24, autoAlpha: 0, stagger: 0.1, ease: 'power2.out' });
+
+    // Testimonials
+    gsap.from('.testi-card', { immediateRender: false, scrollTrigger: { trigger: '.testi-grid', start: 'top 85%' }, duration: 0.9, y: 24, autoAlpha: 0, stagger: 0.12, ease: 'power2.out' });
+
+    // CTA
+    gsap.from('.membership-cta-inner', { immediateRender: false, scrollTrigger: { trigger: '.membership-cta', start: 'top 85%' }, duration: 1, y: 24, autoAlpha: 0, ease: 'power2.out' });
+  }
+</script>
+</body>
+</html>

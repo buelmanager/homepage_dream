@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commission — VELOX ATELIER</title>
+  <meta name="description" content="Commission your bespoke Velox Atelier frame. Fill out the commission form and begin the journey to your perfect bike.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141414;
+      --surface: #1C1C1C;
+      --accent: #E8C840;
+      --accent2: #A8A8A8;
+      --text: #F0F0F0;
+      --text-muted: #888888;
+      --font-heading: 'Montserrat', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 72px;
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(232, 200, 64, 0.1);
+    }
+    .nav-logo {
+      font-family: var(--font-heading); font-size: 15px; font-weight: 800;
+      letter-spacing: 4px; color: var(--text); text-decoration: none; text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: var(--font-heading); font-size: 11px; font-weight: 600;
+      letter-spacing: 3px; color: var(--accent2); text-decoration: none; text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta {
+      font-family: var(--font-heading); font-size: 10px; font-weight: 700;
+      letter-spacing: 3px; color: var(--bg); background: var(--accent);
+      text-decoration: none; text-transform: uppercase; padding: 12px 24px;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .nav-cta:hover { background: #fff; transform: translateY(-1px); }
+
+    /* SUBHERO */
+    .subhero {
+      padding-top: 72px; height: 55vh; min-height: 420px;
+      position: relative; display: flex; align-items: flex-end; overflow: hidden;
+    }
+    .subhero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1502744688674-c619d1586c9e?w=1200&q=80&auto=format&fit=crop');
+      background-size: cover; background-position: center 40%;
+    }
+    .subhero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(20,20,20,0.90) 0%, rgba(20,20,20,0.40) 60%, rgba(20,20,20,0.55) 100%);
+    }
+    .subhero-content { position: relative; z-index: 2; padding: 60px 80px; }
+    .subhero-eyebrow {
+      font-family: var(--font-heading); font-size: 10px; font-weight: 600;
+      letter-spacing: 6px; color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+    }
+    .subhero-title {
+      font-family: var(--font-heading); font-size: clamp(36px, 5vw, 64px);
+      font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 1;
+    }
+
+    /* COMMISSION FORM */
+    #commission-form {
+      background: var(--bg); padding: 100px 80px;
+    }
+    .commission-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+    }
+
+    .form-intro { position: sticky; top: 120px; }
+    .section-eyebrow {
+      font-family: var(--font-heading); font-size: 10px; font-weight: 600;
+      letter-spacing: 6px; color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-heading); font-size: clamp(28px, 3vw, 44px);
+      font-weight: 800; line-height: 1.1; letter-spacing: -1px; text-transform: uppercase;
+    }
+    .form-intro-desc {
+      font-size: 15px; line-height: 1.9; color: var(--text-muted); margin-top: 20px;
+    }
+
+    .form-trust {
+      margin-top: 48px; display: flex; flex-direction: column; gap: 16px;
+    }
+    .trust-item {
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .trust-icon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      border: 1px solid rgba(232,200,64,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading); font-size: 11px; font-weight: 700; color: var(--accent);
+    }
+    .trust-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .trust-text strong { color: var(--accent2); font-weight: 600; }
+
+    /* FORM */
+    form {
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+    label {
+      font-family: var(--font-heading); font-size: 10px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase; color: var(--accent2);
+    }
+
+    input, select, textarea {
+      background: var(--surface); border: 1px solid rgba(240,240,240,0.08);
+      color: var(--text); font-family: var(--font-body); font-size: 14px;
+      padding: 16px 20px;
+      transition: border-color 0.3s;
+      outline: none; width: 100%;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    select { cursor: pointer; appearance: none; }
+    select option { background: var(--surface); }
+    textarea { resize: vertical; min-height: 120px; }
+
+    .form-submit {
+      font-family: var(--font-heading); font-size: 11px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--bg); background: var(--accent);
+      border: none; padding: 20px 48px; cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      margin-top: 8px;
+    }
+    .form-submit:hover { background: #fff; transform: translateY(-2px); }
+
+    .form-note {
+      font-size: 12px; color: var(--text-muted); line-height: 1.6;
+      padding-top: 16px; border-top: 1px solid rgba(240,240,240,0.06);
+    }
+
+    /* WHAT HAPPENS NEXT */
+    #what-next {
+      background: var(--surface); padding: 100px 80px;
+    }
+    .what-next-inner { max-width: 1200px; margin: 0 auto; }
+    .what-next-steps {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+      background: rgba(232,200,64,0.08); margin-top: 60px;
+    }
+    .next-step {
+      background: var(--surface); padding: 48px 36px;
+    }
+    .next-step-num {
+      font-family: var(--font-heading); font-size: 48px; font-weight: 900;
+      color: rgba(232,200,64,0.15); line-height: 1; margin-bottom: 20px;
+    }
+    .next-step-title {
+      font-family: var(--font-heading); font-size: 16px; font-weight: 800;
+      letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .next-step-desc { font-size: 14px; line-height: 1.8; color: var(--text-muted); }
+
+    /* STUDIO VISIT */
+    #studio-visit {
+      background: var(--bg); padding: 100px 80px;
+    }
+    .studio-visit-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .studio-img { overflow: hidden; aspect-ratio: 4/3; }
+    .studio-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .studio-info { display: flex; flex-direction: column; gap: 32px; margin-top: 40px; }
+    .studio-info-item {}
+    .studio-info-label {
+      font-family: var(--font-heading); font-size: 10px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .studio-info-value { font-size: 15px; color: var(--accent2); line-height: 1.6; }
+
+    .btn-secondary {
+      font-family: var(--font-heading); font-size: 10px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      text-decoration: none; color: var(--text); border: 1px solid rgba(240,240,240,0.3);
+      padding: 16px 40px; display: inline-block;
+      transition: border-color 0.3s, color 0.3s, transform 0.3s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* CONTACT INFO */
+    #contact-info {
+      background: var(--surface); padding: 100px 80px;
+    }
+    .contact-info-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+      background: rgba(232,200,64,0.08);
+    }
+    .contact-card {
+      background: var(--surface); padding: 48px 36px;
+    }
+    .contact-card-icon {
+      width: 48px; height: 48px; border: 1px solid rgba(232,200,64,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+    }
+    .contact-card-icon svg {
+      width: 22px; height: 22px; stroke: var(--accent); fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .contact-card-title {
+      font-family: var(--font-heading); font-size: 12px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase; color: var(--accent2); margin-bottom: 12px;
+    }
+    .contact-card-value { font-size: 15px; color: var(--text); line-height: 1.7; }
+    .contact-card-value a { color: var(--accent); text-decoration: none; }
+    .contact-card-value a:hover { text-decoration: underline; }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg); border-top: 1px solid rgba(232,200,64,0.1); padding: 80px 48px 40px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand-name {
+      font-family: var(--font-heading); font-size: 16px; font-weight: 800;
+      letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px;
+    }
+    .footer-brand-name span { color: var(--accent); }
+    .footer-tagline { font-size: 13px; color: var(--text-muted); line-height: 1.7; max-width: 280px; }
+    .footer-col-title {
+      font-family: var(--font-heading); font-size: 10px; font-weight: 700;
+      letter-spacing: 4px; text-transform: uppercase; color: var(--accent2); margin-bottom: 24px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--accent); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 32px; border-top: 1px solid rgba(240,240,240,0.06);
+    }
+    .footer-copy { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; }
+    .footer-accent-line { width: 60px; height: 1px; background: var(--accent); }
+
+    @media (max-width: 1024px) {
+      #commission-form, #what-next, #studio-visit, #contact-info { padding: 80px 40px; }
+      .subhero-content { padding: 40px; }
+      .commission-inner { grid-template-columns: 1fr; }
+      .form-intro { position: static; }
+      .studio-visit-inner { grid-template-columns: 1fr; }
+      .contact-info-inner { grid-template-columns: 1fr; }
+      .what-next-steps { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      #commission-form, #what-next, #studio-visit, #contact-info { padding: 60px 24px; }
+      .subhero-content { padding: 32px 24px; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      footer { padding: 60px 24px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">VELOX <span>A</span>TELIER</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="builds.html">Builds</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Start Commission</a>
+  </nav>
+
+  <div class="subhero">
+    <div class="subhero-bg"></div>
+    <div class="subhero-overlay"></div>
+    <div class="subhero-content">
+      <div class="subhero-eyebrow">Begin Your Journey</div>
+      <h1 class="subhero-title">Commission</h1>
+    </div>
+  </div>
+
+  <!-- COMMISSION FORM -->
+  <section id="commission-form">
+    <div class="commission-inner">
+      <div class="form-intro">
+        <div class="section-eyebrow">Tell Us Your Story</div>
+        <h2 class="section-title">Start Your<br>Commission</h2>
+        <p class="form-intro-desc">Every Velox frame begins with the rider. Fill out this form with as much detail as you can — there are no wrong answers. We will review your submission and reach out within 48 hours to schedule your consultation.</p>
+        <div class="form-trust">
+          <div class="trust-item">
+            <div class="trust-icon">48h</div>
+            <p class="trust-text"><strong>Response within 48 hours.</strong> We personally review every submission. No autoresponders.</p>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">0</div>
+            <p class="trust-text"><strong>No obligation.</strong> The consultation is free. A deposit is only required when you decide to proceed.</p>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon">EU</div>
+            <p class="trust-text"><strong>GDPR compliant.</strong> Your data is used only for this commission enquiry and deleted if you do not proceed.</p>
+          </div>
+        </div>
+      </div>
+
+      <form id="commissionForm" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Your first name" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Your last name" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="ridingStyle">Primary Riding Style *</label>
+          <select id="ridingStyle" name="ridingStyle" required>
+            <option value="" disabled selected>Select your discipline</option>
+            <option value="road-racing">Road Racing</option>
+            <option value="road-endurance">Road Endurance / Gran Fondo</option>
+            <option value="gravel">Gravel / Mixed Surface</option>
+            <option value="track">Track / Velodrome</option>
+            <option value="touring">Touring / Long Distance</option>
+            <option value="commute">Performance Commute</option>
+            <option value="cyclocross">Cyclocross</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="height">Height (cm) *</label>
+            <input type="number" id="height" name="height" placeholder="e.g. 178" min="140" max="220" required>
+          </div>
+          <div class="form-group">
+            <label for="weight">Weight (kg) *</label>
+            <input type="number" id="weight" name="weight" placeholder="e.g. 72" min="40" max="150" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inseam">Inseam Length (cm)</label>
+          <input type="number" id="inseam" name="inseam" placeholder="e.g. 83 (optional but helpful)">
+        </div>
+
+        <div class="form-group">
+          <label for="budget">Estimated Budget (EUR) *</label>
+          <select id="budget" name="budget" required>
+            <option value="" disabled selected>Select your budget range</option>
+            <option value="frame-only-3600-4500">Frame only — €3,600–€4,500</option>
+            <option value="frame-only-4500-6000">Frame only — €4,500–€6,000</option>
+            <option value="full-build-8500-12000">Full build — €8,500–€12,000</option>
+            <option value="full-build-12000-18000">Full build — €12,000–€18,000</option>
+            <option value="full-build-18000+">Full build — €18,000+</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="goals">Riding Goals & Context *</label>
+          <textarea id="goals" name="goals" placeholder="Tell us about your riding goals, events you're targeting, terrain you ride most, and any specific performance priorities (e.g. climbing, long distance comfort, sprint power)." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="previous">Previous Frame / Current Setup</label>
+          <textarea id="previous" name="previous" placeholder="What do you currently ride? What do you love about it? What do you wish was different?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="material">Material Preference</label>
+          <select id="material" name="material">
+            <option value="" disabled selected>Do you have a material preference?</option>
+            <option value="titanium">Titanium (Grade 9) — recommended for road/gravel</option>
+            <option value="carbon">Carbon (T700) — recommended for track/race</option>
+            <option value="steel">Steel (CrMo) — recommended for touring</option>
+            <option value="unsure">Unsure — advise me</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="visit">Studio Visit</label>
+          <select id="visit" name="visit">
+            <option value="" disabled selected>Can you visit our Lyon workshop?</option>
+            <option value="yes-flexible">Yes — flexible dates</option>
+            <option value="yes-specific">Yes — specific dates (mention in goals field)</option>
+            <option value="no-remote">No — remote consultation preferred</option>
+          </select>
+        </div>
+
+        <button type="submit" class="form-submit">Submit Commission Enquiry</button>
+        <p class="form-note">By submitting this form you agree to Velox Atelier contacting you regarding your commission enquiry. We never share your data with third parties. We will respond within 48 business hours.</p>
+      </form>
+
+      <div id="formSuccess" style="display:none; background:var(--surface); padding:48px; text-align:center;">
+        <div style="font-family:var(--font-heading); font-size:40px; color:var(--accent); margin-bottom:16px;">✓</div>
+        <div style="font-family:var(--font-heading); font-size:14px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;">Enquiry Received</div>
+        <p style="font-size:14px; color:var(--text-muted); line-height:1.8;">Thank you. Julien will review your submission and contact you within 48 hours to schedule your consultation call.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT HAPPENS NEXT -->
+  <section id="what-next">
+    <div class="what-next-inner">
+      <div class="section-eyebrow">After You Submit</div>
+      <h2 class="section-title">What Happens Next</h2>
+      <div class="what-next-steps">
+        <div class="next-step">
+          <div class="next-step-num">01</div>
+          <div class="next-step-title">We Review Your Submission</div>
+          <p class="next-step-desc">Julien personally reads every commission form. Within 48 hours, you will receive a reply from him with initial thoughts on your brief and a link to book your consultation call.</p>
+        </div>
+        <div class="next-step">
+          <div class="next-step-num">02</div>
+          <div class="next-step-title">Consultation Call</div>
+          <p class="next-step-desc">A 60-90 minute call where we deep-dive into your riding profile, goals, and geometry requirements. We may ask for video of your current riding position. At the end of this call, you will have a clear picture of your proposed build.</p>
+        </div>
+        <div class="next-step">
+          <div class="next-step-num">03</div>
+          <div class="next-step-title">Proposal & Deposit</div>
+          <p class="next-step-desc">We send you a detailed build proposal with geometry specification, material choice, component spec, total price, and estimated delivery date. A 30% deposit secures your place in the build queue.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STUDIO VISIT -->
+  <section id="studio-visit">
+    <div class="studio-visit-inner">
+      <div class="studio-img">
+        <img src="https://images.unsplash.com/photo-1517649281203-dad836b7b7e7?w=1200&q=80&auto=format&fit=crop" alt="Velox Atelier workshop Lyon" loading="lazy">
+      </div>
+      <div>
+        <div class="section-eyebrow">Come See Us</div>
+        <h2 class="section-title">Book a<br>Studio Visit</h2>
+        <p style="font-size:15px;color:var(--text-muted);line-height:1.9;margin-top:20px;">Local clients are warmly invited to visit our Lyon workshop. You will see frames in progress, meet the team, sit on our Guru fitting system, and walk away with a geometry worksheet and a clear picture of what your build will be. Studio visits run 2–3 hours and are by appointment only.</p>
+
+        <div class="studio-info">
+          <div class="studio-info-item">
+            <div class="studio-info-label">Address</div>
+            <div class="studio-info-value">12 Rue de la Forge<br>69001 Lyon, France</div>
+          </div>
+          <div class="studio-info-item">
+            <div class="studio-info-label">Visit Hours</div>
+            <div class="studio-info-value">Monday–Friday: 09:00–18:00<br>Saturday: By appointment only</div>
+          </div>
+          <div class="studio-info-item">
+            <div class="studio-info-label">How to Book</div>
+            <div class="studio-info-value">Email <a href="mailto:visit@veloxatelier.com">visit@veloxatelier.com</a><br>with preferred dates</div>
+          </div>
+        </div>
+
+        <a href="mailto:visit@veloxatelier.com" class="btn-secondary" style="margin-top:40px;">Book a Studio Visit</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT INFO -->
+  <section id="contact-info">
+    <div class="contact-info-inner">
+      <div class="contact-card">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="contact-card-title">Email</div>
+        <div class="contact-card-value">
+          General: <a href="mailto:hello@veloxatelier.com">hello@veloxatelier.com</a><br>
+          Studio visits: <a href="mailto:visit@veloxatelier.com">visit@veloxatelier.com</a><br>
+          Press: <a href="mailto:press@veloxatelier.com">press@veloxatelier.com</a>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.71-.71a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>
+        </div>
+        <div class="contact-card-title">Phone</div>
+        <div class="contact-card-value">
+          Main: <a href="tel:+33123456789">+33 1 23 45 67 89</a><br>
+          Mon–Fri: 09:00–18:00 CET<br>
+          Calls returned same business day
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="contact-card-title">Workshop</div>
+        <div class="contact-card-value">
+          12 Rue de la Forge<br>
+          69001 Lyon, France<br>
+          Studio visits by appointment
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-name">VELOX <span>ATELIER</span></div>
+          <p class="footer-tagline">Bespoke handbuilt titanium and carbon bicycle frames. Custom geometry. 47-day average build. Delivered worldwide.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Navigate</div>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="builds.html">Our Builds</a></li>
+            <li><a href="process.html">The Process</a></li>
+            <li><a href="about.html">The Atelier</a></li>
+            <li><a href="contact.html">Commission</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Build Types</div>
+          <ul>
+            <li><a href="builds.html">Road Frames</a></li>
+            <li><a href="builds.html">Gravel Frames</a></li>
+            <li><a href="builds.html">Track Frames</a></li>
+            <li><a href="builds.html">Touring Frames</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact</div>
+          <ul>
+            <li><a href="mailto:hello@veloxatelier.com">hello@veloxatelier.com</a></li>
+            <li><a href="tel:+33123456789">+33 1 23 45 67 89</a></li>
+            <li><a href="#">12 Rue de la Forge, Lyon</a></li>
+            <li><a href="#">France 69001</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 Velox Atelier. All rights reserved.</div>
+        <div class="footer-accent-line"></div>
+        <div class="footer-copy">Engineered for the Pure Rider</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Subhero
+    gsap.fromTo('.subhero-content > *', {
+      autoAlpha: 0, y: 28
+    }, { autoAlpha: 1, y: 0, duration: 1.0, stagger: 0.12, ease: 'power2.out', delay: 0.4 });
+
+    // Form intro
+    gsap.from('.form-intro > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.commission-inner', start: 'top 80%' },
+      y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: 'power2.out'
+    });
+
+    gsap.from('form .form-group, form .form-row, form .form-submit, form .form-note', {
+      immediateRender: false,
+      scrollTrigger: { trigger: 'form', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.8, stagger: 0.06, ease: 'power2.out'
+    });
+
+    gsap.from('.next-step', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.what-next-steps', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, stagger: 0.12, ease: 'power2.out'
+    });
+
+    gsap.from('.studio-img', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#studio-visit', start: 'top 80%' },
+      x: -40, autoAlpha: 0, duration: 1.1, ease: 'power2.out'
+    });
+
+    gsap.from('.studio-visit-inner > div:last-child > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#studio-visit', start: 'top 75%' },
+      y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: 'power2.out'
+    });
+
+    gsap.from('.contact-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.contact-info-inner', start: 'top 80%' },
+      y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: 'power2.out'
+    });
+
+    gsap.from('.footer-top > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: 'footer', start: 'top 85%' },
+      y: 20, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: 'power2.out'
+    });
+
+    // Form submit handler
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('commissionForm');
+      const success = document.getElementById('formSuccess');
+      form.style.display = 'none';
+      success.style.display = 'block';
+      gsap.fromTo(success, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' });
+    }
+  </script>
+</body>
+</html>

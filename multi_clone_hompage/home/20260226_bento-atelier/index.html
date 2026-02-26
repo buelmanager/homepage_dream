@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BENTO BIJOU — A Box That Tells a Story</title>
+  <meta name="description" content="Kyoto's premier luxury artisan bento studio. Jewel-like bento boxes for corporate gifting, weddings, and private ceremonies. Since 1988." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #181810;
+      --surface: #201E14;
+      --accent: #E84820;
+      --accent2: #F0C840;
+      --text: #F5F0E8;
+      --text-muted: #908060;
+      --border: rgba(240,200,64,0.15);
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ─── PRELOADER ─────────────────────────────────────────── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .chopstick-wrap {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .chopstick {
+      position: absolute;
+      width: 4px;
+      height: 72px;
+      background: var(--accent2);
+      border-radius: 2px;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+    }
+
+    .chopstick-1 {
+      transform: translate(-50%, -50%) rotate(-30deg);
+    }
+
+    .chopstick-2 {
+      transform: translate(-50%, -50%) rotate(30deg);
+    }
+
+    .preloader-brand {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .preloader-line {
+      width: 120px;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: var(--accent2);
+      width: 0%;
+    }
+
+    /* ─── SCROLL INDICATOR ──────────────────────────────────── */
+    #scroll-indicator {
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--accent2), transparent);
+    }
+
+    .scroll-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      writing-mode: vertical-rl;
+      text-transform: uppercase;
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 24px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(24,24,16,0.95);
+      backdrop-filter: blur(12px);
+      padding: 16px 60px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-logo span { color: var(--accent2); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: var(--text) !important;
+      padding: 10px 24px;
+      border-radius: 0;
+      font-size: 0.68rem !important;
+      letter-spacing: 0.15em;
+      transition: background 0.3s !important;
+    }
+
+    .nav-cta:hover { background: #c73a18 !important; }
+
+    /* ─── HERO ───────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1800&q=80');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.05);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(24,24,16,0.88) 0%,
+        rgba(24,24,16,0.6) 50%,
+        rgba(24,24,16,0.85) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 800px;
+      padding: 0 40px;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.4em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      display: block;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .hero-title-word {
+      display: block;
+    }
+
+    .hero-title .char {
+      display: inline-block;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-heading);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 60px;
+      justify-content: center;
+      margin-bottom: 52px;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--accent2);
+      display: block;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--accent);
+      color: var(--text);
+      text-decoration: none;
+      padding: 16px 40px;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: background 0.3s;
+    }
+
+    .hero-cta:hover { background: #c73a18; }
+
+    .hero-cta-arrow {
+      width: 20px;
+      height: 1px;
+      background: currentColor;
+      position: relative;
+    }
+
+    .hero-cta-arrow::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -3px;
+      width: 7px;
+      height: 7px;
+      border-top: 1px solid currentColor;
+      border-right: 1px solid currentColor;
+      transform: rotate(45deg);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .hero-scroll-hint span {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .hero-scroll-hint-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent2), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* Decorative Japanese motif */
+    .hero-kamon {
+      position: absolute;
+      right: 80px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 200px;
+      height: 200px;
+      opacity: 0.06;
+      z-index: 1;
+    }
+
+    /* ─── SECTION BASE ───────────────────────────────────────── */
+    section {
+      padding: 120px 60px;
+    }
+
+    .section-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.4em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    .section-desc {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 540px;
+    }
+
+    .section-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      margin: 32px 0;
+    }
+
+    /* ─── SEASONAL COLLECTION ────────────────────────────────── */
+    #collection {
+      background: var(--bg);
+    }
+
+    .collection-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 72px;
+    }
+
+    .collection-header-right a {
+      color: var(--accent2);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--accent2);
+      padding-bottom: 2px;
+      transition: opacity 0.3s;
+    }
+
+    .collection-header-right a:hover { opacity: 0.7; }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+
+    .collection-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .collection-card-img {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.7s ease;
+    }
+
+    .collection-card:hover .collection-card-img {
+      transform: scale(1.06);
+    }
+
+    .collection-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(24,24,16,0.95) 0%, rgba(24,24,16,0.1) 60%);
+    }
+
+    .collection-card-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px 24px;
+    }
+
+    .collection-card-season {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .collection-card-name {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .collection-card-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .collection-card-price {
+      margin-top: 16px;
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--accent2);
+    }
+
+    /* ─── THE CRAFT ──────────────────────────────────────────── */
+    #craft {
+      background: var(--surface);
+    }
+
+    .craft-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .craft-image-stack {
+      position: relative;
+      height: 600px;
+    }
+
+    .craft-img-main {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 75%;
+      height: 80%;
+      background-size: cover;
+      background-position: center;
+      background-image: url('https://images.unsplash.com/photo-1503342394128-c104d54dba01?auto=format&fit=crop&w=800&q=80');
+    }
+
+    .craft-img-accent {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 55%;
+      height: 55%;
+      background-size: cover;
+      background-position: center;
+      background-image: url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=600&q=80');
+      border: 6px solid var(--bg);
+    }
+
+    .craft-steps {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .craft-step {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .craft-step-num {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--accent2);
+      line-height: 1;
+      opacity: 0.4;
+      min-width: 52px;
+    }
+
+    .craft-step-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .craft-step-desc {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    /* ─── OCCASIONS ──────────────────────────────────────────── */
+    #occasions {
+      background: var(--bg);
+    }
+
+    .occasions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+    }
+
+    .occasion-card {
+      position: relative;
+      padding: 56px 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.4s;
+    }
+
+    .occasion-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .occasion-card:hover::before { transform: scaleX(1); }
+    .occasion-card:hover { border-color: var(--accent2); }
+
+    .occasion-icon {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 28px;
+    }
+
+    .occasion-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--accent2);
+      fill: none;
+      stroke-width: 1;
+    }
+
+    .occasion-title {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+
+    .occasion-desc {
+      font-size: 0.82rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    .occasion-link {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.3s;
+    }
+
+    .occasion-link:hover { gap: 14px; }
+
+    .occasion-bg-num {
+      position: absolute;
+      bottom: -20px;
+      right: 20px;
+      font-family: var(--font-heading);
+      font-size: 8rem;
+      font-weight: 300;
+      color: rgba(240,200,64,0.04);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    /* ─── WORKSHOP ───────────────────────────────────────────── */
+    #workshop {
+      background: var(--surface);
+    }
+
+    .workshop-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .workshop-image {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+    }
+
+    .workshop-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .workshop-badge {
+      position: absolute;
+      top: 32px;
+      right: -16px;
+      background: var(--accent);
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    .workshop-badge-num {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 300;
+      display: block;
+      line-height: 1;
+    }
+
+    .workshop-badge-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.7);
+      display: block;
+      margin-top: 4px;
+    }
+
+    .workshop-features {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .workshop-feature {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .workshop-feature:last-child { border-bottom: none; }
+
+    .workshop-feature-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .workshop-feature-title {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .workshop-feature-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ─── CTA ────────────────────────────────────────────────── */
+    #cta {
+      background: var(--accent);
+      padding: 100px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cta::before {
+      content: '弁当';
+      position: absolute;
+      font-family: var(--font-heading);
+      font-size: 20rem;
+      color: rgba(0,0,0,0.06);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .cta-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.4em;
+      color: rgba(245,240,232,0.6);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 24px;
+    }
+
+    .cta-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.4rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .cta-subtitle {
+      font-size: 0.9rem;
+      color: rgba(245,240,232,0.7);
+      margin-bottom: 48px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--text);
+      color: var(--accent);
+      text-decoration: none;
+      padding: 16px 44px;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover { background: var(--bg); color: var(--text); }
+
+    .btn-secondary {
+      display: inline-block;
+      background: transparent;
+      color: var(--text);
+      text-decoration: none;
+      padding: 16px 44px;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid rgba(245,240,232,0.4);
+      transition: all 0.3s;
+    }
+
+    .btn-secondary:hover { border-color: var(--text); }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 60px 40px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 64px;
+    }
+
+    .footer-brand {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .footer-brand span { color: var(--accent2); }
+
+    .footer-tagline {
+      font-family: var(--font-heading);
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .footer-address {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .footer-col-title {
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Japanese decorative motif SVG */
+    .footer-motif {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-motif-line {
+      width: 40px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .footer-motif-char {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      opacity: 0.4;
+    }
+
+    /* ─── UTILS ─────────────────────────────────────────────── */
+    .text-gold { color: var(--accent2); }
+    .text-accent { color: var(--accent); }
+
+    @media (max-width: 1024px) {
+      nav { padding: 20px 32px; }
+      section { padding: 80px 32px; }
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .craft-inner, .workshop-inner { grid-template-columns: 1fr; }
+      .occasions-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      nav.scrolled { padding: 12px 20px; }
+      .nav-links { display: none; }
+      section { padding: 60px 20px; }
+      .hero-stats { gap: 32px; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="chopstick-wrap">
+      <div class="chopstick chopstick-1"></div>
+      <div class="chopstick chopstick-2"></div>
+    </div>
+    <div class="preloader-brand">Bento Bijou</div>
+    <div class="preloader-line">
+      <div class="preloader-progress" id="preloader-progress"></div>
+    </div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">Bento <span>Bijou</span></a>
+    <ul class="nav-links">
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="workshops.html">Workshops</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta">Order Now</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-overlay"></div>
+
+    <!-- Decorative Kamon -->
+    <svg class="hero-kamon" viewBox="0 0 200 200" fill="none">
+      <circle cx="100" cy="100" r="95" stroke="white" stroke-width="1"/>
+      <circle cx="100" cy="100" r="70" stroke="white" stroke-width="0.5"/>
+      <circle cx="100" cy="100" r="45" stroke="white" stroke-width="1"/>
+      <line x1="100" y1="5" x2="100" y2="195" stroke="white" stroke-width="0.5"/>
+      <line x1="5" y1="100" x2="195" y2="100" stroke="white" stroke-width="0.5"/>
+      <line x1="32" y1="32" x2="168" y2="168" stroke="white" stroke-width="0.5"/>
+      <line x1="168" y1="32" x2="32" y2="168" stroke="white" stroke-width="0.5"/>
+    </svg>
+
+    <div class="hero-content">
+      <span class="hero-eyebrow" id="hero-eyebrow">Kyoto Artisan Bento Studio · Est. 1988</span>
+      <h1 class="hero-title" id="hero-title">
+        <span class="hero-title-word" id="title-word-1">Bento</span>
+        <span class="hero-title-word" id="title-word-2">Bijou</span>
+      </h1>
+      <p class="hero-subtitle" id="hero-subtitle">"A Box That Tells a Story."</p>
+
+      <div class="hero-stats" id="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num">40</span>
+          <span class="hero-stat-label">Seasonal Items</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">1988</span>
+          <span class="hero-stat-label">Est. Kyoto</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">200</span>
+          <span class="hero-stat-label">Boxes / Month</span>
+        </div>
+      </div>
+
+      <a href="collection.html" class="hero-cta" id="hero-cta">
+        View Collection
+        <span class="hero-cta-arrow"></span>
+      </a>
+    </div>
+
+    <div class="hero-scroll-hint" id="hero-scroll-hint">
+      <span>Scroll</span>
+      <div class="hero-scroll-hint-line"></div>
+    </div>
+  </section>
+
+  <!-- SEASONAL COLLECTION -->
+  <section id="collection">
+    <div class="collection-header">
+      <div>
+        <span class="section-label">The Seasons</span>
+        <h2 class="section-title">Seasonal<br>Collection</h2>
+      </div>
+      <div class="collection-header-right">
+        <a href="collection.html">View All Editions →</a>
+      </div>
+    </div>
+
+    <div class="collection-grid">
+      <div class="collection-card">
+        <div class="collection-card-img" style="background-image: url('https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="collection-card-overlay"></div>
+        <div class="collection-card-content">
+          <span class="collection-card-season">Spring · 春</span>
+          <h3 class="collection-card-name">Sakura Hana</h3>
+          <p class="collection-card-desc">Cherry blossom petals, bamboo shoots, and first-harvest rice. A fleeting season in every layer.</p>
+          <div class="collection-card-price">¥18,000</div>
+        </div>
+      </div>
+
+      <div class="collection-card">
+        <div class="collection-card-img" style="background-image: url('https://images.unsplash.com/photo-1512327536842-5aa37d1ba3e3?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="collection-card-overlay"></div>
+        <div class="collection-card-content">
+          <span class="collection-card-season">Summer · 夏</span>
+          <h3 class="collection-card-name">Midori Umi</h3>
+          <p class="collection-card-desc">Sea bream sashimi, edamame, ginger-pickled cucumber. Coastal cool in lacquered black.</p>
+          <div class="collection-card-price">¥22,000</div>
+        </div>
+      </div>
+
+      <div class="collection-card">
+        <div class="collection-card-img" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="collection-card-overlay"></div>
+        <div class="collection-card-content">
+          <span class="collection-card-season">Autumn · 秋</span>
+          <h3 class="collection-card-name">Momiji Yama</h3>
+          <p class="collection-card-desc">Matsutake mushroom, chestnut rice, persimmon glaze. The mountain's harvest, perfectly arranged.</p>
+          <div class="collection-card-price">¥26,000</div>
+        </div>
+      </div>
+
+      <div class="collection-card">
+        <div class="collection-card-img" style="background-image: url('https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="collection-card-overlay"></div>
+        <div class="collection-card-content">
+          <span class="collection-card-season">Winter · 冬</span>
+          <h3 class="collection-card-name">Yuki Mori</h3>
+          <p class="collection-card-desc">Wagyu braised slow, snow crab ankake, yuzu foam. A warm embrace against the cold.</p>
+          <div class="collection-card-price">¥34,000</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE CRAFT -->
+  <section id="craft">
+    <div class="craft-inner">
+      <div class="craft-image-stack">
+        <div class="craft-img-main"></div>
+        <div class="craft-img-accent"></div>
+      </div>
+
+      <div class="craft-text">
+        <span class="section-label">The Process</span>
+        <h2 class="section-title">The Art of<br>Every Box</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">Each bento is composed like a painting. Ingredients are sourced from trusted farmers in Kyoto and Osaka, arranged by color temperature and texture, then sealed inside hand-lacquered wooden boxes made by artisans in Wajima.</p>
+
+        <div class="craft-steps">
+          <div class="craft-step">
+            <span class="craft-step-num">01</span>
+            <div>
+              <div class="craft-step-title">Seasonal Sourcing</div>
+              <p class="craft-step-desc">We visit our farm partners each week to select ingredients at peak ripeness. No ingredient travels more than 80km to our studio.</p>
+            </div>
+          </div>
+          <div class="craft-step">
+            <span class="craft-step-num">02</span>
+            <div>
+              <div class="craft-step-title">Color Composition</div>
+              <p class="craft-step-desc">Our master artisans study the color temperature of each ingredient — warm, cool, neutral — and compose each layer like a seasonal painting.</p>
+            </div>
+          </div>
+          <div class="craft-step">
+            <span class="craft-step-num">03</span>
+            <div>
+              <div class="craft-step-title">Lacquer & Seal</div>
+              <p class="craft-step-desc">Each box is finished in Wajima-nuri lacquer, hand-polished over seven layers. A box that is also a keepsake.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR EVERY OCCASION -->
+  <section id="occasions">
+    <div style="text-align:center; max-width:600px; margin:0 auto 0 0;">
+      <span class="section-label">Occasions</span>
+      <h2 class="section-title">Crafted for<br>Every Moment</h2>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="occasions-grid">
+      <div class="occasion-card">
+        <div class="occasion-icon">
+          <svg viewBox="0 0 52 52">
+            <path d="M26 6 L30 20 L44 20 L33 29 L37 43 L26 34 L15 43 L19 29 L8 20 L22 20 Z" stroke-width="1"/>
+          </svg>
+        </div>
+        <h3 class="occasion-title">Wedding Bento</h3>
+        <p class="occasion-desc">Bespoke boxes designed around your wedding colors and seasonal flowers. We craft the menu to mirror the joy of your day — each ingredient chosen with intention.</p>
+        <a href="contact.html" class="occasion-link">Inquire → <span></span></a>
+        <div class="occasion-bg-num">婚</div>
+      </div>
+
+      <div class="occasion-card">
+        <div class="occasion-icon">
+          <svg viewBox="0 0 52 52">
+            <rect x="8" y="14" width="36" height="28" rx="2" stroke-width="1"/>
+            <path d="M16 14 L16 8 M36 14 L36 8" stroke-width="1"/>
+            <path d="M8 24 L44 24" stroke-width="1"/>
+          </svg>
+        </div>
+        <h3 class="occasion-title">Corporate Gifting</h3>
+        <p class="occasion-desc">Impress clients and celebrate milestones with branded bento collections. Custom presentation boxes and personalized notes — minimum order 20 boxes.</p>
+        <a href="contact.html" class="occasion-link">Inquire → <span></span></a>
+        <div class="occasion-bg-num">礼</div>
+      </div>
+
+      <div class="occasion-card">
+        <div class="occasion-icon">
+          <svg viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="18" stroke-width="1"/>
+            <path d="M26 8 L26 26 L38 26" stroke-width="1"/>
+          </svg>
+        </div>
+        <h3 class="occasion-title">Private Ceremony</h3>
+        <p class="occasion-desc">Tea ceremony, memorial gatherings, ikebana events — bento designed with the quiet elegance these moments deserve. Delivered with our cloth furoshiki wrap.</p>
+        <a href="contact.html" class="occasion-link">Inquire → <span></span></a>
+        <div class="occasion-bg-num">式</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKSHOP -->
+  <section id="workshop">
+    <div class="workshop-inner">
+      <div class="workshop-image">
+        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80" alt="Bento Making Workshop" loading="lazy" />
+        <div class="workshop-badge">
+          <span class="workshop-badge-num">12</span>
+          <span class="workshop-badge-label">Workshops / Month</span>
+        </div>
+      </div>
+
+      <div class="workshop-text">
+        <span class="section-label">Learn The Art</span>
+        <h2 class="section-title">The Bento<br>Workshop</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">Our intimate studio classes teach the principles of Japanese bento — color harmony, ingredient preparation, placement geometry, and the philosophy of ichi-ju san-sai (one soup, three sides).</p>
+
+        <div class="workshop-features">
+          <div class="workshop-feature">
+            <div class="workshop-feature-dot"></div>
+            <div>
+              <div class="workshop-feature-title">Seasonal Half-Day Class</div>
+              <p class="workshop-feature-desc">3-hour class for up to 6 participants. Includes materials, ingredients, and your finished bento to take home.</p>
+            </div>
+          </div>
+          <div class="workshop-feature">
+            <div class="workshop-feature-dot"></div>
+            <div>
+              <div class="workshop-feature-title">Private Master Class</div>
+              <p class="workshop-feature-desc">One-on-one with our head artisan. 5-hour immersive experience covering knife techniques, sauces, and box composition.</p>
+            </div>
+          </div>
+          <div class="workshop-feature">
+            <div class="workshop-feature-dot"></div>
+            <div>
+              <div class="workshop-feature-title">Team Events</div>
+              <p class="workshop-feature-desc">Corporate team-building for 10–30 participants. Available on weekends. Catering and sake pairing add-ons available.</p>
+            </div>
+          </div>
+        </div>
+
+        <a href="workshops.html" class="hero-cta" style="display:inline-flex; margin-top:40px;">
+          View All Workshops
+          <span class="hero-cta-arrow"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <span class="cta-label">Begin Your Order</span>
+    <h2 class="cta-title">Every Box is a<br>Handcrafted Story</h2>
+    <p class="cta-subtitle">Commission your bento today. We accept orders 2 weeks in advance.</p>
+    <div class="cta-buttons">
+      <a href="contact.html" class="btn-primary">Order Now</a>
+      <a href="workshops.html" class="btn-secondary">Join a Workshop</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Bento <span>Bijou</span></div>
+        <div class="footer-tagline">"A Box That Tells a Story."</div>
+        <div class="footer-address">
+          22 Nishiki Koji, Nakagyo-ku<br>
+          Kyoto, 604-8031, Japan<br><br>
+          +81 75 222 3456<br>
+          hello@bentobijou.jp
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Studio</div>
+        <ul class="footer-links">
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html">The Artisans</a></li>
+          <li><a href="about.html">Philosophy</a></li>
+          <li><a href="about.html">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Offerings</div>
+        <ul class="footer-links">
+          <li><a href="collection.html">Seasonal Collection</a></li>
+          <li><a href="collection.html">Corporate Gifting</a></li>
+          <li><a href="collection.html">Wedding Bento</a></li>
+          <li><a href="workshops.html">Workshops</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Visit Us</div>
+        <ul class="footer-links">
+          <li><a href="contact.html">Order Inquiry</a></li>
+          <li><a href="contact.html">Workshop Booking</a></li>
+          <li><a href="contact.html">Directions</a></li>
+          <li><a href="contact.html">Studio Hours</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024 Bento Bijou. All rights reserved. Kyoto, Japan.</div>
+      <div class="footer-motif">
+        <div class="footer-motif-line"></div>
+        <span class="footer-motif-char">弁当美珠</span>
+        <div class="footer-motif-line"></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ─── SplitText Polyfill ────────────────────────────────────────
+    class SplitText {
+      constructor(el, opts = {}) {
+        this.el = typeof el === 'string' ? document.querySelector(el) : el;
+        this.chars = [];
+        if (!this.el) return;
+        const text = this.el.textContent;
+        this.el.textContent = '';
+        [...text].forEach(ch => {
+          const span = document.createElement('span');
+          span.textContent = ch === ' ' ? '\u00A0' : ch;
+          span.style.display = 'inline-block';
+          this.el.appendChild(span);
+          this.chars.push(span);
+        });
+      }
+    }
+
+    // ─── Preloader ──────────────────────────────────────────────────
+    const preloaderProgress = document.getElementById('preloader-progress');
+    const preloader = document.getElementById('preloader');
+    let progress = 0;
+
+    const loadInterval = setInterval(() => {
+      progress = Math.min(progress + Math.random() * 18, 95);
+      preloaderProgress.style.width = progress + '%';
+    }, 100);
+
+    window.addEventListener('load', () => {
+      clearInterval(loadInterval);
+      preloaderProgress.style.width = '100%';
+
+      setTimeout(() => {
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            initAnimations();
+          }
+        });
+      }, 400);
+    });
+
+    // Chopstick animation
+    gsap.to('.chopstick-1', {
+      rotation: -50,
+      transformOrigin: '50% 100%',
+      duration: 0.8,
+      repeat: -1,
+      yoyo: true,
+      ease: 'power1.inOut'
+    });
+    gsap.to('.chopstick-2', {
+      rotation: 50,
+      transformOrigin: '50% 100%',
+      duration: 0.8,
+      repeat: -1,
+      yoyo: true,
+      ease: 'power1.inOut',
+      delay: 0.1
+    });
+
+    // ─── Scroll indicator ─────────────────────────────────────────
+    function showScrollIndicator() {
+      gsap.to('#scroll-indicator', {
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.out'
+      });
+    }
+
+    // ─── Main Animations ──────────────────────────────────────────
+    function initAnimations() {
+      // Show scroll indicator
+      showScrollIndicator();
+      setTimeout(showScrollIndicator, 4000);
+
+      // Hero parallax
+      gsap.to('#hero-bg', {
+        immediateRender: false,
+        y: '25%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      // Hero eyebrow
+      gsap.from('#hero-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 0.2
+      });
+
+      // Hero title chars
+      const titleWord1 = new SplitText(document.getElementById('title-word-1'));
+      const titleWord2 = new SplitText(document.getElementById('title-word-2'));
+
+      gsap.from(titleWord1.chars, {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        stagger: 0.06,
+        ease: 'power3.out',
+        delay: 0.4
+      });
+
+      gsap.from(titleWord2.chars, {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        stagger: 0.06,
+        ease: 'power3.out',
+        delay: 0.6
+      });
+
+      // Hero subtitle, stats, cta
+      gsap.from(['#hero-subtitle', '#hero-stats', '#hero-cta', '#hero-scroll-hint'], {
+        immediateRender: false,
+        opacity: 0,
+        y: 24,
+        duration: 1,
+        stagger: 0.15,
+        ease: 'power2.out',
+        delay: 1
+      });
+
+      // Navbar scroll effect
+      ScrollTrigger.create({
+        trigger: '#hero',
+        start: 'bottom 90%',
+        onEnter: () => document.getElementById('navbar').classList.add('scrolled'),
+        onLeaveBack: () => document.getElementById('navbar').classList.remove('scrolled')
+      });
+
+      // ── Collection cards ─────────────────────────────────────────
+      gsap.from('.collection-header', {
+        immediateRender: false,
+        opacity: 0,
+        y: 28,
+        duration: 1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#collection',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.collection-card', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 0.9,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.collection-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // ── Craft ────────────────────────────────────────────────────
+      gsap.from('.craft-img-main', {
+        immediateRender: false,
+        opacity: 0,
+        x: -40,
+        duration: 1.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#craft',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.craft-img-accent', {
+        immediateRender: false,
+        opacity: 0,
+        x: 40,
+        duration: 1.1,
+        delay: 0.2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#craft',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.craft-text .section-label, .craft-text .section-title, .section-divider, .craft-text .section-desc', {
+        immediateRender: false,
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.craft-text',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.craft-step', {
+        immediateRender: false,
+        opacity: 0,
+        x: 28,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.craft-steps',
+          start: 'top 85%'
+        }
+      });
+
+      // ── Occasions ───────────────────────────────────────────────
+      gsap.from('#occasions .section-label, #occasions .section-title, #occasions .section-divider', {
+        immediateRender: false,
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#occasions',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.occasion-card', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.occasions-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // ── Workshop ─────────────────────────────────────────────────
+      gsap.from('.workshop-image', {
+        immediateRender: false,
+        opacity: 0,
+        x: -40,
+        duration: 1.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#workshop',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.workshop-text .section-label, .workshop-text .section-title, .workshop-text .section-divider, .workshop-text .section-desc', {
+        immediateRender: false,
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.workshop-text',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.workshop-feature', {
+        immediateRender: false,
+        opacity: 0,
+        x: 24,
+        duration: 0.9,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.workshop-features',
+          start: 'top 85%'
+        }
+      });
+
+      // ── CTA ──────────────────────────────────────────────────────
+      gsap.from('#cta .cta-label, #cta .cta-title, #cta .cta-subtitle, #cta .cta-buttons', {
+        immediateRender: false,
+        opacity: 0,
+        y: 28,
+        duration: 0.9,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#cta',
+          start: 'top 80%'
+        }
+      });
+
+      // ── Footer ───────────────────────────────────────────────────
+      gsap.from('footer .footer-top > *', {
+        immediateRender: false,
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: 'footer',
+          start: 'top 90%'
+        }
+      });
+    }
+  </script>
+</body>
+</html>

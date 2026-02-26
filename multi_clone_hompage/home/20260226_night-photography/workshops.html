@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workshops — OBSCURA Night Photography Academy</title>
+  <meta name="description" content="OBSCURA workshops: Milky Way Masterclass, Light Painting, Urban Night, and Astrophotography Intensive. Enroll in the world's finest night photography training." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #15151E;
+      --surface: #1C1C2A;
+      --accent: #8060FF;
+      --accent2: #F0C840;
+      --text: #F0EEFF;
+      --text-muted: #7060A0;
+      --border: rgba(128, 96, 255, 0.15);
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; line-height: 1.6; }
+
+    /* scroll indicator */
+    #scroll-indicator { position: fixed; left: 24px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.5s ease; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 48px; background: linear-gradient(to bottom, transparent, var(--accent)); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent2); animation: scrollDown 1.8s ease infinite; }
+    @keyframes scrollDown { 0% { top: -100%; } 100% { top: 200%; } }
+    .scroll-text { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); writing-mode: vertical-rl; text-transform: uppercase; }
+
+    /* navbar */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 0 clamp(24px, 5vw, 80px); height: 72px; display: flex; align-items: center; justify-content: space-between; background: rgba(21, 21, 30, 0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.3em; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+    .nav-logo-icon { width: 28px; height: 28px; border: 2px solid var(--accent); border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; }
+    .nav-logo-icon::after { content: ''; width: 8px; height: 8px; background: var(--accent2); border-radius: 50%; }
+    .nav-links { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); list-style: none; }
+    .nav-links a { font-size: 0.8rem; letter-spacing: 0.12em; color: var(--text-muted); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-enroll { background: var(--accent); color: #fff !important; padding: 9px 22px; border-radius: 2px; font-size: 0.75rem !important; letter-spacing: 0.15em !important; transition: background 0.3s !important; }
+    .nav-enroll:hover { background: #9070ff !important; }
+
+    /* page hero */
+    .page-hero { height: 55vh; min-height: 420px; position: relative; display: flex; align-items: flex-end; padding: 0 clamp(24px, 5vw, 80px) 72px; margin-top: 72px; }
+    .page-hero-bg { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?w=1600&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; filter: brightness(0.4); }
+    .page-hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(21,21,30,0.9) 0%, transparent 60%); }
+    .page-hero-content { position: relative; z-index: 2; }
+    .page-eyebrow { font-size: 0.65rem; letter-spacing: 0.35em; color: var(--accent2); text-transform: uppercase; display: block; margin-bottom: 16px; }
+    .page-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 7vw, 5.5rem); font-weight: 700; line-height: 1.0; margin-bottom: 16px; }
+    .page-subtitle { font-size: 1rem; color: rgba(240,238,255,0.65); max-width: 520px; line-height: 1.8; }
+
+    /* sections */
+    section { padding: clamp(80px, 10vw, 130px) clamp(24px, 5vw, 80px); }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; display: block; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 24px; }
+    .section-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.8; }
+
+    /* workshop filter tabs */
+    #workshops { }
+
+    .workshops-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .filter-tab.active, .filter-tab:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* workshop cards */
+    .workshops-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .workshop-card {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      background: var(--bg);
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .workshop-card:hover { background: var(--surface); }
+
+    .workshop-card-img {
+      height: 300px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .workshop-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+
+    .workshop-card:hover .workshop-card-img img { transform: scale(1.05); }
+
+    .workshop-card-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 4px 12px;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border-radius: 2px;
+    }
+
+    .badge-pro { background: var(--accent); color: #fff; }
+    .badge-elite { background: var(--accent2); color: #15151E; }
+    .badge-intensive { background: rgba(21,21,30,0.8); color: var(--text); border: 1px solid var(--border); }
+
+    .workshop-card-body {
+      padding: 40px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .workshop-type {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .workshop-name {
+      font-family: var(--font-heading);
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .workshop-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 32px;
+      max-width: 520px;
+    }
+
+    .workshop-meta {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .workshop-meta-item { }
+
+    .workshop-meta-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .workshop-meta-value {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .workshop-price {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    .workshop-price small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      font-family: var(--font-body);
+    }
+
+    .workshop-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-enroll {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 13px 28px;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-decoration: none;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-enroll:hover { background: #9070ff; transform: translateY(-1px); }
+
+    .workshop-spots {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .workshop-spots strong { color: var(--accent2); }
+
+    /* schedule section */
+    #schedule { background: var(--surface); }
+
+    .schedule-header { text-align: center; margin-bottom: 64px; }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .schedule-table th {
+      font-family: var(--font-heading);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding: 0 24px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .schedule-table td {
+      padding: 20px 24px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .schedule-table tr:hover td { background: rgba(128,96,255,0.03); }
+
+    .schedule-workshop-name {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      color: var(--text);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .schedule-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border-radius: 1px;
+      margin-left: 8px;
+    }
+
+    .schedule-badge-open { background: rgba(128,96,255,0.2); color: var(--accent); }
+    .schedule-badge-limited { background: rgba(240,200,64,0.15); color: var(--accent2); }
+    .schedule-badge-full { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+
+    .schedule-enroll-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      transition: color 0.3s;
+    }
+
+    .schedule-enroll-link:hover { color: var(--accent2); }
+
+    /* what's included */
+    #included { }
+
+    .included-header { text-align: center; margin-bottom: 64px; }
+
+    .included-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .included-item {
+      padding: 32px 24px;
+      background: var(--surface);
+      border-radius: 2px;
+      border-bottom: 3px solid transparent;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .included-item:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+    .included-icon {
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    .included-name {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .included-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* footer */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 64px clamp(24px, 5vw, 80px) 40px; }
+    .footer-top { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 48px; margin-bottom: 48px; }
+    .footer-tagline { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; max-width: 260px; }
+    .footer-col-title { font-family: var(--font-heading); font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text); text-transform: uppercase; margin-bottom: 20px; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--accent2); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+    .footer-accent { color: var(--accent2); }
+
+    @media (max-width: 900px) {
+      .workshop-card { grid-template-columns: 1fr; }
+      .workshop-card-img { height: 240px; }
+      .workshop-card-body { padding: 28px 24px; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      #scroll-indicator { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .footer-top { grid-template-columns: 1fr; }
+      .schedule-table { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="scroll-indicator" class="visible">
+    <div class="scroll-text">Scroll</div>
+    <div class="scroll-line"></div>
+  </div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"></div>
+      OBSCURA
+    </a>
+    <ul class="nav-links">
+      <li><a href="workshops.html" class="active">Workshops</a></li>
+      <li><a href="expeditions.html">Expeditions</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-enroll">Enroll</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+      <span class="page-eyebrow">Training Programs</span>
+      <h1 class="page-title">Workshops &amp;<br>Masterclasses</h1>
+      <p class="page-subtitle">Four intensive programs designed to take you from curious to professional. All levels welcome. All skills transformed.</p>
+    </div>
+  </div>
+
+  <!-- WORKSHOPS LIST -->
+  <section id="workshops">
+    <div class="workshops-header">
+      <div>
+        <span class="section-label">Our Programs</span>
+        <h2 class="section-title">Find Your Specialty</h2>
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab active">All</button>
+        <button class="filter-tab">Beginner</button>
+        <button class="filter-tab">Advanced</button>
+        <button class="filter-tab">Online</button>
+      </div>
+    </div>
+
+    <div class="workshops-grid">
+
+      <!-- Workshop 1: Milky Way -->
+      <div class="workshop-card">
+        <div class="workshop-card-img">
+          <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=700&q=80&auto=format&fit=crop" alt="Milky Way photography" loading="lazy" />
+          <span class="workshop-card-badge badge-elite">Elite</span>
+        </div>
+        <div class="workshop-card-body">
+          <div>
+            <div class="workshop-type">Flagship Program</div>
+            <h2 class="workshop-name">Milky Way Masterclass</h2>
+            <p class="workshop-desc">The definitive galactic center photography program. From basic night exposure settings to advanced sky-ground blending, multi-shot panoramas, and image stacking. You will leave with a complete portfolio-ready Milky Way series — all shot in the field during two overnight sessions in a dark-sky reserve.</p>
+            <div class="workshop-meta">
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Duration</span>
+                <span class="workshop-meta-value">4 Days / 3 Nights</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Skill Level</span>
+                <span class="workshop-meta-value">Intermediate–Advanced</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Class Size</span>
+                <span class="workshop-meta-value">Max 8 Students</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Location</span>
+                <span class="workshop-meta-value">Joshua Tree, CA</span>
+              </div>
+            </div>
+          </div>
+          <div class="workshop-card-footer">
+            <div class="workshop-price">$2,400 <small>/ person · accommodation included</small></div>
+            <div style="display:flex;align-items:center;gap:20px;">
+              <span class="workshop-spots">Only <strong>3 spots</strong> left in April cohort</span>
+              <a href="contact.html" class="btn-enroll">Enroll Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workshop 2: Light Painting -->
+      <div class="workshop-card">
+        <div class="workshop-card-img">
+          <img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=700&q=80&auto=format&fit=crop" alt="Light painting photography" loading="lazy" />
+          <span class="workshop-card-badge badge-pro">Pro</span>
+        </div>
+        <div class="workshop-card-body">
+          <div>
+            <div class="workshop-type">Specialization Workshop</div>
+            <h2 class="workshop-name">Light Painting Mastery</h2>
+            <p class="workshop-desc">Master the art of painting with light. Hana Sato's signature program covers steel wool photography, light orbs, kinetic light sculpture, and long-exposure figure work. Includes a private exhibition of your workshop photographs in our Tokyo gallery partner space.</p>
+            <div class="workshop-meta">
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Duration</span>
+                <span class="workshop-meta-value">3 Days / 2 Nights</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Skill Level</span>
+                <span class="workshop-meta-value">All Levels</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Class Size</span>
+                <span class="workshop-meta-value">Max 10 Students</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Location</span>
+                <span class="workshop-meta-value">Portland, OR / Tokyo</span>
+              </div>
+            </div>
+          </div>
+          <div class="workshop-card-footer">
+            <div class="workshop-price">$1,800 <small>/ person</small></div>
+            <div style="display:flex;align-items:center;gap:20px;">
+              <span class="workshop-spots"><strong>6 spots</strong> available in May</span>
+              <a href="contact.html" class="btn-enroll">Enroll Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workshop 3: Urban Night -->
+      <div class="workshop-card">
+        <div class="workshop-card-img">
+          <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=700&q=80&auto=format&fit=crop" alt="Urban night photography" loading="lazy" />
+          <span class="workshop-card-badge badge-pro">Pro</span>
+        </div>
+        <div class="workshop-card-body">
+          <div>
+            <div class="workshop-type">Urban Specialization</div>
+            <h2 class="workshop-name">Urban Night Program</h2>
+            <p class="workshop-desc">Ravi Menon's immersive city night program takes you through Tokyo, Hong Kong, or New York after dark. Light trails, rain reflections, neon bokeh, and the hidden geometry of the nocturnal city. Two overnight street sessions with post-processing workshop included.</p>
+            <div class="workshop-meta">
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Duration</span>
+                <span class="workshop-meta-value">3 Days / 2 Nights</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Skill Level</span>
+                <span class="workshop-meta-value">Beginner–Intermediate</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Class Size</span>
+                <span class="workshop-meta-value">Max 12 Students</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Location</span>
+                <span class="workshop-meta-value">Tokyo / NYC / Hong Kong</span>
+              </div>
+            </div>
+          </div>
+          <div class="workshop-card-footer">
+            <div class="workshop-price">$1,400 <small>/ person</small></div>
+            <div style="display:flex;align-items:center;gap:20px;">
+              <span class="workshop-spots"><strong>8 spots</strong> available · June Tokyo</span>
+              <a href="contact.html" class="btn-enroll">Enroll Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workshop 4: Astrophotography -->
+      <div class="workshop-card">
+        <div class="workshop-card-img">
+          <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=700&q=80&auto=format&fit=crop" alt="Astrophotography deep sky" loading="lazy" />
+          <span class="workshop-card-badge badge-elite">Elite</span>
+        </div>
+        <div class="workshop-card-body">
+          <div>
+            <div class="workshop-type">Technical Intensive</div>
+            <h2 class="workshop-name">Astrophotography Intensive</h2>
+            <p class="workshop-desc">Deep-sky imaging, planetary photography, and image stacking with telescope-mounted cameras. Led by Dr. Elena Varek and conducted at observatory-grade dark sky sites with access to 12" Dobsonian telescopes. The most technically demanding program OBSCURA offers.</p>
+            <div class="workshop-meta">
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Duration</span>
+                <span class="workshop-meta-value">5 Days / 4 Nights</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Skill Level</span>
+                <span class="workshop-meta-value">Advanced Only</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Class Size</span>
+                <span class="workshop-meta-value">Max 6 Students</span>
+              </div>
+              <div class="workshop-meta-item">
+                <span class="workshop-meta-label">Location</span>
+                <span class="workshop-meta-value">Atacama, Chile</span>
+              </div>
+            </div>
+          </div>
+          <div class="workshop-card-footer">
+            <div class="workshop-price">$4,800 <small>/ person · observatory access included</small></div>
+            <div style="display:flex;align-items:center;gap:20px;">
+              <span class="workshop-spots">Only <strong>2 spots</strong> left — August cohort</span>
+              <a href="contact.html" class="btn-enroll">Enroll Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule">
+    <div class="schedule-header">
+      <span class="section-label">2026 Calendar</span>
+      <h2 class="section-title">Upcoming Sessions</h2>
+      <p class="section-desc" style="max-width:480px;margin:0 auto;">All workshops run on dark moon windows for optimal night sky conditions. Reserve early — most cohorts fill within days of opening.</p>
+    </div>
+    <table class="schedule-table">
+      <thead>
+        <tr>
+          <th>Dates</th>
+          <th>Workshop</th>
+          <th>Location</th>
+          <th>Instructor</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Apr 12–15, 2026</td>
+          <td><span class="schedule-workshop-name">Milky Way Masterclass</span>4 days · max 8</td>
+          <td>Joshua Tree, CA</td>
+          <td>Marcus Obi</td>
+          <td><span class="schedule-badge schedule-badge-limited">3 Spots Left</span></td>
+          <td><a href="contact.html" class="schedule-enroll-link">Enroll →</a></td>
+        </tr>
+        <tr>
+          <td>May 8–10, 2026</td>
+          <td><span class="schedule-workshop-name">Light Painting Mastery</span>3 days · max 10</td>
+          <td>Portland, OR</td>
+          <td>Hana Sato</td>
+          <td><span class="schedule-badge schedule-badge-open">Open</span></td>
+          <td><a href="contact.html" class="schedule-enroll-link">Enroll →</a></td>
+        </tr>
+        <tr>
+          <td>Jun 3–5, 2026</td>
+          <td><span class="schedule-workshop-name">Urban Night Program</span>3 days · max 12</td>
+          <td>Tokyo, Japan</td>
+          <td>Ravi Menon</td>
+          <td><span class="schedule-badge schedule-badge-open">Open</span></td>
+          <td><a href="contact.html" class="schedule-enroll-link">Enroll →</a></td>
+        </tr>
+        <tr>
+          <td>Jul 19–22, 2026</td>
+          <td><span class="schedule-workshop-name">Milky Way Masterclass</span>4 days · max 8</td>
+          <td>Moab, UT</td>
+          <td>Marcus Obi</td>
+          <td><span class="schedule-badge schedule-badge-open">Open</span></td>
+          <td><a href="contact.html" class="schedule-enroll-link">Enroll →</a></td>
+        </tr>
+        <tr>
+          <td>Aug 14–18, 2026</td>
+          <td><span class="schedule-workshop-name">Astrophotography Intensive</span>5 days · max 6</td>
+          <td>Atacama, Chile</td>
+          <td>Dr. Elena Varek</td>
+          <td><span class="schedule-badge schedule-badge-limited">2 Spots Left</span></td>
+          <td><a href="contact.html" class="schedule-enroll-link">Enroll →</a></td>
+        </tr>
+        <tr>
+          <td>Sep 6–8, 2026</td>
+          <td><span class="schedule-workshop-name">Light Painting Mastery</span>3 days · max 10</td>
+          <td>Tokyo, Japan</td>
+          <td>Hana Sato</td>
+          <td><span class="schedule-badge schedule-badge-open">Open</span></td>
+          <td><a href="contact.html" class="schedule-enroll-link">Enroll →</a></td>
+        </tr>
+        <tr>
+          <td>Oct 4–6, 2026</td>
+          <td><span class="schedule-workshop-name">Urban Night Program</span>3 days · max 12</td>
+          <td>New York, NY</td>
+          <td>Ravi Menon</td>
+          <td><span class="schedule-badge schedule-badge-open">Open</span></td>
+          <td><a href="contact.html" class="schedule-enroll-link">Enroll →</a></td>
+        </tr>
+        <tr>
+          <td>Nov 9–12, 2026</td>
+          <td><span class="schedule-workshop-name">Milky Way Masterclass</span>4 days · max 8</td>
+          <td>Namibia</td>
+          <td>Dr. Elena Varek</td>
+          <td><span class="schedule-badge schedule-badge-open">Open</span></td>
+          <td><a href="contact.html" class="schedule-enroll-link">Enroll →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- WHAT'S INCLUDED -->
+  <section id="included">
+    <div class="included-header">
+      <span class="section-label">All Programs Include</span>
+      <h2 class="section-title">The OBSCURA Standard</h2>
+    </div>
+    <div class="included-grid">
+      <div class="included-item">
+        <div class="included-icon">★</div>
+        <div class="included-name">Expert-Led Instruction</div>
+        <p class="included-desc">All sessions led personally by OBSCURA master photographers — never assistants or substitute instructors.</p>
+      </div>
+      <div class="included-item">
+        <div class="included-icon">◎</div>
+        <div class="included-name">Small Class Sizes</div>
+        <p class="included-desc">Maximum 12 students per cohort. Most programs limited to 6–8 for individualized feedback on every image.</p>
+      </div>
+      <div class="included-item">
+        <div class="included-icon">▣</div>
+        <div class="included-name">Field Shooting Sessions</div>
+        <p class="included-desc">Two overnight field sessions minimum per program. You learn by doing, not just watching.</p>
+      </div>
+      <div class="included-item">
+        <div class="included-icon">◈</div>
+        <div class="included-name">Post-Processing Workshop</div>
+        <p class="included-desc">Full Lightroom and Photoshop workflow sessions. Night-specific presets and Milky Way stacking techniques included.</p>
+      </div>
+      <div class="included-item">
+        <div class="included-icon">◐</div>
+        <div class="included-name">Portfolio Review</div>
+        <p class="included-desc">Individual portfolio critique session with your instructor on the final day of every program.</p>
+      </div>
+      <div class="included-item">
+        <div class="included-icon">◑</div>
+        <div class="included-name">Alumni Community Access</div>
+        <p class="included-desc">Lifetime access to the OBSCURA Alumni Network, monthly Q&amp;A calls, and graduate portfolio showcases.</p>
+      </div>
+      <div class="included-item">
+        <div class="included-icon">◊</div>
+        <div class="included-name">Certificate of Completion</div>
+        <p class="included-desc">Signed certificate from your OBSCURA instructor, recognized by leading photography agencies and publications.</p>
+      </div>
+      <div class="included-item">
+        <div class="included-icon">○</div>
+        <div class="included-name">Weather Guarantee</div>
+        <p class="included-desc">If poor weather ruins overnight sessions, OBSCURA offers a complimentary re-enrollment in any future cohort of the same program.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom:16px;">
+          <div class="nav-logo-icon"></div>
+          OBSCURA
+        </a>
+        <p class="footer-tagline">Elite night photography academy and dark-sky expedition operator. Training award-winning photographers since 2013.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Learn</div>
+        <ul class="footer-links">
+          <li><a href="workshops.html">Milky Way Masterclass</a></li>
+          <li><a href="workshops.html">Light Painting Workshop</a></li>
+          <li><a href="workshops.html">Urban Night Program</a></li>
+          <li><a href="workshops.html">Astrophotography Intensive</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="expeditions.html">Iceland Aurora</a></li>
+          <li><a href="expeditions.html">Sahara Milky Way</a></li>
+          <li><a href="expeditions.html">Atacama Star Fields</a></li>
+          <li><a href="expeditions.html">Himalayan Starfields</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About OBSCURA</a></li>
+          <li><a href="about.html">Our Faculty</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="contact.html">Private Hire</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 OBSCURA. All rights reserved. <span class="footer-accent">Find the Light in Total Darkness.</span></span>
+      <span class="footer-copy">Luxury Night Photography Academy</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const indicator = document.getElementById('scroll-indicator');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > window.innerHeight * 0.8) {
+        indicator.classList.remove('visible');
+      } else {
+        indicator.classList.add('visible');
+      }
+    });
+
+    gsap.from('.page-hero-content > *', {
+      immediateRender: false,
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      stagger: 0.12,
+      delay: 0.3
+    });
+
+    gsap.from('.workshops-header', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#workshops', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.workshop-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.workshops-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 28,
+      duration: 1.0,
+      ease: 'power2.out',
+      stagger: 0.15
+    });
+
+    gsap.from('.schedule-table', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#schedule', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.included-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.included-grid', start: 'top 85%' },
+      opacity: 0,
+      y: 24,
+      duration: 0.9,
+      ease: 'power2.out',
+      stagger: 0.08
+    });
+
+    // Filter tabs (visual only)
+    document.querySelectorAll('.filter-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

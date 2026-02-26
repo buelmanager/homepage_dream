@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SELVA — Immersed in the Infinite Green</title>
+  <meta name="description" content="SELVA is an ultra-luxury eco-lodge nestled deep in the Amazon rainforest. Only 8 treehouse villas with private canopy access. Immersed in the Infinite Green." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #131F13;
+      --surface: #1A2A1A;
+      --surface2: #213021;
+      --accent: #78C840;
+      --accent2: #F0D060;
+      --text: #F0F5E8;
+      --text-muted: #708060;
+      --border: rgba(120,200,64,0.15);
+      --transition: 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .preloader-leaf {
+      width: 80px;
+      height: 80px;
+    }
+    .preloader-brand {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.4em;
+      color: var(--accent);
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+    .preloader-bar {
+      width: 120px;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .preloader-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      background: var(--accent);
+      animation: barLoad 1.8s ease forwards;
+    }
+    @keyframes barLoad {
+      to { left: 0; }
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    #scroll-indicator {
+      position: fixed;
+      left: 2rem;
+      bottom: 2.5rem;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+    .scroll-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      writing-mode: vertical-lr;
+      rotate: 180deg;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(0.8); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 1.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background var(--transition), backdrop-filter var(--transition);
+    }
+    nav.scrolled {
+      background: rgba(19,31,19,0.92);
+      backdrop-filter: blur(12px);
+      padding: 1rem 3rem;
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-reserve {
+      padding: 0.6rem 1.6rem;
+      border: 1px solid var(--accent);
+      color: var(--accent) !important;
+      border-radius: 2px;
+      transition: background 0.3s, color 0.3s !important;
+    }
+    .nav-reserve:hover {
+      background: var(--accent) !important;
+      color: var(--bg) !important;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=1800&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.05);
+      transition: transform 12s ease;
+    }
+    .hero-bg.loaded { transform: scale(1); }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(19,31,19,0.3) 0%,
+        rgba(19,31,19,0.1) 40%,
+        rgba(19,31,19,0.6) 75%,
+        rgba(19,31,19,0.95) 100%
+      );
+    }
+    /* Mist layers */
+    .mist {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .mist-layer {
+      position: absolute;
+      height: 180px;
+      width: 200%;
+      background: linear-gradient(to bottom, transparent, rgba(240,245,232,0.04) 40%, transparent);
+      border-radius: 50%;
+    }
+    .mist-1 { bottom: 30%; animation: mistDrift 18s ease-in-out infinite; }
+    .mist-2 { bottom: 50%; animation: mistDrift 24s ease-in-out infinite reverse; opacity: 0.6; }
+    .mist-3 { bottom: 65%; animation: mistDrift 30s ease-in-out infinite; opacity: 0.3; }
+    @keyframes mistDrift {
+      0%, 100% { transform: translateX(-10%) scaleY(1); }
+      50% { transform: translateX(5%) scaleY(1.3); }
+    }
+
+    /* Wildlife silhouettes */
+    .wildlife {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .bird {
+      position: absolute;
+      opacity: 0.18;
+    }
+    .bird svg { fill: var(--accent); }
+    .bird-1 { top: 22%; right: 18%; animation: birdFloat 8s ease-in-out infinite; }
+    .bird-2 { top: 35%; right: 30%; animation: birdFloat 11s ease-in-out infinite 2s; transform: scale(0.6); }
+    .bird-3 { top: 18%; left: 25%; animation: birdFloat 9s ease-in-out infinite 4s; transform: scale(0.45); }
+    @keyframes birdFloat {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      33% { transform: translateY(-12px) translateX(8px); }
+      66% { transform: translateY(6px) translateX(-5px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 0 2rem;
+      max-width: 900px;
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(5rem, 14vw, 12rem);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      clip-path: inset(0 0 100% 0);
+      margin-bottom: 1.5rem;
+    }
+    .hero-tagline {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      font-weight: 300;
+      color: rgba(240,245,232,0.75);
+      margin-bottom: 2.5rem;
+    }
+    .hero-cta-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-primary:hover { background: #8ED44E; transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      border: 1px solid rgba(240,245,232,0.3);
+      color: var(--text);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--text); background: rgba(240,245,232,0.05); }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      z-index: 10;
+    }
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 1px solid var(--text-muted);
+      border-bottom: 1px solid var(--text-muted);
+      transform: rotate(45deg);
+      animation: arrowBounce 2s ease infinite;
+    }
+    @keyframes arrowBounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(6px); }
+    }
+
+    /* ── SECTION BASICS ── */
+    section { position: relative; }
+    .section-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 3rem;
+    }
+    .section-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .section-body {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      max-width: 540px;
+    }
+
+    /* ── VILLAS SECTION ── */
+    #villas {
+      padding: 9rem 0 7rem;
+      background: var(--bg);
+    }
+    .villas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .villas-header .section-body { margin-bottom: 0; }
+    .villas-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5px;
+    }
+    .villa-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .villa-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .villa-card:hover .villa-card-bg { transform: scale(1.08); }
+    .villa-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(19,31,19,0.95) 0%, rgba(19,31,19,0.2) 60%, transparent 100%);
+      transition: opacity 0.4s;
+    }
+    .villa-card-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 1.5rem;
+    }
+    .villa-number {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .villa-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+    .villa-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .villa-card:hover .villa-desc { max-height: 60px; }
+    .villas-cta {
+      text-align: center;
+      margin-top: 3.5rem;
+    }
+
+    /* ── RAINFOREST SECTION ── */
+    #rainforest {
+      position: relative;
+      height: 80vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .rainforest-bg {
+      position: absolute;
+      inset: -10%;
+      background-image: url('https://images.unsplash.com/photo-1588392382834-a891154bca4d?w=1800&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+    }
+    .rainforest-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(19,31,19,0.85) 0%,
+        rgba(19,31,19,0.4) 50%,
+        rgba(19,31,19,0.7) 100%
+      );
+    }
+    .rainforest-content {
+      position: relative;
+      z-index: 5;
+      padding: 0 3rem;
+      max-width: 700px;
+    }
+    .rainforest-stats {
+      display: flex;
+      gap: 4rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+    .stat-item {}
+    .stat-number {
+      font-family: 'Fraunces', serif;
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── EXPERIENCES SECTION ── */
+    #experiences {
+      padding: 9rem 0 7rem;
+      background: var(--surface);
+    }
+    .experiences-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 6rem;
+      align-items: start;
+      margin-top: 4rem;
+    }
+    .experience-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .exp-item {
+      display: flex;
+      gap: 1.5rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: padding-left 0.3s ease;
+    }
+    .exp-item:hover { padding-left: 0.5rem; }
+    .exp-item:first-child { padding-top: 0; }
+    .exp-num {
+      font-family: 'Fraunces', serif;
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 300;
+      padding-top: 0.2rem;
+      min-width: 2rem;
+    }
+    .exp-body {}
+    .exp-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .exp-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .experiences-image {
+      position: sticky;
+      top: 10rem;
+    }
+    .exp-img-wrap {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+    .exp-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+    .exp-img-caption {
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── SUSTAINABILITY ── */
+    #sustainability {
+      padding: 9rem 0;
+      background: var(--bg);
+    }
+    .sustainability-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .sustainability-promise {
+      padding: 3rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+    .promise-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 2rem;
+    }
+    .promise-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .promise-list li {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .promise-check {
+      color: var(--accent);
+      font-size: 0.7rem;
+      margin-top: 0.15rem;
+      flex-shrink: 0;
+    }
+    .sustain-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .sustain-stat {
+      text-align: center;
+      padding: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: var(--surface);
+    }
+    .sustain-num {
+      font-family: 'Fraunces', serif;
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--accent2);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .sustain-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── CTA SECTION ── */
+    #reserve-cta {
+      position: relative;
+      padding: 10rem 0;
+      text-align: center;
+      overflow: hidden;
+    }
+    .cta-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+    }
+    .cta-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(19,31,19,0.88);
+    }
+    .cta-content {
+      position: relative;
+      z-index: 5;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .cta-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .cta-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+    .cta-availability {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: 2rem;
+    }
+    .availability-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: dotPulse 2s ease infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 5rem 3rem 3rem;
+    }
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+    .footer-brand-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .footer-brand-logo span { color: var(--accent); }
+    .footer-brand-tagline {
+      font-style: italic;
+      font-family: 'Fraunces', serif;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .footer-brand-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 280px;
+    }
+    .footer-col-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-partners {
+      margin-top: 2rem;
+    }
+    .partners-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .partners-list {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .partner-name {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.5;
+      font-weight: 500;
+    }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copyright {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+    .footer-legal {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .footer-legal a {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+      text-decoration: none;
+      transition: opacity 0.3s;
+    }
+    .footer-legal a:hover { opacity: 1; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      nav { padding: 1.5rem 2rem; }
+      nav.scrolled { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+      .villas-grid { grid-template-columns: repeat(2, 1fr); }
+      .experiences-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .experiences-image { position: static; }
+      .sustainability-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 3rem; }
+    }
+    @media (max-width: 768px) {
+      .section-inner { padding: 0 1.5rem; }
+      nav { padding: 1.5rem; }
+      nav.scrolled { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero-title { font-size: 5rem; }
+      .villas-grid { grid-template-columns: 1fr; }
+      .rainforest-stats { gap: 2rem; }
+      .sustain-stats { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="preloader-leaf" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g id="leaf-group">
+        <path id="leaf-path" d="M40 70 C40 70 10 50 10 25 C10 10 25 5 40 10 C55 5 70 10 70 25 C70 50 40 70 40 70Z" fill="none" stroke="#78C840" stroke-width="1.5" stroke-dasharray="160" stroke-dashoffset="160">
+          <animate attributeName="stroke-dashoffset" values="160;0" dur="1.6s" fill="freeze" easing="ease-out"/>
+        </path>
+        <line x1="40" y1="70" x2="40" y2="20" stroke="#78C840" stroke-width="1" opacity="0.4" stroke-dasharray="50" stroke-dashoffset="50">
+          <animate attributeName="stroke-dashoffset" values="50;0" dur="1s" begin="0.8s" fill="freeze"/>
+        </line>
+      </g>
+    </svg>
+    <span class="preloader-brand">SELVA</span>
+    <div class="preloader-bar"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">SEL<span>V</span>A</a>
+    <ul class="nav-links">
+      <li><a href="villas.html">Villas</a></li>
+      <li><a href="experiences.html">Experiences</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-reserve">Reserve</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="mist">
+      <div class="mist-layer mist-1"></div>
+      <div class="mist-layer mist-2"></div>
+      <div class="mist-layer mist-3"></div>
+    </div>
+    <div class="wildlife">
+      <div class="bird bird-1">
+        <svg width="40" height="20" viewBox="0 0 40 20"><path d="M0 10 Q10 0 20 5 Q30 0 40 10 Q30 8 20 12 Q10 8 0 10Z"/></svg>
+      </div>
+      <div class="bird bird-2">
+        <svg width="40" height="20" viewBox="0 0 40 20"><path d="M0 10 Q10 0 20 5 Q30 0 40 10 Q30 8 20 12 Q10 8 0 10Z"/></svg>
+      </div>
+      <div class="bird bird-3">
+        <svg width="40" height="20" viewBox="0 0 40 20"><path d="M0 10 Q10 0 20 5 Q30 0 40 10 Q30 8 20 12 Q10 8 0 10Z"/></svg>
+      </div>
+    </div>
+    <div class="hero-content">
+      <span class="hero-eyebrow">Amazon Rainforest · Only 8 Villas</span>
+      <h1 class="hero-title" id="heroTitle">SELVA</h1>
+      <p class="hero-tagline">Immersed in the Infinite Green.</p>
+      <div class="hero-cta-group">
+        <a href="villas.html" class="btn-primary">Explore Villas</a>
+        <a href="experiences.html" class="btn-outline">Discover Experiences</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <div class="scroll-arrow"></div>
+      <span>Descend</span>
+    </div>
+  </section>
+
+  <!-- VILLAS SECTION -->
+  <section id="villas">
+    <div class="section-inner">
+      <div class="villas-header">
+        <div>
+          <span class="section-eyebrow">Eight Private Sanctuaries</span>
+          <h2 class="section-title">The Villas</h2>
+        </div>
+        <p class="section-body">Each treehouse villa is an architectural statement — suspended in the canopy, engineered for invisibility, furnished for ceremony.</p>
+      </div>
+      <div class="villas-grid">
+        <div class="villa-card">
+          <div class="villa-card-bg" style="background-image:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80&auto=format&fit=crop')"></div>
+          <div class="villa-card-overlay"></div>
+          <div class="villa-card-content">
+            <span class="villa-number">01 / 08</span>
+            <h3 class="villa-name">Canopy Suite</h3>
+            <p class="villa-desc">Elevated 18 meters above the forest floor with a wraparound rain-forest terrace.</p>
+          </div>
+        </div>
+        <div class="villa-card">
+          <div class="villa-card-bg" style="background-image:url('https://images.unsplash.com/photo-1587131782738-de30ea91a542?w=600&q=80&auto=format&fit=crop')"></div>
+          <div class="villa-card-overlay"></div>
+          <div class="villa-card-content">
+            <span class="villa-number">02 / 08</span>
+            <h3 class="villa-name">River Pavilion</h3>
+            <p class="villa-desc">Overhanging a tributary stream — fall asleep to the sound of flowing water.</p>
+          </div>
+        </div>
+        <div class="villa-card">
+          <div class="villa-card-bg" style="background-image:url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80&auto=format&fit=crop')"></div>
+          <div class="villa-card-overlay"></div>
+          <div class="villa-card-content">
+            <span class="villa-number">03 / 08</span>
+            <h3 class="villa-name">Emerald Nest</h3>
+            <p class="villa-desc">Intimate one-bedroom retreat cocooned by ancient fig trees and orchid walls.</p>
+          </div>
+        </div>
+        <div class="villa-card">
+          <div class="villa-card-bg" style="background-image:url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80&auto=format&fit=crop')"></div>
+          <div class="villa-card-overlay"></div>
+          <div class="villa-card-content">
+            <span class="villa-number">04 / 08</span>
+            <h3 class="villa-name">The Observatory</h3>
+            <p class="villa-desc">Glass-roofed master villa at 24m for uninterrupted stargazing and dawn mists.</p>
+          </div>
+        </div>
+      </div>
+      <div class="villas-cta">
+        <a href="villas.html" class="btn-outline">View All Eight Villas</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RAINFOREST IMMERSION -->
+  <section id="rainforest">
+    <div class="rainforest-bg" id="rainforestBg"></div>
+    <div class="rainforest-overlay"></div>
+    <div class="rainforest-content">
+      <span class="section-eyebrow">The Living Forest</span>
+      <h2 class="section-title" style="max-width:500px;">Sixty Million Acres of Ancient World</h2>
+      <p class="section-body">SELVA sits within one of the most biodiverse regions on Earth. Every morning, the forest speaks — in birdsong, in mist, in the orchestral percussion of rain on a thousand leaves.</p>
+      <div class="rainforest-stats">
+        <div class="stat-item">
+          <div class="stat-number" id="stat1">3M+</div>
+          <div class="stat-label">Species of Flora</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="stat2">400+</div>
+          <div class="stat-label">Bird Species Recorded</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="stat3">8</div>
+          <div class="stat-label">Private Villas Only</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCES SECTION -->
+  <section id="experiences">
+    <div class="section-inner">
+      <span class="section-eyebrow">Curated Encounters</span>
+      <h2 class="section-title">The Experiences</h2>
+      <div class="experiences-layout">
+        <div class="experience-timeline">
+          <div class="exp-item">
+            <span class="exp-num">01</span>
+            <div class="exp-body">
+              <h3 class="exp-title">Canopy Walk at Dawn</h3>
+              <p class="exp-text">Suspended bridges connect ancient emergent trees at 30 meters. Watch scarlet macaws emerge as the forest wakes. Guided by resident naturalists.</p>
+            </div>
+          </div>
+          <div class="exp-item">
+            <span class="exp-num">02</span>
+            <div class="exp-body">
+              <h3 class="exp-title">River Expedition</h3>
+              <p class="exp-text">Navigate blackwater tributaries by silent electric canoe. Spot river dolphins, giant otters, and pink boto on your private waterway.</p>
+            </div>
+          </div>
+          <div class="exp-item">
+            <span class="exp-num">03</span>
+            <div class="exp-body">
+              <h3 class="exp-title">Nocturnal Forest Immersion</h3>
+              <p class="exp-text">The jungle transforms at night. Guided barefoot walks through bioluminescent fungi paths with infrared observation of nocturnal species.</p>
+            </div>
+          </div>
+          <div class="exp-item">
+            <span class="exp-num">04</span>
+            <div class="exp-body">
+              <h3 class="exp-title">Forest Bathing &amp; Ceremony</h3>
+              <p class="exp-text">Shinrin-yoku sessions with indigenous knowledge holders. Medicinal plant immersion, breathing rituals, sensory silence.</p>
+            </div>
+          </div>
+          <div class="exp-item">
+            <span class="exp-num">05</span>
+            <div class="exp-body">
+              <h3 class="exp-title">Zero-Impact Gastronomy</h3>
+              <p class="exp-text">Chef-led dinners on the forest platform using ingredients foraged within 2km. No outside food, no waste, no compromise on luxury.</p>
+            </div>
+          </div>
+        </div>
+        <div class="experiences-image">
+          <div class="exp-img-wrap">
+            <img src="https://images.unsplash.com/photo-1497864149936-d3163f0c0f4b?w=800&q=80&auto=format&fit=crop" alt="Jungle canopy experience" loading="lazy" />
+          </div>
+          <p class="exp-img-caption">Canopy at Dawn — SELVA Naturalist Programme</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUSTAINABILITY SECTION -->
+  <section id="sustainability">
+    <div class="section-inner">
+      <div class="sustainability-layout">
+        <div class="sustainability-promise">
+          <span class="section-eyebrow">Conservation First</span>
+          <h2 class="promise-title">Our Zero-Impact Promise</h2>
+          <ul class="promise-list">
+            <li><span class="promise-check">◆</span> <span>100% solar energy — zero grid connection, zero emissions from operations</span></li>
+            <li><span class="promise-check">◆</span> <span>All construction used elevated post-and-beam — no roots disturbed, no land cleared</span></li>
+            <li><span class="promise-check">◆</span> <span>1% of every booking funds Amazon conservation trust permanently</span></li>
+            <li><span class="promise-check">◆</span> <span>Certified with IUCN Green List and Rainforest Alliance Gold Standard</span></li>
+            <li><span class="promise-check">◆</span> <span>Indigenous community employment — 80% of staff from local Ribeirinhos families</span></li>
+            <li><span class="promise-check">◆</span> <span>Zero single-use plastics. All materials biodegradable or reclaimed timber.</span></li>
+          </ul>
+        </div>
+        <div class="sustain-stats">
+          <div class="sustain-stat">
+            <div class="sustain-num">100%</div>
+            <div class="sustain-label">Solar Powered</div>
+          </div>
+          <div class="sustain-stat">
+            <div class="sustain-num">0</div>
+            <div class="sustain-label">Trees Removed</div>
+          </div>
+          <div class="sustain-stat">
+            <div class="sustain-num">80%</div>
+            <div class="sustain-label">Local Employment</div>
+          </div>
+          <div class="sustain-stat">
+            <div class="sustain-num">12yr</div>
+            <div class="sustain-label">Conservation Record</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESERVE CTA -->
+  <section id="reserve-cta">
+    <div class="cta-bg"></div>
+    <div class="cta-overlay"></div>
+    <div class="cta-content">
+      <span class="section-eyebrow">Exclusive Access</span>
+      <h2 class="cta-title">Reserve Your Canopy</h2>
+      <p class="cta-subtitle">Only eight villas. Minimum three nights. Fully bespoke programmes arranged for each guest. Contact our Rainforest Concierge to begin your journey.</p>
+      <a href="contact.html" class="btn-primary">Begin Your Reservation</a>
+      <div class="cta-availability">
+        <span class="availability-dot"></span>
+        Accepting reservations for 2025–2026 seasons
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-logo">SEL<span>V</span>A</div>
+          <p class="footer-brand-tagline">"Immersed in the Infinite Green."</p>
+          <p class="footer-brand-desc">An ultra-luxury eco-lodge within the Amazon basin. Eight treehouse villas. One commitment: that the forest remains forever wild.</p>
+          <div class="footer-partners">
+            <p class="partners-label">Conservation Partners</p>
+            <div class="partners-list">
+              <span class="partner-name">Rainforest Alliance</span>
+              <span class="partner-name">IUCN</span>
+              <span class="partner-name">WWF Amazon</span>
+              <span class="partner-name">Ribeirinhos Foundation</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="footer-col-title">Explore</p>
+          <ul class="footer-links">
+            <li><a href="villas.html">The Villas</a></li>
+            <li><a href="experiences.html">Experiences</a></li>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="about.html#conservation">Conservation</a></li>
+            <li><a href="experiences.html#gastronomy">Gastronomy</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-col-title">Plan</p>
+          <ul class="footer-links">
+            <li><a href="contact.html">Reserve a Villa</a></li>
+            <li><a href="contact.html#travel">Getting Here</a></li>
+            <li><a href="contact.html#faq">FAQ</a></li>
+            <li><a href="contact.html#partnerships">Group &amp; Partnerships</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-col-title">Contact</p>
+          <ul class="footer-links">
+            <li><a href="mailto:reserve@selvalodge.com">reserve@selvalodge.com</a></li>
+            <li><a href="tel:+5511000000000">+55 11 0000-0000</a></li>
+            <li><a href="#">Amazon Basin, Brazil</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">&copy; 2025 SELVA Eco-Lodge. All rights reserved.</p>
+        <ul class="footer-legal">
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Sustainability Report</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── PRELOADER ──
+    const preloader = document.getElementById('preloader');
+    const heroBg = document.getElementById('heroBg');
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            heroBg.classList.add('loaded');
+            // Show scroll indicator
+            const si = document.getElementById('scroll-indicator');
+            si.classList.add('visible');
+            // Hero entrance
+            animateHeroEntrance();
+          }
+        });
+      }, 2000);
+    });
+
+    // Fallback scroll indicator
+    setTimeout(() => {
+      const si = document.getElementById('scroll-indicator');
+      if (si) si.classList.add('visible');
+    }, 4000);
+
+    // ── HERO ENTRANCE ──
+    function animateHeroEntrance() {
+      const tl = gsap.timeline();
+      tl.to('#heroTitle', {
+        clipPath: 'inset(0 0 0% 0)',
+        duration: 1.2,
+        ease: 'power3.out'
+      })
+      .from('.hero-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: 16,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, '-=0.6')
+      .from('.hero-tagline', {
+        immediateRender: false,
+        opacity: 0,
+        y: 16,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, '-=0.5')
+      .from('.hero-cta-group', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, '-=0.4')
+      .from('.hero-scroll-hint', {
+        immediateRender: false,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.out'
+      }, '-=0.2');
+    }
+
+    // ── NAVBAR ──
+    const navbar = document.getElementById('navbar');
+    ScrollTrigger.create({
+      start: 'top -80',
+      onUpdate: (self) => {
+        navbar.classList.toggle('scrolled', self.scroll() > 80);
+      }
+    });
+
+    // ── PARALLAX HERO BG ──
+    gsap.to('#heroBg', {
+      immediateRender: false,
+      yPercent: 25,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1
+      }
+    });
+
+    // ── VILLAS SECTION ──
+    gsap.from('#villas .section-eyebrow, #villas .section-title, #villas .section-body', {
+      immediateRender: false,
+      opacity: 0,
+      y: 28,
+      stagger: 0.1,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#villas',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.villa-card', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      stagger: 0.12,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.villas-grid',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.villas-cta', {
+      immediateRender: false,
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.villas-cta',
+        start: 'top 90%'
+      }
+    });
+
+    // ── RAINFOREST PARALLAX ──
+    gsap.to('#rainforestBg', {
+      immediateRender: false,
+      yPercent: 20,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#rainforest',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1
+      }
+    });
+
+    gsap.from('.rainforest-content .section-eyebrow, .rainforest-content .section-title, .rainforest-content .section-body', {
+      immediateRender: false,
+      opacity: 0,
+      x: -30,
+      stagger: 0.12,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#rainforest',
+        start: 'top 70%'
+      }
+    });
+
+    gsap.from('.stat-item', {
+      immediateRender: false,
+      opacity: 0,
+      y: 24,
+      stagger: 0.15,
+      duration: 0.9,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.rainforest-stats',
+        start: 'top 80%'
+      }
+    });
+
+    // ── EXPERIENCES ──
+    gsap.from('#experiences .section-eyebrow, #experiences .section-title', {
+      immediateRender: false,
+      opacity: 0,
+      y: 24,
+      stagger: 0.1,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#experiences',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.exp-item', {
+      immediateRender: false,
+      opacity: 0,
+      x: -24,
+      stagger: 0.1,
+      duration: 0.9,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.experience-timeline',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.exp-img-wrap', {
+      immediateRender: false,
+      opacity: 0,
+      scale: 0.96,
+      duration: 1.2,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.exp-img-wrap',
+        start: 'top 80%'
+      }
+    });
+
+    // ── SUSTAINABILITY ──
+    gsap.from('.sustainability-promise', {
+      immediateRender: false,
+      opacity: 0,
+      x: -30,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#sustainability',
+        start: 'top 75%'
+      }
+    });
+
+    gsap.from('.sustain-stat', {
+      immediateRender: false,
+      opacity: 0,
+      y: 24,
+      stagger: 0.1,
+      duration: 0.9,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.sustain-stats',
+        start: 'top 80%'
+      }
+    });
+
+    // ── CTA ──
+    gsap.from('.cta-content > *', {
+      immediateRender: false,
+      opacity: 0,
+      y: 24,
+      stagger: 0.12,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#reserve-cta',
+        start: 'top 75%'
+      }
+    });
+  </script>
+</body>
+</html>

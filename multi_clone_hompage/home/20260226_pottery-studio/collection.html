@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Collection — TERRA FORMA</title>
+<meta name="description" content="Explore the Terra Forma collection. Handcrafted ceramics including vessels, bowls, plates, and sculptural works." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1E1710;
+  --surface:#271E14;
+  --accent:#C87840;
+  --accent2:#D4C4A0;
+  --text:#F5EDE0;
+  --text-muted:#A08060;
+  --font-heading:'Cormorant Garamond',serif;
+  --font-body:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{text-decoration:none;color:inherit}
+
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:900;padding:1.5rem 4rem;display:flex;align-items:center;justify-content:space-between;background:rgba(30,23,16,.92);backdrop-filter:blur(12px);transition:padding .4s}
+.navbar.scrolled{padding:1rem 4rem}
+.nav-logo{font-family:var(--font-heading);font-size:1.6rem;letter-spacing:.15em;color:var(--text);font-weight:400}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:2.5rem;list-style:none}
+.nav-links a{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-cta{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;padding:.7rem 1.8rem;border:1px solid var(--accent);color:var(--accent);transition:all .3s}
+.nav-cta:hover{background:var(--accent);color:var(--bg)}
+
+/* SUBHERO */
+.subhero{position:relative;height:60vh;min-height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.subhero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1558618047-3bd4b1f58d89?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;transform:scale(1.05)}
+.subhero-overlay{position:absolute;inset:0;background:rgba(30,23,16,.60)}
+.subhero-content{position:relative;z-index:2;text-align:center;padding:0 2rem}
+.page-eyebrow{font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem}
+.page-title{font-family:var(--font-heading);font-size:clamp(2.5rem,6vw,5.5rem);font-weight:300;line-height:1.05;color:var(--text)}
+.page-title em{font-style:italic;color:var(--accent2)}
+
+/* COLLECTION SECTION */
+.collection-section{padding:6rem 4rem}
+.section-label{font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
+.section-title{font-family:var(--font-heading);font-size:clamp(2rem,4vw,3.5rem);font-weight:300;line-height:1.1;color:var(--text);margin-bottom:1.5rem}
+.section-title em{font-style:italic;color:var(--accent2)}
+
+/* FILTER TABS */
+.filter-bar{display:flex;gap:1rem;margin:3rem 0;flex-wrap:wrap}
+.filter-btn{font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;padding:.6rem 1.5rem;border:1px solid rgba(200,120,64,.3);color:var(--text-muted);cursor:pointer;transition:all .3s;background:none}
+.filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--text);background:rgba(200,120,64,.1)}
+
+/* MASONRY GRID */
+.masonry-grid{columns:3;column-gap:1.5rem}
+.masonry-item{break-inside:avoid;margin-bottom:1.5rem;cursor:pointer;position:relative;overflow:hidden}
+.masonry-item img{width:100%;display:block;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
+.masonry-item:hover img{transform:scale(1.05)}
+.item-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(30,23,16,.92) 0%,rgba(30,23,16,0) 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;transform:translateY(0);transition:all .4s}
+.item-title{font-family:var(--font-heading);font-size:1.1rem;color:var(--text);font-weight:400;margin-bottom:.3rem}
+.item-meta{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2)}
+.item-price{font-family:var(--font-heading);font-size:1.2rem;color:var(--accent);margin-top:.5rem}
+.item-view{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin-top:.75rem;border-top:1px solid rgba(200,120,64,.3);padding-top:.75rem;transition:color .3s}
+.masonry-item:hover .item-view{color:var(--accent)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(30,23,16,.95);z-index:1000;display:flex;align-items:center;justify-content:center;padding:2rem;opacity:0;pointer-events:none;transition:opacity .4s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);max-width:900px;width:100%;display:grid;grid-template-columns:1fr 1fr;max-height:90vh;overflow:hidden}
+.modal-img{position:relative;overflow:hidden}
+.modal-img img{width:100%;height:100%;object-fit:cover}
+.modal-info{padding:3rem;overflow-y:auto}
+.modal-close{position:absolute;top:1.5rem;right:1.5rem;width:36px;height:36px;background:rgba(30,23,16,.7);border:1px solid rgba(200,120,64,.4);color:var(--text);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:all .3s}
+.modal-close:hover{background:var(--accent);color:var(--bg)}
+.modal-label{font-size:.65rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem}
+.modal-title{font-family:var(--font-heading);font-size:2rem;color:var(--text);font-weight:300;margin-bottom:1rem}
+.modal-price{font-family:var(--font-heading);font-size:1.5rem;color:var(--accent);margin-bottom:1.5rem}
+.modal-desc{font-size:.85rem;color:var(--text-muted);line-height:1.9;margin-bottom:2rem}
+.modal-specs{border-top:1px solid rgba(200,120,64,.2);padding-top:1.5rem;margin-bottom:2rem}
+.modal-specs h4{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
+.spec-row{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(200,120,64,.1);font-size:.8rem}
+.spec-row .spec-k{color:var(--text-muted)}
+.spec-row .spec-v{color:var(--text)}
+
+.btn-primary{display:inline-block;padding:1rem 2.8rem;background:var(--accent);color:var(--bg);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;font-weight:500;transition:all .3s;cursor:pointer;border:none}
+.btn-primary:hover{background:var(--accent2);color:var(--bg)}
+.btn-outline{display:inline-block;padding:1rem 2.8rem;border:1px solid var(--accent2);color:var(--accent2);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;transition:all .3s}
+.btn-outline:hover{background:var(--accent2);color:var(--bg)}
+
+/* BESPOKE CTA */
+.bespoke-section{background:var(--surface);padding:6rem 4rem;text-align:center}
+.bespoke-inner{max-width:680px;margin:0 auto}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid rgba(200,120,64,.2);padding:5rem 4rem 2rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;margin-bottom:4rem}
+.footer-brand .logo{font-family:var(--font-heading);font-size:1.8rem;letter-spacing:.1em;color:var(--text);margin-bottom:1rem}
+.footer-brand p{font-size:.8rem;color:var(--text-muted);line-height:1.8;max-width:260px}
+.footer-col h4{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:.75rem}
+.footer-col a{font-size:.8rem;color:var(--text-muted);transition:color .3s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{border-top:1px solid rgba(200,120,64,.15);padding-top:2rem;display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:.75rem;color:var(--text-muted)}
+
+@media(max-width:1024px){
+  .navbar,.navbar.scrolled{padding:1.2rem 2rem}
+  .collection-section{padding:4rem 2rem}
+  .masonry-grid{columns:2}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .modal{grid-template-columns:1fr;max-height:95vh}
+  .modal-img{height:300px}
+}
+@media(max-width:640px){
+  .masonry-grid{columns:1}
+  .footer-grid{grid-template-columns:1fr}
+  .bespoke-section{padding:4rem 2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="nav-logo">TERRA<span>&nbsp;FORMA</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="collection.html" class="active">Collection</a></li>
+    <li><a href="classes.html">Classes</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html#commission" class="nav-cta">Commission</a>
+</nav>
+
+<!-- SUBHERO -->
+<div class="subhero">
+  <div class="subhero-bg"></div>
+  <div class="subhero-overlay"></div>
+  <div class="subhero-content">
+    <div class="page-eyebrow">Handcrafted Works</div>
+    <h1 class="page-title">The <em>Collection</em></h1>
+  </div>
+</div>
+
+<!-- COLLECTION -->
+<section class="collection-section">
+  <div class="section-label">Available Works</div>
+  <h2 class="section-title">Each Piece, <em>Unique</em></h2>
+  <p style="font-size:.88rem;color:var(--text-muted);max-width:560px;line-height:1.8">Every vessel in our collection is a singular object — thrown by hand, fired in our anagama kiln, and finished without templates or repetition. Prices reflect the unique nature of each work.</p>
+
+  <!-- FILTER TABS -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="vessels">Vessels</button>
+    <button class="filter-btn" data-filter="bowls">Bowls</button>
+    <button class="filter-btn" data-filter="plates">Plates</button>
+    <button class="filter-btn" data-filter="sculptural">Sculptural</button>
+  </div>
+
+  <!-- MASONRY GRID -->
+  <div class="masonry-grid" id="masonryGrid">
+
+    <div class="masonry-item" data-category="vessels" data-title="Obsidian Vessel No.7" data-price="£2,400" data-material="Stoneware" data-glaze="Wood-ash reduction" data-dims="H 32cm · Ø 18cm" data-edition="Unique" data-desc="Thrown from Devon stoneware clay and fired in the anagama kiln for 72 hours, this vessel bears the full signatures of the flame — natural ash deposits, iron blush, and a surface that rewards patient looking. The form is classical in proportion yet entirely of its moment.">
+      <img src="https://images.unsplash.com/photo-1558618047-3bd4b1f58d89?w=700&q=80&auto=format&fit=crop" alt="Obsidian Vessel" loading="lazy" />
+      <div class="item-overlay">
+        <div class="item-meta">Stoneware · Vessels</div>
+        <div class="item-title">Obsidian Vessel No.7</div>
+        <div class="item-price">£2,400</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="bowls" data-title="Terra Bowl — Celadon" data-price="£880" data-material="Porcelain" data-glaze="Celadon ash glaze" data-dims="H 9cm · Ø 24cm" data-edition="Edition of 3" data-desc="A shallow serving bowl in the finest translucent porcelain, glazed in a celadon ash mix developed over twelve years of recipe refinement. The interior pool of glaze shifts from pale jade to deep aqua depending on the light. A rare instance where restraint becomes abundance.">
+      <img src="https://images.unsplash.com/photo-1473973266408-ed4ce7b43e29?w=700&q=80&auto=format&fit=crop" alt="Terra Bowl Celadon" loading="lazy" style="height:250px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Porcelain · Bowls</div>
+        <div class="item-title">Terra Bowl — Celadon</div>
+        <div class="item-price">£880</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="sculptural" data-title="Threshold Series I" data-price="£5,800" data-material="Stoneware & Porcelain" data-glaze="Natural ash / unglazed" data-dims="H 54cm · W 22cm" data-edition="Unique" data-desc="A sculptural piece from the Threshold Series, exploring the point at which a vessel ceases to be functional and becomes purely expressive. Half wheel-thrown, half hand-built, the piece disrupts its own symmetry deliberately — a meditation on impermanence and the beauty of the incomplete.">
+      <img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=700&q=80&auto=format&fit=crop" alt="Threshold Series I" loading="lazy" style="height:400px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Mixed · Sculptural</div>
+        <div class="item-title">Threshold Series I</div>
+        <div class="item-price">£5,800</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="plates" data-title="Ember Platter — Large" data-price="£1,200" data-material="Earthenware" data-glaze="Terracotta slip / iron" data-dims="H 4cm · Ø 42cm" data-edition="Edition of 6" data-desc="A large serving platter in warm Devon earthenware, finished with a terracotta slip and iron wash that deepens at the rim and pool. At once deeply domestic and quietly spectacular, it transforms any table setting into something considered and beautiful.">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80&auto=format&fit=crop" alt="Ember Platter" loading="lazy" />
+      <div class="item-overlay">
+        <div class="item-meta">Earthenware · Plates</div>
+        <div class="item-title">Ember Platter — Large</div>
+        <div class="item-price">£1,200</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="vessels" data-title="Hands Series I" data-price="£3,200" data-material="Porcelain" data-glaze="Reduction fired / unglazed" data-dims="H 28cm · Ø 14cm" data-edition="Unique" data-desc="The first piece from the Hands Series — a porcelain vessel thrown at such thinness that light passes through the walls. The fingerprints of its making are left deliberately visible, a record of the hand's work preserved in fired clay. It is both vessel and portrait.">
+      <img src="https://images.unsplash.com/photo-1565193566014-c4d9059a4c22?w=700&q=80&auto=format&fit=crop" alt="Hands Series I" loading="lazy" style="height:350px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Porcelain · Vessels</div>
+        <div class="item-title">Hands Series I</div>
+        <div class="item-price">£3,200</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="bowls" data-title="Studio Triptych — Bowl Set" data-price="£1,650" data-material="Stoneware" data-glaze="Matte iron oxide" data-dims="Ø 16 / 20 / 26cm" data-edition="Edition of 4" data-desc="Three nesting bowls in graduated sizes, thrown from the same batch of Scottish Highlands stoneware and fired together so that their markings share a common language. The matte iron surface is exceptional for food use — it improves with age, developing a patina unique to its owner.">
+      <img src="https://images.unsplash.com/photo-1493106641515-6b890b4fe066?w=700&q=80&auto=format&fit=crop" alt="Studio Triptych Bowl Set" loading="lazy" />
+      <div class="item-overlay">
+        <div class="item-meta">Stoneware · Bowls</div>
+        <div class="item-title">Studio Triptych — Set</div>
+        <div class="item-price">£1,650</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="sculptural" data-title="Kiln Mark — Column II" data-price="£8,400" data-material="Stoneware" data-glaze="Natural kiln ash" data-dims="H 72cm · Ø 20cm" data-edition="Unique" data-desc="A floor sculpture from the Kiln Mark series — pieces which are placed in the most extreme position of the anagama kiln and left entirely to the flame. The glaze is formed entirely from the kiln's own wood ash accumulating over 72 hours. No human glaze was applied. The fire made this alone.">
+      <img src="https://images.unsplash.com/photo-1530303027-4b2371e7a6f1?w=700&q=80&auto=format&fit=crop" alt="Kiln Mark Column II" loading="lazy" style="height:480px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Stoneware · Sculptural</div>
+        <div class="item-title">Kiln Mark — Column II</div>
+        <div class="item-price">£8,400</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="plates" data-title="Wabi Plate Series" data-price="£480" data-material="Porcelain" data-glaze="Shino glaze" data-dims="H 3cm · Ø 28cm" data-edition="Edition of 8" data-desc="A set of individual plates in the Wabi tradition, each deliberately imperfect — slightly off-centre, with a rim that rises and falls as the wheel turned. In the philosophy of wabi-sabi, this imperfection is the source of beauty, not a deficiency to be corrected.">
+      <img src="https://images.unsplash.com/photo-1504198453519-5f1b2b2b3a5d?w=700&q=80&auto=format&fit=crop" alt="Wabi Plate Series" loading="lazy" style="height:280px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Porcelain · Plates</div>
+        <div class="item-title">Wabi Plate — Individual</div>
+        <div class="item-price">£480</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="vessels" data-title="Archive Vessel — Devon" data-price="£4,100" data-material="Earthenware" data-glaze="Lead-free terracotta / slip trail" data-dims="H 44cm · Ø 22cm" data-edition="Unique" data-desc="A large vessel from the Archive series, created to hold and age — to be filled with seasonal branches, emptied, handled, and gradually acquired into the life of a space. The slip-trail decoration is the only hand-drawn work in the Terra Forma collection, making each piece a direct record of the maker's mark.">
+      <img src="https://images.unsplash.com/photo-1558618047-3bd4b1f58d89?w=700&q=80&auto=format&fit=crop" alt="Archive Vessel Devon" loading="lazy" style="height:420px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Earthenware · Vessels</div>
+        <div class="item-title">Archive Vessel — Devon</div>
+        <div class="item-price">£4,100</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="bowls" data-title="Morning Bowl — White" data-price="£560" data-material="Porcelain" data-glaze="Unglazed interior / white slip" data-dims="H 8cm · Ø 16cm" data-edition="Edition of 10" data-desc="Designed specifically for daily use — for coffee, tea, fruit, or simply to hold in the hands on a quiet morning. The unglazed interior acquires a subtle patina with use. The white slip exterior has a surface like bare skin. It is the most intimate object we make.">
+      <img src="https://images.unsplash.com/photo-1473973266408-ed4ce7b43e29?w=700&q=80&auto=format&fit=crop" alt="Morning Bowl White" loading="lazy" style="height:240px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Porcelain · Bowls</div>
+        <div class="item-title">Morning Bowl — White</div>
+        <div class="item-price">£560</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="sculptural" data-title="Void Piece No.3" data-price="£12,000" data-material="Stoneware" data-glaze="Black slip / reduction" data-dims="H 88cm · W 30cm" data-edition="Unique" data-desc="The largest piece in the current collection. A floor-standing sculptural vessel that has been cut open during the leather-hard stage to reveal its interior — a deliberate rupture that questions the relationship between container and contained. The black slip surface is fired at reduction to achieve a surface like graphite.">
+      <img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=700&q=80&auto=format&fit=crop" alt="Void Piece No.3" loading="lazy" style="height:500px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Stoneware · Sculptural</div>
+        <div class="item-title">Void Piece No.3</div>
+        <div class="item-price">£12,000</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+    <div class="masonry-item" data-category="plates" data-title="Salt Platter — Oval" data-price="£920" data-material="Stoneware" data-glaze="Salt-fired" data-dims="H 3cm · 38cm × 28cm" data-edition="Edition of 5" data-desc="An oval platter salt-fired in a separate kiln at 1280°C, where salt is thrown into the kiln at peak temperature and vaporises onto the surface of the clay. The result is an orange-peel texture unique to this process — a surface that is simultaneously rough and smooth, raw and refined.">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80&auto=format&fit=crop" alt="Salt Platter Oval" loading="lazy" style="height:260px;object-fit:cover" />
+      <div class="item-overlay">
+        <div class="item-meta">Stoneware · Plates</div>
+        <div class="item-title">Salt Platter — Oval</div>
+        <div class="item-price">£920</div>
+        <div class="item-view">View Details →</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-img" style="position:relative">
+      <img id="modalImg" src="" alt="" />
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-info">
+      <div class="modal-label" id="modalLabel">Category</div>
+      <h2 class="modal-title" id="modalTitle">Piece Name</h2>
+      <div class="modal-price" id="modalPrice">£0</div>
+      <p class="modal-desc" id="modalDesc">Description</p>
+      <div class="modal-specs">
+        <h4>Specifications</h4>
+        <div class="spec-row"><span class="spec-k">Material</span><span class="spec-v" id="modalMaterial">—</span></div>
+        <div class="spec-row"><span class="spec-k">Glaze</span><span class="spec-v" id="modalGlaze">—</span></div>
+        <div class="spec-row"><span class="spec-k">Dimensions</span><span class="spec-v" id="modalDims">—</span></div>
+        <div class="spec-row"><span class="spec-k">Edition</span><span class="spec-v" id="modalEdition">—</span></div>
+      </div>
+      <a href="contact.html#commission" class="btn-primary" style="display:block;text-align:center">Enquire About This Piece</a>
+    </div>
+  </div>
+</div>
+
+<!-- BESPOKE CTA -->
+<section class="bespoke-section" id="commission">
+  <div class="bespoke-inner">
+    <div class="section-label">Beyond the Collection</div>
+    <h2 class="section-title" style="text-align:center">Something Made<br><em>Only for You</em></h2>
+    <p style="font-size:.9rem;color:var(--text-muted);line-height:1.9;margin-bottom:2.5rem">If none of the available works speaks to you, or if you have a specific vision — a piece for a particular space, a particular occasion, a particular person — our commission service exists for precisely that purpose. Our waiting list is typically twelve to eighteen months.</p>
+    <a href="contact.html#commission" class="btn-primary">Begin a Commission</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">TERRA FORMA</div>
+      <p>Shaped by Hand, Fired by Soul. Luxury artisan pottery & ceramics studio in the heart of London since 1985.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="collection.html">Collection</a></li>
+        <li><a href="classes.html">Classes</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Studio</h4>
+      <ul>
+        <li><a href="#">12 Kiln Lane</a></li>
+        <li><a href="#">Shoreditch, London</a></li>
+        <li><a href="#">EC2A 3BT</a></li>
+        <li><a href="#">+44 20 7123 4567</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hours</h4>
+      <ul>
+        <li><a href="#">Mon–Fri 9am–6pm</a></li>
+        <li><a href="#">Sat 10am–5pm</a></li>
+        <li><a href="#">Sun Closed</a></li>
+        <li style="margin-top:1rem"><a href="contact.html">Book a Visit</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Terra Forma. All rights reserved.</p>
+    <p>Shaped by Hand, Fired by Soul</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 80) navbar.classList.add('scrolled');
+  else navbar.classList.remove('scrolled');
+}, { passive: true });
+
+// Subhero parallax
+gsap.to('.subhero-bg', {
+  immediateRender: false,
+  yPercent: 20,
+  ease: 'none',
+  scrollTrigger: { trigger: '.subhero', start: 'top top', end: 'bottom top', scrub: true }
+});
+
+// Subhero content
+gsap.from('.subhero-content', {
+  immediateRender: false,
+  y: 30,
+  opacity: 0,
+  duration: 1.1,
+  ease: 'power2.out',
+  delay: .3
+});
+
+// Masonry items
+gsap.from('.masonry-item', {
+  immediateRender: false,
+  y: 40,
+  opacity: 0,
+  duration: 1,
+  stagger: 0.08,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '#masonryGrid', start: 'top 85%' }
+});
+
+// Section heading
+gsap.from('.section-title', {
+  immediateRender: false,
+  y: 24,
+  opacity: 0,
+  duration: 1,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.collection-section', start: 'top 85%' }
+});
+
+// FILTER
+const filterBtns = document.querySelectorAll('.filter-btn');
+const items = document.querySelectorAll('.masonry-item');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    items.forEach(item => {
+      if (filter === 'all' || item.dataset.category === filter) {
+        gsap.to(item, { opacity: 1, scale: 1, duration: .4, ease: 'power2.out' });
+        item.style.display = 'block';
+      } else {
+        gsap.to(item, { opacity: 0, scale: .95, duration: .4, ease: 'power2.in', onComplete: () => item.style.display = 'none' });
+      }
+    });
+  });
+});
+
+// MODAL
+const overlay = document.getElementById('modalOverlay');
+const modalClose = document.getElementById('modalClose');
+
+items.forEach(item => {
+  item.addEventListener('click', () => {
+    document.getElementById('modalImg').src = item.querySelector('img').src;
+    document.getElementById('modalImg').alt = item.querySelector('img').alt;
+    document.getElementById('modalLabel').textContent = item.dataset.category.charAt(0).toUpperCase() + item.dataset.category.slice(1);
+    document.getElementById('modalTitle').textContent = item.dataset.title;
+    document.getElementById('modalPrice').textContent = item.dataset.price;
+    document.getElementById('modalDesc').textContent = item.dataset.desc;
+    document.getElementById('modalMaterial').textContent = item.dataset.material;
+    document.getElementById('modalGlaze').textContent = item.dataset.glaze;
+    document.getElementById('modalDims').textContent = item.dataset.dims;
+    document.getElementById('modalEdition').textContent = item.dataset.edition;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+modalClose.addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>

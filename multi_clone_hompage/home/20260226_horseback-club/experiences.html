@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riding Experiences — GALLOP & GRACE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1A1510;
+      --surface: #231C14;
+      --accent: #C8903C;
+      --accent2: #6B8C3A;
+      --text: #F5EDD8;
+      --text-muted: #9A8060;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Lato', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 1.2rem 3rem; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(26,21,16,0.96); border-bottom: 1px solid rgba(200,144,60,0.2);
+      transition: padding 0.4s;
+    }
+    nav.scrolled { padding: 0.8rem 3rem; }
+    .nav-brand { font-family: var(--font-heading); font-size: 1.3rem; letter-spacing: 0.15em; color: var(--accent); text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: var(--text); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { padding: 0.6rem 1.6rem; border: 1px solid var(--accent); color: var(--accent); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* SUBHERO */
+    .subhero {
+      height: 65vh; min-height: 500px; position: relative;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .subhero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1508094584510-5b72e65e7a13?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover; background-position: center;
+    }
+    .subhero-overlay { position: absolute; inset: 0; background: rgba(26,21,16,0.65); }
+    .subhero-content { position: relative; z-index: 2; text-align: center; padding: 0 2rem; padding-top: 5rem; }
+    .subhero-label { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .subhero-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 4.5rem); color: var(--text); }
+    .subhero-divider { width: 60px; height: 2px; background: var(--accent); margin: 1.5rem auto; }
+    .subhero-sub { font-size: 0.9rem; letter-spacing: 0.15em; color: var(--text-muted); }
+
+    /* SECTION */
+    section { padding: 7rem 3rem; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.15; margin-bottom: 1.5rem; }
+    .section-body { color: var(--text-muted); line-height: 1.8; }
+    .divider { width: 60px; height: 2px; background: var(--accent); margin: 1.5rem 0; }
+
+    /* SIGNATURE EXPERIENCES */
+    .experiences { background: var(--bg); }
+    .experiences-header { text-align: center; margin-bottom: 5rem; }
+    .experiences-header .divider { margin: 1.5rem auto; }
+    .exp-list { }
+    .exp-item {
+      display: grid;
+      grid-template-columns: 120px 1fr 480px;
+      gap: 0;
+      border-bottom: 1px solid rgba(200,144,60,0.15);
+      align-items: stretch;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .exp-item:first-child { border-top: 1px solid rgba(200,144,60,0.15); }
+    .exp-item:hover { background: rgba(35,28,20,0.5); }
+    .exp-num-col {
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem 2rem;
+      border-right: 1px solid rgba(200,144,60,0.12);
+    }
+    .exp-num { font-family: var(--font-heading); font-size: 3.5rem; color: rgba(200,144,60,0.2); line-height: 1; }
+    .exp-body { padding: 3rem 3rem; }
+    .exp-name { font-family: var(--font-heading); font-size: 1.6rem; color: var(--text); margin-bottom: 0.5rem; }
+    .exp-tags { display: flex; gap: 0.6rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .exp-tag { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.7rem; border: 1px solid rgba(107,140,58,0.5); color: var(--accent2); }
+    .exp-desc { color: var(--text-muted); font-size: 0.88rem; line-height: 1.75; margin-bottom: 1.5rem; max-width: 520px; }
+    .exp-includes { list-style: none; }
+    .exp-includes li { padding: 0.3rem 0; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
+    .exp-includes li::before { content: '▸'; color: var(--accent); flex-shrink: 0; }
+    .exp-img { position: relative; overflow: hidden; }
+    .exp-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s; }
+    .exp-item:hover .exp-img img { transform: scale(1.04); }
+    .exp-meta-col { padding: 3rem 2.5rem 3rem 0; display: flex; flex-direction: column; justify-content: center; border-left: 1px solid rgba(200,144,60,0.12); }
+    .exp-detail { margin-bottom: 1.2rem; }
+    .exp-detail-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
+    .exp-detail-value { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text); }
+    .exp-cta { display: inline-block; margin-top: 1.5rem; padding: 0.65rem 1.8rem; border: 1px solid var(--accent); color: var(--accent); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .exp-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* TRAIL RIDES */
+    .trails { background: var(--surface); }
+    .trails-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .trails-img { position: relative; aspect-ratio: 16/10; overflow: hidden; }
+    .trails-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .trail-routes { margin-top: 2rem; }
+    .trail-route { display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.2rem 0; border-bottom: 1px solid rgba(200,144,60,0.12); }
+    .trail-route:last-child { border-bottom: none; }
+    .trail-icon { width: 40px; height: 40px; border: 1px solid rgba(200,144,60,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--accent); font-size: 1rem; }
+    .trail-info h4 { font-family: var(--font-heading); font-size: 1rem; color: var(--text); margin-bottom: 0.3rem; }
+    .trail-info p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+    .trail-info span { font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; }
+
+    /* POLO */
+    .polo { background: var(--bg); }
+    .polo-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .polo-img { aspect-ratio: 4/3; overflow: hidden; }
+    .polo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .polo-details { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+    .polo-detail { background: var(--surface); padding: 1.5rem; border-top: 2px solid var(--accent); }
+    .polo-detail h4 { font-family: var(--font-heading); font-size: 1rem; color: var(--text); margin-bottom: 0.5rem; }
+    .polo-detail p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* MEMBERSHIP TIERS */
+    .membership { background: var(--surface); }
+    .membership-header { text-align: center; margin-bottom: 4rem; }
+    .membership-header .divider { margin: 1.5rem auto; }
+    .membership-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+    .membership-tier {
+      padding: 3rem 2.5rem;
+      background: var(--bg);
+      border: 1px solid rgba(200,144,60,0.1);
+      text-align: center;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .membership-tier.featured {
+      background: var(--surface);
+      border-color: rgba(200,144,60,0.5);
+      transform: scaleY(1.02);
+      z-index: 2;
+    }
+    .membership-tier:hover { border-color: rgba(200,144,60,0.4); }
+    .tier-badge { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .tier-name { font-family: var(--font-heading); font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
+    .tier-price { font-family: var(--font-heading); font-size: 2.8rem; color: var(--accent); line-height: 1; margin: 1.5rem 0 0.3rem; }
+    .tier-period { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2rem; }
+    .tier-divider { width: 40px; height: 1px; background: rgba(200,144,60,0.3); margin: 0 auto 2rem; }
+    .tier-features { list-style: none; text-align: left; margin-bottom: 2rem; }
+    .tier-features li { padding: 0.6rem 0; font-size: 0.83rem; color: var(--text-muted); border-bottom: 1px solid rgba(200,144,60,0.08); display: flex; align-items: flex-start; gap: 0.6rem; }
+    .tier-features li::before { content: '—'; color: var(--accent); flex-shrink: 0; margin-top: 0.05rem; }
+    .tier-cta { display: inline-block; padding: 0.8rem 2rem; border: 1px solid var(--accent); color: var(--accent); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; width: 100%; text-align: center; }
+    .tier-cta:hover { background: var(--accent); color: var(--bg); }
+    .tier-cta.featured-cta { background: var(--accent); color: var(--bg); }
+    .tier-cta.featured-cta:hover { background: #d9a452; }
+
+    /* BOOKING HIGHLIGHT */
+    .book-highlight {
+      background: var(--bg); padding: 8rem 3rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .book-highlight::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover; background-position: center;
+    }
+    .book-highlight::after { content: ''; position: absolute; inset: 0; background: rgba(26,21,16,0.82); }
+    .book-highlight-inner { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; }
+    .btn-primary { display: inline-block; padding: 0.9rem 2.5rem; background: var(--accent); color: var(--bg); font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+    .btn-primary:hover { background: #d9a452; }
+    .btn-outline { display: inline-block; padding: 0.9rem 2.5rem; border: 1px solid var(--text); color: var(--text); font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .highlight-actions { display: flex; gap: 1.5rem; justify-content: center; margin-top: 2.5rem; flex-wrap: wrap; }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid rgba(200,144,60,0.2); padding: 5rem 3rem 2.5rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+    .footer-brand-name { font-family: var(--font-heading); font-size: 1.5rem; color: var(--accent); margin-bottom: 1rem; }
+    .footer-brand-desc { color: var(--text-muted); font-size: 0.85rem; line-height: 1.7; max-width: 280px; }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.75rem; }
+    .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--accent); }
+    .footer-col address { font-style: normal; color: var(--text-muted); font-size: 0.85rem; line-height: 1.8; }
+    .footer-bottom { border-top: 1px solid rgba(200,144,60,0.15); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { color: var(--text-muted); font-size: 0.75rem; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .exp-item { grid-template-columns: 1fr; }
+      .exp-num-col, .exp-meta-col { display: none; }
+      .exp-body { padding: 2rem 1.5rem; }
+      .trails-layout, .polo-layout { grid-template-columns: 1fr; }
+      .polo-details { grid-template-columns: 1fr; }
+      .membership-grid { grid-template-columns: 1fr; }
+      .membership-tier.featured { transform: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-brand">GALLOP & GRACE</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="horses.html">Horses</a></li>
+    <li><a href="programs.html">Programs</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Enquire</a>
+</nav>
+
+<!-- SUBHERO -->
+<div class="subhero">
+  <div class="subhero-bg"></div>
+  <div class="subhero-overlay"></div>
+  <div class="subhero-content">
+    <div class="subhero-label">14 Disciplines &nbsp;·&nbsp; All Levels</div>
+    <h1 class="subhero-title">Riding Experiences</h1>
+    <div class="subhero-divider"></div>
+    <div class="subhero-sub">Lessons &nbsp;·&nbsp; Trail Rides &nbsp;·&nbsp; Polo &nbsp;·&nbsp; Show Jumping &nbsp;·&nbsp; Membership</div>
+  </div>
+</div>
+
+<!-- SIGNATURE EXPERIENCES -->
+<section class="experiences">
+  <div class="section-inner">
+    <div class="experiences-header">
+      <div class="section-label">Our Disciplines</div>
+      <h2 class="section-title">Signature Riding Experiences</h2>
+      <div class="divider"></div>
+      <p class="section-body" style="text-align:center;max-width:600px;margin:0 auto;">From a first introduction to horsemanship to Grand Prix dressage, every experience at Gallop & Grace is crafted to the same standard: patient, expert, and deeply rewarding.</p>
+    </div>
+    <div class="exp-list">
+
+      <!-- DRESSAGE -->
+      <div class="exp-item">
+        <div class="exp-num-col"><div class="exp-num">01</div></div>
+        <div class="exp-body">
+          <div class="exp-name">Classical Dressage</div>
+          <div class="exp-tags">
+            <span class="exp-tag">All Levels</span>
+            <span class="exp-tag">Novice — Grand Prix</span>
+            <span class="exp-tag">FEI Standard Arenas</span>
+          </div>
+          <p class="exp-desc">The art of classical dressage, taught through the lens of the European training scale and the philosophy of our Head Trainer James Ashworth — trained at the Spanish Riding School in Vienna. Students at every level learn to ride with greater harmony, precision, and feel.</p>
+          <ul class="exp-includes">
+            <li>Group lessons (max 4 riders) and private coaching available</li>
+            <li>Video analysis with written trainer review</li>
+            <li>British Dressage affiliation and competition support</li>
+            <li>Quarterly clinics with international guest judges</li>
+          </ul>
+        </div>
+        <div class="exp-meta-col" style="padding-left:2.5rem;">
+          <div class="exp-detail">
+            <div class="exp-detail-label">Session Length</div>
+            <div class="exp-detail-value">45 — 60 min</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Group Lesson From</div>
+            <div class="exp-detail-value">£85 / session</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Private Coaching From</div>
+            <div class="exp-detail-value">£175 / hour</div>
+          </div>
+          <a href="contact.html" class="exp-cta">Book a Lesson</a>
+        </div>
+      </div>
+
+      <!-- SHOW JUMPING -->
+      <div class="exp-item">
+        <div class="exp-num-col"><div class="exp-num">02</div></div>
+        <div class="exp-body">
+          <div class="exp-name">Show Jumping</div>
+          <div class="exp-tags">
+            <span class="exp-tag">Cross-rails — 1.30m</span>
+            <span class="exp-tag">BSJA Affiliated</span>
+            <span class="exp-tag">Outdoor & Indoor</span>
+          </div>
+          <p class="exp-desc">From first cross-rails to national affiliated competitions, our show jumping programme builds athleticism, timing, and courage under the instruction of Senior Instructor Sophia Langley — a former British Young Rider representative. Training takes place on a 40-fence outdoor course and our heated indoor school.</p>
+          <ul class="exp-includes">
+            <li>Grid work, related distance work, full course riding</li>
+            <li>Flatwork for jumping horses included</li>
+            <li>BSJA membership support and affiliated show transport</li>
+            <li>Monthly fun jumping competitions for all levels</li>
+          </ul>
+        </div>
+        <div class="exp-meta-col" style="padding-left:2.5rem;">
+          <div class="exp-detail">
+            <div class="exp-detail-label">Session Length</div>
+            <div class="exp-detail-value">45 — 60 min</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Group Lesson From</div>
+            <div class="exp-detail-value">£90 / session</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Private Coaching From</div>
+            <div class="exp-detail-value">£180 / hour</div>
+          </div>
+          <a href="contact.html" class="exp-cta">Book a Lesson</a>
+        </div>
+      </div>
+
+      <!-- TRAIL RIDES -->
+      <div class="exp-item">
+        <div class="exp-num-col"><div class="exp-num">03</div></div>
+        <div class="exp-body">
+          <div class="exp-name">Estate Trail Rides</div>
+          <div class="exp-tags">
+            <span class="exp-tag">Intermediate+</span>
+            <span class="exp-tag">40 Miles Private Trails</span>
+            <span class="exp-tag">Surrey Hills</span>
+          </div>
+          <p class="exp-desc">Explore 40 miles of private bridleway across the Surrey Hills estate. Our guided trail rides traverse open meadows, ancient oak woodland, chalk streams, and managed downland — terrain that cannot be found in any commercial riding school. A revelatory equestrian experience available exclusively to members and their guests.</p>
+          <ul class="exp-includes">
+            <li>Guided morning and afternoon rides with qualified leaders</li>
+            <li>Unguided rides for verified competent members</li>
+            <li>Multi-day expedition rides (May through September)</li>
+            <li>Solo dawn rides by prior arrangement for Patron Members</li>
+          </ul>
+        </div>
+        <div class="exp-meta-col" style="padding-left:2.5rem;">
+          <div class="exp-detail">
+            <div class="exp-detail-label">Ride Duration</div>
+            <div class="exp-detail-value">1 — 4 hours</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Guided Ride From</div>
+            <div class="exp-detail-value">£110 / ride</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Availability</div>
+            <div class="exp-detail-value">By Appointment</div>
+          </div>
+          <a href="contact.html" class="exp-cta">Arrange a Ride</a>
+        </div>
+      </div>
+
+      <!-- POLO -->
+      <div class="exp-item">
+        <div class="exp-num-col"><div class="exp-num">04</div></div>
+        <div class="exp-body">
+          <div class="exp-name">Polo Introduction</div>
+          <div class="exp-tags">
+            <span class="exp-tag">Beginner — Intermediate</span>
+            <span class="exp-tag">Seasonal</span>
+            <span class="exp-tag">Chukka Ponies Provided</span>
+          </div>
+          <p class="exp-desc">Our polo programme — offered from April through September — provides an exceptional introduction to one of the world's most demanding equestrian sports. All sessions begin with stick-and-ball practice on foot, progress to mounted exercises, and culminate in supervised slow chukkas on our purpose-trained polo ponies.</p>
+          <ul class="exp-includes">
+            <li>Ground polo fundamentals: swing, strike, mallet grip</li>
+            <li>Mounted slow chukkas on trained estate polo ponies</li>
+            <li>Introduction to the rules and tactics of competitive polo</li>
+            <li>Guest chukkas against invited county-level teams (seasonal)</li>
+          </ul>
+        </div>
+        <div class="exp-meta-col" style="padding-left:2.5rem;">
+          <div class="exp-detail">
+            <div class="exp-detail-label">Session Length</div>
+            <div class="exp-detail-value">2.5 hours</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Introduction Session</div>
+            <div class="exp-detail-value">£165 / session</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Season</div>
+            <div class="exp-detail-value">April — Sept</div>
+          </div>
+          <a href="contact.html" class="exp-cta">Enquire About Polo</a>
+        </div>
+      </div>
+
+      <!-- PRIVATE COACHING -->
+      <div class="exp-item">
+        <div class="exp-num-col"><div class="exp-num">05</div></div>
+        <div class="exp-body">
+          <div class="exp-name">Private Coaching</div>
+          <div class="exp-tags">
+            <span class="exp-tag">All Levels</span>
+            <span class="exp-tag">Bespoke Schedule</span>
+            <span class="exp-tag">Own Horse or Ours</span>
+          </div>
+          <p class="exp-desc">The most direct route to equestrian excellence. One-to-one sessions with our senior instructors, structured entirely around your goals, your horse, and your schedule. Private coaching is available on your own horse or on estate horses — on the flat, over fences, or across country.</p>
+          <ul class="exp-includes">
+            <li>Fully bespoke session structure designed by your instructor</li>
+            <li>HD video analysis with frame-by-frame commentary</li>
+            <li>Written inter-session training plan delivered within 48 hours</li>
+            <li>Nutrition, conditioning, and tack consultation included</li>
+          </ul>
+        </div>
+        <div class="exp-meta-col" style="padding-left:2.5rem;">
+          <div class="exp-detail">
+            <div class="exp-detail-label">Session Length</div>
+            <div class="exp-detail-value">60 — 90 min</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Private Coaching From</div>
+            <div class="exp-detail-value">£175 / hour</div>
+          </div>
+          <div class="exp-detail">
+            <div class="exp-detail-label">Package Saving</div>
+            <div class="exp-detail-value">10% on 10+ sessions</div>
+          </div>
+          <a href="contact.html" class="exp-cta">Book Private Coaching</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TRAIL RIDES DETAIL -->
+<section class="trails">
+  <div class="section-inner">
+    <div class="trails-layout">
+      <div>
+        <div class="section-label">40 Miles of Private Countryside</div>
+        <h2 class="section-title">Estate Trail<br><em style="color:var(--accent);font-style:italic;">Routes</em></h2>
+        <div class="divider"></div>
+        <p class="section-body" style="margin-bottom:2rem;">Every trail route at Gallop & Grace has been mapped, maintained, and named over decades of riding across the Surrey Hills estate. They range from a contemplative morning hour through ancient woodland to a full half-day expedition across the open downs.</p>
+        <div class="trail-routes">
+          <div class="trail-route">
+            <div class="trail-icon">&#9674;</div>
+            <div class="trail-info">
+              <h4>The Woodland Circuit</h4>
+              <span>8 miles &nbsp;·&nbsp; 1.5 hours &nbsp;·&nbsp; All ride levels</span>
+              <p>The most popular estate route. A gentle loop through ancient oak and beech woodland, crossing two chalk streams and passing the restored 18th-century ice house. Ideal for first trail rides and leisurely hacks.</p>
+            </div>
+          </div>
+          <div class="trail-route">
+            <div class="trail-icon">&#9674;</div>
+            <div class="trail-info">
+              <h4>The Downs Gallop</h4>
+              <span>14 miles &nbsp;·&nbsp; 2.5 hours &nbsp;·&nbsp; Intermediate+</span>
+              <p>A sweeping route across open chalk downland with two long approved gallop stretches. The finest landscape on the estate — views extend across three counties on a clear day.</p>
+            </div>
+          </div>
+          <div class="trail-route">
+            <div class="trail-icon">&#9674;</div>
+            <div class="trail-info">
+              <h4>The Full Estate Circuit</h4>
+              <span>28 miles &nbsp;·&nbsp; 4 hours &nbsp;·&nbsp; Experienced riders only</span>
+              <p>The grand tour of all 340 acres. Combines all terrain types and includes a midpoint rest at the estate's historic hay barn with light refreshments provided. A ride unlike any other in Surrey.</p>
+            </div>
+          </div>
+          <div class="trail-route">
+            <div class="trail-icon">&#9674;</div>
+            <div class="trail-info">
+              <h4>The Dawn Expedition</h4>
+              <span>Seasonal &nbsp;·&nbsp; By arrangement &nbsp;·&nbsp; Patron Members only</span>
+              <p>A private sunrise ride across the estate's highest ground, departing 45 minutes before dawn and returning at breakfast. A singular experience that members describe as the finest hour in English riding.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trails-img">
+        <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80&auto=format&fit=crop" alt="Estate trails at Gallop & Grace" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POLO PROGRAMME -->
+<section class="polo">
+  <div class="section-inner">
+    <div class="polo-layout">
+      <div class="polo-img">
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=80&auto=format&fit=crop" alt="Polo at Gallop & Grace" loading="lazy" />
+      </div>
+      <div>
+        <div class="section-label">April — September</div>
+        <h2 class="section-title">The Polo<br><em style="color:var(--accent);font-style:italic;">Programme</em></h2>
+        <div class="divider"></div>
+        <p class="section-body" style="margin-bottom:1.5rem;">Polo is one of the oldest team sports in the world and one of the most exhilarating. Our polo programme was introduced in 2018 on a dedicated grass pitch alongside the estate's eastern meadow. A string of eight purpose-trained polo ponies is available exclusively for the programme.</p>
+        <p class="section-body">Whether you seek the exhilaration of a first chukka or are looking to develop your handicap in a private club setting, our resident polo coach — trained at Guards Polo Club — will design a progressive, structured curriculum around your ability.</p>
+        <div class="polo-details">
+          <div class="polo-detail">
+            <h4>8-Pony String</h4>
+            <p>Dedicated polo ponies selected for manoeuvrability, speed, and calm temperament. Available for all polo sessions.</p>
+          </div>
+          <div class="polo-detail">
+            <h4>Pitch & Boards</h4>
+            <p>Full-size grass polo pitch with permanent boards, mallet racks, and a thatched spectator pavilion.</p>
+          </div>
+          <div class="polo-detail">
+            <h4>Resident Coach</h4>
+            <p>Guards Polo Club-trained instructor with playing experience at 4-goal level. Available for individual and group sessions.</p>
+          </div>
+          <div class="polo-detail">
+            <h4>Guest Chukkas</h4>
+            <p>Seasonal matches against invited county-level teams. Members may observe or play depending on ability assessment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERSHIP TIERS -->
+<section class="membership">
+  <div class="section-inner">
+    <div class="membership-header">
+      <div class="section-label">Exclusive Access</div>
+      <h2 class="section-title">Membership Tiers</h2>
+      <div class="divider"></div>
+      <p class="section-body" style="text-align:center;max-width:600px;margin:0 auto;">Three tiers of membership, each designed to offer a different level of immersion in the Gallop & Grace experience. All memberships are subject to a one-year commitment and a discreet selection process.</p>
+    </div>
+    <div class="membership-grid">
+      <div class="membership-tier">
+        <div class="tier-badge">Day Member</div>
+        <div class="tier-name">Equestrian</div>
+        <div class="tier-price">£4,800</div>
+        <div class="tier-period">per annum</div>
+        <div class="tier-divider"></div>
+        <ul class="tier-features">
+          <li>Access to all estate arenas and trails</li>
+          <li>Up to 12 group lessons per year</li>
+          <li>Two guest passes per year</li>
+          <li>Estate clubhouse access (daylight hours)</li>
+          <li>Stable viewing and horse interaction</li>
+          <li>Access to internal club events</li>
+        </ul>
+        <a href="contact.html" class="tier-cta">Apply Now</a>
+      </div>
+      <div class="membership-tier featured">
+        <div class="tier-badge">Full Member</div>
+        <div class="tier-name">Gallop</div>
+        <div class="tier-price">£9,600</div>
+        <div class="tier-period">per annum</div>
+        <div class="tier-divider"></div>
+        <ul class="tier-features">
+          <li>Unlimited estate arena and trail access</li>
+          <li>24 group lessons and 4 private sessions</li>
+          <li>Six guest passes per year</li>
+          <li>Full clubhouse and dining access</li>
+          <li>Priority arena booking (48-hour lead)</li>
+          <li>Polo introduction programme included</li>
+          <li>Competition transport allocation (4 events)</li>
+          <li>Annual gala evening invitation</li>
+        </ul>
+        <a href="contact.html" class="tier-cta featured-cta">Apply Now</a>
+      </div>
+      <div class="membership-tier">
+        <div class="tier-badge">Patron</div>
+        <div class="tier-name">Grace</div>
+        <div class="tier-price">£22,000</div>
+        <div class="tier-period">per annum</div>
+        <div class="tier-divider"></div>
+        <ul class="tier-features">
+          <li>Unlimited all-access to all estate facilities</li>
+          <li>Unlimited private coaching sessions</li>
+          <li>Twelve guest passes per year</li>
+          <li>Named stable box (for own horse)</li>
+          <li>Dawn rides and exclusive experiences</li>
+          <li>Unlimited competition transport</li>
+          <li>Dedicated personal groom allocation</li>
+          <li>First access to estate events and clinics</li>
+          <li>Invitation to annual Patron Dinner</li>
+        </ul>
+        <a href="contact.html" class="tier-cta">Apply Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING HIGHLIGHT -->
+<section class="book-highlight">
+  <div class="book-highlight-inner">
+    <div class="section-label">Begin Your Journey</div>
+    <h2 class="section-title" style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.5rem);line-height:1.15;margin-bottom:1.5rem;">Book a Trial<br><em style="font-style:italic;color:var(--accent);">Experience</em></h2>
+    <p class="section-body" style="color:#9A8060;line-height:1.8;max-width:560px;margin:0 auto;">All prospective members are invited to a complimentary assessment session and an estate tour before committing to membership. Begin with a single lesson, trail ride, or polo introduction — and decide from experience.</p>
+    <div class="highlight-actions">
+      <a href="contact.html" class="btn-primary">Book a Trial Session</a>
+      <a href="programs.html" class="btn-outline">View All Programs</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">GALLOP & GRACE</div>
+        <p class="footer-brand-desc">An ultra-luxury private equestrian club established in 1952 on 340 acres of English countryside. Home to 85 exceptional horses and 70 years of heritage.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="about.html">Our Heritage</a></li>
+          <li><a href="horses.html">Our Horses</a></li>
+          <li><a href="programs.html">Programs</a></li>
+          <li><a href="contact.html">Membership</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="programs.html">Beginner Equestrian</a></li>
+          <li><a href="programs.html">Dressage</a></li>
+          <li><a href="programs.html">Show Jumping</a></li>
+          <li><a href="programs.html">Private Coaching</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <address>
+          Gallop & Grace Estate<br>
+          Hartfield Lane, Surrey<br>
+          GU5 0BX, England<br><br>
+          +44 (0)1483 920 100<br>
+          enquiries@gallopandgrace.co.uk
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 Gallop & Grace. All rights reserved.</div>
+      <div class="footer-copy">Est. 1952 &nbsp;·&nbsp; Surrey, England</div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  window.addEventListener('scroll', function() {
+    var nav = document.getElementById('navbar');
+    if (window.scrollY > 60) { nav.classList.add('scrolled'); }
+    else { nav.classList.remove('scrolled'); }
+  });
+
+  gsap.from('.subhero-content', { immediateRender: false, scrollTrigger: { trigger: '.subhero', start: 'top 80%' }, duration: 1, y: 28, autoAlpha: 0, ease: 'power2.out' });
+
+  gsap.from('.experiences-header', { immediateRender: false, scrollTrigger: { trigger: '.experiences', start: 'top 85%' }, duration: 1, y: 24, autoAlpha: 0, ease: 'power2.out' });
+  gsap.from('.exp-item', { immediateRender: false, scrollTrigger: { trigger: '.exp-list', start: 'top 85%' }, duration: 0.9, y: 28, autoAlpha: 0, stagger: 0.12, ease: 'power2.out' });
+
+  gsap.from('.trails-img', { immediateRender: false, scrollTrigger: { trigger: '.trails', start: 'top 85%' }, duration: 1.1, x: 30, autoAlpha: 0, ease: 'power2.out' });
+  gsap.from('.trails .section-label, .trails .section-title, .trails .divider, .trails .section-body', { immediateRender: false, scrollTrigger: { trigger: '.trails', start: 'top 85%' }, duration: 0.9, x: -24, autoAlpha: 0, stagger: 0.1, ease: 'power2.out', delay: 0.2 });
+  gsap.from('.trail-route', { immediateRender: false, scrollTrigger: { trigger: '.trail-routes', start: 'top 85%' }, duration: 0.8, y: 20, autoAlpha: 0, stagger: 0.1, ease: 'power2.out' });
+
+  gsap.from('.polo-img', { immediateRender: false, scrollTrigger: { trigger: '.polo', start: 'top 85%' }, duration: 1.1, x: -30, autoAlpha: 0, ease: 'power2.out' });
+  gsap.from('.polo-detail', { immediateRender: false, scrollTrigger: { trigger: '.polo-details', start: 'top 85%' }, duration: 0.8, y: 20, autoAlpha: 0, stagger: 0.1, ease: 'power2.out' });
+
+  gsap.from('.membership-header', { immediateRender: false, scrollTrigger: { trigger: '.membership', start: 'top 85%' }, duration: 1, y: 24, autoAlpha: 0, ease: 'power2.out' });
+  gsap.from('.membership-tier', { immediateRender: false, scrollTrigger: { trigger: '.membership-grid', start: 'top 85%' }, duration: 0.9, y: 28, autoAlpha: 0, stagger: 0.12, ease: 'power2.out' });
+
+  gsap.from('.book-highlight-inner', { immediateRender: false, scrollTrigger: { trigger: '.book-highlight', start: 'top 85%' }, duration: 1, y: 24, autoAlpha: 0, ease: 'power2.out' });
+</script>
+</body>
+</html>

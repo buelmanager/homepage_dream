@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Sake — KURABITO Sake School</title>
+  <meta name="description" content="Explore Kurabito's range of artisan nihonshu — Junmai, Ginjo, Daiginjo, and Nigori — brewed in Fushimi, Kyoto since 1872." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1A1510;
+      --surface: #231C14;
+      --accent: #C87840;
+      --accent2: #E8D8B0;
+      --text: #F0E8D8;
+      --text-muted: #907050;
+      --border: rgba(200,120,64,0.18);
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      padding: 0 48px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(26,21,16,0.92);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; letter-spacing: 0.3em; color: var(--text); text-decoration: none; text-transform: uppercase; }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent2); }
+    .nav-book { padding: 10px 24px; border: 1px solid var(--accent); font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); text-decoration: none; transition: background 0.3s, color 0.3s; }
+    .nav-book:hover { background: var(--accent); color: var(--bg); }
+
+    .page-hero {
+      position: relative;
+      width: 100%;
+      height: 65vh;
+      min-height: 500px;
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 80px;
+      overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1600&q=80&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35) saturate(0.5);
+    }
+    .page-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, var(--bg) 0%, rgba(26,21,16,0.4) 60%, transparent 100%);
+    }
+    .page-hero-content { position: relative; z-index: 2; padding-left: 100px; }
+    .page-eyebrow { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .page-eyebrow-line { width: 36px; height: 1px; background: var(--accent); }
+    .page-eyebrow-text { font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); }
+    .page-hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.8rem, 5.5vw, 5.5rem); font-weight: 300; line-height: 1.05; color: var(--text); }
+    .page-hero-title em { font-style: italic; color: var(--accent2); }
+
+    section { padding: 100px; }
+    .section-label { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .section-label-line { width: 32px; height: 1px; background: var(--accent); }
+    .section-label-text { font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 3.5vw, 3.8rem); font-weight: 300; line-height: 1.1; color: var(--text); margin-bottom: 24px; }
+    .section-body { font-size: 0.9rem; color: var(--text-muted); line-height: 1.9; max-width: 640px; }
+
+    /* ── SAKE RANGE ── */
+    #sake-range { background: var(--surface); }
+
+    .sake-full-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 64px;
+    }
+
+    .sake-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 1fr 200px;
+      gap: 0;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .sake-row:hover { border-color: var(--accent); }
+
+    .sake-row-grade {
+      padding: 40px 36px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .sake-grade-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .sake-grade-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .sake-grade-jp {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .sake-row-info {
+      padding: 40px 48px;
+      border-right: 1px solid var(--border);
+    }
+
+    .sake-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .sake-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .sake-row-notes {
+      padding: 40px 48px;
+      border-right: 1px solid var(--border);
+    }
+
+    .sake-notes-title {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .sake-note-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sake-note-tag {
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .sake-row-meta {
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .sake-meta-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .sake-meta-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .sake-meta-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--accent2);
+    }
+
+    /* ── PROCESS ── */
+    #process { background: var(--bg); }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+      border: 1px solid var(--border);
+    }
+
+    .process-step {
+      padding: 52px 36px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .process-step:last-child { border-right: none; }
+    .process-step:hover { background: rgba(35,28,20,0.7); }
+
+    .process-step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .process-step-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .process-step-jp {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .process-step-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ── SEASONAL ── */
+    #seasonal { background: var(--surface); }
+
+    .seasonal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .seasonal-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      transition: border-color 0.3s;
+    }
+    .seasonal-card:hover { border-color: var(--accent); }
+
+    .seasonal-card-img {
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      object-fit: cover;
+      filter: brightness(0.5) saturate(0.5);
+      transition: transform 0.8s var(--ease), filter 0.4s;
+    }
+    .seasonal-card:hover .seasonal-card-img {
+      transform: scale(1.06);
+      filter: brightness(0.6) saturate(0.7);
+    }
+
+    .seasonal-card-body {
+      padding: 36px;
+    }
+
+    .seasonal-season {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .seasonal-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .seasonal-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .seasonal-avail {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── PAIRING ── */
+    #pairing { background: var(--bg); }
+
+    .pairing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 48px;
+    }
+
+    .pairing-table thead tr {
+      border-bottom: 1px solid var(--accent);
+    }
+
+    .pairing-table th {
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-align: left;
+      padding: 16px 24px;
+    }
+
+    .pairing-table td {
+      padding: 20px 24px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .pairing-table tr:hover td { background: var(--surface); }
+
+    .pairing-grade {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    footer {
+      background: var(--surface);
+      padding: 80px 100px 40px;
+      position: relative;
+    }
+    .footer-pattern {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: repeating-linear-gradient(90deg, var(--accent) 0px, var(--accent) 8px, transparent 8px, transparent 16px);
+    }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 48px; border-top: 1px solid var(--border); }
+    .footer-links { display: flex; gap: 28px; list-style: none; }
+    .footer-links a { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--accent2); }
+    .footer-copy { font-size: 0.72rem; color: var(--text-muted); }
+
+    @media (max-width: 1100px) {
+      .sake-row { grid-template-columns: 1fr; }
+      .sake-row-grade, .sake-row-info, .sake-row-notes { border-right: none; border-bottom: 1px solid var(--border); }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .seasonal-grid { grid-template-columns: 1fr; }
+      .seasonal-card { grid-template-columns: 1fr; }
+      .seasonal-card-img { min-height: 200px; height: 200px; width: 100%; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .page-hero-content { padding-left: 24px; }
+      section { padding: 60px 24px; }
+      footer { padding: 60px 24px 32px; }
+      .process-steps { grid-template-columns: 1fr; }
+      .pairing-table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Kurabito</a>
+    <ul class="nav-links">
+      <li><a href="sake.html" class="active">Sake</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-book">Book Experience</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content">
+      <div class="page-eyebrow">
+        <div class="page-eyebrow-line"></div>
+        <span class="page-eyebrow-text">Nihonshu</span>
+      </div>
+      <h1 class="page-hero-title">The <em>Sake</em> of<br>Kurabito</h1>
+    </div>
+  </div>
+
+  <!-- SAKE RANGE -->
+  <section id="sake-range">
+    <div class="section-label">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Our Range</span>
+    </div>
+    <h2 class="section-title">The Kurabito Collection</h2>
+    <p class="section-body">Each sake in our range is named for an element of the Fushimi landscape — the mountain, the water, the cedar, the crane. Each is brewed in the kura by Toji Nakamura's own hand.</p>
+
+    <div class="sake-full-list">
+      <div class="sake-row">
+        <div class="sake-row-grade">
+          <div class="sake-grade-label">Grade</div>
+          <div class="sake-grade-name">Junmai</div>
+          <div class="sake-grade-jp">純米</div>
+        </div>
+        <div class="sake-row-info">
+          <div class="sake-name">Yamashiro</div>
+          <p class="sake-desc">The Mountain Castle. Named for the ancient province of Kyoto. A robust, warming Junmai with earthy umami depth — the sake of craftsmen and ceremonies.</p>
+        </div>
+        <div class="sake-row-notes">
+          <div class="sake-notes-title">Tasting Notes</div>
+          <div class="sake-note-tags">
+            <span class="sake-note-tag">Earthy</span>
+            <span class="sake-note-tag">Mushroom</span>
+            <span class="sake-note-tag">Steamed rice</span>
+            <span class="sake-note-tag">Cedar</span>
+            <span class="sake-note-tag">Warm finish</span>
+          </div>
+        </div>
+        <div class="sake-row-meta">
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">Polish Ratio</span>
+            <span class="sake-meta-val">68%</span>
+          </div>
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">SMV</span>
+            <span class="sake-meta-val">+3.5 (dry)</span>
+          </div>
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">ABV</span>
+            <span class="sake-meta-val">15.5%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sake-row">
+        <div class="sake-row-grade">
+          <div class="sake-grade-label">Grade</div>
+          <div class="sake-grade-name">Ginjo</div>
+          <div class="sake-grade-jp">吟醸</div>
+        </div>
+        <div class="sake-row-info">
+          <div class="sake-name">Tsuru no Mai</div>
+          <p class="sake-desc">Dance of the Crane. Slow-fermented for forty days in the deep winter cold. Extraordinary floral delicacy — white peach, wisteria, and a whisper of anise.</p>
+        </div>
+        <div class="sake-row-notes">
+          <div class="sake-notes-title">Tasting Notes</div>
+          <div class="sake-note-tags">
+            <span class="sake-note-tag">White peach</span>
+            <span class="sake-note-tag">Wisteria</span>
+            <span class="sake-note-tag">Pear</span>
+            <span class="sake-note-tag">Anise</span>
+            <span class="sake-note-tag">Silken</span>
+          </div>
+        </div>
+        <div class="sake-row-meta">
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">Polish Ratio</span>
+            <span class="sake-meta-val">58%</span>
+          </div>
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">SMV</span>
+            <span class="sake-meta-val">+1.0 (off-dry)</span>
+          </div>
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">ABV</span>
+            <span class="sake-meta-val">16.0%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sake-row">
+        <div class="sake-row-grade">
+          <div class="sake-grade-label">Grade</div>
+          <div class="sake-grade-name">Daiginjo</div>
+          <div class="sake-grade-jp">大吟醸</div>
+        </div>
+        <div class="sake-row-info">
+          <div class="sake-name">Hakuun</div>
+          <p class="sake-desc">White Cloud. The pinnacle of the Nakamura legacy. Sixty days of fermentation, 48% polished Yamada Nishiki rice, and the patience of a lifetime. Reserved production of 120 bottles per year.</p>
+        </div>
+        <div class="sake-row-notes">
+          <div class="sake-notes-title">Tasting Notes</div>
+          <div class="sake-note-tags">
+            <span class="sake-note-tag">Lychee</span>
+            <span class="sake-note-tag">Melon</span>
+            <span class="sake-note-tag">Jasmine</span>
+            <span class="sake-note-tag">Mineral</span>
+            <span class="sake-note-tag">Ethereal</span>
+          </div>
+        </div>
+        <div class="sake-row-meta">
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">Polish Ratio</span>
+            <span class="sake-meta-val">48%</span>
+          </div>
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">SMV</span>
+            <span class="sake-meta-val">+4.0 (dry)</span>
+          </div>
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">ABV</span>
+            <span class="sake-meta-val">15.0%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sake-row">
+        <div class="sake-row-grade">
+          <div class="sake-grade-label">Grade</div>
+          <div class="sake-grade-name">Nigori</div>
+          <div class="sake-grade-jp">濁り酒</div>
+        </div>
+        <div class="sake-row-info">
+          <div class="sake-name">Shirayuki</div>
+          <p class="sake-desc">White Snow. Cloudy, unfiltered, alive with the wild vitality of the press. Rich and creamy with a yogurt tang and the sweetness of new rice — the sake of celebration.</p>
+        </div>
+        <div class="sake-row-notes">
+          <div class="sake-notes-title">Tasting Notes</div>
+          <div class="sake-note-tags">
+            <span class="sake-note-tag">Rice cream</span>
+            <span class="sake-note-tag">Banana</span>
+            <span class="sake-note-tag">Yogurt</span>
+            <span class="sake-note-tag">Sweet mochi</span>
+            <span class="sake-note-tag">Cloudy</span>
+          </div>
+        </div>
+        <div class="sake-row-meta">
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">Polish Ratio</span>
+            <span class="sake-meta-val">70%</span>
+          </div>
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">SMV</span>
+            <span class="sake-meta-val">-4.0 (sweet)</span>
+          </div>
+          <div class="sake-meta-row">
+            <span class="sake-meta-label">ABV</span>
+            <span class="sake-meta-val">14.5%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BREWING PROCESS -->
+  <section id="process">
+    <div class="section-label">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">The Method</span>
+    </div>
+    <h2 class="section-title">How Sake is Made</h2>
+    <p class="section-body">Every bottle of Kurabito sake passes through the same eight-hundred-year-old process, refined by five generations of toji wisdom.</p>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-step-num">01</div>
+        <div class="process-step-name">Rice Polishing</div>
+        <div class="process-step-jp">精米 · Seimai</div>
+        <p class="process-step-desc">The outer bran of each grain is removed. The deeper we polish, the purer the fermentation and the more delicate the final sake. Our Daiginjo is polished to 48% — less than half of each grain remains.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">02</div>
+        <div class="process-step-name">Koji Cultivation</div>
+        <div class="process-step-jp">製麹 · Seikiku</div>
+        <p class="process-step-desc">Aspergillus oryzae mold is cultivated on steamed rice in the koji room for 48 hours. The toji monitors temperature by hand, by smell, by instinct. This is the heart of sake.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">03</div>
+        <div class="process-step-name">Fermentation</div>
+        <div class="process-step-jp">発酵 · Hakko</div>
+        <p class="process-step-desc">Rice, koji, water, and yeast are combined in cedar tanks. The mash ferments for 25 to 60 days at temperatures as low as 5°C for ginjo styles. The toji sleeps beside the tanks in winter.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-step-num">04</div>
+        <div class="process-step-name">Pressing &amp; Aging</div>
+        <div class="process-step-jp">搾り · Shibori</div>
+        <p class="process-step-desc">The mash is pressed through traditional fune (wooden pressing box), separating the sake from the lees. Premium sake is then aged in enameled steel tanks or ancient cedar barrels for three to twelve months.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEASONAL -->
+  <section id="seasonal">
+    <div class="section-label">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Limited Releases</span>
+    </div>
+    <h2 class="section-title">Seasonal Sake</h2>
+    <p class="section-body">Sake is a seasonal art. The best rice is harvested in autumn, the brewing season runs from October to March, and certain expressions can only be made once a year.</p>
+    <div class="seasonal-grid">
+      <div class="seasonal-card">
+        <img class="seasonal-card-img" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=450&q=75&auto=format&fit=crop" alt="Winter sake" loading="lazy" />
+        <div class="seasonal-card-body">
+          <div class="seasonal-season">Winter · Limited Release</div>
+          <div class="seasonal-name">Shinshu Arabashiri</div>
+          <p class="seasonal-desc">The first-run sake of the season, pressed in early December from the newborn mash. Raw, vibrant, and alive — available only in our tasting room for six weeks.</p>
+          <div class="seasonal-avail">Available: December – January · Kura only</div>
+        </div>
+      </div>
+      <div class="seasonal-card">
+        <img class="seasonal-card-img" src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=450&q=75&auto=format&fit=crop" alt="Spring sake" loading="lazy" />
+        <div class="seasonal-card-body">
+          <div class="seasonal-season">Spring · Seasonal Release</div>
+          <div class="seasonal-name">Haru Kasumi</div>
+          <p class="seasonal-desc">Spring Haze. A light, effervescent nama (unpasteurized) sake that captures the awakening of Kyoto in cherry blossom season. Chilled and poured in ceramic cups beneath the kura's plum tree.</p>
+          <div class="seasonal-avail">Available: March – April · 480 bottles</div>
+        </div>
+      </div>
+      <div class="seasonal-card">
+        <img class="seasonal-card-img" src="https://images.unsplash.com/photo-1577803645773-f96470509666?w=450&q=75&auto=format&fit=crop" alt="Summer sake" loading="lazy" />
+        <div class="seasonal-card-body">
+          <div class="seasonal-season">Summer · Cold Service</div>
+          <div class="seasonal-name">Natsu Ginjo</div>
+          <p class="seasonal-desc">A lighter, refreshing Ginjo formulated for summer service at 8°C. Lower alcohol and higher acidity balance the heat of Kyoto summer. Recommended with river fish and cold tofu.</p>
+          <div class="seasonal-avail">Available: June – August · 600 bottles</div>
+        </div>
+      </div>
+      <div class="seasonal-card">
+        <img class="seasonal-card-img" src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=450&q=75&auto=format&fit=crop" alt="Autumn sake" loading="lazy" />
+        <div class="seasonal-card-body">
+          <div class="seasonal-season">Autumn · Reserve</div>
+          <div class="seasonal-name">Hiyaoroshi</div>
+          <p class="seasonal-desc">The seasonal classic — sake pasteurized once in spring and then aged through summer, released in September when the autumn air cools the kura. Mellow, deep, and perfectly mature.</p>
+          <div class="seasonal-avail">Available: September – October · 320 bottles</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAIRING -->
+  <section id="pairing">
+    <div class="section-label">
+      <div class="section-label-line"></div>
+      <span class="section-label-text">Table Harmony</span>
+    </div>
+    <h2 class="section-title">Sake &amp; Food Pairing</h2>
+    <p class="section-body">The Japanese principle of ma — space and harmony — applies to the table as much as the brewery. Our sommeliers have created the following pairing guide for home use.</p>
+    <table class="pairing-table">
+      <thead>
+        <tr>
+          <th>Grade</th>
+          <th>Style</th>
+          <th>Best Temperature</th>
+          <th>Classic Pairings</th>
+          <th>Avoid</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pairing-grade">Junmai</span></td>
+          <td>Full-bodied, savory, warm</td>
+          <td>45–50°C (atsukan)</td>
+          <td>Grilled fish, aged tofu, miso soup, yakitori</td>
+          <td>Delicate raw seafood (overpowers)</td>
+        </tr>
+        <tr>
+          <td><span class="pairing-grade">Ginjo</span></td>
+          <td>Light, floral, clean</td>
+          <td>10–15°C (hana-hie)</td>
+          <td>Sashimi, steamed clams, edamame, light salads</td>
+          <td>Rich sauces (compete with aromatics)</td>
+        </tr>
+        <tr>
+          <td><span class="pairing-grade">Daiginjo</span></td>
+          <td>Ethereal, aromatic, dry</td>
+          <td>8–12°C (yuki-hie)</td>
+          <td>Uni (sea urchin), lobster, fine white fish, nothing</td>
+          <td>Anything with strong flavor — drink alone</td>
+        </tr>
+        <tr>
+          <td><span class="pairing-grade">Nigori</span></td>
+          <td>Rich, creamy, sweet</td>
+          <td>5–8°C (well chilled)</td>
+          <td>Spicy dishes, rich cream desserts, fresh fruit, cheese</td>
+          <td>Delicate dashi (sweetness overpowers)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <div class="footer-pattern"></div>
+    <div class="footer-bottom">
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="courses.html">Courses</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <p class="footer-copy">&copy; 2026 Kurabito Sake School · Kyoto, Japan</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.page-eyebrow', { immediateRender: false, opacity: 0, y: 20, duration: 0.9, ease: 'power2.out', delay: 0.3 });
+    gsap.from('.page-hero-title', { immediateRender: false, opacity: 0, y: 28, duration: 1.1, ease: 'power2.out', delay: 0.5 });
+
+    gsap.from('.sake-row', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.sake-full-list', start: 'top 80%' },
+      opacity: 0, y: 24, duration: 0.9, ease: 'power2.out', stagger: 0.1
+    });
+
+    gsap.from('.process-step', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.process-steps', start: 'top 80%' },
+      opacity: 0, y: 28, duration: 1.0, ease: 'power2.out', stagger: 0.1
+    });
+
+    gsap.from('.seasonal-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.seasonal-grid', start: 'top 80%' },
+      opacity: 0, y: 24, duration: 0.9, ease: 'power2.out', stagger: 0.1
+    });
+
+    gsap.from('.pairing-table tbody tr', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.pairing-table', start: 'top 80%' },
+      opacity: 0, x: -16, duration: 0.8, ease: 'power2.out', stagger: 0.08
+    });
+  </script>
+</body>
+</html>

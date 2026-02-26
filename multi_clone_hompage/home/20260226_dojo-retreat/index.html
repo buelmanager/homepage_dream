@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MUSHIN — Empty the Mind. Find the Edge.</title>
+  <meta name="description" content="A luxury traditional martial arts and meditation retreat in a restored 17th-century Japanese temple outside Kyoto. Limited to 12 guests." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #181410;
+      --surface: #221C16;
+      --accent: #C04020;
+      --accent2: #E8C080;
+      --text: #F5EDE0;
+      --text-muted: #907060;
+      --border: rgba(232,192,128,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── PRELOADER ─── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    #preloader .ink-container {
+      width: 120px;
+      height: 120px;
+    }
+
+    #preloader svg.ink-brush {
+      width: 100%;
+      height: 100%;
+    }
+
+    .ink-stroke {
+      stroke-dasharray: 800;
+      stroke-dashoffset: 800;
+      animation: inkDraw 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards 0.3s;
+    }
+
+    @keyframes inkDraw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    #preloader .pre-kanji {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      color: var(--accent2);
+      letter-spacing: 0.2em;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.6s;
+    }
+
+    #preloader .pre-tagline {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 2s;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── SCROLL INDICATOR ─── */
+    #scroll-indicator {
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    #scroll-indicator .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #scroll-indicator .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent2);
+      animation: scrollAnim 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollAnim {
+      0% { top: -100%; }
+      100% { top: 100%; }
+    }
+
+    #scroll-indicator .scroll-text {
+      writing-mode: vertical-rl;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(24,20,16,0.95);
+      backdrop-filter: blur(12px);
+      padding: 14px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--accent2); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-apply {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 10px 22px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .nav-apply:hover { background: var(--accent2); }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1800&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.1);
+      filter: brightness(0.35);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(24,20,16,0.4) 0%,
+        rgba(24,20,16,0.1) 40%,
+        rgba(24,20,16,0.6) 80%,
+        rgba(24,20,16,1) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 24px;
+    }
+
+    .hero-sub {
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 28px;
+      display: block;
+    }
+
+    .hero-kanji {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(80px, 15vw, 180px);
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      color: var(--text);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .hero-kanji-jp {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 3vw, 40px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--accent2);
+      letter-spacing: 0.2em;
+      display: block;
+      margin-bottom: 36px;
+    }
+
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(14px, 2vw, 20px);
+      font-style: italic;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 56px;
+    }
+
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--accent2);
+      display: block;
+    }
+
+    .hero-stat-label {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 4px;
+    }
+
+    .hero-stat-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--border);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-scroll-hint span {
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .hero-scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    /* ─── SECTION BASE ─── */
+    section {
+      position: relative;
+    }
+
+    .section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .section-label {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    /* ─── THE ARTS ─── */
+    #the-arts {
+      padding: 120px 0;
+      background: var(--bg);
+    }
+
+    .arts-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+      margin-bottom: 80px;
+    }
+
+    .arts-intro {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 440px;
+    }
+
+    .arts-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+
+    .art-card {
+      background: var(--surface);
+      padding: 48px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s;
+    }
+
+    .art-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.4s ease;
+    }
+
+    .art-card:hover { background: #261E17; }
+    .art-card:hover::before { height: 100%; }
+
+    .art-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 24px;
+      color: var(--accent2);
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+    }
+
+    .art-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--text);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .art-jp {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .art-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1.6;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+
+    /* ─── THE TEMPLE ─── */
+    #the-temple {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+
+    .temple-split {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .temple-image {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+    }
+
+    .temple-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.85);
+    }
+
+    .temple-image-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px;
+      background: linear-gradient(transparent, rgba(24,20,16,0.9));
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+
+    .temple-content .section-title {
+      margin-bottom: 32px;
+    }
+
+    .temple-body {
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .temple-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 36px 0;
+    }
+
+    .temple-features li {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .temple-features li::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .btn-outline {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      border: 1px solid var(--accent2);
+      padding: 14px 32px;
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .btn-outline:hover {
+      background: var(--accent2);
+      color: var(--bg);
+    }
+
+    /* ─── DAILY SCHEDULE ─── */
+    #daily-schedule {
+      padding: 120px 0;
+      background: var(--bg);
+    }
+
+    .schedule-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .schedule-header .section-title {
+      margin-bottom: 20px;
+    }
+
+    .schedule-intro {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .schedule-timeline {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 48px;
+      position: relative;
+    }
+
+    .schedule-timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--border);
+      transform: translateX(-50%);
+    }
+
+    .schedule-item {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 48px;
+    }
+
+    .schedule-item:nth-child(odd) .schedule-left { text-align: right; }
+    .schedule-item:nth-child(odd) .schedule-right { opacity: 0; pointer-events: none; }
+    .schedule-item:nth-child(even) .schedule-left { opacity: 0; pointer-events: none; }
+
+    .schedule-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .schedule-time {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      color: var(--accent2);
+      display: block;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .schedule-activity {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .schedule-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ─── THE MASTERS ─── */
+    #the-masters {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+
+    .masters-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+      margin-bottom: 64px;
+    }
+
+    .masters-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .master-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .master-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.7) saturate(0.6);
+      transition: filter 0.5s, transform 0.5s;
+    }
+
+    .master-card:hover .master-img {
+      filter: brightness(0.55) saturate(0.5);
+      transform: scale(1.03);
+    }
+
+    .master-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 36px 32px;
+      background: linear-gradient(transparent, rgba(24,20,16,0.95));
+    }
+
+    .master-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .master-title {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .master-bio {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .master-card:hover .master-bio { max-height: 80px; }
+
+    /* ─── APPLY CTA ─── */
+    #apply-cta {
+      padding: 140px 0;
+      background: var(--bg);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #apply-cta::before {
+      content: '無心';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 300px;
+      font-weight: 300;
+      color: rgba(192,64,32,0.04);
+      pointer-events: none;
+      white-space: nowrap;
+      letter-spacing: 0.1em;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+
+    .cta-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    .btn-accent {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 18px 48px;
+      text-decoration: none;
+      transition: background 0.3s;
+      margin-bottom: 20px;
+    }
+
+    .btn-accent:hover { background: var(--accent2); }
+
+    .cta-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 72px 0 40px;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand .nav-logo {
+      display: block;
+      margin-bottom: 20px;
+      font-size: 26px;
+    }
+
+    .footer-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    .footer-address {
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    .footer-col-title {
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      display: block;
+      margin-bottom: 24px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 48px 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="ink-container">
+      <svg class="ink-brush" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Stylized enso circle in ink brush style -->
+        <path class="ink-stroke"
+          d="M60 15 C85 15, 105 35, 105 60 C105 82, 88 100, 66 104 C45 108, 25 95, 18 75 C11 55, 20 32, 38 22 C48 16, 56 14, 62 16"
+          stroke="#C04020" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <path class="ink-stroke"
+          d="M62 16 C68 17, 74 22, 76 30"
+          stroke="#C04020" stroke-width="3" stroke-linecap="round" fill="none"
+          style="animation-delay: 1.9s; stroke-dasharray: 60; stroke-dashoffset: 60;"/>
+      </svg>
+    </div>
+    <div class="pre-kanji">無心</div>
+    <div class="pre-tagline">MUSHIN — Preparing your experience</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-text">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">MUSHIN <span>無心</span></a>
+    <ul class="nav-links">
+      <li><a href="programs.html">Programs</a></li>
+      <li><a href="retreat.html">The Retreat</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-apply">Apply</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-sub" id="hero-sub">Kyoto Prefecture, Japan &nbsp;·&nbsp; Est. 1682</span>
+      <span class="hero-kanji" id="hero-title">MUSHIN</span>
+      <span class="hero-kanji-jp" id="hero-jp">無心</span>
+      <p class="hero-tagline" id="hero-tagline">Empty the Mind. Find the Edge.</p>
+      <div class="hero-stats" id="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value">17th</span>
+          <span class="hero-stat-label">Century Temple</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">12</span>
+          <span class="hero-stat-label">Guests Maximum</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">6</span>
+          <span class="hero-stat-label">Masters in Residence</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <span>Discover</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- THE ARTS -->
+  <section id="the-arts">
+    <div class="arts-header">
+      <div>
+        <span class="section-label">The Disciplines</span>
+        <h2 class="section-title">The <em>Arts</em> of<br>Transformation</h2>
+      </div>
+      <p class="arts-intro">
+        Four ancient disciplines, practiced in their living tradition. Each art is a gateway — not to skill, but to self. At MUSHIN, we study not to become fighters or monks, but to become whole.
+      </p>
+    </div>
+    <div class="arts-grid">
+      <div class="art-card" id="art-1">
+        <span class="art-icon">合</span>
+        <span class="art-name">Aikido</span>
+        <span class="art-jp">合氣道 — Way of Harmony</span>
+        <p class="art-quote">"The art that transforms conflict into flow. We move not against, but through."</p>
+      </div>
+      <div class="art-card" id="art-2">
+        <span class="art-icon">居</span>
+        <span class="art-name">Iaido</span>
+        <span class="art-jp">居合道 — The Drawing Blade</span>
+        <p class="art-quote">"One perfect cut. In the sword's edge lives the stillness of the practiced mind."</p>
+      </div>
+      <div class="art-card" id="art-3">
+        <span class="art-icon">坐</span>
+        <span class="art-name">Zazen</span>
+        <span class="art-jp">坐禅 — Seated Meditation</span>
+        <p class="art-quote">"Sit. Breathe. Let the chattering mind become still water."</p>
+      </div>
+      <div class="art-card" id="art-4">
+        <span class="art-icon">道</span>
+        <span class="art-name">Traditional Arts</span>
+        <span class="art-jp">伝統芸術 — Living Heritage</span>
+        <p class="art-quote">"Chado, Shodo, Kyudo. Each a mirror for the practitioner."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE TEMPLE -->
+  <section id="the-temple">
+    <div class="temple-split">
+      <div class="temple-image">
+        <img
+          src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=900&q=85&auto=format&fit=crop"
+          alt="Ancient Japanese temple architecture in misty forest"
+          loading="lazy"
+        />
+        <div class="temple-image-caption">Main Hall — Restored 2019 by Traditional Craftsmen</div>
+      </div>
+      <div class="temple-content">
+        <span class="section-label">The Setting</span>
+        <h2 class="section-title">A Temple<br><em>Unchanged</em><br>by Time</h2>
+        <p class="temple-body">
+          Originally commissioned in 1682 during the Edo period, our temple complex sits within 14 acres of ancient cedar forest, 40 minutes from central Kyoto by private car. The structures were painstakingly restored over five years using only traditional joinery — no nails, no adhesives, no compromise.
+        </p>
+        <p class="temple-body">
+          The tatami practice halls, stone garden, and meditation pavilion have hosted teachers in unbroken lineage for over three centuries. When you arrive, you step out of the 21st century entirely.
+        </p>
+        <ul class="temple-features">
+          <li>Three separate practice dojos with genuine tatami flooring</li>
+          <li>Karesansui rock garden, maintained daily</li>
+          <li>Private cedar onsen overlooking the cedar grove</li>
+          <li>12 individual guest rooms with shoji screens and futon</li>
+        </ul>
+        <a href="retreat.html" class="btn-outline">Explore the Retreat</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAILY SCHEDULE -->
+  <section id="daily-schedule">
+    <div class="schedule-header">
+      <span class="section-label">Daily Life</span>
+      <h2 class="section-title">A Week at <em>MUSHIN</em></h2>
+      <p class="schedule-intro">
+        Structure is freedom. Every day at MUSHIN follows a rhythm designed over decades — moving between practice, stillness, and restoration.
+      </p>
+    </div>
+
+    <div class="schedule-timeline">
+      <div class="schedule-item" id="sched-1">
+        <div class="schedule-left">
+          <span class="schedule-time">05:30</span>
+          <span class="schedule-activity">Morning Bell & Zazen</span>
+          <span class="schedule-desc">Day begins in the main hall. 40 minutes of seated meditation guided by a Zen teacher.</span>
+        </div>
+        <div class="schedule-dot"></div>
+        <div class="schedule-right"></div>
+      </div>
+      <div class="schedule-item" id="sched-2">
+        <div class="schedule-left"></div>
+        <div class="schedule-dot"></div>
+        <div class="schedule-right">
+          <span class="schedule-time">07:00</span>
+          <span class="schedule-activity">Morning Aikido</span>
+          <span class="schedule-desc">Two hours on the mat with Sensei Nakamura. Ukemi, paired practice, weapons work.</span>
+        </div>
+      </div>
+      <div class="schedule-item" id="sched-3">
+        <div class="schedule-left">
+          <span class="schedule-time">09:30</span>
+          <span class="schedule-activity">Shojin Ryori Breakfast</span>
+          <span class="schedule-desc">Traditional Buddhist temple cuisine. Simple, seasonal, nourishing. Eaten in silence.</span>
+        </div>
+        <div class="schedule-dot"></div>
+        <div class="schedule-right"></div>
+      </div>
+      <div class="schedule-item" id="sched-4">
+        <div class="schedule-left"></div>
+        <div class="schedule-dot"></div>
+        <div class="schedule-right">
+          <span class="schedule-time">14:00</span>
+          <span class="schedule-activity">Afternoon Elective</span>
+          <span class="schedule-desc">Iaido, Chado, Shodo, or Kyudo. Guests rotate through all disciplines during the week.</span>
+        </div>
+      </div>
+      <div class="schedule-item" id="sched-5">
+        <div class="schedule-left">
+          <span class="schedule-time">17:00</span>
+          <span class="schedule-activity">Contemplative Walk</span>
+          <span class="schedule-desc">Guided kinhin through the cedar forest. Walking meditation as movement practice.</span>
+        </div>
+        <div class="schedule-dot"></div>
+        <div class="schedule-right"></div>
+      </div>
+      <div class="schedule-item" id="sched-6">
+        <div class="schedule-left"></div>
+        <div class="schedule-dot"></div>
+        <div class="schedule-right">
+          <span class="schedule-time">21:00</span>
+          <span class="schedule-activity">Evening Oryoki</span>
+          <span class="schedule-desc">The ceremonial dinner ritual. Each guest prepares and cleans their own bowls in the Zen tradition.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE MASTERS -->
+  <section id="the-masters">
+    <div class="masters-header">
+      <span class="section-label">Faculty</span>
+      <h2 class="section-title">The <em>Masters</em></h2>
+    </div>
+    <div class="masters-grid">
+      <div class="master-card" id="master-1">
+        <img
+          class="master-img"
+          src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?w=700&q=85&auto=format&fit=crop"
+          alt="Dojo practice hall interior"
+          loading="lazy"
+        />
+        <div class="master-info">
+          <span class="master-name">Sensei Kenji Nakamura</span>
+          <span class="master-title">Aikido · 7th Dan Aikikai</span>
+          <p class="master-bio">44 years in practice. Trained under Morihiro Saito at Iwama. Teaches that Aikido is a conversation, never an argument.</p>
+        </div>
+      </div>
+      <div class="master-card" id="master-2">
+        <img
+          class="master-img"
+          src="https://images.unsplash.com/photo-1485125639709-a60c3a500bf1?w=700&q=85&auto=format&fit=crop"
+          alt="Traditional Japanese sword practice"
+          loading="lazy"
+        />
+        <div class="master-info">
+          <span class="master-name">Sensei Yuki Hayashi</span>
+          <span class="master-title">Iaido · Muso Shinden-ryu</span>
+          <p class="master-bio">Third-generation swordsman. Custodian of two Edo-period blades. His curriculum strips iaido to its contemplative core.</p>
+        </div>
+      </div>
+      <div class="master-card" id="master-3">
+        <img
+          class="master-img"
+          src="https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=700&q=85&auto=format&fit=crop"
+          alt="Zen garden raked stones"
+          loading="lazy"
+        />
+        <div class="master-info">
+          <span class="master-name">Roshi Tomoko Abe</span>
+          <span class="master-title">Zazen · Rinzai School</span>
+          <p class="master-bio">Dharma heir of Kyoto's Tenryū-ji lineage. Her dokusan sessions are described by guests as the most confronting hour of their lives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPLY CTA -->
+  <section id="apply-cta">
+    <div class="cta-inner">
+      <span class="section-label">Application</span>
+      <h2 class="cta-title">Twelve Seats.<br><em>One Criterion:</em><br>Readiness.</h2>
+      <p class="cta-subtitle">
+        We do not select by profession, achievement, or status. We look for people ready to be genuinely uncomfortable — and to sit with that discomfort until it becomes something else entirely.
+      </p>
+      <a href="contact.html" class="btn-accent">Begin Your Application</a>
+      <p class="cta-note">Next residency: March 2026 &nbsp;·&nbsp; 7-day & 14-day programs available</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">MUSHIN <span>無心</span></a>
+        <p class="footer-tagline">"Empty the Mind. Find the Edge."</p>
+        <p class="footer-address">
+          Mushin Retreat Centre<br>
+          Ohara District, Sakyo Ward<br>
+          Kyoto Prefecture, Japan 601-1242<br>
+          <br>
+          Inquiries: hello@mushin-retreat.jp
+        </p>
+      </div>
+      <div>
+        <span class="footer-col-title">Programs</span>
+        <ul class="footer-links">
+          <li><a href="programs.html">Aikido Intensive</a></li>
+          <li><a href="programs.html">Iaido Study</a></li>
+          <li><a href="programs.html">Zazen Retreat</a></li>
+          <li><a href="programs.html">Traditional Arts</a></li>
+          <li><a href="programs.html">Full Immersion</a></li>
+        </ul>
+      </div>
+      <div>
+        <span class="footer-col-title">The Retreat</span>
+        <ul class="footer-links">
+          <li><a href="retreat.html">Accommodation</a></li>
+          <li><a href="retreat.html">Daily Schedule</a></li>
+          <li><a href="retreat.html">Cuisine</a></li>
+          <li><a href="retreat.html">Seasonal Calendar</a></li>
+          <li><a href="about.html">The Temple</a></li>
+        </ul>
+      </div>
+      <div>
+        <span class="footer-col-title">Visit</span>
+        <ul class="footer-links">
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html">The Masters</a></li>
+          <li><a href="contact.html">How to Arrive</a></li>
+          <li><a href="contact.html">Apply Now</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MUSHIN Retreat Centre. All rights reserved.</span>
+      <span>Kyoto Prefecture, Japan</span>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ─── PRELOADER ───
+    const preloader = document.getElementById('preloader');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+
+    function showScrollIndicator() {
+      scrollIndicator.classList.add('visible');
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            showScrollIndicator();
+            initAnimations();
+          }
+        });
+      }, 2600);
+    });
+
+    // Fallback scroll indicator show
+    setTimeout(showScrollIndicator, 4000);
+
+    // ─── NAVBAR ───
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      // Hide scroll indicator after scrolling
+      if (window.scrollY > 200) {
+        scrollIndicator.style.opacity = '0';
+      } else if (scrollIndicator.classList.contains('visible')) {
+        scrollIndicator.style.opacity = '1';
+      }
+    });
+
+    function initAnimations() {
+      // ─── HERO ───
+      gsap.from('#hero-bg', {
+        immediateRender: false,
+        scale: 1.15,
+        duration: 2.2,
+        ease: 'power2.out'
+      });
+
+      // Hero text reveal — letter by letter approach
+      const heroTitle = document.getElementById('hero-title');
+      const letters = heroTitle.textContent.split('');
+      heroTitle.textContent = '';
+      letters.forEach((letter, i) => {
+        const span = document.createElement('span');
+        span.textContent = letter === ' ' ? '\u00A0' : letter;
+        span.style.display = 'inline-block';
+        heroTitle.appendChild(span);
+      });
+
+      gsap.from(heroTitle.children, {
+        immediateRender: false,
+        y: 60,
+        rotateX: 90,
+        transformOrigin: 'bottom center',
+        stagger: 0.08,
+        duration: 1.2,
+        ease: 'power3.out',
+        delay: 0.3
+      });
+
+      gsap.from('#hero-sub', {
+        immediateRender: false,
+        y: 20,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 0.1
+      });
+
+      gsap.from('#hero-jp', {
+        immediateRender: false,
+        y: 20,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 0.8
+      });
+
+      gsap.from('#hero-tagline', {
+        immediateRender: false,
+        y: 20,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 1.0
+      });
+
+      gsap.from('#hero-stats', {
+        immediateRender: false,
+        y: 24,
+        duration: 1,
+        ease: 'power2.out',
+        delay: 1.2
+      });
+
+      // ─── THE ARTS ───
+      gsap.from('.arts-header > *', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#the-arts', start: 'top 80%' },
+        y: 28,
+        stagger: 0.15,
+        duration: 1.0,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.art-card', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.arts-grid', start: 'top 85%' },
+        y: 40,
+        stagger: 0.1,
+        duration: 1.0,
+        ease: 'power2.out'
+      });
+
+      // ─── THE TEMPLE ───
+      gsap.from('.temple-image', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#the-temple', start: 'top 75%' },
+        x: -40,
+        duration: 1.2,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.temple-content > *', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#the-temple', start: 'top 75%' },
+        x: 40,
+        stagger: 0.12,
+        duration: 1.1,
+        ease: 'power2.out'
+      });
+
+      // ─── SCHEDULE ───
+      gsap.from('.schedule-header > *', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#daily-schedule', start: 'top 80%' },
+        y: 24,
+        stagger: 0.1,
+        duration: 1.0,
+        ease: 'power2.out'
+      });
+
+      document.querySelectorAll('.schedule-item').forEach((item, i) => {
+        gsap.from(item, {
+          immediateRender: false,
+          scrollTrigger: { trigger: item, start: 'top 88%' },
+          y: 20,
+          duration: 0.9,
+          ease: 'power2.out'
+        });
+      });
+
+      // ─── MASTERS ───
+      gsap.from('.masters-header > *', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#the-masters', start: 'top 80%' },
+        y: 24,
+        duration: 1.0,
+        ease: 'power2.out'
+      });
+
+      gsap.from('.master-card', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.masters-grid', start: 'top 80%' },
+        y: 40,
+        stagger: 0.12,
+        duration: 1.1,
+        ease: 'power2.out'
+      });
+
+      // ─── CTA ───
+      gsap.from('.cta-inner > *', {
+        immediateRender: false,
+        scrollTrigger: { trigger: '#apply-cta', start: 'top 80%' },
+        y: 28,
+        stagger: 0.1,
+        duration: 1.0,
+        ease: 'power2.out'
+      });
+
+      // Parallax hero bg
+      gsap.to('#hero-bg', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        },
+        y: 120,
+        ease: 'none'
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Builds — VELOX ATELIER</title>
+  <meta name="description" content="Explore the Velox Atelier build portfolio. Road, gravel, track, and touring titanium and carbon frames. 340+ builds delivered worldwide.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141414;
+      --surface: #1C1C1C;
+      --accent: #E8C840;
+      --accent2: #A8A8A8;
+      --text: #F0F0F0;
+      --text-muted: #888888;
+      --font-heading: 'Montserrat', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px;
+      height: 72px;
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(232, 200, 64, 0.1);
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 15px; font-weight: 800; letter-spacing: 4px;
+      color: var(--text); text-decoration: none; text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 36px; list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-heading);
+      font-size: 11px; font-weight: 600; letter-spacing: 3px;
+      color: var(--accent2); text-decoration: none; text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    .nav-cta {
+      font-family: var(--font-heading);
+      font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      color: var(--bg); background: var(--accent);
+      text-decoration: none; text-transform: uppercase;
+      padding: 12px 24px;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .nav-cta:hover { background: #fff; transform: translateY(-1px); }
+
+    /* SUBHERO */
+    .subhero {
+      padding-top: 72px;
+      height: 55vh; min-height: 420px;
+      position: relative;
+      display: flex; align-items: flex-end; justify-content: flex-start;
+      overflow: hidden;
+    }
+    .subhero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1511994298241-3b73bc6c6f67?w=1200&q=80&auto=format&fit=crop');
+      background-size: cover; background-position: center 40%;
+    }
+    .subhero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(20,20,20,0.90) 0%, rgba(20,20,20,0.40) 60%, rgba(20,20,20,0.55) 100%);
+    }
+    .subhero-content { position: relative; z-index: 2; padding: 60px 80px; }
+    .subhero-eyebrow {
+      font-family: var(--font-heading);
+      font-size: 10px; font-weight: 600; letter-spacing: 6px;
+      color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+    }
+    .subhero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 1;
+    }
+
+    /* FILTER */
+    #build-filter {
+      background: var(--surface);
+      padding: 32px 80px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      position: sticky; top: 72px;
+      z-index: 100;
+      border-bottom: 1px solid rgba(240,240,240,0.05);
+    }
+
+    .filter-btn {
+      font-family: var(--font-heading);
+      font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--text-muted);
+      background: none; border: 1px solid transparent;
+      padding: 10px 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .filter-btn:hover { color: var(--accent); border-color: rgba(232,200,64,0.3); }
+    .filter-btn.active { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+
+    /* BUILDS GRID */
+    #builds-gallery {
+      background: var(--bg);
+      padding: 80px;
+    }
+
+    .builds-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .build-card {
+      background: var(--surface);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.4s;
+    }
+    .build-card:hover { transform: translateY(-6px); }
+    .build-card:hover .build-img { transform: scale(1.05); }
+    .build-card[data-type]:not(.visible) { display: none; }
+
+    .build-img-wrap { overflow: hidden; aspect-ratio: 4/3; position: relative; }
+    .build-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .build-type-badge {
+      position: absolute; top: 16px; left: 16px;
+      background: var(--accent); color: var(--bg);
+      font-family: var(--font-heading);
+      font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      padding: 6px 12px;
+    }
+
+    .build-body { padding: 24px; }
+    .build-model {
+      font-family: var(--font-heading);
+      font-size: 18px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .build-tagline { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+    .build-specs {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      padding-top: 20px; border-top: 1px solid rgba(240,240,240,0.08);
+    }
+    .spec-val {
+      font-family: var(--font-heading); font-size: 15px; font-weight: 700; color: var(--accent);
+    }
+    .spec-key { font-size: 10px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+
+    /* FEATURED BUILD DEEP-DIVE */
+    #featured-deep {
+      background: var(--surface);
+      padding: 100px 80px;
+    }
+    .featured-deep-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .deep-img { aspect-ratio: 1; overflow: hidden; }
+    .deep-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .section-eyebrow {
+      font-family: var(--font-heading);
+      font-size: 10px; font-weight: 600; letter-spacing: 6px;
+      color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(28px, 3vw, 44px);
+      font-weight: 800; line-height: 1.1; letter-spacing: -1px; text-transform: uppercase;
+    }
+
+    .deep-spec-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 40px;
+    }
+    .deep-spec {
+      background: var(--bg); padding: 20px; border-left: 2px solid var(--accent);
+    }
+    .deep-spec-val {
+      font-family: var(--font-heading); font-size: 22px; font-weight: 900; color: var(--accent);
+    }
+    .deep-spec-key { font-size: 11px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
+
+    /* CLIENT PHOTOS */
+    #client-photos {
+      background: var(--bg); padding: 100px 80px;
+    }
+    .client-photos-inner { max-width: 1200px; margin: 0 auto; }
+    .client-photos-header { margin-bottom: 60px; }
+    .client-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    .client-img { aspect-ratio: 1; overflow: hidden; }
+    .client-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .client-img:hover img { transform: scale(1.06); }
+
+    /* COMMISSION CTA */
+    #commission-cta {
+      background: var(--surface); padding: 100px 80px; text-align: center;
+    }
+    .cta-title {
+      font-family: var(--font-heading);
+      font-size: clamp(32px, 4vw, 56px); font-weight: 900; text-transform: uppercase; letter-spacing: -1px;
+    }
+    .cta-title em { color: var(--accent); font-style: normal; }
+    .btn-primary {
+      font-family: var(--font-heading);
+      font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      text-decoration: none; color: var(--bg); background: var(--accent);
+      padding: 16px 40px; display: inline-block;
+      transition: background 0.3s, transform 0.3s; margin-top: 40px;
+    }
+    .btn-primary:hover { background: #fff; transform: translateY(-2px); }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid rgba(232,200,64,0.1);
+      padding: 80px 48px 40px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px; margin-bottom: 60px;
+    }
+    .footer-brand-name {
+      font-family: var(--font-heading); font-size: 16px; font-weight: 800;
+      letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px;
+    }
+    .footer-brand-name span { color: var(--accent); }
+    .footer-tagline { font-size: 13px; color: var(--text-muted); line-height: 1.7; max-width: 280px; }
+    .footer-col-title {
+      font-family: var(--font-heading); font-size: 10px; font-weight: 700;
+      letter-spacing: 4px; text-transform: uppercase; color: var(--accent2); margin-bottom: 24px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--accent); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 32px; border-top: 1px solid rgba(240,240,240,0.06);
+    }
+    .footer-copy { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; }
+    .footer-accent-line { width: 60px; height: 1px; background: var(--accent); }
+
+    @media (max-width: 1024px) {
+      .builds-grid { grid-template-columns: repeat(2, 1fr); }
+      .featured-deep-inner { grid-template-columns: 1fr; }
+      .client-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      #builds-gallery, #featured-deep, #client-photos, #commission-cta { padding: 80px 40px; }
+      .subhero-content { padding: 40px; }
+      #build-filter { padding: 24px 40px; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .builds-grid { grid-template-columns: 1fr; }
+      .client-grid { grid-template-columns: repeat(2, 1fr); }
+      #builds-gallery, #featured-deep, #client-photos, #commission-cta { padding: 60px 24px; }
+      .subhero-content { padding: 32px 24px; }
+      #build-filter { padding: 16px 24px; flex-wrap: wrap; }
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      footer { padding: 60px 24px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">VELOX <span>A</span>TELIER</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="builds.html" class="active">Builds</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Start Commission</a>
+  </nav>
+
+  <div class="subhero">
+    <div class="subhero-bg"></div>
+    <div class="subhero-overlay"></div>
+    <div class="subhero-content">
+      <div class="subhero-eyebrow">The Portfolio</div>
+      <h1 class="subhero-title">Our Builds</h1>
+    </div>
+  </div>
+
+  <div id="build-filter">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="road">Road</button>
+    <button class="filter-btn" data-filter="gravel">Gravel</button>
+    <button class="filter-btn" data-filter="track">Track</button>
+    <button class="filter-btn" data-filter="touring">Touring</button>
+  </div>
+
+  <section id="builds-gallery">
+    <div class="builds-grid" id="buildsGrid">
+
+      <!-- Road -->
+      <div class="build-card visible" data-type="road">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&q=80&auto=format&fit=crop" alt="Strada Ti" loading="lazy">
+          <div class="build-type-badge">Road</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Strada Ti</div>
+          <div class="build-tagline">Grade 9 titanium. Alpine climbing geometry. Cobblestone comfort.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">780g</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">6.2kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">52cm</div><div class="spec-key">Stack</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="build-card visible" data-type="road">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1511994298241-3b73bc6c6f67?w=800&q=80&auto=format&fit=crop" alt="Corsa R" loading="lazy">
+          <div class="build-type-badge">Road</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Corsa R</div>
+          <div class="build-tagline">Endurance road geometry. 28mm clearance. Racing yellow build.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">820g</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">6.8kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">56cm</div><div class="spec-key">Stack</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="build-card visible" data-type="road">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&auto=format&fit=crop" alt="Aero S" loading="lazy">
+          <div class="build-type-badge">Road</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Aero S</div>
+          <div class="build-tagline">Aero tubing profile. Di2 routing. Time trial geometry option.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">760g</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">6.0kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">48cm</div><div class="spec-key">Stack</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gravel -->
+      <div class="build-card visible" data-type="gravel">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1502744688674-c619d1586c9e?w=800&q=80&auto=format&fit=crop" alt="Terra Force" loading="lazy">
+          <div class="build-type-badge">Gravel</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Terra Force</div>
+          <div class="build-tagline">50mm clearance. Multi-surface. Bikepacking mounts standard.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">920g</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">8.1kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">50mm</div><div class="spec-key">Clearance</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="build-card visible" data-type="gravel">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5b?w=800&q=80&auto=format&fit=crop" alt="Sentiero" loading="lazy">
+          <div class="build-type-badge">Gravel</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Sentiero</div>
+          <div class="build-tagline">Trail-optimized geometry. Flat bar option. 45mm clearance.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">880g</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">7.8kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">45mm</div><div class="spec-key">Clearance</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track -->
+      <div class="build-card visible" data-type="track">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?w=800&q=80&auto=format&fit=crop" alt="Velodrome C" loading="lazy">
+          <div class="build-type-badge">Track</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Velodrome C</div>
+          <div class="build-tagline">Full carbon. 700g. Sprint optimized. UCI legal geometry.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">700g</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">6.8kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">73.5°</div><div class="spec-key">Head Angle</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="build-card visible" data-type="track">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800&q=80&auto=format&fit=crop" alt="Pista Ti" loading="lazy">
+          <div class="build-type-badge">Track</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Pista Ti</div>
+          <div class="build-tagline">Titanium track frame. Endurance track geometry. Flying 200m specialist.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">860g</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">7.4kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">74°</div><div class="spec-key">Head Angle</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Touring -->
+      <div class="build-card visible" data-type="touring">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1517649281203-dad836b7b7e7?w=800&q=80&auto=format&fit=crop" alt="Vagabond Ti" loading="lazy">
+          <div class="build-type-badge">Touring</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Vagabond Ti</div>
+          <div class="build-tagline">Full touring with 6 cage mounts. Low trail geometry. 50mm tire.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">1.1kg</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">11.2kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">6</div><div class="spec-key">Cage Mounts</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="build-card visible" data-type="touring">
+        <div class="build-img-wrap">
+          <img class="build-img" src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&q=80&auto=format&fit=crop" alt="Route Longue" loading="lazy">
+          <div class="build-type-badge">Touring</div>
+        </div>
+        <div class="build-body">
+          <div class="build-model">Route Longue</div>
+          <div class="build-tagline">CrMo steel. Ultra-comfortable long-haul. Dynamo hub compatible.</div>
+          <div class="build-specs">
+            <div><div class="spec-val">1.3kg</div><div class="spec-key">Frame</div></div>
+            <div><div class="spec-val">13.0kg</div><div class="spec-key">Build</div></div>
+            <div><div class="spec-val">4</div><div class="spec-key">Cage Mounts</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FEATURED BUILD DEEP-DIVE -->
+  <section id="featured-deep">
+    <div class="featured-deep-inner">
+      <div class="deep-img">
+        <img src="https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?w=1200&q=80&auto=format&fit=crop" alt="Velodrome C frame detail" loading="lazy">
+      </div>
+      <div>
+        <div class="section-eyebrow">Deep Dive</div>
+        <h2 class="section-title">The Velodrome C:<br>A Study in Carbon</h2>
+        <p style="font-size:15px;line-height:1.9;color:var(--text-muted);margin-top:20px;">The Velodrome C was born from a single brief: build the fastest track frame we could conceive. Three months of testing, seven carbon layup iterations, and four geometry revisions later — the result is a UCI-legal frame that weighs 700g and transfers rider power with zero compliance.</p>
+        <div class="deep-spec-grid">
+          <div class="deep-spec"><div class="deep-spec-val">700g</div><div class="deep-spec-key">Frame Weight</div></div>
+          <div class="deep-spec"><div class="deep-spec-val">T700</div><div class="deep-spec-key">Carbon Grade</div></div>
+          <div class="deep-spec"><div class="deep-spec-val">73.5°</div><div class="deep-spec-key">Head Tube Angle</div></div>
+          <div class="deep-spec"><div class="deep-spec-val">390mm</div><div class="deep-spec-key">Chainstay Length</div></div>
+          <div class="deep-spec"><div class="deep-spec-val">BB86</div><div class="deep-spec-key">Bottom Bracket</div></div>
+          <div class="deep-spec"><div class="deep-spec-val">100%</div><div class="deep-spec-key">NDT Tested</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENT PHOTO GALLERY -->
+  <section id="client-photos">
+    <div class="client-photos-inner">
+      <div class="client-photos-header">
+        <div class="section-eyebrow">In The Wild</div>
+        <h2 class="section-title">Client Gallery</h2>
+      </div>
+      <div class="client-grid">
+        <div class="client-img"><img src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5b?w=600&q=80&auto=format&fit=crop" alt="Client build" loading="lazy"></div>
+        <div class="client-img"><img src="https://images.unsplash.com/photo-1502744688674-c619d1586c9e?w=600&q=80&auto=format&fit=crop" alt="Client build mountain" loading="lazy"></div>
+        <div class="client-img"><img src="https://images.unsplash.com/photo-1511994298241-3b73bc6c6f67?w=600&q=80&auto=format&fit=crop" alt="Client build racing" loading="lazy"></div>
+        <div class="client-img"><img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=600&q=80&auto=format&fit=crop" alt="Client build road" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMISSION CTA -->
+  <section id="commission-cta">
+    <div class="section-eyebrow">Next</div>
+    <h2 class="cta-title">Your Build.<br><em>Our Engineering.</em></h2>
+    <p style="font-size:16px;color:var(--text-muted);max-width:500px;margin:16px auto;line-height:1.8;">Every build in this gallery started with a single conversation. Start yours.</p>
+    <a href="contact.html" class="btn-primary">Commission Your Frame</a>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-name">VELOX <span>ATELIER</span></div>
+          <p class="footer-tagline">Bespoke handbuilt titanium and carbon bicycle frames. Custom geometry. 47-day average build. Delivered worldwide.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Navigate</div>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="builds.html">Our Builds</a></li>
+            <li><a href="process.html">The Process</a></li>
+            <li><a href="about.html">The Atelier</a></li>
+            <li><a href="contact.html">Commission</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Build Types</div>
+          <ul>
+            <li><a href="builds.html">Road Frames</a></li>
+            <li><a href="builds.html">Gravel Frames</a></li>
+            <li><a href="builds.html">Track Frames</a></li>
+            <li><a href="builds.html">Touring Frames</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact</div>
+          <ul>
+            <li><a href="mailto:hello@veloxatelier.com">hello@veloxatelier.com</a></li>
+            <li><a href="tel:+33123456789">+33 1 23 45 67 89</a></li>
+            <li><a href="#">12 Rue de la Forge, Lyon</a></li>
+            <li><a href="#">France 69001</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 Velox Atelier. All rights reserved.</div>
+        <div class="footer-accent-line"></div>
+        <div class="footer-copy">Engineered for the Pure Rider</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Subhero
+    gsap.fromTo('.subhero-content > *', {
+      autoAlpha: 0, y: 28
+    }, { autoAlpha: 1, y: 0, duration: 1.0, stagger: 0.12, ease: 'power2.out', delay: 0.4 });
+
+    // Filter logic
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.build-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const type = btn.dataset.filter;
+        cards.forEach(card => {
+          if (type === 'all' || card.dataset.type === type) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+        // Re-trigger animations
+        ScrollTrigger.refresh();
+      });
+    });
+
+    // Build cards animation
+    gsap.from('.build-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.builds-grid', start: 'top 80%' },
+      y: 28, autoAlpha: 0, duration: 1.0, stagger: 0.08, ease: 'power2.out'
+    });
+
+    gsap.from('.deep-img', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#featured-deep', start: 'top 80%' },
+      x: -40, autoAlpha: 0, duration: 1.1, ease: 'power2.out'
+    });
+
+    gsap.from('.deep-spec', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.deep-spec-grid', start: 'top 80%' },
+      y: 20, autoAlpha: 0, duration: 0.8, stagger: 0.08, ease: 'power2.out'
+    });
+
+    gsap.from('.client-img', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.client-grid', start: 'top 80%' },
+      y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: 'power2.out'
+    });
+
+    gsap.from('#commission-cta > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#commission-cta', start: 'top 80%' },
+      y: 24, autoAlpha: 0, duration: 0.9, stagger: 0.12, ease: 'power2.out'
+    });
+
+    gsap.from('.footer-top > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: 'footer', start: 'top 85%' },
+      y: 20, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: 'power2.out'
+    });
+  </script>
+</body>
+</html>
