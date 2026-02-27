@@ -114,7 +114,9 @@ function syncSourceTemplatesToPublic() {
 }
 
 function toTitleFromSlug(slug) {
-  return slug
+  // Strip date prefix like "20260226_" before converting
+  const clean = slug.replace(/^\d{8}_/, "");
+  return clean
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
