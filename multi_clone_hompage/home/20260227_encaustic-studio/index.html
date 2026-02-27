@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CEREUS — Ancient Medium, Living Art | Encaustic Art Studio</title>
+  <meta name="description" content="CEREUS is a luxury encaustic wax painting studio rooted in the ancient Fayum portrait tradition. Original artworks, commissions, and workshops in the Greco-Egyptian medium.">
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    /* ===== CSS RESET & CUSTOM PROPERTIES ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #130F1A;
+      --surface: #1C1626;
+      --surface2: #231D30;
+      --accent: #9B6EDB;
+      --accent-light: #B894EE;
+      --accent-dark: #6840A8;
+      --ivory: #EAE0F8;
+      --smoke: #907890;
+      --muted: #544860;
+      --border: #181420;
+      --font-serif: 'Spectral', Georgia, serif;
+      --font-sans: 'Mulish', sans-serif;
+      --transition: 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --section-pad: clamp(80px, 10vw, 140px) clamp(20px, 6vw, 80px);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ===== CUSTOM SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--ivory);
+    }
+
+    .preloader-tagline {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .preloader-bar {
+      width: 120px;
+      height: 1px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: barFill 1.8s ease forwards;
+    }
+
+    @keyframes barFill {
+      to { left: 0; }
+    }
+
+    /* ===== SCROLL INDICATOR ===== */
+    #scroll-indicator {
+      position: fixed;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .scroll-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .scroll-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--muted);
+      transition: background var(--transition);
+    }
+
+    .scroll-dot.active { background: var(--accent); }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    /* ===== NAVBAR ===== */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 24px clamp(20px, 5vw, 60px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background var(--transition), padding var(--transition);
+    }
+
+    #navbar.scrolled {
+      background: rgba(19, 15, 26, 0.92);
+      backdrop-filter: blur(16px);
+      padding: 16px clamp(20px, 5vw, 60px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(24px, 3vw, 48px);
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--ivory); }
+
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      padding: 10px 24px;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: var(--transition);
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-nav {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      transform: translateX(100%);
+      transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    .mobile-nav.open { transform: translateX(0); }
+
+    .mobile-nav a {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--ivory);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .mobile-nav a:hover { color: var(--accent); }
+
+    /* ===== HERO — TYPE G: TEXT-DRIVEN SCROLL TRANSFORM ===== */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/hero-1.webp');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35) saturate(0.7);
+      transform: scale(1.05);
+      will-change: transform;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(155, 110, 219, 0.12) 0%, rgba(19, 15, 26, 0.65) 70%);
+    }
+
+    .hero-text-wrap {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero-word {
+      font-family: var(--font-serif);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: 0.15em;
+      color: var(--ivory);
+      will-change: transform, opacity;
+    }
+
+    .hero-word.word-1 {
+      font-size: clamp(5rem, 14vw, 13rem);
+    }
+
+    .hero-word.word-2 {
+      font-size: clamp(3.5rem, 10vw, 9rem);
+      color: var(--accent-light);
+      font-style: italic;
+      letter-spacing: 0.25em;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-sans);
+      font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+      font-weight: 400;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 16px;
+    }
+
+    .hero-cta {
+      margin-top: 40px;
+    }
+
+    .btn-primary {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      text-decoration: none;
+      padding: 16px 48px;
+      display: inline-block;
+      transition: background var(--transition), transform 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      border: 1px solid var(--muted);
+      text-decoration: none;
+      padding: 14px 40px;
+      display: inline-block;
+      transition: border-color var(--transition), color var(--transition), transform 0.3s ease;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      font-family: var(--font-sans);
+      font-size: 1.4rem;
+      color: var(--smoke);
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(12px); }
+    }
+
+    /* ===== STATS SECTION ===== */
+    .stats-section {
+      padding: var(--section-pad);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 48px 24px;
+      position: relative;
+    }
+
+    .stat-item::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 20%;
+      height: 60%;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .stat-item:last-child::after { display: none; }
+
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      display: block;
+      margin-top: 12px;
+    }
+
+    /* ===== PHILOSOPHY SECTION ===== */
+    .philosophy-section {
+      padding: var(--section-pad);
+      background: var(--bg);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: clamp(48px, 7vw, 80px);
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.2;
+    }
+
+    .section-subtitle {
+      font-family: var(--font-sans);
+      font-size: clamp(0.9rem, 1.5vw, 1rem);
+      font-weight: 300;
+      color: var(--smoke);
+      max-width: 560px;
+      margin: 20px auto 0;
+      line-height: 1.8;
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .philosophy-card {
+      background: var(--surface);
+      padding: clamp(36px, 5vw, 56px) clamp(28px, 4vw, 48px);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .philosophy-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent-dark), var(--accent), transparent);
+    }
+
+    .philosophy-number {
+      font-family: var(--font-serif);
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+
+    .philosophy-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+
+    .philosophy-card-text {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    /* ===== COLLECTION SECTION ===== */
+    .collection-section {
+      padding: var(--section-pad);
+      background: var(--surface);
+      overflow: visible;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow: visible;
+    }
+
+    .collection-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .collection-item:first-child {
+      grid-row: span 2;
+    }
+
+    .collection-img {
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .collection-item:first-child .collection-img {
+      min-height: 760px;
+    }
+
+    .collection-item:hover .collection-img {
+      transform: scale(1.06);
+    }
+
+    .collection-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(19,15,26,0.9) 0%, transparent 50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      transition: background var(--transition);
+    }
+
+    .collection-item:hover .collection-overlay {
+      background: linear-gradient(to top, rgba(19,15,26,0.95) 0%, rgba(19,15,26,0.3) 60%);
+    }
+
+    .collection-category {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .collection-name {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-weight: 300;
+      color: var(--ivory);
+    }
+
+    .collection-view {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 12px;
+      transform: translateY(10px);
+      transition: transform var(--transition), color var(--transition);
+    }
+
+    .collection-item:hover .collection-view {
+      transform: translateY(0);
+      color: var(--accent-light);
+    }
+
+    /* ===== STUDIO SECTION ===== */
+    .studio-section {
+      padding: var(--section-pad);
+      background: var(--bg);
+    }
+
+    .studio-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 80px);
+      align-items: center;
+    }
+
+    .studio-media {
+      position: relative;
+    }
+
+    .studio-main-img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      background-image: url('images/ambient-1.webp');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .studio-accent-img {
+      position: absolute;
+      bottom: -32px;
+      right: -32px;
+      width: 50%;
+      aspect-ratio: 1;
+      background-image: url('images/ambient-2.webp');
+      background-size: cover;
+      background-position: center;
+      border: 4px solid var(--bg);
+    }
+
+    .studio-content {
+      padding: 24px 0;
+    }
+
+    .studio-text {
+      font-family: var(--font-sans);
+      font-size: clamp(0.9rem, 1.4vw, 1rem);
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.9;
+      margin-bottom: 24px;
+    }
+
+    .studio-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ivory);
+      border-left: 2px solid var(--accent);
+      padding: 8px 0 8px 24px;
+      margin: 32px 0;
+      line-height: 1.7;
+    }
+
+    /* ===== PROCESS SECTION ===== */
+    .process-section {
+      padding: var(--section-pad);
+      background: var(--surface);
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .process-step {
+      background: var(--surface2);
+      padding: clamp(32px, 4vw, 48px) clamp(24px, 3vw, 36px);
+      position: relative;
+    }
+
+    .process-step-num {
+      font-family: var(--font-serif);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .process-step-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+
+    .process-step-text {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    .process-connector {
+      position: absolute;
+      top: 48px;
+      right: -12px;
+      width: 24px;
+      height: 1px;
+      background: var(--accent-dark);
+      z-index: 1;
+    }
+
+    .process-step:last-child .process-connector { display: none; }
+
+    /* ===== FAYUM HERITAGE ===== */
+    .heritage-section {
+      padding: var(--section-pad);
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .heritage-bg-text {
+      position: absolute;
+      bottom: -40px;
+      right: -20px;
+      font-family: var(--font-serif);
+      font-size: clamp(8rem, 18vw, 18rem);
+      font-weight: 300;
+      color: rgba(155, 110, 219, 0.04);
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .heritage-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: clamp(48px, 7vw, 96px);
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .heritage-content .section-title {
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .heritage-text {
+      font-family: var(--font-sans);
+      font-size: clamp(0.9rem, 1.4vw, 1rem);
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.9;
+      margin-bottom: 20px;
+    }
+
+    .heritage-facts {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 36px;
+    }
+
+    .heritage-fact {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px;
+      background: var(--surface);
+      border-left: 2px solid var(--accent-dark);
+    }
+
+    .heritage-fact-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .heritage-fact-text {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+
+    .heritage-fact-text strong {
+      color: var(--ivory);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .heritage-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background-image: url('images/product-1.webp');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .heritage-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(155,110,219,0.15) 0%, transparent 60%);
+    }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials-section {
+      padding: var(--section-pad);
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .swiper-testimonials {
+      max-width: 900px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .testimonial-slide {
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .testimonial-stars {
+      color: var(--accent);
+      font-size: 1rem;
+      letter-spacing: 6px;
+      margin-bottom: 32px;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-serif);
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .testimonial-author {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .testimonial-role {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 300;
+      color: var(--smoke);
+      margin-top: 4px;
+    }
+
+    .swiper-pagination-bullet {
+      background: var(--muted);
+      opacity: 1;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: var(--accent);
+    }
+
+    /* ===== ACQUISITION FORM ===== */
+    .acquisition-section {
+      padding: var(--section-pad);
+      background: var(--bg);
+    }
+
+    .acquisition-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .form-label {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 300;
+      padding: 14px 18px;
+      transition: border-color var(--transition);
+      outline: none;
+      width: 100%;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .form-select {
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23907890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+
+    .form-select option { background: var(--surface); }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 140px;
+    }
+
+    .form-submit {
+      margin-top: 32px;
+      width: 100%;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 18px 48px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: clamp(60px, 8vw, 100px) clamp(20px, 5vw, 60px) 40px;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: clamp(32px, 4vw, 64px);
+      margin-bottom: 64px;
+    }
+
+    .footer-brand-logo {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .footer-brand-desc {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.8;
+      max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-col a {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .footer-col a:hover { color: var(--ivory); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-copy {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--muted);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-social a {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .footer-social a:hover { color: var(--accent); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .philosophy-card:last-child { grid-column: span 2; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .process-step:nth-child(2) .process-connector { display: none; }
+      .heritage-inner { grid-template-columns: 1fr; }
+      .heritage-img { max-height: 400px; aspect-ratio: 16/9; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .studio-inner { grid-template-columns: 1fr; }
+      .studio-accent-img { display: none; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .collection-item:first-child { grid-row: span 1; }
+      .collection-item:first-child .collection-img { min-height: 380px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full-width { grid-column: span 1; }
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      #scroll-indicator { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .philosophy-card:last-child { grid-column: span 1; }
+      .process-steps { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">CEREUS</div>
+    <div class="preloader-tagline">Ancient Medium, Living Art</div>
+    <div class="preloader-bar"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator" style="display:none;">
+    <div class="scroll-line"></div>
+    <div class="scroll-dots">
+      <div class="scroll-dot active"></div>
+      <div class="scroll-dot"></div>
+      <div class="scroll-dot"></div>
+      <div class="scroll-dot"></div>
+    </div>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobile-nav">
+    <a href="index.html" onclick="closeMobileNav()">Home</a>
+    <a href="about.html" onclick="closeMobileNav()">About</a>
+    <a href="collection.html" onclick="closeMobileNav()">Collection</a>
+    <a href="process.html" onclick="closeMobileNav()">Process</a>
+    <a href="contact.html" onclick="closeMobileNav()">Contact</a>
+  </nav>
+
+  <!-- NAVBAR -->
+  <header id="navbar">
+    <a href="index.html" class="nav-logo">CEREUS</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="process.html">Process</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Acquire</a>
+    <div class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO — TYPE G: SCROLL-DRIVEN TEXT TRANSFORM -->
+    <section class="hero hero-text-driven" id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-text-wrap">
+        <div class="hero-word word-1">CEREUS</div>
+        <div class="hero-word word-2">WAX</div>
+        <div class="hero-tagline">Ancient Medium, Living Art</div>
+        <div class="hero-cta"><a href="collection.html" class="btn-primary">View the Collection</a></div>
+      </div>
+      <div class="hero-scroll-hint">&#x2193;</div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number">300+</span>
+          <span class="stat-label">Original Works</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">2000</span>
+          <span class="stat-label">Year Method</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">40</span>
+          <span class="stat-label">Pure Pigments</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">Intl.</span>
+          <span class="stat-label">Exhibitions</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="philosophy-section">
+      <div class="section-header">
+        <span class="section-eyebrow">Our Philosophy</span>
+        <h2 class="section-title">Where Fire Meets Pigment</h2>
+        <p class="section-subtitle">Encaustic painting binds beeswax, damar resin, and mineral pigment into a surface that breathes and shifts with each pass of the heated tool.</p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <div class="philosophy-number">01</div>
+          <h3 class="philosophy-card-title">Living Material</h3>
+          <p class="philosophy-card-text">Beeswax is a biological medium — it carries the memory of the hive, absorbing warmth and releasing it slowly. Every CEREUS panel is made with cold-pressed beeswax sourced directly from organic apiaries.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-number">02</div>
+          <h3 class="philosophy-card-title">Ancient Fire</h3>
+          <p class="philosophy-card-text">The word encaustic derives from the Greek enkaiō — to burn in. Each layer is fused with heat, bonding pigment to panel in a process that ancient Egyptian artisans used to preserve the faces of the dead for eternity.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-number">03</div>
+          <h3 class="philosophy-card-title">Timeless Permanence</h3>
+          <p class="philosophy-card-text">Encaustic paintings do not yellow, crack, or fade with age. The Fayum portraits, painted over two millennia ago, remain vivid today — proof that wax is the most archival medium on earth.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLLECTION -->
+    <section class="collection-section" id="collection">
+      <div class="section-header">
+        <span class="section-eyebrow">The Collection</span>
+        <h2 class="section-title">Works in Wax</h2>
+      </div>
+      <div class="collection-grid">
+        <div class="collection-item">
+          <div class="collection-img" style="background-image:url('images/product-1.webp')"></div>
+          <div class="collection-overlay">
+            <div class="collection-category">Abstracts</div>
+            <div class="collection-name">The Molten Series</div>
+            <div class="collection-view">Explore &rarr;</div>
+          </div>
+        </div>
+        <div class="collection-item">
+          <div class="collection-img" style="background-image:url('images/product-2.webp')"></div>
+          <div class="collection-overlay">
+            <div class="collection-category">Portraits</div>
+            <div class="collection-name">Fayum Echoes</div>
+            <div class="collection-view">Explore &rarr;</div>
+          </div>
+        </div>
+        <div class="collection-item">
+          <div class="collection-img" style="background-image:url('images/product-3.webp')"></div>
+          <div class="collection-overlay">
+            <div class="collection-category">Landscapes</div>
+            <div class="collection-name">Amber Horizons</div>
+            <div class="collection-view">Explore &rarr;</div>
+          </div>
+        </div>
+        <div class="collection-item">
+          <div class="collection-img" style="background-image:url('images/product-4.webp')"></div>
+          <div class="collection-overlay">
+            <div class="collection-category">Commissions</div>
+            <div class="collection-name">Bespoke Wax Portraits</div>
+            <div class="collection-view">Inquire &rarr;</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:48px;">
+        <a href="collection.html" class="btn-outline">View All Works</a>
+      </div>
+    </section>
+
+    <!-- STUDIO -->
+    <section class="studio-section">
+      <div class="studio-inner">
+        <div class="studio-media">
+          <div class="studio-main-img"></div>
+          <div class="studio-accent-img"></div>
+        </div>
+        <div class="studio-content">
+          <span class="section-eyebrow">The Studio</span>
+          <h2 class="section-title" style="text-align:left; margin-bottom:24px;">Where Wax<br>Becomes Art</h2>
+          <p class="studio-text">CEREUS operates from a small, light-filled atelier where temperature, time, and intention converge. The studio smells of warm beeswax and pine resin — an olfactory anchor to centuries of practice.</p>
+          <blockquote class="studio-quote">"I work with fire every day. Not to destroy, but to reveal — layer after translucent layer, until the panel glows from within."</blockquote>
+          <p class="studio-text">Each work begins with a prepared wood panel, coated in molten wax. Pigment is suspended, heat fuses each application, and the surface is buffed to a luminous depth unachievable in any other medium.</p>
+          <a href="about.html" class="btn-outline" style="margin-top:8px;">Meet the Artist</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="process-section">
+      <div class="section-header">
+        <span class="section-eyebrow">The Method</span>
+        <h2 class="section-title">Creation Process</h2>
+        <p class="section-subtitle">Four foundational stages transform raw beeswax into luminous encaustic art.</p>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <span class="process-step-num">Step 01</span>
+          <h3 class="process-step-title">Wax Preparation</h3>
+          <p class="process-step-text">Raw beeswax is melted and blended with damar resin crystals at precise ratios to achieve the ideal melting point and adhesion for panel work.</p>
+          <div class="process-connector"></div>
+        </div>
+        <div class="process-step">
+          <span class="process-step-num">Step 02</span>
+          <h3 class="process-step-title">Pigment Suspension</h3>
+          <p class="process-step-text">Dry mineral and earth pigments — ochre, cobalt, burnt sienna, ultramarine — are stirred into the molten wax, creating individual color pots.</p>
+          <div class="process-connector"></div>
+        </div>
+        <div class="process-step">
+          <span class="process-step-num">Step 03</span>
+          <h3 class="process-step-title">Layering & Fusing</h3>
+          <p class="process-step-text">Each wax layer is applied with brushes or tools, then fused with a heat gun or torch — bonding it to the layer below to build translucent depth.</p>
+          <div class="process-connector"></div>
+        </div>
+        <div class="process-step">
+          <span class="process-step-num">Step 04</span>
+          <h3 class="process-step-title">Burnishing</h3>
+          <p class="process-step-text">The finished surface is hand-burnished with soft cotton to bring up the characteristic encaustic luminosity — a glow that seems to radiate from within.</p>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:48px;">
+        <a href="process.html" class="btn-outline">Full Process Guide</a>
+      </div>
+    </section>
+
+    <!-- FAYUM HERITAGE -->
+    <section class="heritage-section">
+      <div class="heritage-bg-text">FAYUM</div>
+      <div class="heritage-inner">
+        <div class="heritage-content">
+          <span class="section-eyebrow">Ancient Roots</span>
+          <h2 class="section-title">The Fayum Tradition</h2>
+          <p class="heritage-text">The Fayum mummy portraits, painted in Roman-era Egypt between the 1st and 3rd centuries CE, represent the earliest surviving tradition of encaustic painting on panel. These luminous, hauntingly life-like faces were painted in hot wax and placed over the mummies of the deceased.</p>
+          <p class="heritage-text">CEREUS draws direct lineage from this tradition — honoring the same materials, the same intimate relationship between artist and medium, and the same belief that art can outlast the body it was created to honor.</p>
+          <div class="heritage-facts">
+            <div class="heritage-fact">
+              <div class="heritage-fact-icon">&#x2E3B;</div>
+              <div class="heritage-fact-text"><strong>1st–3rd century CE</strong>Roman-Egyptian Fayum portraits painted in hot encaustic wax remain vivid after 2,000 years.</div>
+            </div>
+            <div class="heritage-fact">
+              <div class="heritage-fact-icon">&#x2E3B;</div>
+              <div class="heritage-fact-text"><strong>Beeswax + Damar Resin</strong>The same materials used by Fayum painters are used in every CEREUS work — unchanged for two millennia.</div>
+            </div>
+            <div class="heritage-fact">
+              <div class="heritage-fact-icon">&#x2E3B;</div>
+              <div class="heritage-fact-text"><strong>No Varnish Required</strong>Encaustic wax creates a self-protecting surface that never needs varnishing, framing behind glass, or chemical preservation.</div>
+            </div>
+          </div>
+        </div>
+        <div class="heritage-img"></div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section">
+      <div class="section-header">
+        <span class="section-eyebrow">Collectors Speak</span>
+        <h2 class="section-title">Voices of the Collection</h2>
+      </div>
+      <div class="swiper swiper-testimonials">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="testimonial-slide">
+              <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+              <p class="testimonial-text">"The panel arrived and I immediately understood why encaustic has endured for two thousand years. The depth is impossible to photograph — you have to stand before it. It changes with the light, all day long."</p>
+              <div class="testimonial-author">Catherine V.</div>
+              <div class="testimonial-role">Private collector, London</div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-slide">
+              <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+              <p class="testimonial-text">"I commissioned a Fayum-style portrait as a memorial piece. The artist honored the tradition with such integrity — I felt the ancient world and the present moment held together in the same surface."</p>
+              <div class="testimonial-author">Marcus R.</div>
+              <div class="testimonial-role">Commission client, New York</div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-slide">
+              <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+              <p class="testimonial-text">"CEREUS introduced our gallery to encaustic for the first time. The response from visitors was unlike anything we had seen — people stood closer than they would to oil paintings, as if drawn in by the warmth still held in the wax."</p>
+              <div class="testimonial-author">Elspeth M.</div>
+              <div class="testimonial-role">Gallery Director, Edinburgh</div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination" style="position:relative; margin-top:32px;"></div>
+      </div>
+    </section>
+
+    <!-- ACQUISITION FORM -->
+    <section class="acquisition-section">
+      <div class="acquisition-inner">
+        <div class="section-header">
+          <span class="section-eyebrow">Acquire a Work</span>
+          <h2 class="section-title">Begin an Inquiry</h2>
+          <p class="section-subtitle">Whether acquiring an existing work or commissioning a new panel, we welcome inquiries from private collectors and institutions alike.</p>
+        </div>
+        <form class="form-grid" onsubmit="handleFormSubmit(event)">
+          <div class="form-group">
+            <label class="form-label" for="first-name">First Name</label>
+            <input class="form-input" type="text" id="first-name" placeholder="Your first name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="last-name">Last Name</label>
+            <input class="form-input" type="text" id="last-name" placeholder="Your last name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-input" type="email" id="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="interest">Interest</label>
+            <select class="form-select" id="interest">
+              <option value="">Select an interest</option>
+              <option value="existing">Existing Artwork</option>
+              <option value="commission">Commission a Work</option>
+              <option value="workshop">Workshop Enrollment</option>
+              <option value="exhibition">Exhibition Inquiry</option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label" for="message">Message</label>
+            <textarea class="form-textarea" id="message" placeholder="Tell us about the work you are looking for, or describe your commission vision..."></textarea>
+          </div>
+          <div class="form-group full-width" style="display:flex; justify-content:flex-end;">
+            <button type="submit" class="form-submit">Send Inquiry</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-brand-logo">CEREUS</a>
+          <p class="footer-brand-desc">Encaustic wax paintings rooted in the ancient Fayum portrait tradition. Original works, private commissions, and immersive wax workshops.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Navigate</div>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="collection.html">Collection</a></li>
+            <li><a href="process.html">Process</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Collection</div>
+          <ul>
+            <li><a href="collection.html">Abstracts</a></li>
+            <li><a href="collection.html">Portraits</a></li>
+            <li><a href="collection.html">Landscapes</a></li>
+            <li><a href="collection.html">Commissions</a></li>
+            <li><a href="collection.html">Workshops</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact</div>
+          <ul>
+            <li><a href="mailto:studio@cereus.art">studio@cereus.art</a></li>
+            <li><a href="contact.html">Acquisition Inquiry</a></li>
+            <li><a href="contact.html">Commission a Work</a></li>
+            <li><a href="contact.html">Press & Media</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2026 CEREUS Encaustic Art Studio. All rights reserved.</p>
+        <div class="footer-social">
+          <a href="#">Instagram</a>
+          <a href="#">Pinterest</a>
+          <a href="#">Artsy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // ===== SPLITTEXT POLYFILL =====
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+
+    // ===== GSAP + SCROLLTRIGGER SETUP =====
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ===== PRELOADER =====
+    const preloader = document.getElementById('preloader');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+
+    window.addEventListener('load', () => {
+      gsap.to(preloader, {
+        duration: 0.8,
+        delay: 1.8,
+        opacity: 0,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          preloader.style.display = 'none';
+          initAnimations();
+          // Show scroll indicator after preloader
+          scrollIndicator.style.display = 'flex';
+          gsap.from(scrollIndicator, {
+            immediateRender: false,
+            opacity: 0,
+            x: 20,
+            duration: 1,
+            ease: 'power2.out'
+          });
+        }
+      });
+
+      // Backup: show scroll indicator after 4000ms regardless
+      setTimeout(() => {
+        if (scrollIndicator.style.display === 'none' || scrollIndicator.style.display === '') {
+          scrollIndicator.style.display = 'flex';
+        }
+      }, 4000);
+    });
+
+    // ===== MOBILE NAV =====
+    function toggleMobileNav() {
+      document.getElementById('mobile-nav').classList.toggle('open');
+      document.body.style.overflow = document.getElementById('mobile-nav').classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMobileNav() {
+      document.getElementById('mobile-nav').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // ===== NAVBAR SCROLL =====
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      updateScrollDots();
+    });
+
+    // ===== SCROLL DOTS =====
+    function updateScrollDots() {
+      const dots = document.querySelectorAll('.scroll-dot');
+      const sections = ['hero', 'collection'];
+      const scrollProgress = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      const dotIndex = Math.floor(scrollProgress * dots.length);
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === Math.min(dotIndex, dots.length - 1));
+      });
+    }
+
+    // ===== HERO TYPE G: SCROLL-DRIVEN TEXT TRANSFORM =====
+    function initHeroScrollTransform() {
+      const heroBg = document.querySelector('.hero-bg');
+      const word1 = document.querySelector('.hero-word.word-1');
+      const word2 = document.querySelector('.hero-word.word-2');
+
+      // Parallax background
+      gsap.to(heroBg, {
+        immediateRender: false,
+        yPercent: 30,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      // Word 1 — CEREUS — scrolls up and fades
+      gsap.to(word1, {
+        immediateRender: false,
+        yPercent: -40,
+        scale: 0.85,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2
+        }
+      });
+
+      // Word 2 — WAX — scrolls down and scales up
+      gsap.to(word2, {
+        immediateRender: false,
+        yPercent: 60,
+        scale: 1.15,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.5
+        }
+      });
+    }
+
+    // ===== ALL ANIMATIONS =====
+    function initAnimations() {
+      initHeroScrollTransform();
+
+      // Hero entrance
+      gsap.from('.hero-word.word-1', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        ease: 'power2.inOut'
+      });
+
+      gsap.from('.hero-word.word-2', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        delay: 0.15,
+        ease: 'power2.inOut'
+      });
+
+      gsap.from('.hero-tagline', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        delay: 0.4,
+        ease: 'power2.inOut'
+      });
+
+      gsap.from('.hero-cta', {
+        immediateRender: false,
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        delay: 0.6,
+        ease: 'power2.inOut'
+      });
+
+      gsap.from('.hero-scroll-hint', {
+        immediateRender: false,
+        opacity: 0,
+        duration: 1,
+        delay: 1.2,
+        ease: 'power2.inOut'
+      });
+
+      // Stats
+      gsap.from('.stat-item', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.stats-section',
+          start: 'top 85%'
+        }
+      });
+
+      // Philosophy cards
+      gsap.from('.philosophy-card', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.philosophy-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // Section headers
+      document.querySelectorAll('.section-header').forEach(header => {
+        gsap.from(header.children, {
+          immediateRender: false,
+          opacity: 0,
+          y: 40,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: 'power2.inOut',
+          scrollTrigger: {
+            trigger: header,
+            start: 'top 85%'
+          }
+        });
+      });
+
+      // Collection items
+      gsap.from('.collection-item', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.collection-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // Studio section
+      gsap.from('.studio-main-img', {
+        immediateRender: false,
+        opacity: 0,
+        x: -40,
+        duration: 1.2,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.studio-inner',
+          start: 'top 85%'
+        }
+      });
+
+      gsap.from('.studio-content > *', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.studio-content',
+          start: 'top 85%'
+        }
+      });
+
+      // Process steps
+      gsap.from('.process-step', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.process-steps',
+          start: 'top 85%'
+        }
+      });
+
+      // Heritage
+      gsap.from('.heritage-content > *', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.heritage-inner',
+          start: 'top 85%'
+        }
+      });
+
+      gsap.from('.heritage-img', {
+        immediateRender: false,
+        opacity: 0,
+        x: 40,
+        duration: 1.2,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.heritage-inner',
+          start: 'top 85%'
+        }
+      });
+
+      // Heritage facts
+      gsap.from('.heritage-fact', {
+        immediateRender: false,
+        opacity: 0,
+        x: -20,
+        duration: 1,
+        stagger: 0.15,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.heritage-facts',
+          start: 'top 85%'
+        }
+      });
+
+      // Testimonials
+      gsap.from('.swiper-testimonials', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.testimonials-section',
+          start: 'top 85%'
+        }
+      });
+
+      // Acquisition form
+      gsap.from('.form-grid > *', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        stagger: 0.1,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: '.form-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // Footer
+      gsap.from('.footer-inner > *', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: 'footer',
+          start: 'top 85%'
+        }
+      });
+    }
+
+    // ===== SWIPER =====
+    const testimonialSwiper = new Swiper('.swiper-testimonials', {
+      loop: true,
+      autoplay: { delay: 6000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      speed: 800
+    });
+
+    // ===== FORM SUBMIT =====
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.form-submit');
+      btn.textContent = 'Inquiry Sent';
+      btn.style.background = 'var(--accent-dark)';
+      setTimeout(() => {
+        btn.textContent = 'Send Inquiry';
+        btn.style.background = '';
+        e.target.reset();
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

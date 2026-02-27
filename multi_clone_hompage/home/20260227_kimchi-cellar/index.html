@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONGGI — Fermented by Time, Perfected by Tradition</title>
+  <meta name="description" content="Traditional Korean kimchi cellar. Ancient onggi pottery fermentation, 2000 years of heritage, 50+ kimchi varieties crafted underground in Jeonju.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F1A10;
+      --surface: #162016;
+      --surface2: #1A2A1A;
+      --accent: #4DAF6A;
+      --accent-light: #7ACC8A;
+      --accent-dark: #2E7A46;
+      --ivory: #DCF0DC;
+      --smoke: #809080;
+      --muted: #4A6050;
+      --border: #182018;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--ivory);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .preloader-tagline {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--smoke);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+    .preloader-bar-wrap {
+      width: 200px;
+      height: 1px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .preloader-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+    }
+    .preloader-num {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+    }
+
+    /* ===== SCROLL INDICATOR ===== */
+    #scroll-indicator {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    #scroll-indicator.hidden { opacity: 0; }
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: scrollLine 1.6s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0% { top: -100%; }
+      100% { top: 100%; }
+    }
+    .scroll-label {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      writing-mode: vertical-rl;
+      text-transform: uppercase;
+    }
+
+    /* ===== NAVBAR ===== */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 900;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.5s ease, padding 0.4s ease, border-bottom 0.4s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(15, 26, 16, 0.97);
+      padding: 14px 48px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ivory);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent-light); }
+    .nav-links a.active { color: var(--ivory); }
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 10px 24px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    .nav-cta:hover { background: var(--accent-light); }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* ===== MOBILE MENU ===== */
+    #mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 850;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      transform: translateY(-100%);
+      transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    #mobile-menu.open { transform: translateY(0); }
+    .mobile-menu-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+    .mobile-menu-links a {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      color: var(--ivory);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.3s ease;
+    }
+    .mobile-menu-links a:hover { color: var(--accent); }
+
+    /* ===== HERO TYPE G — TEXT DRIVEN SCROLL TRANSFORM ===== */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 640px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/hero-1.webp');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.12);
+      filter: brightness(0.45);
+    }
+    .hero-text-wrap {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 24px;
+    }
+    .hero-word {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: clamp(5rem, 16vw, 14rem);
+      line-height: 0.88;
+      color: var(--ivory);
+      letter-spacing: -0.02em;
+      display: block;
+    }
+    .word-2 {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--accent);
+    }
+    .hero-tagline {
+      font-family: var(--font-sans);
+      font-size: clamp(0.75rem, 1.5vw, 1rem);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 28px;
+    }
+    .hero-cta {
+      margin-top: 44px;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 16px 40px;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      background: transparent;
+      border: 1px solid var(--accent);
+      padding: 16px 40px;
+      text-decoration: none;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .btn-outline:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.4rem;
+      color: var(--accent);
+      animation: bounce 2.2s ease-in-out infinite;
+      z-index: 10;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ===== SECTION COMMONS ===== */
+    section {
+      padding: 120px 48px;
+    }
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: block;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--ivory);
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .section-body {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      color: var(--smoke);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: var(--accent);
+      margin: 28px 0;
+    }
+
+    /* ===== STATS SECTION ===== */
+    .stats-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 48px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .stat-item {
+      background: var(--surface);
+      padding: 48px 32px;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* ===== PHILOSOPHY SECTION ===== */
+    .philosophy-section {
+      background: var(--bg);
+    }
+    .philosophy-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 72px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .philosophy-card {
+      background: var(--surface);
+      padding: 56px 40px;
+      transition: background 0.4s ease;
+    }
+    .philosophy-card:hover { background: var(--surface2); }
+    .philosophy-num {
+      font-family: var(--font-serif);
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 28px;
+      display: block;
+    }
+    .philosophy-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--ivory);
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+    .philosophy-body {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    /* ===== COLLECTION PREVIEW ===== */
+    .collection-section {
+      background: var(--surface);
+    }
+    .collection-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 56px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow: visible;
+    }
+    .collection-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .collection-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      background: var(--surface2);
+    }
+    .collection-card:hover .collection-img {
+      transform: scale(1.06);
+    }
+    .collection-info {
+      padding: 20px 4px;
+    }
+    .collection-name {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--ivory);
+      margin-bottom: 6px;
+    }
+    .collection-sub {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      color: var(--smoke);
+      letter-spacing: 0.1em;
+    }
+    .collection-tag {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+    }
+
+    /* ===== UNDERGROUND CELLAR ===== */
+    .cellar-section {
+      background: var(--bg);
+      padding: 0;
+      overflow: hidden;
+    }
+    .cellar-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 680px;
+    }
+    .cellar-visual {
+      position: relative;
+      overflow: hidden;
+    }
+    .cellar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: var(--surface2);
+      min-height: 480px;
+      filter: brightness(0.85);
+    }
+    .cellar-overlay {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      right: 40px;
+      display: flex;
+      gap: 24px;
+    }
+    .cellar-badge {
+      background: rgba(15, 26, 16, 0.9);
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      flex: 1;
+      text-align: center;
+    }
+    .cellar-badge-num {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .cellar-badge-label {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      color: var(--smoke);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .cellar-content {
+      padding: 80px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--surface);
+    }
+    .cellar-features {
+      list-style: none;
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .cellar-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.6;
+    }
+    .cellar-features li::before {
+      content: '—';
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ===== FERMENTATION PROCESS ===== */
+    .process-section {
+      background: var(--surface);
+    }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--border);
+      max-width: 1200px;
+      margin: 56px auto 0;
+    }
+    .process-step {
+      background: var(--surface);
+      padding: 48px 28px;
+      position: relative;
+      transition: background 0.4s ease;
+    }
+    .process-step:hover { background: var(--surface2); }
+    .step-num {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--border);
+      display: block;
+      margin-bottom: 20px;
+    }
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .step-body {
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+
+    /* ===== KOREAN HERITAGE ===== */
+    .heritage-section {
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .heritage-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .heritage-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .heritage-img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      background: var(--surface2);
+      filter: brightness(0.9);
+    }
+    .heritage-img-tall {
+      grid-row: span 2;
+      aspect-ratio: 1/2;
+    }
+    .heritage-list {
+      list-style: none;
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .heritage-list li {
+      padding: 16px 20px;
+      background: var(--surface);
+      border-left: 2px solid var(--accent);
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      color: var(--smoke);
+      line-height: 1.6;
+    }
+    .heritage-list li strong {
+      color: var(--ivory);
+      font-weight: 600;
+    }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials-section {
+      background: var(--surface);
+    }
+    .testimonials-header {
+      max-width: 1200px;
+      margin: 0 auto 56px;
+      text-align: center;
+    }
+    .swiper-testimonials {
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow: visible;
+    }
+    .testimonial-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 48px 40px;
+      text-align: center;
+      height: auto;
+    }
+    .testimonial-stars {
+      color: var(--accent);
+      font-size: 1rem;
+      letter-spacing: 4px;
+      margin-bottom: 24px;
+      display: block;
+    }
+    .testimonial-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+    .testimonial-author {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .swiper-pagination-bullet {
+      background: var(--muted) !important;
+      opacity: 1 !important;
+    }
+    .swiper-pagination-bullet-active {
+      background: var(--accent) !important;
+    }
+
+    /* ===== ORDER FORM ===== */
+    .order-section {
+      background: var(--bg);
+    }
+    .order-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 48px;
+      text-align: left;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .form-input,
+    .form-select,
+    .form-textarea {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--ivory);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      width: 100%;
+      appearance: none;
+    }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: var(--muted); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-select option { background: var(--surface); }
+    .form-submit {
+      grid-column: 1 / -1;
+      margin-top: 12px;
+    }
+    .form-submit .btn-primary {
+      width: 100%;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      border: none;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 48px 40px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      max-width: 1200px;
+      margin: 0 auto 64px;
+    }
+    .footer-brand .nav-logo {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 20px;
+    }
+    .footer-tagline {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--smoke);
+      font-size: 0.75rem;
+      text-decoration: none;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    .footer-social a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .footer-col-title {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 20px;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-links a {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .footer-links a:hover { color: var(--accent-light); }
+    .footer-address {
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-legal a {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .footer-legal a:hover { color: var(--smoke); }
+
+    /* ===== AMBIENT BANNER ===== */
+    .ambient-banner {
+      position: relative;
+      height: 360px;
+      overflow: hidden;
+    }
+    .ambient-banner-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/ambient-2.webp');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.4);
+      transform: scale(1.08);
+    }
+    .ambient-banner-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 24px;
+    }
+    .ambient-banner-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.3rem, 3vw, 2.2rem);
+      font-style: italic;
+      color: var(--ivory);
+      max-width: 700px;
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+    .ambient-banner-attr {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: repeat(2, 1fr); }
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .process-steps { grid-template-columns: repeat(3, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 80px 24px; }
+      #navbar { padding: 16px 24px; }
+      #navbar.scrolled { padding: 12px 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .hero-word { font-size: clamp(4rem, 18vw, 8rem); }
+      .cellar-inner { grid-template-columns: 1fr; }
+      .cellar-content { padding: 56px 32px; }
+      .heritage-inner { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+      .process-steps { grid-template-columns: 1fr; }
+      .philosophy-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .collection-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+      #scroll-indicator { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">ONGGI</div>
+    <div class="preloader-tagline">Traditional Kimchi Cellar</div>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar" id="preloader-bar"></div>
+    </div>
+    <div class="preloader-num" id="preloader-num">0%</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div id="mobile-menu">
+    <ul class="mobile-menu-links">
+      <li><a href="index.html" onclick="closeMobileMenu()">Home</a></li>
+      <li><a href="about.html" onclick="closeMobileMenu()">Our Story</a></li>
+      <li><a href="collection.html" onclick="closeMobileMenu()">Kimchi Collection</a></li>
+      <li><a href="process.html" onclick="closeMobileMenu()">Process</a></li>
+      <li><a href="contact.html" onclick="closeMobileMenu()">Order</a></li>
+    </ul>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">ONGGI</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">Our Story</a></li>
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="process.html">Process</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Order Now</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO TYPE G — SCROLL-DRIVEN TEXT TRANSFORM -->
+  <section class="hero hero-text-driven" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-word word-1">ONGGI</div>
+      <div class="hero-word word-2">CELLAR</div>
+      <div class="hero-tagline">Fermented by Time, Perfected by Tradition</div>
+      <div class="hero-cta"><a href="collection.html" class="btn-primary">Taste the Heritage</a></div>
+    </div>
+    <div class="hero-scroll-hint">↓</div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num" data-count="50">0</div>
+        <div class="stat-label">Kimchi Varieties</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" data-count="2000">0</div>
+        <div class="stat-label">Years of Tradition</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">UNESCO</div>
+        <div class="stat-label">Intangible Heritage</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" data-count="300">0</div>
+        <div class="stat-label">Onggi Pots</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy-section">
+    <div class="philosophy-header">
+      <div>
+        <span class="section-label">Our Philosophy</span>
+        <h2 class="section-title">Three Pillars of<br><em>Ancient Fermentation</em></h2>
+      </div>
+      <a href="about.html" class="btn-outline">Our Story</a>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <span class="philosophy-num">01</span>
+        <h3 class="philosophy-title">Onggi — Living Pottery</h3>
+        <p class="philosophy-body">Our hand-thrown onggi vessels breathe. Fired in traditional kilns at 1200°C, the porous stoneware regulates humidity and oxygen, creating the precise micro-climate that bacteria need to transform raw vegetables into complex, layered kimchi. Each pot holds decades of accumulated culture.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="philosophy-num">02</span>
+        <h3 class="philosophy-title">Ttang — The Living Earth</h3>
+        <p class="philosophy-body">Our underground cellar descends 4.2 metres beneath the Jeonju valley floor. At constant 4–8°C year-round, shielded by insulating earth and stone, fermentation slows into a meditation. Time itself becomes an ingredient — weeks become months, months become character.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="philosophy-num">03</span>
+        <h3 class="philosophy-title">Son-mat — The Hand's Taste</h3>
+        <p class="philosophy-body">Every batch is mixed by hand — never machine. The Korean concept of son-mat, the flavour of the maker's hand, acknowledges that the unique microbial flora of the kimchi master's skin contributes to fermentation. Master Lee's hands have been the secret ingredient for 40 years.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION PREVIEW -->
+  <section class="collection-section">
+    <div class="collection-header">
+      <div>
+        <span class="section-label">Kimchi Collection</span>
+        <h2 class="section-title">Artisan Varieties</h2>
+      </div>
+      <a href="collection.html" class="btn-outline">Full Collection</a>
+    </div>
+    <div class="collection-grid">
+      <div class="collection-card">
+        <div class="collection-tag">Signature</div>
+        <img src="images/product-1.webp" alt="Baechu Kimchi — Napa Cabbage" class="collection-img" loading="lazy">
+        <div class="collection-info">
+          <div class="collection-name">Baechu Kimchi</div>
+          <div class="collection-sub">Napa Cabbage — 18 Month Aged</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <img src="images/product-2.webp" alt="Kkakdugi — Cubed Radish Kimchi" class="collection-img" loading="lazy">
+        <div class="collection-info">
+          <div class="collection-name">Kkakdugi</div>
+          <div class="collection-sub">Cubed Radish — Crunch &amp; Depth</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <img src="images/product-3.webp" alt="Oi Sobagi — Stuffed Cucumber Kimchi" class="collection-img" loading="lazy">
+        <div class="collection-info">
+          <div class="collection-name">Oi Sobagi</div>
+          <div class="collection-sub">Stuffed Cucumber — Seasonal</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-tag">Premium</div>
+        <img src="images/product-4.webp" alt="Baek Kimchi — White Kimchi" class="collection-img" loading="lazy">
+        <div class="collection-info">
+          <div class="collection-name">Baek Kimchi</div>
+          <div class="collection-sub">White Kimchi — No Chili</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UNDERGROUND CELLAR -->
+  <section class="cellar-section">
+    <div class="cellar-inner">
+      <div class="cellar-visual">
+        <img src="images/ambient-1.webp" alt="Underground onggi cellar" class="cellar-img" loading="lazy">
+        <div class="cellar-overlay">
+          <div class="cellar-badge">
+            <span class="cellar-badge-num">4.2m</span>
+            <span class="cellar-badge-label">Underground</span>
+          </div>
+          <div class="cellar-badge">
+            <span class="cellar-badge-num">6°C</span>
+            <span class="cellar-badge-label">Constant Temp</span>
+          </div>
+          <div class="cellar-badge">
+            <span class="cellar-badge-num">1947</span>
+            <span class="cellar-badge-label">Est.</span>
+          </div>
+        </div>
+      </div>
+      <div class="cellar-content">
+        <span class="section-label">The Underground Cellar</span>
+        <h2 class="section-title">Where Time<br>Becomes Flavour</h2>
+        <div class="divider"></div>
+        <p class="section-body">Beneath the ancient grounds of our Jeonju estate lies a network of earthen chambers hand-dug by three generations of the Lee family. Here, 300 onggi pots rest in the living earth — each one a universe of microbial activity invisible to the eye yet profound on the palate.</p>
+        <ul class="cellar-features">
+          <li>Naturally regulated temperature, 4–8°C year-round, no refrigeration needed</li>
+          <li>Thatched roof ventilation channels control humidity to within 2% tolerance</li>
+          <li>Each onggi pot is buried to its shoulder, insulated by Jeonju clay</li>
+          <li>Monthly rotation ensures even fermentation across all vessels</li>
+          <li>Cellar tours available by reservation — experience living fermentation</li>
+        </ul>
+        <div style="margin-top: 40px;">
+          <a href="contact.html" class="btn-primary">Book Cellar Experience</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FERMENTATION PROCESS -->
+  <section class="process-section">
+    <div class="container">
+      <div style="text-align:center; margin-bottom: 16px;">
+        <span class="section-label">How It's Made</span>
+        <h2 class="section-title">The Five Stages of<br><em>Kimchi Transformation</em></h2>
+      </div>
+    </div>
+    <div class="process-steps">
+      <div class="process-step">
+        <span class="step-num">01</span>
+        <h3 class="step-title">Salting</h3>
+        <p class="step-body">Whole napa cabbage heads are layered with coarse sea salt from the West Sea tidal flats and left for 8–12 hours. Salt draws moisture out through osmosis, wilting the leaves and creating the brine foundation. Only solar-evaporated salt, never refined.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">02</span>
+        <h3 class="step-title">Washing</h3>
+        <p class="step-body">Triple-washed in cold spring water drawn from our on-site well. Excess salt is removed precisely — enough remains to season, none to overpower. The cabbage is then hand-wrung and laid to drain on woven bamboo racks for 4 hours.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">03</span>
+        <h3 class="step-title">Yangnyeom</h3>
+        <p class="step-body">The paste — gochugaru (Korean red pepper flakes), saeujeot (fermented shrimp), maesil syrup, garlic, ginger, and green onion — is blended by hand and massaged between every leaf layer. This is son-mat, the flavour of the maker.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">04</span>
+        <h3 class="step-title">Packing</h3>
+        <p class="step-body">Packed tightly into onggi, expelling air pockets. The kimchi is pressed under the weight of large flat stones to keep it submerged in its own brine. The onggi lid is sealed with rice paper and a clay slip, then lowered into the cellar.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">05</span>
+        <h3 class="step-title">Aging</h3>
+        <p class="step-body">From one month to three years. Lactic acid bacteria transform sugars into acids, CO₂ bubbles through the brine, umami deepens. Master Lee evaluates each pot monthly, noting its voice — a slight hiss, a rich aroma — and decides its destiny.</p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top: 56px;">
+      <a href="process.html" class="btn-outline">Explore Full Process</a>
+    </div>
+  </section>
+
+  <!-- AMBIENT QUOTE BANNER -->
+  <div class="ambient-banner">
+    <div class="ambient-banner-bg"></div>
+    <div class="ambient-banner-content">
+      <p class="ambient-banner-quote">"Kimchi is not made — it is listened to. The onggi speaks. The earth speaks. We only translate."</p>
+      <span class="ambient-banner-attr">— Master Lee Byung-jun, 4th Generation Kimchi Master</span>
+    </div>
+  </div>
+
+  <!-- KOREAN HERITAGE -->
+  <section class="heritage-section">
+    <div class="heritage-inner">
+      <div class="heritage-images">
+        <img src="images/ambient-3.webp" alt="Traditional onggi pottery" class="heritage-img heritage-img-tall" loading="lazy">
+        <img src="images/ambient-1.webp" alt="Kimchi fermentation" class="heritage-img" loading="lazy">
+        <img src="images/hero-3.webp" alt="Korean cellar tradition" class="heritage-img" loading="lazy">
+      </div>
+      <div class="heritage-content">
+        <span class="section-label">2000 Years of Heritage</span>
+        <h2 class="section-title">A Living UNESCO<br><em>Intangible Heritage</em></h2>
+        <div class="divider"></div>
+        <p class="section-body">In 2013, UNESCO recognised kimchi-making — kimjang — as an intangible cultural heritage of humanity. But for the Lee family of Jeonju, this was not news. It was simply a confirmation of what four generations already knew.</p>
+        <ul class="heritage-list">
+          <li><strong>Jeonju Kimchi Festival:</strong> Our cellar has anchored the annual festival since its founding in 1994, presenting the full breadth of regional kimchi diversity.</li>
+          <li><strong>Joseon Dynasty Legacy:</strong> Records from the royal court at Gyeongbok Palace document kimchi varieties nearly identical to those we produce today.</li>
+          <li><strong>Onggi Pottery:</strong> Our vessels are thrown by Gyeonggi-do master potter Choi Sung-won using 400-year-old family clay recipes and traditional kiln techniques.</li>
+          <li><strong>Live Culture Archive:</strong> We maintain a living library of 12 distinct kimchi strains, some propagated continuously for over 80 years.</li>
+        </ul>
+        <div style="margin-top: 36px;">
+          <a href="about.html" class="btn-primary">Discover Our Story</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials-section">
+    <div class="testimonials-header">
+      <span class="section-label">Guest Voices</span>
+      <h2 class="section-title">From Those Who<br><em>Have Tasted</em></h2>
+    </div>
+    <div class="swiper swiper-testimonials">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <span class="testimonial-stars">★★★★★</span>
+            <p class="testimonial-quote">"The 18-month baechu kimchi was a revelation. I thought I knew kimchi. I did not know kimchi. The depth, the funk, the clean acidity — it tasted of time itself."</p>
+            <div class="testimonial-author">— Maangchi, Korean Cuisine Author, New York</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <span class="testimonial-stars">★★★★★</span>
+            <p class="testimonial-quote">"We visited the cellar at dawn. The silence underground, broken only by the subtle hiss of fermenting pots, was a profoundly spiritual experience. The baek kimchi moved our chef to tears."</p>
+            <div class="testimonial-author">— Park Ji-young, Michelin Inspector, Seoul</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <span class="testimonial-stars">★★★★★</span>
+            <p class="testimonial-quote">"I have sourced fermented foods from 30 countries. ONGGI's kkakdugi is the most precisely fermented vegetable product I have encountered. The texture alone is extraordinary."</p>
+            <div class="testimonial-author">— René Larsen, Head Fermentation Chef, Copenhagen</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <span class="testimonial-stars">★★★★★</span>
+            <p class="testimonial-quote">"A pilgrimage every kimchi lover must make. Master Lee's son-mat is unmistakable — every jar carries his 40 years of knowledge. We order quarterly shipments to our restaurant."</p>
+            <div class="testimonial-author">— Judy Joo, Chef &amp; TV Host, London</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="margin-top: 40px; position: relative;"></div>
+    </div>
+  </section>
+
+  <!-- ORDER EXPERIENCE FORM -->
+  <section class="order-section">
+    <div class="order-inner">
+      <span class="section-label">Order &amp; Experience</span>
+      <h2 class="section-title">Begin Your<br><em>Fermentation Journey</em></h2>
+      <p class="section-body" style="margin: 0 auto 0; text-align: center; max-width: 520px;">Order a curated kimchi selection or book an underground cellar experience with Master Lee. Both begin with this form.</p>
+      <form class="form-grid" action="#" method="post">
+        <div class="form-group">
+          <label class="form-label" for="idx-name">Name</label>
+          <input class="form-input" type="text" id="idx-name" name="name" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="idx-email">Email</label>
+          <input class="form-input" type="email" id="idx-email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group full">
+          <label class="form-label" for="idx-interest">I am interested in</label>
+          <select class="form-select" id="idx-interest" name="interest">
+            <option value="">Select an option</option>
+            <option value="order">Kimchi Order — Curated Selection</option>
+            <option value="cellar">Cellar Experience Tour</option>
+            <option value="workshop">Kimchi-Making Workshop</option>
+            <option value="wholesale">Wholesale / Restaurant Supply</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label" for="idx-message">Message</label>
+          <textarea class="form-textarea" id="idx-message" name="message" placeholder="Tell us about your interest, dietary requirements, or preferred dates..."></textarea>
+        </div>
+        <div class="form-group form-submit">
+          <button type="submit" class="btn-primary">Send Enquiry</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">ONGGI</a>
+        <p class="footer-tagline">Fermented by Time, Perfected by Tradition. Four generations of kimchi mastery from the ancient cellars of Jeonju, North Jeolla Province, Korea.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">Ig</a>
+          <a href="#" aria-label="Facebook">Fb</a>
+          <a href="#" aria-label="YouTube">Yt</a>
+          <a href="#" aria-label="KakaoTalk">Ko</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="collection.html">Kimchi Collection</a></li>
+          <li><a href="process.html">Our Process</a></li>
+          <li><a href="contact.html">Order</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Kimchi</div>
+        <ul class="footer-links">
+          <li><a href="collection.html#baechu">Baechu Kimchi</a></li>
+          <li><a href="collection.html#kkakdugi">Kkakdugi</a></li>
+          <li><a href="collection.html#oi-sobagi">Oi Sobagi</a></li>
+          <li><a href="collection.html#nabak">Nabak Kimchi</a></li>
+          <li><a href="collection.html#baek">Baek Kimchi</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Visit</div>
+        <address class="footer-address">
+          ONGGI Traditional Cellar<br>
+          124-8 Pungnam-dong<br>
+          Jeonju, North Jeolla<br>
+          54918, Republic of Korea<br><br>
+          Tel: +82 63 284 7700<br>
+          hello@onggi-cellar.kr
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 ONGGI Traditional Kimchi Cellar. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Shipping Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // SplitText polyfill (Club GSAP not available on CDN)
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ===== PRELOADER =====
+    const preloaderBar = document.getElementById('preloader-bar');
+    const preloaderNum = document.getElementById('preloader-num');
+    const preloader = document.getElementById('preloader');
+    let progress = 0;
+
+    const preloaderTimer = setInterval(() => {
+      progress += Math.random() * 12 + 3;
+      if (progress > 100) progress = 100;
+      preloaderBar.style.width = progress + '%';
+      preloaderNum.textContent = Math.floor(progress) + '%';
+      if (progress >= 100) {
+        clearInterval(preloaderTimer);
+        setTimeout(() => {
+          gsap.to(preloader, {
+            opacity: 0,
+            duration: 0.8,
+            ease: 'power2.inOut',
+            onComplete: () => {
+              preloader.style.display = 'none';
+              initScrollIndicator();
+              initHeroAnimations();
+            }
+          });
+        }, 400);
+      }
+    }, 80);
+
+    // ===== SCROLL INDICATOR =====
+    function initScrollIndicator() {
+      const indicator = document.getElementById('scroll-indicator');
+      indicator.classList.add('visible');
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > window.innerHeight * 0.5) {
+          indicator.classList.add('hidden');
+        } else {
+          indicator.classList.remove('hidden');
+        }
+      }, { passive: true });
+    }
+
+    // Backup: show scroll indicator after 4000ms regardless
+    setTimeout(() => {
+      const indicator = document.getElementById('scroll-indicator');
+      if (indicator) indicator.classList.add('visible');
+    }, 4000);
+
+    // ===== NAVBAR =====
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // ===== MOBILE MENU =====
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    let menuOpen = false;
+
+    hamburger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      hamburger.querySelectorAll('span')[0].style.transform = menuOpen ? 'translateY(6px) rotate(45deg)' : '';
+      hamburger.querySelectorAll('span')[1].style.opacity = menuOpen ? '0' : '';
+      hamburger.querySelectorAll('span')[2].style.transform = menuOpen ? 'translateY(-6px) rotate(-45deg)' : '';
+    });
+
+    function closeMobileMenu() {
+      menuOpen = false;
+      mobileMenu.classList.remove('open');
+      hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+
+    // ===== HERO ANIMATIONS — TYPE G SCROLL TRANSFORM =====
+    function initHeroAnimations() {
+      // Word-1 scroll scale transform
+      gsap.to('.word-1', {
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2,
+        },
+        scale: 1.15,
+        x: '-8vw',
+        ease: 'none',
+      });
+
+      gsap.to('.word-2', {
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2,
+        },
+        scale: 1.15,
+        x: '8vw',
+        ease: 'none',
+      });
+
+      gsap.to('.hero-bg', {
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.5,
+        },
+        scale: 1.0,
+        ease: 'none',
+      });
+
+      // Entrance animations (no opacity:0 in CSS — set here with immediateRender)
+      gsap.from('.word-1', {
+        immediateRender: false,
+        y: -40,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power2.out',
+      });
+      gsap.from('.word-2', {
+        immediateRender: false,
+        y: 40,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power2.out',
+        delay: 0.15,
+      });
+      gsap.from('.hero-tagline', {
+        immediateRender: false,
+        y: 24,
+        opacity: 0,
+        duration: 1.1,
+        ease: 'power2.out',
+        delay: 0.4,
+      });
+      gsap.from('.hero-cta', {
+        immediateRender: false,
+        y: 24,
+        opacity: 0,
+        duration: 1.1,
+        ease: 'power2.out',
+        delay: 0.6,
+      });
+    }
+
+    // ===== SECTION SCROLL ANIMATIONS =====
+    const animElements = document.querySelectorAll(
+      '.stat-item, .philosophy-card, .collection-card, .process-step, .testimonial-card'
+    );
+    animElements.forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+        },
+        opacity: 0,
+        y: 24,
+        duration: 1.1,
+        ease: 'power2.out',
+        delay: (i % 4) * 0.10,
+      });
+    });
+
+    gsap.from('.section-label', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.philosophy-section', start: 'top 85%' },
+      opacity: 0,
+      y: 24,
+      duration: 1.1,
+      ease: 'power2.out',
+    });
+
+    // Cellar section
+    gsap.from('.cellar-img', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.cellar-section', start: 'top 80%' },
+      opacity: 0,
+      x: -40,
+      duration: 1.2,
+      ease: 'power2.out',
+    });
+    gsap.from('.cellar-content', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.cellar-section', start: 'top 80%' },
+      opacity: 0,
+      x: 40,
+      duration: 1.2,
+      ease: 'power2.out',
+      delay: 0.15,
+    });
+
+    // Heritage section
+    gsap.from('.heritage-images', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.heritage-section', start: 'top 80%' },
+      opacity: 0,
+      x: -32,
+      duration: 1.2,
+      ease: 'power2.out',
+    });
+    gsap.from('.heritage-content', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.heritage-section', start: 'top 80%' },
+      opacity: 0,
+      x: 32,
+      duration: 1.2,
+      ease: 'power2.out',
+      delay: 0.2,
+    });
+
+    // Ambient banner
+    gsap.from('.ambient-banner-quote', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.ambient-banner', start: 'top 80%' },
+      opacity: 0,
+      y: 24,
+      duration: 1.1,
+      ease: 'power2.out',
+    });
+
+    // Order form
+    gsap.from('.order-inner', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.order-section', start: 'top 85%' },
+      opacity: 0,
+      y: 24,
+      duration: 1.1,
+      ease: 'power2.out',
+    });
+
+    // ===== STAT COUNTER =====
+    document.querySelectorAll('.stat-num[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count);
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 90%',
+        once: true,
+        onEnter: () => {
+          const obj = { val: 0 };
+          gsap.to(obj, {
+            val: target,
+            duration: 2,
+            ease: 'power2.out',
+            onUpdate: () => {
+              el.textContent = (target >= 1000 ? obj.val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : Math.floor(obj.val)) + (target === 50 ? '+' : target === 300 ? '+' : '');
+            }
+          });
+        }
+      });
+    });
+
+    // ===== SWIPER =====
+    new Swiper('.swiper-testimonials', {
+      slidesPerView: 1,
+      spaceBetween: 32,
+      loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
+      }
+    });
+  </script>
+</body>
+</html>

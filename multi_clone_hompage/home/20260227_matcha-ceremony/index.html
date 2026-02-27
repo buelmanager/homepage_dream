@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHADO — Harmony in Every Bowl</title>
+  <meta name="description" content="Japanese matcha tea ceremony studio offering Urasenke-certified instruction, private ceremonies, and seasonal rituals. Experience the Way of Tea." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F1A10;
+      --surface: #162016;
+      --surface2: #1A2A1A;
+      --accent: #4DAF6A;
+      --accent-light: #7ACC8A;
+      --accent-dark: #2E7A46;
+      --ivory: #DCF0DC;
+      --smoke: #809080;
+      --muted: #4A6050;
+      --border: #182018;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 2px; }
+
+    /* ─── PRELOADER ─── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .pre-mark {
+      width: 80px;
+      height: 80px;
+      position: relative;
+    }
+
+    .pre-circle {
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--accent-dark);
+      border-radius: 50%;
+      animation: preCircle 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      stroke-dasharray: 251;
+      stroke-dashoffset: 251;
+    }
+
+    .pre-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .pre-arc {
+      stroke-dasharray: 251;
+      stroke-dashoffset: 251;
+      animation: arcDraw 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.2s;
+    }
+
+    @keyframes arcDraw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .pre-kanji {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      color: var(--accent);
+      letter-spacing: 0.3em;
+      animation: fadeUp 0.7s ease forwards 1.4s;
+      opacity: 0;
+    }
+
+    .pre-label {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      animation: fadeUp 0.7s ease forwards 1.7s;
+      opacity: 0;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── SCROLL INDICATOR ─── */
+    #scroll-indicator {
+      position: fixed;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    #scroll-indicator .si-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--accent));
+      animation: siPulse 2s ease-in-out infinite;
+    }
+
+    #scroll-indicator .si-text {
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    @keyframes siPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(0.8); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 800;
+      padding: 24px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.5s ease, padding 0.4s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(15, 26, 16, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 16px 60px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      letter-spacing: 0.15em;
+      color: var(--ivory);
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+      margin-left: 8px;
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      font-family: var(--font-sans);
+      font-weight: 300;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 10px 24px;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    /* ─── HERO — TYPE G ─── */
+    .hero.hero-text-driven {
+      min-height: 200vh;
+      position: relative;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(15,26,16,0.5) 0%,
+        rgba(15,26,16,0.2) 40%,
+        rgba(15,26,16,0.7) 100%
+      );
+    }
+
+    .hero-text-wrap {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 80px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .hero-word {
+      font-family: var(--font-serif);
+      font-size: clamp(72px, 14vw, 200px);
+      line-height: 0.9;
+      color: var(--ivory);
+      will-change: transform, opacity;
+      letter-spacing: -0.02em;
+    }
+
+    .word-1 {
+      color: var(--ivory);
+    }
+
+    .word-2 {
+      color: var(--accent);
+      font-style: italic;
+      margin-left: 40px;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 40px;
+      will-change: opacity, transform;
+    }
+
+    .hero-cta {
+      margin-top: 40px;
+      pointer-events: all;
+      will-change: opacity, transform;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 16px 48px;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(77,175,106,0.25);
+    }
+
+    .btn-outline {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      border: 1px solid rgba(220,240,220,0.3);
+      padding: 14px 40px;
+      text-decoration: none;
+      transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      color: var(--smoke);
+      animation: bounce 2s ease-in-out infinite;
+      z-index: 10;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ─── SECTION BASE ─── */
+    section { position: relative; }
+
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 5vw, 72px);
+      line-height: 1.05;
+      color: var(--ivory);
+      margin-bottom: 24px;
+    }
+
+    .section-body {
+      font-size: 15px;
+      color: var(--smoke);
+      max-width: 540px;
+      line-height: 1.8;
+    }
+
+    /* ─── STATS STRIP ─── */
+    .stats-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 60px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 20px;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: 64px;
+      line-height: 1;
+      color: var(--accent);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 8px;
+      display: block;
+    }
+
+    /* ─── PHILOSOPHY ─── */
+    .philosophy {
+      padding: 120px 60px;
+      background: var(--bg);
+    }
+
+    .philosophy-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 80px;
+      gap: 60px;
+    }
+
+    .philosophy-header .left { max-width: 480px; }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .philosophy-card {
+      background: var(--surface);
+      padding: 48px 40px;
+      border: 1px solid var(--border);
+      transition: border-color 0.4s ease, transform 0.4s ease;
+    }
+
+    .philosophy-card:hover {
+      border-color: var(--accent-dark);
+      transform: translateY(-4px);
+    }
+
+    .phil-kanji {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      color: var(--accent-dark);
+      margin-bottom: 20px;
+      display: block;
+      opacity: 0.6;
+    }
+
+    .phil-title {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+
+    .phil-body {
+      font-size: 14px;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    /* ─── EXPERIENCE ─── */
+    .experience {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+
+    .experience-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .exp-image {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+    }
+
+    .exp-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .exp-image:hover img { transform: scale(1.04); }
+
+    .exp-content {
+      padding: 80px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--surface2);
+    }
+
+    .exp-list {
+      list-style: none;
+      margin-top: 40px;
+    }
+
+    .exp-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--smoke);
+    }
+
+    .exp-list li:last-child { border-bottom: none; }
+
+    .exp-list li::before {
+      content: '—';
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ─── TEAROOM ─── */
+    .tearoom {
+      padding: 120px 60px;
+      background: var(--bg);
+    }
+
+    .tearoom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px;
+      margin-top: 60px;
+    }
+
+    .tearoom-item {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+    }
+
+    .tearoom-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .tearoom-item:hover img { transform: scale(1.06); }
+
+    .tearoom-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15,26,16,0.85) 0%, transparent 50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+    }
+
+    .tearoom-name {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      color: var(--ivory);
+      margin-bottom: 6px;
+    }
+
+    .tearoom-sub {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* ─── PROCESS ─── */
+    .process {
+      padding: 120px 60px;
+      background: var(--surface);
+    }
+
+    .process-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 80px;
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+
+    .process-step {
+      background: var(--surface2);
+      padding: 48px 32px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .process-step::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-dark);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+
+    .process-step:hover::before { transform: scaleX(1); }
+
+    .step-num {
+      font-family: var(--font-serif);
+      font-size: 64px;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+
+    .step-body {
+      font-size: 13px;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+
+    /* ─── HERITAGE ─── */
+    .heritage {
+      padding: 120px 60px;
+      background: var(--bg);
+    }
+
+    .heritage-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .heritage-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+
+    .heritage-img {
+      overflow: hidden;
+      aspect-ratio: 1;
+    }
+
+    .heritage-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .heritage-img:hover img { transform: scale(1.06); }
+
+    .heritage-content .section-body {
+      margin-bottom: 32px;
+    }
+
+    .heritage-quote {
+      border-left: 2px solid var(--accent);
+      padding-left: 28px;
+      margin-top: 40px;
+    }
+
+    .heritage-quote blockquote {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .heritage-quote cite {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials {
+      padding: 120px 60px;
+      background: var(--surface);
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .swiper-testimonials {
+      padding-bottom: 60px !important;
+    }
+
+    .testimonial-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 48px 40px;
+      height: auto !important;
+    }
+
+    .test-stars {
+      color: var(--accent);
+      font-size: 14px;
+      letter-spacing: 4px;
+      margin-bottom: 24px;
+    }
+
+    .test-quote {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .test-author {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .test-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: var(--ivory);
+      flex-shrink: 0;
+    }
+
+    .test-name {
+      font-size: 13px;
+      color: var(--ivory);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .test-title {
+      font-size: 11px;
+      color: var(--smoke);
+      margin-top: 2px;
+    }
+
+    .swiper-pagination-bullet {
+      background: var(--muted) !important;
+      opacity: 1 !important;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: var(--accent) !important;
+    }
+
+    /* ─── RESERVATION ─── */
+    .reservation {
+      padding: 140px 60px;
+      background: var(--surface2);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reservation::before {
+      content: '茶';
+      position: absolute;
+      font-family: var(--font-serif);
+      font-size: 600px;
+      color: rgba(77,175,106,0.03);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .reservation-content {
+      position: relative;
+      z-index: 2;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .reservation-content .section-body {
+      margin: 0 auto 48px;
+    }
+
+    .reservation-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 60px 40px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand .brand-name {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      color: var(--ivory);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .footer-brand .brand-desc {
+      font-size: 13px;
+      color: var(--smoke);
+      line-height: 1.8;
+      max-width: 280px;
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 12px;
+    }
+
+    .footer-col ul li a {
+      font-size: 13px;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-col ul li a:hover { color: var(--ivory); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .footer-tagline {
+      font-family: var(--font-serif);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--accent-dark);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .heritage-inner { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .hero-text-wrap { padding: 0 40px; }
+      nav { padding: 20px 40px; }
+      nav.scrolled { padding: 14px 40px; }
+    }
+
+    @media (max-width: 768px) {
+      .stats-strip { grid-template-columns: 1fr 1fr; padding: 40px 24px; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .philosophy { padding: 80px 24px; }
+      .philosophy-header { flex-direction: column; }
+      .experience-inner { grid-template-columns: 1fr; }
+      .exp-content { padding: 48px 24px; }
+      .tearoom-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr; }
+      .process { padding: 80px 24px; }
+      .heritage { padding: 80px 24px; }
+      .heritage-images { grid-template-columns: 1fr 1fr; }
+      .testimonials { padding: 80px 24px; }
+      .reservation { padding: 100px 24px; }
+      footer { padding: 60px 24px 32px; }
+      .footer-top { grid-template-columns: 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .nav-links { display: none; }
+      nav { padding: 18px 24px; }
+      nav.scrolled { padding: 14px 24px; }
+      .hero-text-wrap { padding: 0 24px; }
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="pre-mark">
+      <svg class="pre-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle class="pre-arc" cx="40" cy="40" r="39" stroke="#2E7A46" stroke-width="1" fill="none" />
+        <circle cx="40" cy="40" r="4" fill="#4DAF6A" opacity="0.6" />
+      </svg>
+    </div>
+    <div class="pre-kanji">茶道</div>
+    <div class="pre-label">The Way of Tea</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="si-text">Scroll</div>
+    <div class="si-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">CHADO <span>茶道</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="collection.html">Ceremonies</a></li>
+      <li><a href="process.html">The Way</a></li>
+      <li><a href="about.html">Our Story</a></li>
+      <li><a href="contact.html">Reserve</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Book a Ceremony</a>
+  </nav>
+
+  <!-- HERO — TYPE G -->
+  <section class="hero hero-text-driven" id="hero">
+    <div class="hero-bg" style="background-image:url('images/hero-1.webp')"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-word word-1">CHADO</div>
+      <div class="hero-word word-2">茶道</div>
+      <div class="hero-tagline">Harmony in Every Bowl</div>
+      <div class="hero-cta"><a href="collection.html" class="btn-primary">Begin the Way</a></div>
+    </div>
+    <div class="hero-scroll-hint">↓</div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stat-item">
+      <span class="stat-num">300+</span>
+      <span class="stat-label">Ceremonies Conducted</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">5</span>
+      <span class="stat-label">Ceremony Styles</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">20</span>
+      <span class="stat-label">Years of Practice</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">認定</span>
+      <span class="stat-label">Urasenke Certified</span>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="philosophy-header">
+      <div class="left">
+        <div class="section-label">Our Foundation</div>
+        <h2 class="section-title">Four Principles<br>of Chado</h2>
+      </div>
+      <p class="section-body">The Way of Tea is not merely the preparation and consumption of matcha. It is a complete philosophy of being — a discipline that integrates aesthetics, ethics, and the pursuit of inner stillness through every deliberate gesture.</p>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <span class="phil-kanji">和</span>
+        <h3 class="phil-title">Wa — Harmony</h3>
+        <p class="phil-body">The harmony between host and guest, between the tools and the space, between the season and the bowl. Every element in the ceremony exists in relation to every other.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="phil-kanji">敬</span>
+        <h3 class="phil-title">Kei — Respect</h3>
+        <p class="phil-body">Deep reverence for all things — the bamboo whisk, the ceramic bowl, the water, the guest. Respect arises not from hierarchy but from recognizing the sacred in the ordinary.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="phil-kanji">清</span>
+        <h3 class="phil-title">Sei — Purity</h3>
+        <p class="phil-body">Physical cleanliness of the utensils, purity of intention, clarity of mind. Each cleansing movement in the ceremony is a meditation on letting go of what is unnecessary.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="phil-kanji">寂</span>
+        <h3 class="phil-title">Jaku — Tranquility</h3>
+        <p class="phil-body">The stillness that arises when harmony, respect, and purity converge. Jaku is not absence of sound — it is the profound quiet that exists within full presence.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="phil-kanji">一</span>
+        <h3 class="phil-title">Ichi-go Ichi-e</h3>
+        <p class="phil-body">One encounter, one opportunity. Each gathering of host and guest is unique and will never occur again in precisely this form. This philosophy asks us to meet each moment completely.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="phil-kanji">間</span>
+        <h3 class="phil-title">Ma — Negative Space</h3>
+        <p class="phil-body">The pauses between movements are as important as the movements themselves. Ma teaches us that meaning lives in the intervals — in what is not said, not filled, not rushed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="experience" id="experience">
+    <div class="experience-inner">
+      <div class="exp-image">
+        <img src="images/ambient-1.webp" alt="Tea ceremony preparation — whisking matcha in a hand-thrown bowl" loading="lazy" />
+      </div>
+      <div class="exp-content">
+        <div class="section-label">The Experience</div>
+        <h2 class="section-title">A Living Meditation</h2>
+        <p class="section-body">Each ceremony at CHADO is a curated encounter with presence. Guests are guided through an immersive ritual lasting 75 to 120 minutes in our purpose-built tatami tearoom.</p>
+        <ul class="exp-list">
+          <li>Purification rite and seasonal scroll viewing</li>
+          <li>Kaiseki-style seasonal confection pairing</li>
+          <li>Koicha (thick tea) or Usucha (thin tea) preparation</li>
+          <li>Utensil study: chawan, chakin, chasen, chashaku</li>
+          <li>Guided post-ceremony conversation on Chado philosophy</li>
+          <li>Matcha and seasonal tea to take home</li>
+        </ul>
+        <div style="margin-top: 48px; display: flex; gap: 20px; flex-wrap: wrap;">
+          <a href="collection.html" class="btn-primary">View All Ceremonies</a>
+          <a href="about.html" class="btn-outline">Our Teachers</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAROOM -->
+  <section class="tearoom" id="tearoom">
+    <div style="text-align: center; max-width: 560px; margin: 0 auto 16px;">
+      <div class="section-label">Our Spaces</div>
+      <h2 class="section-title">The Tearoom</h2>
+      <p class="section-body" style="margin: 0 auto;">Three distinct spaces, each designed to hold a different quality of stillness. All rooms overlook the garden.</p>
+    </div>
+    <div class="tearoom-grid">
+      <div class="tearoom-item">
+        <img src="images/ambient-2.webp" alt="Akagi tearoom — intimate tatami room with garden view" loading="lazy" />
+        <div class="tearoom-overlay">
+          <div class="tearoom-name">Akagi Room</div>
+          <div class="tearoom-sub">4.5-tatami · Private</div>
+        </div>
+      </div>
+      <div class="tearoom-item">
+        <img src="images/hero-2.webp" alt="Shizen tearoom — open-plan room for group ceremonies" loading="lazy" />
+        <div class="tearoom-overlay">
+          <div class="tearoom-name">Shizen Room</div>
+          <div class="tearoom-sub">8-tatami · Group / Corporate</div>
+        </div>
+      </div>
+      <div class="tearoom-item">
+        <img src="images/ambient-3.webp" alt="Roji garden — outdoor ceremony space by the moss garden" loading="lazy" />
+        <div class="tearoom-overlay">
+          <div class="tearoom-name">Roji Garden</div>
+          <div class="tearoom-sub">Outdoor · Seasonal</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS STEPS -->
+  <section class="process" id="process-preview">
+    <div class="process-header">
+      <div class="section-label">The Ceremony</div>
+      <h2 class="section-title">How Tea is Made</h2>
+      <p class="section-body" style="margin: 0 auto;">From the first bow to the final silence, every gesture in the tea ceremony is intentional. Here are four essential moments.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step">
+        <span class="step-num">01</span>
+        <h3 class="step-title">Preparation of Space</h3>
+        <p class="step-body">The host purifies the tearoom, arranges the tatami, hangs a seasonal scroll, and places a single flower in the tokonoma alcove — establishing the aesthetic tone for the gathering.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">02</span>
+        <h3 class="step-title">Welcoming the Guest</h3>
+        <p class="step-body">Guests walk the roji garden path, remove footwear, and enter through the small nijiriguchi door — an act of humility that equalizes all who enter the tearoom.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">03</span>
+        <h3 class="step-title">Cleansing the Utensils</h3>
+        <p class="step-body">Each utensil — the chawan bowl, chakin cloth, chasen whisk, and chashaku scoop — is wiped and placed with ceremonial precision before the guest's eyes.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">04</span>
+        <h3 class="step-title">Preparing the Tea</h3>
+        <p class="step-body">Sifted ceremonial matcha is placed in the warm bowl. Hot water at precisely 80°C is added. The chasen whisks in a swift W-motion until a fine, emerald foam appears.</p>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 48px;">
+      <a href="process.html" class="btn-outline">See the Full 7-Step Process</a>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="heritage-inner">
+      <div class="heritage-images">
+        <div class="heritage-img">
+          <img src="images/product-1.webp" alt="Antique chawan bowl from Iga ware" loading="lazy" />
+        </div>
+        <div class="heritage-img">
+          <img src="images/product-2.webp" alt="Bamboo chasen whisk handmade in Takayama" loading="lazy" />
+        </div>
+        <div class="heritage-img">
+          <img src="images/product-3.webp" alt="Seasonal confection on a lacquer tray" loading="lazy" />
+        </div>
+        <div class="heritage-img">
+          <img src="images/product-4.webp" alt="Stone mill grinding ceremonial matcha" loading="lazy" />
+        </div>
+      </div>
+      <div class="heritage-content">
+        <div class="section-label">Our Heritage</div>
+        <h2 class="section-title">Rooted in Tradition</h2>
+        <p class="section-body">CHADO was founded by Sensei Yuki Harada, a fourth-generation practitioner trained under Urasenke Headquarters in Kyoto. Every ceremony draws from 500 years of unbroken tradition.</p>
+        <p class="section-body" style="margin-top: 20px;">Our tools are sourced directly from Kyoto craftspeople: Iga-ware chawan from kilns operating since the Momoyama period, chasen from the last family of whisk-makers in Takayama, and ceremonial matcha tencha from Uji.</p>
+        <div class="heritage-quote">
+          <blockquote>"The bowl holds the tea. The silence holds the ceremony."</blockquote>
+          <cite>— Sensei Yuki Harada, Founder</cite>
+        </div>
+        <div style="margin-top: 40px;">
+          <a href="about.html" class="btn-primary">Our Story</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="testimonials-header">
+      <div class="section-label">Guest Words</div>
+      <h2 class="section-title">Voices from the Tearoom</h2>
+    </div>
+    <div class="swiper swiper-testimonials">
+      <div class="swiper-wrapper">
+
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="test-stars">★★★★★</div>
+            <p class="test-quote">"I have attended tea ceremonies in Kyoto and Tokyo, and nothing has come close to the depth and care at CHADO. Sensei Harada teaches not just technique but a way of inhabiting time."</p>
+            <div class="test-author">
+              <div class="test-avatar">M</div>
+              <div>
+                <div class="test-name">Margaret Ashford</div>
+                <div class="test-title">Art Curator · London</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="test-stars">★★★★★</div>
+            <p class="test-quote">"Our corporate retreat at CHADO completely transformed the team dynamic. The ceremony demands presence and listening — precisely what we needed. An extraordinary experience."</p>
+            <div class="test-author">
+              <div class="test-avatar">T</div>
+              <div>
+                <div class="test-name">Takeshi Yamamoto</div>
+                <div class="test-title">CEO · Osaka</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="test-stars">★★★★★</div>
+            <p class="test-quote">"The koicha ceremony was the most meditative hour I have spent anywhere. The space, the light, the sound of water — it all conspires to slow time in the most beautiful way."</p>
+            <div class="test-author">
+              <div class="test-avatar">S</div>
+              <div>
+                <div class="test-name">Sofia Marchetti</div>
+                <div class="test-title">Architect · Milan</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="test-stars">★★★★★</div>
+            <p class="test-quote">"We celebrated our anniversary here with a private seasonal ceremony. The ritual of being cared for so intentionally — the tea, the confections, the conversation — was a profound gift."</p>
+            <div class="test-author">
+              <div class="test-avatar">A</div>
+              <div>
+                <div class="test-name">Amélie & Julien Roux</div>
+                <div class="test-title">Guests · Paris</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- RESERVATION CTA -->
+  <section class="reservation" id="reservation">
+    <div class="reservation-content">
+      <div class="section-label">Begin Your Practice</div>
+      <h2 class="section-title">Reserve a Ceremony</h2>
+      <p class="section-body">Each ceremony is intimate — limited to eight guests to preserve the quality of stillness. Reservations open three months in advance. Private and corporate ceremonies available year-round.</p>
+      <div class="reservation-buttons">
+        <a href="contact.html" class="btn-primary">Make a Reservation</a>
+        <a href="collection.html" class="btn-outline">Explore Ceremonies</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="brand-name">CHADO 茶道</span>
+        <p class="brand-desc">A Urasenke-certified Japanese tea ceremony studio offering private, group, and seasonal ceremonies rooted in 500 years of unbroken tradition.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Ceremonies</h4>
+        <ul>
+          <li><a href="collection.html">Usucha — Thin Tea</a></li>
+          <li><a href="collection.html">Koicha — Thick Tea</a></li>
+          <li><a href="collection.html">Seasonal Ceremony</a></li>
+          <li><a href="collection.html">Private Ceremony</a></li>
+          <li><a href="collection.html">Corporate Ceremony</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html">Sensei Harada</a></li>
+          <li><a href="about.html">Urasenke Lineage</a></li>
+          <li><a href="process.html">The Way</a></li>
+          <li><a href="contact.html">The Tearoom</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <ul>
+          <li><a href="contact.html">Reserve a Place</a></li>
+          <li><a href="contact.html">Gift Ceremonies</a></li>
+          <li><a href="contact.html">Corporate Enquiries</a></li>
+          <li><a href="contact.html">Directions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 CHADO Studio. All rights reserved.</span>
+      <span class="footer-tagline">一期一会 — One encounter, one opportunity.</span>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // SplitText Polyfill
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ─── PRELOADER ───
+    window.addEventListener('DOMContentLoaded', () => {
+      const preloader = document.getElementById('preloader');
+      const scrollInd = document.getElementById('scroll-indicator');
+
+      setTimeout(() => {
+        gsap.to(preloader, {
+          duration: 0.9,
+          opacity: 0,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            scrollInd.classList.add('visible');
+            initAnimations();
+          }
+        });
+      }, 2400);
+
+      // Scroll indicator fallback
+      setTimeout(() => {
+        scrollInd.classList.add('visible');
+      }, 4000);
+    });
+
+    // ─── NAVBAR SCROLL ───
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) navbar.classList.add('scrolled');
+      else navbar.classList.remove('scrolled');
+    }, { passive: true });
+
+    // ─── ANIMATIONS ───
+    function initAnimations() {
+      // Hero TYPE G — scroll-driven word separation
+      const heroSection = document.querySelector('.hero-text-driven');
+      const word1 = document.querySelector('.word-1');
+      const word2 = document.querySelector('.word-2');
+      const heroTagline = document.querySelector('.hero-tagline');
+      const heroCta = document.querySelector('.hero-cta');
+
+      gsap.to(word1, {
+        immediateRender: false,
+        x: -80,
+        scrollTrigger: {
+          trigger: heroSection,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2
+        }
+      });
+
+      gsap.to(word2, {
+        immediateRender: false,
+        x: 80,
+        scrollTrigger: {
+          trigger: heroSection,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2
+        }
+      });
+
+      gsap.to([heroTagline, heroCta], {
+        immediateRender: false,
+        opacity: 0,
+        y: -20,
+        scrollTrigger: {
+          trigger: heroSection,
+          start: 'top top',
+          end: '40% top',
+          scrub: 0.8
+        }
+      });
+
+      // Tagline entry
+      gsap.from(heroTagline, {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        delay: 0.3
+      });
+
+      gsap.from(heroCta, {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        delay: 0.5
+      });
+
+      // Stats strip
+      gsap.from('.stat-item', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.stats-strip',
+          start: 'top 85%'
+        }
+      });
+
+      // Philosophy cards
+      gsap.from('.philosophy-card', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.philosophy-grid',
+          start: 'top 85%'
+        }
+      });
+
+      gsap.from('.philosophy-header .left', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.philosophy-header',
+          start: 'top 85%'
+        }
+      });
+
+      // Experience
+      gsap.from('.exp-image', {
+        immediateRender: false,
+        x: -30,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.experience-inner',
+          start: 'top 85%'
+        }
+      });
+
+      gsap.from('.exp-content', {
+        immediateRender: false,
+        x: 30,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.experience-inner',
+          start: 'top 85%'
+        }
+      });
+
+      // Tearoom
+      gsap.from('.tearoom-item', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.tearoom-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // Process steps
+      gsap.from('.process-step', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.process-steps',
+          start: 'top 85%'
+        }
+      });
+
+      // Heritage
+      gsap.from('.heritage-img', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.heritage-images',
+          start: 'top 85%'
+        }
+      });
+
+      gsap.from('.heritage-content', {
+        immediateRender: false,
+        x: 30,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.heritage-inner',
+          start: 'top 85%'
+        }
+      });
+
+      // Testimonials
+      gsap.from('.testimonials-header', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.testimonials',
+          start: 'top 85%'
+        }
+      });
+
+      // Reservation
+      gsap.from('.reservation-content', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.reservation',
+          start: 'top 85%'
+        }
+      });
+
+      // Footer brand
+      gsap.from('.footer-brand', {
+        immediateRender: false,
+        y: 14,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: 'footer',
+          start: 'top 85%'
+        }
+      });
+    }
+
+    // ─── SWIPER ───
+    const swiper = new Swiper('.swiper-testimonials', {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1200: { slidesPerView: 3 }
+      }
+    });
+  </script>
+</body>
+</html>

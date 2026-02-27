@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TALON — The Oldest Bond Between Man and Raptor</title>
+  <meta name="description" content="TALON Ancient Falconry School: 3000 years of raptor mastery. UNESCO-recognized hawking tradition, master falconer training, medieval hunt experiences." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    /* ─── CSS VARIABLES — Onyx Stone P8 ─────────────────────────── */
+    :root {
+      --bg:           #181818;  /* avg: (24+24+24)/3 = 24 ✅ */
+      --surface:      #222222;  /* avg: (34+34+34)/3 = 34 ✅ */
+      --surface2:     #2A2A2A;  /* avg: (42+42+42)/3 = 42 ✅ */
+      --accent:       #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark:  #808090;
+      --ivory:        #EEEEF2;
+      --smoke:        #909090;
+      --muted:        #606060;
+      --border:       #1E1E1E;
+      --font-serif:   'Bebas Neue', Impact, sans-serif;
+      --font-sans:    'DM Sans', system-ui, sans-serif;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── CUSTOM SCROLLBAR ───────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 2px; }
+
+    /* ─── PRELOADER ──────────────────────────────────────────────── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 8vw, 6rem);
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+    }
+    .preloader-line {
+      width: 120px;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .preloader-line::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: loadBar 1.6s ease-in-out forwards;
+    }
+    @keyframes loadBar {
+      0%   { left: -100%; }
+      100% { left: 0%; }
+    }
+    .preloader-sub {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* ─── SCROLL INDICATOR ───────────────────────────────────────── */
+    #scroll-indicator {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .scroll-ind-text {
+      font-size: 0.5rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .scroll-ind-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 0.9; }
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.8rem 4rem;
+      transition: background 0.4s, padding 0.4s;
+    }
+    .nav.scrolled {
+      background: rgba(24, 24, 24, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 1.2rem 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid rgba(176, 176, 192, 0.4);
+      padding: 0.6rem 1.6rem;
+      color: var(--accent);
+      transition: all 0.3s;
+    }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      display: block;
+    }
+
+    /* ─── HERO TYPE G — Scroll-Driven Text Transform ─────────────── */
+    .hero {
+      height: 200vh;
+      position: relative;
+    }
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/hero-1.webp');
+      background-size: cover;
+      background-position: center 30%;
+      will-change: transform;
+      z-index: 0;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(24,24,24,0.55) 0%,
+        rgba(24,24,24,0.25) 40%,
+        rgba(24,24,24,0.65) 100%
+      );
+    }
+    .hero-text-wrap {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      will-change: transform;
+    }
+    .hero-word {
+      font-family: var(--font-serif);
+      font-size: clamp(6rem, 20vw, 22rem);
+      line-height: 0.85;
+      letter-spacing: 0.05em;
+      color: var(--ivory);
+      will-change: transform;
+      display: block;
+      text-transform: uppercase;
+    }
+    .hero-word.word-2 {
+      color: var(--accent);
+    }
+    .hero-tagline {
+      margin-top: 2rem;
+      font-family: var(--font-sans);
+      font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      opacity: 0.8;
+    }
+    .hero-cta {
+      margin-top: 2.5rem;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 1rem 2.8rem;
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 500;
+      transition: all 0.35s;
+    }
+    .btn-primary:hover {
+      background: var(--ivory);
+      color: var(--bg);
+      letter-spacing: 0.3em;
+    }
+    .btn-outline {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.5rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      transition: all 0.35s;
+    }
+    .btn-outline:hover { background: var(--accent); color: var(--bg); }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 6%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      font-size: 1.4rem;
+      color: var(--accent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ─── SECTION UTILITIES ──────────────────────────────────────── */
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 0.58rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      line-height: 0.92;
+      color: var(--ivory);
+      letter-spacing: 0.04em;
+    }
+    .section-body {
+      font-size: 0.9rem;
+      line-height: 1.85;
+      color: var(--smoke);
+    }
+    .section-body p + p { margin-top: 1.2rem; }
+
+    /* ─── STATS ──────────────────────────────────────────────────── */
+    .stats {
+      background: var(--surface);
+      padding: 6rem 4rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .stat-item {
+      padding: 3rem 2rem;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      letter-spacing: 0.05em;
+      color: var(--ivory);
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      margin-top: 0.5rem;
+      display: block;
+    }
+
+    /* ─── PHILOSOPHY 3-col CSS grid ─────────────────────────────── */
+    .philosophy {
+      padding: 10rem 4rem;
+      background: var(--bg);
+    }
+    .philosophy-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--border);
+    }
+    .philosophy-card {
+      background: var(--surface);
+      padding: 4rem 3rem;
+      position: relative;
+    }
+    .philosophy-num {
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      line-height: 1;
+      color: var(--border);
+      letter-spacing: 0.04em;
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+    }
+    .philosophy-icon {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: block;
+      color: var(--accent);
+    }
+    .philosophy-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      letter-spacing: 0.08em;
+      color: var(--ivory);
+      margin-bottom: 1.2rem;
+    }
+    .philosophy-text {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      color: var(--smoke);
+    }
+
+    /* ─── PROGRAMS COLLECTION ────────────────────────────────────── */
+    .programs {
+      padding: 10rem 4rem;
+      background: var(--surface);
+    }
+    .programs-header {
+      max-width: 600px;
+      margin-bottom: 5rem;
+    }
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow: visible;
+    }
+    .program-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--surface2);
+    }
+    .program-img {
+      aspect-ratio: 4/3;
+      overflow: hidden;
+    }
+    .program-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+    .program-card:hover .program-img img { transform: scale(1.06); }
+    .program-info {
+      padding: 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .program-tag {
+      font-size: 0.55rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.8rem;
+    }
+    .program-name {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      letter-spacing: 0.06em;
+      color: var(--ivory);
+      margin-bottom: 0.8rem;
+    }
+    .program-desc {
+      font-size: 0.82rem;
+      line-height: 1.75;
+      color: var(--smoke);
+      margin-bottom: 1.5rem;
+    }
+    .program-meta {
+      display: flex;
+      gap: 2rem;
+    }
+    .program-meta-item {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+    .program-meta-item strong {
+      display: block;
+      color: var(--ivory);
+      font-size: 0.75rem;
+      margin-bottom: 0.2rem;
+      font-weight: 400;
+    }
+
+    /* ─── MEWS SECTION ───────────────────────────────────────────── */
+    .mews {
+      padding: 10rem 4rem;
+      background: var(--bg);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .mews-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+    .mews-img {
+      overflow: hidden;
+    }
+    .mews-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      aspect-ratio: 1;
+      transition: transform 0.7s ease;
+    }
+    .mews-img:hover img { transform: scale(1.05); }
+    .mews-img.tall {
+      grid-row: span 2;
+    }
+    .mews-img.tall img { aspect-ratio: auto; height: 100%; }
+    .mews-content .section-title { margin-bottom: 2rem; }
+    .mews-list {
+      list-style: none;
+      margin-top: 2.5rem;
+    }
+    .mews-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.2rem;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--smoke);
+    }
+    .mews-list li::before {
+      content: '—';
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ─── PROCESS ────────────────────────────────────────────────── */
+    .process {
+      padding: 10rem 4rem;
+      background: var(--surface);
+    }
+    .process-header {
+      text-align: center;
+      margin-bottom: 7rem;
+    }
+    .process-steps {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .process-step {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 3rem;
+      padding: 3.5rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .process-step:first-child { border-top: 1px solid var(--border); }
+    .step-num {
+      font-family: var(--font-serif);
+      font-size: 4rem;
+      letter-spacing: 0.04em;
+      color: var(--border);
+      line-height: 1;
+    }
+    .step-content {}
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      letter-spacing: 0.06em;
+      color: var(--ivory);
+      margin-bottom: 0.8rem;
+    }
+    .step-desc {
+      font-size: 0.85rem;
+      line-height: 1.85;
+      color: var(--smoke);
+    }
+    .step-duration {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.8rem;
+    }
+
+    /* ─── MEDIEVAL HERITAGE ──────────────────────────────────────── */
+    .heritage {
+      padding: 10rem 4rem;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .heritage-bg-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-serif);
+      font-size: clamp(8rem, 20vw, 18rem);
+      color: rgba(255,255,255,0.02);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .heritage-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: center;
+    }
+    .heritage-img {
+      overflow: hidden;
+    }
+    .heritage-img img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+    }
+    .heritage-content .section-title { margin-bottom: 2rem; }
+    .heritage-quote {
+      margin-top: 2.5rem;
+      padding-left: 2rem;
+      border-left: 2px solid var(--accent);
+      font-family: var(--font-sans);
+      font-size: 1.05rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--accent-light);
+      line-height: 1.7;
+    }
+
+    /* ─── TESTIMONIALS ───────────────────────────────────────────── */
+    .testimonials {
+      padding: 10rem 4rem;
+      background: var(--surface);
+    }
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+    .swiper { overflow: hidden; }
+    .swiper-slide { height: auto; }
+    .testimonial-card {
+      background: var(--surface2);
+      padding: 3.5rem;
+      border-top: 2px solid var(--accent);
+      height: 100%;
+    }
+    .testimonial-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 1.5rem;
+    }
+    .star {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+    .testimonial-text {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--accent-light);
+      font-style: italic;
+      margin-bottom: 2rem;
+    }
+    .testimonial-author {
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .testimonial-author strong {
+      display: block;
+      color: var(--ivory);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      font-size: 0.75rem;
+      margin-bottom: 0.2rem;
+    }
+    .swiper-pagination-bullet {
+      background: var(--accent-dark) !important;
+      opacity: 1 !important;
+    }
+    .swiper-pagination-bullet-active {
+      background: var(--accent) !important;
+    }
+
+    /* ─── ENROLLMENT FORM ────────────────────────────────────────── */
+    .enrollment {
+      padding: 10rem 4rem;
+      background: var(--bg);
+    }
+    .enrollment-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .enrollment-inner .section-title { margin-bottom: 1rem; }
+    .enrollment-sub {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      margin-bottom: 4rem;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      text-align: left;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      padding: 0.9rem 1.2rem;
+      width: 100%;
+      transition: border-color 0.3s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus { border-color: var(--accent); }
+    .form-select option { background: var(--surface); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-submit {
+      grid-column: 1 / -1;
+      margin-top: 1rem;
+    }
+    .form-submit .btn-primary {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      padding: 1.2rem;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    .footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 5rem 4rem 3rem;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 5rem;
+    }
+    .footer-brand-logo {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+      margin-bottom: 1rem;
+    }
+    .footer-brand-text {
+      font-size: 0.82rem;
+      line-height: 1.85;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .footer-col-title {
+      font-size: 0.58rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .footer-col ul a {
+      font-size: 0.8rem;
+      color: var(--muted);
+      transition: color 0.3s;
+      letter-spacing: 0.05em;
+    }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer-copy {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+    }
+    .footer-legal {
+      display: flex;
+      gap: 2rem;
+    }
+    .footer-legal a {
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+    .footer-legal a:hover { color: var(--ivory); }
+
+    /* ─── MOBILE MENU ────────────────────────────────────────────── */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(24,24,24,0.98);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      letter-spacing: 0.15em;
+      color: var(--ivory);
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-close {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-size: 1.4rem;
+      color: var(--smoke);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .programs-grid { grid-template-columns: 1fr; }
+      .mews { grid-template-columns: 1fr; gap: 4rem; padding: 6rem 2rem; }
+      .heritage-inner { grid-template-columns: 1fr; gap: 4rem; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav { padding: 1.4rem 1.5rem; }
+      .nav.scrolled { padding: 1rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .hero-word { font-size: clamp(4rem, 18vw, 10rem); }
+      .stats { padding: 4rem 1.5rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item { padding: 2rem 1rem; }
+      .philosophy { padding: 6rem 1.5rem; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .programs { padding: 6rem 1.5rem; }
+      .programs-grid { grid-template-columns: 1fr; }
+      .process { padding: 6rem 1.5rem; }
+      .process-step { grid-template-columns: 60px 1fr; gap: 1.5rem; }
+      .heritage { padding: 6rem 1.5rem; }
+      .testimonials { padding: 6rem 1.5rem; }
+      .enrollment { padding: 6rem 1.5rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .footer { padding: 4rem 1.5rem 2.5rem; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">TALON</div>
+    <div class="preloader-line"></div>
+    <div class="preloader-sub">Ancient Falconry School — Est. 1147</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <span class="scroll-ind-text">Scroll</span>
+    <div class="scroll-ind-line"></div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">Heritage</a>
+    <a href="collection.html">Programs</a>
+    <a href="process.html">Training</a>
+    <a href="contact.html">Enroll</a>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="nav" id="navbar">
+    <div class="nav-logo">TALON</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">Heritage</a></li>
+      <li><a href="collection.html">Programs</a></li>
+      <li><a href="process.html">Training</a></li>
+      <li><a href="contact.html">Enroll</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Begin Training</a>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO TYPE G — Scroll-Driven Text Transform ══════════════ -->
+  <section class="hero hero-text-driven" id="hero">
+    <div class="hero-sticky">
+      <div class="hero-bg" id="heroBg"></div>
+      <div class="hero-text-wrap" id="heroText">
+        <div class="hero-word word-1">TALON</div>
+        <div class="hero-word word-2">SCHOOL</div>
+        <div class="hero-tagline">The Oldest Bond Between Man and Raptor</div>
+        <div class="hero-cta"><a href="collection.html" class="btn-primary">Begin Training</a></div>
+      </div>
+      <div class="hero-scroll-hint">↓</div>
+    </div>
+  </section>
+
+  <!-- ═══ STATS ════════════════════════════════════════════════════ -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat-item" data-anim>
+        <span class="stat-num">40+</span>
+        <span class="stat-label">Species Trained</span>
+      </div>
+      <div class="stat-item" data-anim>
+        <span class="stat-num">UNESCO</span>
+        <span class="stat-label">Intangible Heritage</span>
+      </div>
+      <div class="stat-item" data-anim>
+        <span class="stat-num">3000</span>
+        <span class="stat-label">Years of Tradition</span>
+      </div>
+      <div class="stat-item" data-anim>
+        <span class="stat-num">XII</span>
+        <span class="stat-label">Master Falconers</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHILOSOPHY 3-col CSS grid ═══════════════════════════════ -->
+  <section class="philosophy" id="philosophy">
+    <div class="philosophy-header">
+      <span class="section-label">The Three Pillars</span>
+      <h2 class="section-title">Philosophy of the Mews</h2>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card" data-anim>
+        <span class="philosophy-num">I</span>
+        <span class="philosophy-icon">◈</span>
+        <div class="philosophy-title">Patience</div>
+        <p class="philosophy-text">The raptor does not submit — it chooses. Manning a bird of prey requires weeks of silent presence, building trust across a threshold no human demands. We teach the ancient art of waiting without losing authority.</p>
+      </div>
+      <div class="philosophy-card" data-anim>
+        <span class="philosophy-num">II</span>
+        <span class="philosophy-icon">◈</span>
+        <div class="philosophy-title">Precision</div>
+        <p class="philosophy-text">Every gesture carries weight. The angle of the fist, the timing of the whistle, the set of the lure — falconry is a vocabulary spoken in movement. We teach you to speak it fluently.</p>
+      </div>
+      <div class="philosophy-card" data-anim>
+        <span class="philosophy-num">III</span>
+        <span class="philosophy-icon">◈</span>
+        <div class="philosophy-title">Partnership</div>
+        <p class="philosophy-text">A trained hawk is not a pet nor a weapon. It is a partner bound by mutual respect and mutual hunger. The highest achievement of the falconer is the bird that returns not from habit, but from choice.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROGRAMS COLLECTION ══════════════════════════════════════ -->
+  <section class="programs" id="programs">
+    <div class="programs-header">
+      <span class="section-label">Programs</span>
+      <h2 class="section-title">Choose Your Path</h2>
+      <p class="section-body" style="margin-top:1.5rem;max-width:500px">Four disciplines. One lineage. Each program is shaped by three thousand years of unbroken hawking tradition.</p>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card" data-anim>
+        <div class="program-img">
+          <img src="images/product-1.webp" alt="Beginner Falconry Course" loading="lazy" />
+        </div>
+        <div class="program-info">
+          <span class="program-tag">Foundation</span>
+          <div class="program-name">Beginner Course</div>
+          <p class="program-desc">An immersive introduction to the ancient art. You will learn the essential vocabulary of the glove — manning, weighing, feeding, and your first lure flights with a Harris Hawk under master supervision.</p>
+          <div class="program-meta">
+            <div class="program-meta-item">
+              <strong>3 Days</strong>
+              Duration
+            </div>
+            <div class="program-meta-item">
+              <strong>2–4 Students</strong>
+              Group Size
+            </div>
+            <div class="program-meta-item">
+              <strong>All Levels</strong>
+              Prerequisite
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="program-card" data-anim>
+        <div class="program-img">
+          <img src="images/product-2.webp" alt="Advanced Hawking" loading="lazy" />
+        </div>
+        <div class="program-info">
+          <span class="program-tag">Advanced</span>
+          <div class="program-name">Advanced Hawking</div>
+          <p class="program-desc">For those with foundational experience. Week-long field work across moorland and forest with Peregrines and Red-tails. Hood training, telemetry, and free-flight at altitude above 400 metres.</p>
+          <div class="program-meta">
+            <div class="program-meta-item">
+              <strong>7 Days</strong>
+              Duration
+            </div>
+            <div class="program-meta-item">
+              <strong>1–2 Students</strong>
+              Group Size
+            </div>
+            <div class="program-meta-item">
+              <strong>Prior Experience</strong>
+              Prerequisite
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="program-card" data-anim>
+        <div class="program-img">
+          <img src="images/ambient-1.webp" alt="Medieval Hunt Experience" loading="lazy" />
+        </div>
+        <div class="program-info">
+          <span class="program-tag">Experience</span>
+          <div class="program-name">Medieval Hunt</div>
+          <p class="program-desc">A full-day excursion into the tradition of medieval hawking. Period dress, mounted escort, and Golden Eagle flights across our private estate. The hunt as it was conducted in the courts of Henry II.</p>
+          <div class="program-meta">
+            <div class="program-meta-item">
+              <strong>1 Day</strong>
+              Duration
+            </div>
+            <div class="program-meta-item">
+              <strong>Up to 8</strong>
+              Group Size
+            </div>
+            <div class="program-meta-item">
+              <strong>None</strong>
+              Prerequisite
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="program-card" data-anim>
+        <div class="program-img">
+          <img src="images/product-4.webp" alt="Private Sessions" loading="lazy" />
+        </div>
+        <div class="program-info">
+          <span class="program-tag">Private</span>
+          <div class="program-name">Private Sessions</div>
+          <p class="program-desc">Bespoke one-to-one training with our most senior falconer. You choose the raptor, the terrain, the pace. From half-day introductions to a full season of ownership preparation. No schedule but your own.</p>
+          <div class="program-meta">
+            <div class="program-meta-item">
+              <strong>Flexible</strong>
+              Duration
+            </div>
+            <div class="program-meta-item">
+              <strong>1:1</strong>
+              Group Size
+            </div>
+            <div class="program-meta-item">
+              <strong>Any Level</strong>
+              Prerequisite
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:4rem;">
+      <a href="collection.html" class="btn-outline">View All Programs</a>
+    </div>
+  </section>
+
+  <!-- ═══ MEWS / WEATHERING GROUND ════════════════════════════════ -->
+  <section class="mews" id="mews">
+    <div class="mews-images">
+      <div class="mews-img tall" data-anim>
+        <img src="images/ambient-2.webp" alt="The Mews" />
+      </div>
+      <div class="mews-img" data-anim>
+        <img src="images/product-3.webp" alt="Weathering Ground" />
+      </div>
+      <div class="mews-img" data-anim>
+        <img src="images/hero-2.webp" alt="Raptor Training" />
+      </div>
+    </div>
+    <div class="mews-content" data-anim>
+      <span class="section-label">Our Facility</span>
+      <h2 class="section-title">The Mews &amp;<br>Weathering Ground</h2>
+      <p class="section-body" style="margin-top:1.5rem">Built on the foundations of a 12th-century hunting lodge, our facility houses 34 birds across three species groups. Every structure is designed to honour the raptor's instinct while enabling the finest conditions for training.</p>
+      <ul class="mews-list">
+        <li>Traditional stone mews with individual screened chambers for each bird</li>
+        <li>South-facing weathering ground with natural perch systems and shelter</li>
+        <li>Open moorland flight area across 180 acres of private estate</li>
+        <li>Lure field and creance lines for early training phases</li>
+        <li>On-site falconry veterinary suite and resident avian specialist</li>
+      </ul>
+      <div style="margin-top:3rem;">
+        <a href="about.html" class="btn-outline">Explore the Estate</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROCESS ═══════════════════════════════════════════════════ -->
+  <section class="process" id="training-process">
+    <div class="process-header">
+      <span class="section-label">The Method</span>
+      <h2 class="section-title">How We Train</h2>
+      <p class="section-body" style="margin-top:1.5rem;max-width:520px;margin-left:auto;margin-right:auto">Five stages. The same sequence used by Arab falconers before the Crusades, Persian court hawks before the Silk Road.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step" data-anim>
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <div class="step-title">Manning</div>
+          <p class="step-desc">The bird learns to accept the falconer's presence without alarm. Gentle exposure to voices, movement, and the glove. No coercion — only gradual trust built through consistent, calm proximity over many hours.</p>
+          <span class="step-duration">Week 1–2</span>
+        </div>
+      </div>
+      <div class="process-step" data-anim>
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <div class="step-title">Jessing</div>
+          <p class="step-desc">Introduction of anklets and leash. The hawk learns to step to the fist and return. Equipment is fitted by hand, checked daily. Traditional aylmeri jesses in natural leather — the same pattern used since the 13th century.</p>
+          <span class="step-duration">Week 2–3</span>
+        </div>
+      </div>
+      <div class="process-step" data-anim>
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <div class="step-title">Lure Training</div>
+          <p class="step-desc">The lure is swung to simulate prey. The hawk is recalled over increasing distances on a creance — a long line that allows freedom without the risk of loss. Speed, arc, and timing are calibrated to each bird's temperament.</p>
+          <span class="step-duration">Week 3–5</span>
+        </div>
+      </div>
+      <div class="process-step" data-anim>
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <div class="step-title">Hood Training</div>
+          <p class="step-desc">The Dutch hood is introduced incrementally. A hooded hawk is a calm hawk — essential for transport, for settling in the field, for the hunt itself. Hooding and unhooding becomes a mutual rhythm, not an imposition.</p>
+          <span class="step-duration">Week 4–6</span>
+        </div>
+      </div>
+      <div class="process-step" data-anim>
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <div class="step-title">Field Work</div>
+          <p class="step-desc">Free flight on the estate. The bird is flown at quarry under close supervision. Telemetry monitors every sortie. The falconer learns to read wind, terrain, and the hawk's mood — the full vocabulary of the ancient art.</p>
+          <span class="step-duration">Week 5+</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:5rem;">
+      <a href="process.html" class="btn-outline">Full Training Details</a>
+    </div>
+  </section>
+
+  <!-- ═══ MEDIEVAL HERITAGE ════════════════════════════════════════ -->
+  <section class="heritage" id="heritage">
+    <div class="heritage-bg-text">HERITAGE</div>
+    <div class="heritage-inner">
+      <div class="heritage-img" data-anim>
+        <img src="images/hero-3.webp" alt="Medieval Falconry Heritage" />
+      </div>
+      <div class="heritage-content" data-anim>
+        <span class="section-label">Since 1147</span>
+        <h2 class="section-title">Nine Centuries of an Unbroken Line</h2>
+        <div class="section-body" style="margin-top:1.5rem">
+          <p>Falconry has been listed by UNESCO as an Intangible Cultural Heritage of Humanity. It is one of the oldest recorded relationships between human and animal — predating horses as working companions and outlasting the empires that practised it.</p>
+          <p style="margin-top:1.2rem">TALON traces its lineage to the hunting lodge of Lord Aldric de Falco, who received his first gyr falcon from the Norwegian court in 1147. The mews that house our birds today stand on the same ground.</p>
+        </div>
+        <blockquote class="heritage-quote">
+          "There is no animal on earth that a nobleman may keep that does the nobleman so much honour, or is so worthy of a prince, as a noble goshawk."<br>
+          <small style="font-size:0.65rem;letter-spacing:0.25em;font-style:normal;color:var(--smoke);display:block;margin-top:0.8rem">— The Book of St. Albans, 1486</small>
+        </blockquote>
+        <div style="margin-top:3rem;">
+          <a href="about.html" class="btn-primary">Discover Our Heritage</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TESTIMONIALS (Swiper) ════════════════════════════════════ -->
+  <section class="testimonials" id="testimonials">
+    <div class="testimonials-header">
+      <span class="section-label">Student Voices</span>
+      <h2 class="section-title">From the Field</h2>
+    </div>
+    <div class="swiper testimonial-swiper" style="padding-bottom:3rem;max-width:1200px;margin:0 auto;">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">
+              <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+            </div>
+            <p class="testimonial-text">"The Advanced Hawking week was unlike any experience I have had. Flying a Peregrine at altitude across the moor, watching it stoop at two hundred miles an hour — nothing in sport hunting approaches this. The instruction was meticulous, patient, and deeply knowledgeable."</p>
+            <div class="testimonial-author">
+              <strong>James Hartwell-Moore</strong>
+              Advanced Hawking — Autumn 2024
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">
+              <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+            </div>
+            <p class="testimonial-text">"We brought twelve guests for the Medieval Hunt Experience as part of a corporate retreat. The theatricality, the landscape, the birds — it was extraordinary. Three of our guests enrolled in the Beginner Course the following month."</p>
+            <div class="testimonial-author">
+              <strong>Sophia van der Berg</strong>
+              Medieval Hunt — Corporate Group
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">
+              <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+            </div>
+            <p class="testimonial-text">"Two private sessions with Master Falconer Edmund Crane changed the way I understand patience. He never raised his voice. The hawk did everything. I am now preparing my own Harris Hawk and return to TALON each month for ongoing supervision."</p>
+            <div class="testimonial-author">
+              <strong>Richard Ashford</strong>
+              Private Sessions — Ongoing Member
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">
+              <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+            </div>
+            <p class="testimonial-text">"I arrived knowing nothing. By the end of three days, I was recalling a Harris Hawk from fifty metres. The instructors are remarkable — they read both the bird and the student with extraordinary accuracy. TALON is in a class entirely its own."</p>
+            <div class="testimonial-author">
+              <strong>Margaux Lefebvre</strong>
+              Beginner Course — Spring 2025
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- ═══ ENROLLMENT FORM ═══════════════════════════════════════════ -->
+  <section class="enrollment" id="enrollment">
+    <div class="enrollment-inner">
+      <span class="section-label">Begin Your Journey</span>
+      <h2 class="section-title">Enrollment Enquiry</h2>
+      <p class="enrollment-sub" style="margin-bottom:3rem">Places are strictly limited. Submit your details and a master falconer will contact you within 48 hours.</p>
+      <form class="form-grid" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="firstName">First Name</label>
+          <input class="form-input" type="text" id="firstName" name="firstName" placeholder="Your first name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="lastName">Last Name</label>
+          <input class="form-input" type="text" id="lastName" name="lastName" placeholder="Your last name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="your@email.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone Number</label>
+          <input class="form-input" type="tel" id="phone" name="phone" placeholder="+44 7700 000000" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label" for="program">Program of Interest</label>
+          <select class="form-select" id="program" name="program" required>
+            <option value="" disabled selected>Select a program</option>
+            <option value="beginner">Beginner Course — 3 Days</option>
+            <option value="advanced">Advanced Hawking — 7 Days</option>
+            <option value="medieval">Medieval Hunt Experience — 1 Day</option>
+            <option value="private">Private Sessions — Bespoke</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label" for="message">Additional Notes</label>
+          <textarea class="form-textarea" id="message" name="message" placeholder="Your experience level, preferred dates, special requirements..."></textarea>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="btn-primary">Submit Enquiry</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">TALON</div>
+        <p class="footer-brand-text">Ancient Falconry School, established 1147 on the estate of Lord Aldric de Falco. UNESCO-recognized tradition. Masters of the oldest bond between man and raptor.</p>
+        <div style="margin-top:1.5rem;display:flex;gap:1rem;">
+          <a href="#" style="font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);border:1px solid var(--border);padding:0.4rem 0.8rem;transition:all 0.3s;" onmouseover="this.style.color='var(--ivory)'" onmouseout="this.style.color='var(--muted)'">Instagram</a>
+          <a href="#" style="font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);border:1px solid var(--border);padding:0.4rem 0.8rem;transition:all 0.3s;" onmouseover="this.style.color='var(--ivory)'" onmouseout="this.style.color='var(--muted)'">YouTube</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Navigate</span>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">Our Heritage</a></li>
+          <li><a href="collection.html">Programs</a></li>
+          <li><a href="process.html">Training Method</a></li>
+          <li><a href="contact.html">Enroll</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Programs</span>
+        <ul>
+          <li><a href="collection.html#beginner">Beginner Course</a></li>
+          <li><a href="collection.html#advanced">Advanced Hawking</a></li>
+          <li><a href="collection.html#medieval">Medieval Hunt</a></li>
+          <li><a href="collection.html#private">Private Sessions</a></li>
+          <li><a href="contact.html">Corporate Retreats</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Location</span>
+        <ul>
+          <li><a href="#">Aldric Estate, Northumberland</a></li>
+          <li><a href="tel:+441234567890">+44 1234 567 890</a></li>
+          <li><a href="mailto:enquiries@talon-school.com">enquiries@talon-school.com</a></li>
+        </ul>
+        <div style="margin-top:2rem;">
+          <span class="footer-col-title">Hours</span>
+          <p style="font-size:0.78rem;color:var(--muted);line-height:1.8;">Mon–Fri: 08:00–18:00<br>Sat: 09:00–15:00<br>Sun: By appointment</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 TALON Ancient Falconry School. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ─── SplitText Polyfill ────────────────────────────────────── */
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+
+    /* ─── GSAP Register ─────────────────────────────────────────── */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ─── PRELOADER ─────────────────────────────────────────────── */
+    const preloader = document.getElementById('preloader');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+
+    // Show scroll indicator alongside preloader exit
+    window.addEventListener('load', () => {
+      gsap.to(preloader, {
+        duration: 0.9,
+        opacity: 0,
+        delay: 1.6,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          preloader.style.display = 'none';
+          // Show scroll indicator after preloader
+          gsap.fromTo(scrollIndicator,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
+          );
+        }
+      });
+    });
+
+    // Fallback scroll indicator show
+    setTimeout(() => {
+      if (scrollIndicator && scrollIndicator.style.opacity !== '1') {
+        gsap.to(scrollIndicator, { opacity: 1, duration: 0.6, ease: 'power2.out' });
+      }
+    }, 4000);
+
+    // Hide scroll indicator on scroll
+    let scrollHidden = false;
+    window.addEventListener('scroll', () => {
+      if (!scrollHidden && window.scrollY > 80) {
+        gsap.to(scrollIndicator, { opacity: 0, duration: 0.4 });
+        scrollHidden = true;
+      }
+    });
+
+    /* ─── NAVBAR SCROLL ─────────────────────────────────────────── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    /* ─── MOBILE MENU ───────────────────────────────────────────── */
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.add('open');
+    });
+    document.getElementById('mobileClose').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.remove('open');
+    });
+    document.querySelectorAll('.mobile-menu a').forEach(a => {
+      a.addEventListener('click', () => {
+        document.getElementById('mobileMenu').classList.remove('open');
+      });
+    });
+
+    /* ─── HERO TYPE G — Scroll-Driven Parallax Transform ────────── */
+    const heroSection = document.getElementById('hero');
+    const heroText    = document.getElementById('heroText');
+    const heroBg      = document.getElementById('heroBg');
+    const heroWords   = document.querySelectorAll('.hero-word');
+
+    ScrollTrigger.create({
+      trigger: heroSection,
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true,
+      onUpdate: (self) => {
+        const p = self.progress;
+        // Text scales down and separates
+        const scale  = 1 - p * 0.35;
+        const spread = p * 60;
+        gsap.set(heroWords[0], { y: -spread, scaleX: scale, transformOrigin: 'center center' });
+        gsap.set(heroWords[1], {  y:  spread, scaleX: scale, transformOrigin: 'center center' });
+        // Parallax background
+        gsap.set(heroBg, { y: p * 120 });
+        // Fade text on deep scroll
+        gsap.set(heroText, { opacity: 1 - p * 1.4 });
+      }
+    });
+
+    /* ─── SECTION ANIMATIONS (A3 — Precision x slide) ──────────── */
+    // Stats
+    document.querySelectorAll('.stat-item[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        opacity: 0,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: i * 0.04
+      });
+    });
+
+    // Philosophy grid
+    document.querySelectorAll('.philosophy-card[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.philosophy-grid', start: 'top 80%' },
+        opacity: 0,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: i * 0.12
+      });
+    });
+
+    // Programs grid
+    document.querySelectorAll('.program-card[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.programs-grid', start: 'top 80%' },
+        opacity: 0,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: i * 0.08
+      });
+    });
+
+    // Mews section
+    document.querySelectorAll('.mews-img[data-anim], .mews-content[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.mews', start: 'top 80%' },
+        opacity: 0,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: i * 0.1
+      });
+    });
+
+    // Process steps
+    document.querySelectorAll('.process-step[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        opacity: 0,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: i * 0.04
+      });
+    });
+
+    // Heritage
+    document.querySelectorAll('.heritage-img[data-anim], .heritage-content[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: '.heritage-inner', start: 'top 80%' },
+        opacity: 0,
+        x: i === 0 ? -20 : 20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: i * 0.1
+      });
+    });
+
+    /* ─── SWIPER ────────────────────────────────────────────────── */
+    new Swiper('.testimonial-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 2,
+      loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: {
+        768:  { slidesPerView: 2 },
+        1200: { slidesPerView: 3 }
+      }
+    });
+
+    /* ─── FORM SUBMIT ───────────────────────────────────────────── */
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-primary');
+      btn.textContent = 'Enquiry Received';
+      btn.style.background = 'var(--accent-dark)';
+      btn.style.cursor = 'default';
+      setTimeout(() => {
+        btn.textContent = 'Submit Enquiry';
+        btn.style.background = '';
+        btn.style.cursor = '';
+        e.target.reset();
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

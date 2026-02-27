@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heritage — TALON Ancient Falconry School</title>
+  <meta name="description" content="Nine centuries of falconry tradition. Discover the heritage of TALON — UNESCO-recognized masters of the oldest bond between man and raptor." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --bg:           #181818;
+      --surface:      #222222;
+      --surface2:     #2A2A2A;
+      --accent:       #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark:  #808090;
+      --ivory:        #EEEEF2;
+      --smoke:        #909090;
+      --muted:        #606060;
+      --border:       #1E1E1E;
+      --font-serif:   'Bebas Neue', Impact, sans-serif;
+      --font-sans:    'DM Sans', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 2px; }
+
+    /* NAV */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.8rem 4rem;
+      background: rgba(24,24,24,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0.25em; color: var(--ivory); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ivory); }
+    .nav-cta { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; border: 1px solid rgba(176,176,192,0.4); padding: 0.6rem 1.6rem; color: var(--accent); transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-hamburger span { width: 24px; height: 1px; background: var(--ivory); display: block; }
+
+    /* MOBILE MENU */
+    .mobile-menu { display: none; position: fixed; inset: 0; background: rgba(24,24,24,0.98); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-serif); font-size: 2.5rem; letter-spacing: 0.15em; color: var(--ivory); transition: color 0.3s; }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-close { position: absolute; top: 2rem; right: 2rem; font-size: 1.4rem; color: var(--smoke); cursor: pointer; background: none; border: none; }
+
+    /* PAGE HERO */
+    .page-hero {
+      height: 70vh; position: relative;
+      display: flex; align-items: flex-end;
+      padding: 5rem 4rem;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('images/hero-4.webp');
+      background-size: cover; background-position: center 20%;
+    }
+    .page-hero-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(24,24,24,0.95) 0%, rgba(24,24,24,0.3) 60%, rgba(24,24,24,0.4) 100%);
+    }
+    .page-hero-content { position: relative; z-index: 1; }
+    .page-hero-label { font-size: 0.58rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .page-hero-title { font-family: var(--font-serif); font-size: clamp(3.5rem, 8vw, 8rem); line-height: 0.88; letter-spacing: 0.05em; color: var(--ivory); }
+
+    /* UTILITIES */
+    .section-label { font-size: 0.58rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); line-height: 0.92; color: var(--ivory); letter-spacing: 0.04em; }
+    .section-body { font-size: 0.9rem; line-height: 1.85; color: var(--smoke); }
+    .section-body p + p { margin-top: 1.2rem; }
+    .btn-outline { display: inline-block; font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 0.9rem 2.5rem; border: 1px solid var(--accent); color: var(--accent); transition: all 0.35s; }
+    .btn-outline:hover { background: var(--accent); color: var(--bg); }
+    .btn-primary { display: inline-block; font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 1rem 2.8rem; background: var(--accent); color: var(--bg); font-weight: 500; transition: all 0.35s; }
+    .btn-primary:hover { background: var(--ivory); }
+
+    /* INTRO */
+    .about-intro {
+      padding: 8rem 4rem;
+      background: var(--surface);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: center;
+    }
+    .about-intro-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3.5vw, 3.5rem);
+      line-height: 0.95;
+      letter-spacing: 0.04em;
+      color: var(--ivory);
+    }
+    .about-intro-quote em { color: var(--accent); font-style: normal; }
+
+    /* TIMELINE */
+    .timeline { padding: 10rem 4rem; background: var(--bg); }
+    .timeline-header { text-align: center; margin-bottom: 7rem; }
+    .timeline-items { max-width: 900px; margin: 0 auto; position: relative; }
+    .timeline-items::before {
+      content: '';
+      position: absolute;
+      left: 120px;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 3rem;
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 119px;
+      top: 3.5rem;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      transform: translateX(-50%);
+    }
+    .timeline-year {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      letter-spacing: 0.06em;
+      color: var(--accent-dark);
+      line-height: 1;
+    }
+    .timeline-body {}
+    .timeline-event { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0.05em; color: var(--ivory); margin-bottom: 0.7rem; }
+    .timeline-desc { font-size: 0.84rem; line-height: 1.8; color: var(--smoke); }
+
+    /* MASTER FALCONER */
+    .master {
+      padding: 10rem 4rem;
+      background: var(--surface);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .master-img { overflow: hidden; }
+    .master-img img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+    .master-credentials {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .credential-item { display: flex; gap: 1.2rem; align-items: flex-start; }
+    .credential-dot { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; margin-top: 0.55rem; flex-shrink: 0; }
+    .credential-text { font-size: 0.82rem; color: var(--smoke); line-height: 1.6; }
+
+    /* UNESCO SECTION */
+    .unesco {
+      padding: 8rem 4rem;
+      background: var(--bg);
+      text-align: center;
+    }
+    .unesco-inner { max-width: 800px; margin: 0 auto; }
+    .unesco-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid var(--border);
+      padding: 1rem 2rem;
+      margin-bottom: 3rem;
+    }
+    .unesco-badge-label { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); }
+    .unesco-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); line-height: 0.92; color: var(--ivory); margin-bottom: 2rem; }
+    .unesco-text { font-size: 0.9rem; line-height: 1.85; color: var(--smoke); max-width: 620px; margin: 0 auto; }
+
+    /* TEAM */
+    .team { padding: 10rem 4rem; background: var(--surface); }
+    .team-header { margin-bottom: 5rem; }
+    .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; max-width: 1200px; margin: 0 auto; }
+    .team-card { background: var(--surface2); }
+    .team-img { overflow: hidden; aspect-ratio: 3/4; }
+    .team-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s ease; }
+    .team-card:hover .team-img img { transform: scale(1.05); }
+    .team-info { padding: 2rem; border-top: 1px solid var(--border); }
+    .team-name { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0.08em; color: var(--ivory); margin-bottom: 0.4rem; }
+    .team-role { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .team-bio { font-size: 0.8rem; line-height: 1.75; color: var(--smoke); }
+
+    /* FOOTER */
+    .footer { background: var(--bg); border-top: 1px solid var(--border); padding: 5rem 4rem 3rem; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 5rem; }
+    .footer-brand-logo { font-family: var(--font-serif); font-size: 2.5rem; letter-spacing: 0.2em; color: var(--ivory); margin-bottom: 1rem; }
+    .footer-brand-text { font-size: 0.82rem; line-height: 1.85; color: var(--muted); }
+    .footer-col-title { font-size: 0.58rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; display: block; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-col ul a { font-size: 0.8rem; color: var(--muted); transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2rem; border-top: 1px solid var(--border); }
+    .footer-copy { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--muted); }
+    .footer-legal { display: flex; gap: 2rem; }
+    .footer-legal a { font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--ivory); }
+
+    @media (max-width: 1024px) {
+      .about-intro { grid-template-columns: 1fr; gap: 3rem; }
+      .master { grid-template-columns: 1fr; gap: 3rem; }
+      .team-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav { padding: 1.4rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .page-hero { padding: 5rem 1.5rem 3rem; }
+      .about-intro { padding: 5rem 1.5rem; }
+      .timeline { padding: 6rem 1.5rem; }
+      .timeline-items::before { left: 70px; }
+      .timeline-item { grid-template-columns: 70px 1fr; gap: 1.5rem; }
+      .timeline-item::before { left: 69px; }
+      .master { padding: 6rem 1.5rem; }
+      .unesco { padding: 6rem 1.5rem; }
+      .team { padding: 6rem 1.5rem; }
+      .team-grid { grid-template-columns: 1fr; }
+      .footer { padding: 4rem 1.5rem 2.5rem; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">Heritage</a>
+    <a href="collection.html">Programs</a>
+    <a href="process.html">Training</a>
+    <a href="contact.html">Enroll</a>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="nav-logo">TALON</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html" class="active">Heritage</a></li>
+      <li><a href="collection.html">Programs</a></li>
+      <li><a href="process.html">Training</a></li>
+      <li><a href="contact.html">Enroll</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Begin Training</a>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content" id="heroContent">
+      <span class="page-hero-label">Our Heritage</span>
+      <h1 class="page-hero-title">Nine Centuries<br>of an<br>Unbroken Line</h1>
+    </div>
+  </section>
+
+  <!-- ABOUT INTRO -->
+  <section class="about-intro">
+    <div data-anim>
+      <div class="about-intro-quote">
+        "The <em>oldest</em> bond<br>between man<br>and raptor."
+      </div>
+    </div>
+    <div class="section-body" data-anim>
+      <p>TALON was not founded — it was inherited. The estate and the mews at Aldric were already ancient when the first written record of training was made in 1147. Since then, through war and plague, reformation and revolution, one thing did not change: the birds flew every morning from these stones.</p>
+      <p>Today we carry that lineage with rigorous purpose. Our twelve master falconers each trained under the previous generation, in an unbroken chain of transmission. We do not teach from books — we teach from memory and experience, exactly as our predecessors did.</p>
+      <p>UNESCO designated falconry as an Intangible Cultural Heritage of Humanity in 2010, recognising it among the world's most significant living traditions. We have been its custodians long before that recognition, and we will continue long after.</p>
+      <div style="margin-top:2.5rem;">
+        <a href="collection.html" class="btn-outline">View Our Programs</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="timeline">
+    <div class="timeline-header">
+      <span class="section-label">Chronicle</span>
+      <h2 class="section-title">A History in Dates</h2>
+    </div>
+    <div class="timeline-items">
+      <div class="timeline-item" data-anim>
+        <div class="timeline-year">1147</div>
+        <div class="timeline-body">
+          <div class="timeline-event">Foundation of the Mews</div>
+          <p class="timeline-desc">Lord Aldric de Falco receives a gyrfalcon from King Inge I of Norway. The stone mews at Aldric Estate are constructed to house the first birds. The training lineage begins.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-anim>
+        <div class="timeline-year">1219</div>
+        <div class="timeline-body">
+          <div class="timeline-event">The Falconers' Codex</div>
+          <p class="timeline-desc">Third Master Falconer William de Aldric compiles the first written manual of the school's methods — forty-seven pages on manning, feeding weights, and field technique. Three copies survive in museum collections.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-anim>
+        <div class="timeline-year">1398</div>
+        <div class="timeline-body">
+          <div class="timeline-event">Royal Commission</div>
+          <p class="timeline-desc">By appointment of Henry IV, the school supplies and trains birds for the royal mews at Windsor. This relationship continues — with interruptions — for three centuries.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-anim>
+        <div class="timeline-year">1651</div>
+        <div class="timeline-body">
+          <div class="timeline-event">The Dark Years</div>
+          <p class="timeline-desc">Following the execution of Charles I, estate lands are sequestered. Master Falconer John Crane moves six birds across the border to Scotland, preserving the bloodline. The estate is restored in 1660.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-anim>
+        <div class="timeline-year">1892</div>
+        <div class="timeline-body">
+          <div class="timeline-event">First Public Training</div>
+          <p class="timeline-desc">For the first time in its history, the school admits students from outside the estate. Eight gentlemen of means complete the inaugural Introductory Course. Demand exceeds capacity within three seasons.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-anim>
+        <div class="timeline-year">2010</div>
+        <div class="timeline-body">
+          <div class="timeline-event">UNESCO Recognition</div>
+          <p class="timeline-desc">Falconry is inscribed on the UNESCO Representative List of Intangible Cultural Heritage of Humanity. TALON is cited as one of eleven schools whose practice informed the designation documentation.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-anim>
+        <div class="timeline-year">Today</div>
+        <div class="timeline-body">
+          <div class="timeline-event">The Living Tradition</div>
+          <p class="timeline-desc">34 birds. 12 master falconers. Four programs accepting students year-round. The tradition not as museum piece but as living, evolving mastery — precisely as Aldric de Falco intended.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MASTER FALCONER -->
+  <section style="background:var(--surface);padding:10rem 4rem;">
+    <div class="master" style="padding:0;background:none;">
+      <div class="master-img" data-anim>
+        <img src="images/hero-2.webp" alt="Master Falconer Edmund Crane" />
+      </div>
+      <div data-anim>
+        <span class="section-label">Chief Master</span>
+        <h2 class="section-title">Edmund Crane<br>XIV</h2>
+        <div class="section-body" style="margin-top:1.5rem">
+          <p>Edmund Crane is the fourteenth in the unbroken succession of Master Falconers at Aldric. He received his first bird at the age of nine — a male kestrel named Corvus — from his grandfather, the thirteenth master. He has not been without a bird since.</p>
+          <p style="margin-top:1.2rem">He holds the International Falconers' Association Master Certificate, the UNESCO Practitioner designation for falconry heritage transmission, and has advised the British Museum on its medieval hawking artefact collection. He lectures twice yearly at Oxford.</p>
+        </div>
+        <div class="master-credentials" style="margin-top:2rem">
+          <div class="credential-item">
+            <div class="credential-dot"></div>
+            <div class="credential-text">IFA Master Certificate — 40+ years in practice</div>
+          </div>
+          <div class="credential-item">
+            <div class="credential-dot"></div>
+            <div class="credential-text">UNESCO Practitioner Designation — Intangible Heritage Transmission</div>
+          </div>
+          <div class="credential-item">
+            <div class="credential-dot"></div>
+            <div class="credential-text">British Falconers' Club — Senior Fellow</div>
+          </div>
+          <div class="credential-item">
+            <div class="credential-dot"></div>
+            <div class="credential-text">Author: "The Weight of the Bird" (Aldric Press, 2018)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UNESCO SECTION -->
+  <section class="unesco">
+    <div class="unesco-inner">
+      <div class="unesco-badge" data-anim>
+        <span class="unesco-badge-label">Intangible Cultural Heritage</span>
+        <span style="font-size:0.6rem;letter-spacing:0.25em;color:var(--smoke);">UNESCO 2010</span>
+      </div>
+      <h2 class="unesco-title" data-anim>A Living<br>Humanity</h2>
+      <p class="unesco-text section-body" data-anim>
+        Falconry was inscribed on the UNESCO Representative List in 2010, then expanded to 24 nations in 2016. The designation recognises it not as a sport or entertainment but as a living cultural practice — a form of knowledge and relationship transmitted between generations. TALON is one of the world's oldest continuous practitioners of this heritage.
+      </p>
+      <div style="margin-top:3rem;" data-anim>
+        <a href="contact.html" class="btn-primary">Become Part of the Heritage</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="team">
+    <div class="team-header">
+      <span class="section-label">The Falconers</span>
+      <h2 class="section-title">Our Masters</h2>
+    </div>
+    <div class="team-grid">
+      <div class="team-card" data-anim>
+        <div class="team-img">
+          <img src="images/ambient-1.webp" alt="Master Margaret Osei" loading="lazy" />
+        </div>
+        <div class="team-info">
+          <div class="team-name">Margaret Osei</div>
+          <span class="team-role">Senior Falconer — Peregrines &amp; Merlins</span>
+          <p class="team-bio">22 years at TALON. Specialist in long-wing falconry and high-altitude flight. Trained under Edmund Crane; now leads the Advanced Hawking programme with a focus on Peregrine hunting technique.</p>
+        </div>
+      </div>
+      <div class="team-card" data-anim>
+        <div class="team-img">
+          <img src="images/ambient-2.webp" alt="Master Rafe Ingold" loading="lazy" />
+        </div>
+        <div class="team-info">
+          <div class="team-name">Rafe Ingold</div>
+          <span class="team-role">Senior Falconer — Harris Hawks &amp; Red-tails</span>
+          <p class="team-bio">Leads the Beginner Course and private sessions. A patient teacher with seventeen years of experience. Specialises in the early phases of manning and the development of the falconer's instinct in novice students.</p>
+        </div>
+      </div>
+      <div class="team-card" data-anim>
+        <div class="team-img">
+          <img src="images/ambient-3.webp" alt="Master Anya Kohl" loading="lazy" />
+        </div>
+        <div class="team-info">
+          <div class="team-name">Anya Kohl</div>
+          <span class="team-role">Falconer &amp; Avian Veterinary Specialist</span>
+          <p class="team-bio">A qualified avian veterinarian who chose the field over the clinic. Responsible for the health, weight management, and welfare of all 34 birds. Manages the telemetry programme during all field sessions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">TALON</div>
+        <p class="footer-brand-text">Ancient Falconry School, established 1147 on the estate of Lord Aldric de Falco. UNESCO-recognized tradition. Masters of the oldest bond between man and raptor.</p>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Navigate</span>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">Our Heritage</a></li>
+          <li><a href="collection.html">Programs</a></li>
+          <li><a href="process.html">Training Method</a></li>
+          <li><a href="contact.html">Enroll</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Programs</span>
+        <ul>
+          <li><a href="collection.html#beginner">Beginner Course</a></li>
+          <li><a href="collection.html#advanced">Advanced Hawking</a></li>
+          <li><a href="collection.html#medieval">Medieval Hunt</a></li>
+          <li><a href="collection.html#private">Private Sessions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Contact</span>
+        <ul>
+          <li><a href="#">Aldric Estate, Northumberland</a></li>
+          <li><a href="tel:+441234567890">+44 1234 567 890</a></li>
+          <li><a href="mailto:enquiries@talon-school.com">enquiries@talon-school.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 TALON Ancient Falconry School. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero entrance
+    gsap.from('#heroContent', {
+      immediateRender: false,
+      opacity: 0,
+      x: -20,
+      duration: 0.75,
+      ease: 'power3.out',
+      delay: 0.3
+    });
+
+    // Stagger all data-anim elements
+    document.querySelectorAll('[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        opacity: 0,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: (i % 4) * 0.04
+      });
+    });
+
+    // Mobile menu
+    document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+    document.getElementById('mobileClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Master Gilding Atelier | Gold Applied with Reverence</title>
+  <meta name="description" content="AURUM is a master gilding atelier specialising in gold leaf application, gilded frames, furniture gilding, and museum-grade art restoration. Gold Applied with Reverence.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #1C1008;
+      --surface: #261608;
+      --surface2: #2E1C0A;
+      --accent: #D4612A;
+      --accent-light: #E8884A;
+      --accent-dark: #9C3C14;
+      --ivory: #F0E4DC;
+      --smoke: #A07860;
+      --muted: #604840;
+      --border: #201408;
+      --font-serif: 'Cinzel', serif;
+      --font-sans: 'Crimson Pro', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .preloader-emblem {
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .preloader-emblem::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 1px solid var(--accent-dark);
+      border-radius: 50%;
+    }
+    .preloader-emblem span {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+    .preloader-bar {
+      width: 180px;
+      height: 1px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+    .preloader-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      background: var(--accent);
+      animation: preload-bar 2s ease forwards;
+    }
+    @keyframes preload-bar {
+      to { left: 0; }
+    }
+    .preloader-label {
+      font-family: var(--font-serif);
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    /* Scroll Indicator */
+    #scroll-indicator {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 800;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scroll-line-pulse 2s ease-in-out infinite;
+    }
+    @keyframes scroll-line-pulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      50% { opacity: 0.4; transform: scaleY(0.6); }
+    }
+    .scroll-label {
+      font-family: var(--font-serif);
+      font-size: 0.5rem;
+      letter-spacing: 0.4em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    /* Navbar */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 900;
+      padding: 1.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.5s, padding 0.4s;
+    }
+    #navbar.scrolled {
+      background: rgba(28, 16, 8, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+    .nav-logo span {
+      font-family: var(--font-sans);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--smoke);
+      font-weight: 300;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-serif);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent-light); }
+    .nav-cta {
+      font-family: var(--font-serif);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-decoration: none;
+      text-transform: uppercase;
+      border: 1px solid var(--accent-dark);
+      padding: 0.6rem 1.4rem;
+      transition: all 0.3s;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: transform 0.3s;
+    }
+
+    /* Hero TYPE G — Scroll-Driven Text Transform */
+    .hero {
+      position: relative;
+      height: 200vh;
+    }
+    .hero-bg {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(28,16,8,0.55) 0%,
+        rgba(28,16,8,0.25) 40%,
+        rgba(28,16,8,0.6) 100%
+      );
+    }
+    .hero-text-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .hero-word {
+      font-family: var(--font-serif);
+      font-size: clamp(5rem, 15vw, 14rem);
+      font-weight: 700;
+      color: var(--ivory);
+      line-height: 0.9;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: block;
+      will-change: transform, opacity;
+    }
+    .hero-word.word-2 {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--accent);
+    }
+    .hero-tagline {
+      font-family: var(--font-sans);
+      font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+      letter-spacing: 0.4em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      margin-top: 2.5rem;
+      font-weight: 300;
+    }
+    .hero-cta {
+      margin-top: 2.5rem;
+      pointer-events: all;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-serif);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      background: var(--accent);
+      padding: 1rem 2.5rem;
+      text-decoration: none;
+      transition: all 0.4s;
+      border: 1px solid var(--accent);
+    }
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--accent-light);
+    }
+    .btn-outline {
+      display: inline-block;
+      font-family: var(--font-serif);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      background: transparent;
+      padding: 1rem 2.5rem;
+      text-decoration: none;
+      border: 1px solid var(--accent-dark);
+      transition: all 0.4s;
+    }
+    .btn-outline:hover {
+      background: var(--accent-dark);
+      color: var(--ivory);
+    }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+      color: var(--accent);
+      animation: bounce 2s ease-in-out infinite;
+      z-index: 20;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* Section Shared */
+    section { position: relative; }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 4rem;
+    }
+    .section-label {
+      font-family: var(--font-serif);
+      font-size: 0.55rem;
+      letter-spacing: 0.45em;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      font-weight: 600;
+      color: var(--ivory);
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+    }
+    .section-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      margin: 1.5rem 0;
+    }
+    .section-body {
+      font-size: 1.05rem;
+      color: var(--smoke);
+      line-height: 1.85;
+      font-weight: 300;
+    }
+
+    /* Stats */
+    .stats-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 6rem 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 2.5rem 2rem;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+    }
+    .stat-suffix {
+      font-size: 1.5rem;
+      color: var(--accent-dark);
+    }
+    .stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      margin-top: 0.75rem;
+      display: block;
+    }
+    .stat-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Philosophy */
+    .philosophy-section {
+      padding: 10rem 0;
+      background: var(--bg);
+    }
+    .philosophy-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    .philosophy-card {
+      background: var(--surface);
+      padding: 3.5rem 2.5rem;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s;
+    }
+    .philosophy-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-dark);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+    .philosophy-card:hover::before { transform: scaleX(1); }
+    .philosophy-card:hover { transform: translateY(-4px); }
+    .philosophy-icon {
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .philosophy-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+    }
+    .philosophy-card-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ivory);
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .philosophy-card-text {
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    /* Services Preview */
+    .services-section {
+      padding: 10rem 0;
+      background: var(--surface);
+    }
+    .services-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: end;
+      margin-bottom: 6rem;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+    }
+    .service-card {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+    .service-card-img {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.7s ease;
+    }
+    .service-card:hover .service-card-img { transform: scale(1.06); }
+    .service-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(28,16,8,0.9) 0%, rgba(28,16,8,0.1) 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2.5rem;
+      transition: background 0.4s;
+    }
+    .service-card:hover .service-card-overlay {
+      background: linear-gradient(to top, rgba(156,60,20,0.85) 0%, rgba(28,16,8,0.3) 60%);
+    }
+    .service-card-num {
+      font-family: var(--font-serif);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--accent-light);
+      margin-bottom: 0.5rem;
+    }
+    .service-card-name {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--ivory);
+      letter-spacing: 0.04em;
+    }
+    .service-card-desc {
+      font-size: 0.85rem;
+      color: rgba(240,228,220,0.7);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    /* Workshop Feature */
+    .workshop-section {
+      padding: 10rem 0;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .workshop-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 70vh;
+    }
+    .workshop-visual {
+      position: relative;
+      overflow: hidden;
+    }
+    .workshop-img {
+      width: 100%;
+      height: 100%;
+      min-height: 600px;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.8s ease;
+    }
+    .workshop-visual:hover .workshop-img { transform: scale(1.04); }
+    .workshop-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(28,16,8,0.15);
+    }
+    .workshop-content {
+      background: var(--surface);
+      padding: 6rem 5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-left: 1px solid var(--border);
+    }
+    .workshop-feature-list {
+      list-style: none;
+      margin-top: 2.5rem;
+    }
+    .workshop-feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--smoke);
+    }
+    .workshop-feature-list li::before {
+      content: '—';
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    /* Process */
+    .process-section {
+      padding: 10rem 0;
+      background: var(--surface2);
+    }
+    .process-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+    .process-timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      position: relative;
+      gap: 0;
+    }
+    .process-timeline::before {
+      content: '';
+      position: absolute;
+      top: 3rem;
+      left: 12%;
+      right: 12%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent-dark) 20%, var(--accent-dark) 80%, transparent);
+    }
+    .process-step {
+      padding: 0 2rem;
+      text-align: center;
+    }
+    .process-num {
+      width: 56px;
+      height: 56px;
+      border: 1px solid var(--accent-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin: 0 auto 2rem;
+      background: var(--surface2);
+      position: relative;
+      z-index: 1;
+    }
+    .process-step-title {
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ivory);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .process-step-desc {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+
+    /* Heritage */
+    .heritage-section {
+      padding: 10rem 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .heritage-bg-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-serif);
+      font-size: clamp(8rem, 18vw, 18rem);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(212,97,42,0.06);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+    .heritage-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .heritage-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 4px;
+    }
+    .heritage-img {
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+    .heritage-img:first-child {
+      grid-column: 1 / -1;
+      aspect-ratio: 16/7;
+    }
+    .heritage-img:not(:first-child) { aspect-ratio: 1; }
+    .heritage-quote {
+      font-family: var(--font-sans);
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.6;
+      margin-top: 2rem;
+    }
+    .heritage-quote::before {
+      content: '\201C';
+      font-size: 4rem;
+      color: var(--accent);
+      line-height: 0;
+      vertical-align: -1.5rem;
+      margin-right: 0.25rem;
+      font-family: var(--font-serif);
+    }
+
+    /* Testimonials */
+    .testimonials-section {
+      padding: 10rem 0;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+    .swiper-testimonials {
+      overflow: hidden;
+      padding-bottom: 4rem !important;
+    }
+    .testimonial-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 3.5rem;
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '\201C';
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      color: var(--accent-dark);
+      line-height: 1;
+      position: absolute;
+      top: 1.5rem;
+      left: 2rem;
+      opacity: 0.5;
+    }
+    .testimonial-text {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--smoke);
+      line-height: 1.85;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--muted);
+      border: 1px solid var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    .testimonial-name {
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ivory);
+      letter-spacing: 0.05em;
+    }
+    .testimonial-role {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .swiper-pagination-bullet {
+      background: var(--muted) !important;
+      opacity: 1 !important;
+    }
+    .swiper-pagination-bullet-active {
+      background: var(--accent) !important;
+    }
+
+    /* Commission CTA */
+    .commission-section {
+      padding: 10rem 0;
+      background: var(--surface2);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .commission-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      border: 1px solid var(--accent-dark);
+      opacity: 0.15;
+    }
+    .commission-section::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      border: 1px solid var(--accent-dark);
+      opacity: 0.2;
+    }
+    .commission-inner { position: relative; z-index: 1; }
+    .commission-label {
+      font-family: var(--font-serif);
+      font-size: 0.6rem;
+      letter-spacing: 0.45em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: block;
+    }
+    .commission-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--ivory);
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .commission-text {
+      font-size: 1.05rem;
+      color: var(--smoke);
+      line-height: 1.8;
+      max-width: 560px;
+      margin: 0 auto 3rem;
+    }
+    .commission-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 6rem 0 3rem;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .footer-brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--ivory);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.5rem;
+    }
+    .footer-brand-tag {
+      font-size: 0.75rem;
+      color: var(--smoke);
+      letter-spacing: 0.2em;
+      margin-bottom: 1.5rem;
+    }
+    .footer-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 280px;
+    }
+    .footer-col-title {
+      font-family: var(--font-serif);
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--accent-light); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-accent-line {
+      height: 1px;
+      background: linear-gradient(to right, var(--accent-dark), transparent);
+      width: 120px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .container { padding: 0 2.5rem; }
+      #navbar { padding: 1.25rem 2.5rem; }
+      #navbar.scrolled { padding: 0.9rem 2.5rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-right: 1px solid var(--border); }
+      .stat-item:nth-child(3), .stat-item:nth-child(4) { border-top: 1px solid var(--border); }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .philosophy-grid .philosophy-card:last-child { grid-column: 1 / -1; }
+      .services-intro { grid-template-columns: 1fr; gap: 2rem; }
+      .workshop-inner { grid-template-columns: 1fr; }
+      .workshop-img { min-height: 400px; }
+      .workshop-content { padding: 4rem 3rem; }
+      .process-timeline { grid-template-columns: repeat(2, 1fr); gap: 3rem; }
+      .process-timeline::before { display: none; }
+      .heritage-inner { grid-template-columns: 1fr; gap: 4rem; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 3rem; }
+    }
+    @media (max-width: 768px) {
+      .container { padding: 0 1.5rem; }
+      #navbar { padding: 1rem 1.5rem; }
+      #navbar.scrolled { padding: 0.8rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .hero-word { font-size: clamp(3.5rem, 18vw, 7rem); }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .philosophy-grid .philosophy-card:last-child { grid-column: 1; }
+      .services-grid { grid-template-columns: 1fr; }
+      .process-timeline { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+      .commission-btns { flex-direction: column; align-items: center; }
+      .heritage-images { grid-template-columns: 1fr; }
+      .heritage-img:first-child { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="preloader-emblem">
+      <span>A</span>
+    </div>
+    <div class="preloader-bar"></div>
+    <div class="preloader-label">AURUM Atelier — Est. MCMLXXXIX</div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      AURUM
+      <span>Master Gilding Atelier</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="about.html">Atelier</a></li>
+      <li><a href="collection.html">Services</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Commission</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Request Commission</a>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Hero TYPE G — Scroll-Driven Text Transform -->
+  <section class="hero hero-text-driven" id="hero">
+    <div class="hero-bg" style="background-image:url('images/hero-1.webp')"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-word word-1">AURUM</div>
+      <div class="hero-word word-2">ATELIER</div>
+      <div class="hero-tagline">Gold Applied with Reverence</div>
+      <div class="hero-cta"><a href="collection.html" class="btn-primary">View Commissions</a></div>
+    </div>
+    <div class="hero-scroll-hint">↓</div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number" data-count="200">0<span class="stat-suffix">+</span></span>
+          <span class="stat-label">Restored Works</span>
+          <p class="stat-desc">Museum and private collection pieces returned to glory</p>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="35">0</span>
+          <span class="stat-label">Years of Mastery</span>
+          <p class="stat-desc">Three decades of unbroken gilding tradition</p>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="6">0</span>
+          <span class="stat-label">Gold Leaf Types</span>
+          <p class="stat-desc">23k, 24k, white gold, palladium, silver, copper leaf</p>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="14">0</span>
+          <span class="stat-label">Museum Partners</span>
+          <p class="stat-desc">Trusted by leading institutions across Europe and North America</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophy -->
+  <section class="philosophy-section">
+    <div class="container">
+      <div class="philosophy-header">
+        <span class="section-label">Our Philosophy</span>
+        <h2 class="section-title">Gold as Living Memory</h2>
+        <div class="section-divider" style="margin:1.5rem auto;"></div>
+        <p class="section-body" style="max-width:560px;margin:0 auto;">Each commission begins not with tools, but with understanding — the object's history, its soul, the light it was made to hold.</p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <div class="philosophy-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3 class="philosophy-card-title">Traditional Methods</h3>
+          <p class="philosophy-card-text">We practise gilding as it was taught in the Renaissance workshops of Florence — bole preparation, water gilding, and hand burnishing with agate stones, each step unchanged in five centuries.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3 class="philosophy-card-title">Patience as Craft</h3>
+          <p class="philosophy-card-text">True gilding cannot be hurried. We allow each layer — bole, size, and leaf — to cure fully before proceeding. A single commission may demand weeks of unhurried attention before the first leaf is laid.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-icon">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3 class="philosophy-card-title">Reverence for Material</h3>
+          <p class="philosophy-card-text">Gold leaf is among the thinnest materials humans have ever made — 0.1 microns. Treating it with reverence means understanding that even breath must be managed when leaf is in the air.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Collection -->
+  <section class="services-section">
+    <div class="container">
+      <div class="services-intro">
+        <div>
+          <span class="section-label">Our Services</span>
+          <h2 class="section-title">Disciplines of the Gilder's Art</h2>
+        </div>
+        <div>
+          <div class="section-divider"></div>
+          <p class="section-body">From intimate objects to monumental architectural commissions, each service shares the same uncompromising standard — gold applied with reverence, lasting centuries.</p>
+          <a href="collection.html" class="btn-outline" style="margin-top:2rem;display:inline-block;">All Services</a>
+        </div>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-card-img" style="background-image:url('images/product-1.webp')"></div>
+          <div class="service-card-overlay">
+            <div class="service-card-num">01</div>
+            <div class="service-card-name">Gold Leaf Frames</div>
+            <div class="service-card-desc">Hand-gilded frames in 22k or 23k leaf with period-appropriate profiles</div>
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="service-card-img" style="background-image:url('images/product-2.webp')"></div>
+          <div class="service-card-overlay">
+            <div class="service-card-num">02</div>
+            <div class="service-card-name">Furniture Gilding</div>
+            <div class="service-card-desc">Water and oil gilding for antique and contemporary furniture</div>
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="service-card-img" style="background-image:url('images/product-3.webp')"></div>
+          <div class="service-card-overlay">
+            <div class="service-card-num">03</div>
+            <div class="service-card-name">Art Restoration</div>
+            <div class="service-card-desc">Museum-standard conservation of gilded surfaces and icon panels</div>
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="service-card-img" style="background-image:url('images/product-4.webp')"></div>
+          <div class="service-card-overlay">
+            <div class="service-card-num">04</div>
+            <div class="service-card-name">Architectural Gilding</div>
+            <div class="service-card-desc">Domes, ceilings, columns, and ornamental details at monumental scale</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workshop Feature -->
+  <section class="workshop-section">
+    <div class="container" style="padding:0;">
+      <div class="workshop-inner">
+        <div class="workshop-visual">
+          <div class="workshop-img" style="background-image:url('images/ambient-1.webp')"></div>
+          <div class="workshop-overlay"></div>
+        </div>
+        <div class="workshop-content">
+          <span class="section-label">The Atelier</span>
+          <h2 class="section-title">A Workshop in Perpetual Gold Light</h2>
+          <div class="section-divider"></div>
+          <p class="section-body">Our studio in the city's old quarter faces north — chosen for its constant, shadowless light that reveals the true brilliance of burnished gold. Every surface here carries traces of two thousand years of accumulated knowledge.</p>
+          <ul class="workshop-feature-list">
+            <li>Climate-controlled environment maintained at 18°C and 55% humidity for optimal leaf adhesion</li>
+            <li>Dedicated water gilding room with marble slabs and hand-ground bole pigments</li>
+            <li>Archive of 240 period gilding profiles traced from European masterworks</li>
+            <li>In-house distillation of rabbit-skin glue from traditional European suppliers</li>
+            <li>Full conservation laboratory with binocular microscopy and UV illumination</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Overview -->
+  <section class="process-section">
+    <div class="container">
+      <div class="process-header">
+        <span class="section-label">The Process</span>
+        <h2 class="section-title">From Bare Wood to Living Gold</h2>
+        <div class="section-divider" style="margin:1.5rem auto;"></div>
+        <p class="section-body" style="max-width:520px;margin:0 auto;">Each step is irreversible. That is what makes gilding a discipline of attention — there is no undoing, only understanding.</p>
+      </div>
+      <div class="process-timeline">
+        <div class="process-step">
+          <div class="process-num">I</div>
+          <h3 class="process-step-title">Bole Application</h3>
+          <p class="process-step-desc">Multiple coats of rabbit-skin glue gesso, followed by burnishing with coloured Armenian bole clay to create a breathing foundation for the gold.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-num">II</div>
+          <h3 class="process-step-title">Gilding Size</h3>
+          <p class="process-step-desc">Water gilding employs a brief moistening of the bole; oil gilding uses carefully timed mordant. Each method produces a distinct final lustre.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-num">III</div>
+          <h3 class="process-step-title">Leaf Laying</h3>
+          <p class="process-step-desc">Gold leaf — 0.1 to 0.5 microns — is lifted with a gilders' tip and laid without wrinkle onto the prepared surface, guided only by breath control and a steady hand.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-num">IV</div>
+          <h3 class="process-step-title">Burnishing</h3>
+          <p class="process-step-desc">An agate burnisher compresses the gold into the bole, releasing the mirror brilliance that distinguishes water gilding from all other finishes.</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:4rem;">
+        <a href="process.html" class="btn-outline">Full Process Detail</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage -->
+  <section class="heritage-section">
+    <div class="heritage-bg-text">AURUM</div>
+    <div class="container">
+      <div class="heritage-inner">
+        <div class="heritage-images">
+          <div class="heritage-img" style="background-image:url('images/ambient-2.webp')"></div>
+          <div class="heritage-img" style="background-image:url('images/hero-3.webp')"></div>
+          <div class="heritage-img" style="background-image:url('images/hero-4.webp')"></div>
+        </div>
+        <div>
+          <span class="section-label">Heritage</span>
+          <h2 class="section-title">Lineage Written in Gold</h2>
+          <div class="section-divider"></div>
+          <p class="section-body">Founded in 1989 by master gilder Édouard Merillon following his apprenticeship under Maître Dupont of the Paris Louvre conservation workshops, AURUM has spent three and a half decades restoring, creating, and preserving.</p>
+          <p class="section-body" style="margin-top:1.5rem;">Our work spans the frames of the Musée d'Orsay's reserve collection, the gilded plasterwork of two Baltic opera houses, and the private commissions of collectors who understand that gold — properly applied — outlasts stone.</p>
+          <blockquote class="heritage-quote">
+            Gold does not age. The gilder's task is only to ensure the gold endures where it was placed.
+          </blockquote>
+          <p style="font-size:0.75rem;color:var(--muted);letter-spacing:0.2em;margin-top:1rem;text-transform:uppercase;">— Édouard Merillon, Founder</p>
+          <a href="about.html" class="btn-outline" style="margin-top:2.5rem;display:inline-block;">About the Atelier</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="testimonials-header">
+        <span class="section-label">Commendations</span>
+        <h2 class="section-title">Words from Those Who Entrust</h2>
+      </div>
+      <div class="swiper swiper-testimonials">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p class="testimonial-text">The restoration of our eighteenth-century cabinet surpassed every expectation. The burnished gold panels are indistinguishable from the original work — a testament to craftsmanship that operates at an entirely different level from ordinary restoration.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">CM</div>
+                <div>
+                  <div class="testimonial-name">Catherine Morel</div>
+                  <div class="testimonial-role">Curator, Musée des Arts Décoratifs, Paris</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p class="testimonial-text">We commissioned AURUM for the gilded ceiling of our main hall — sixteen panels, 23k water-gilded, burnished by hand. The result stopped every architect who visited. Three years later it still glows as it did on the day of completion.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">RV</div>
+                <div>
+                  <div class="testimonial-name">Robert Vandermeer</div>
+                  <div class="testimonial-role">Director, The Vandermeer Foundation, Amsterdam</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p class="testimonial-text">I brought forty-seven frames from my grandfather's collection — some beyond what I thought recoverable. AURUM returned them transformed. The care taken to match each frame's original leaf and burnish pattern was extraordinary.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">SH</div>
+                <div>
+                  <div class="testimonial-name">Sophie Hauenstein</div>
+                  <div class="testimonial-role">Private Collector, Geneva</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p class="testimonial-text">The atelier's knowledge of historical gilding techniques — the specific bole colours, the glue concentrations, the burnishing directions — is without parallel. Édouard and his team treated each object as if it were their own.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">JT</div>
+                <div>
+                  <div class="testimonial-name">James Thornton</div>
+                  <div class="testimonial-role">Head of Conservation, National Portrait Gallery, London</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commission CTA -->
+  <section class="commission-section">
+    <div class="container">
+      <div class="commission-inner">
+        <span class="commission-label">Begin a Commission</span>
+        <h2 class="commission-title">Every Object<br>Deserves Its Gold</h2>
+        <p class="commission-text">A commission begins with a conversation. Describe your object, its history, and what you wish for it — we will respond within five working days with a detailed assessment.</p>
+        <div class="commission-btns">
+          <a href="contact.html" class="btn-primary">Request a Commission</a>
+          <a href="process.html" class="btn-outline">Understand the Process</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-name">AURUM</div>
+          <div class="footer-brand-tag">Master Gilding Atelier — Est. 1989</div>
+          <p class="footer-desc">Gold leaf gilding, art restoration, and architectural gilding practised with traditional methods in the lineage of the great European workshops.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Navigation</div>
+          <ul class="footer-links">
+            <li><a href="about.html">The Atelier</a></li>
+            <li><a href="collection.html">Services</a></li>
+            <li><a href="process.html">Process</a></li>
+            <li><a href="contact.html">Commission</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Services</div>
+          <ul class="footer-links">
+            <li><a href="collection.html#frames">Gold Leaf Frames</a></li>
+            <li><a href="collection.html#furniture">Furniture Gilding</a></li>
+            <li><a href="collection.html#restoration">Art Restoration</a></li>
+            <li><a href="collection.html#architectural">Architectural Gilding</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="mailto:commission@aurum-atelier.com">commission@aurum-atelier.com</a></li>
+            <li><a href="tel:+33142605050">+33 1 42 60 50 50</a></li>
+            <li><a href="#">12 Rue du Bac, Paris 75007</a></li>
+            <li><a href="#">By appointment only</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-accent-line"></div>
+        <p class="footer-copy">&copy; 2025 AURUM Master Gilding Atelier. All rights reserved.</p>
+        <p class="footer-copy">Gold Applied with Reverence</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <!-- SplitText Polyfill (Club GSAP premium not available on CDN) -->
+  <script>
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* --- Preloader --- */
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      const scrollInd = document.getElementById('scroll-indicator');
+
+      setTimeout(() => {
+        gsap.to(preloader, {
+          duration: 0.8,
+          ease: 'power2.inOut',
+          y: '-100%',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            // Show scroll indicator after preloader exits
+            gsap.fromTo(scrollInd,
+              { autoAlpha: 0, y: 12 },
+              { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power2.out' }
+            );
+          }
+        });
+      }, 2200);
+
+      // Scroll indicator fallback
+      setTimeout(() => {
+        if (scrollInd) {
+          scrollInd.style.visibility = 'visible';
+          scrollInd.style.opacity = '1';
+        }
+      }, 4000);
+    });
+
+    /* --- Navbar Scroll --- */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 80) navbar.classList.add('scrolled');
+      else navbar.classList.remove('scrolled');
+    });
+
+    /* --- Hero Type G — Scroll-Driven Word Apart --- */
+    const word1 = document.querySelector('.word-1');
+    const word2 = document.querySelector('.word-2');
+
+    if (word1 && word2) {
+      gsap.to(word1, {
+        immediateRender: false,
+        x: '-18vw',
+        scale: 0.85,
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2
+        }
+      });
+      gsap.to(word2, {
+        immediateRender: false,
+        x: '18vw',
+        scale: 0.85,
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2
+        }
+      });
+      gsap.to('.hero-tagline', {
+        immediateRender: false,
+        y: 40,
+        autoAlpha: 0,
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: '40% top',
+          scrub: 1
+        }
+      });
+      gsap.to('.hero-cta', {
+        immediateRender: false,
+        y: 60,
+        autoAlpha: 0,
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: '35% top',
+          scrub: 1
+        }
+      });
+      gsap.to('.hero-bg', {
+        immediateRender: false,
+        scale: 1.08,
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.5
+        }
+      });
+    }
+
+    /* --- Hide scroll indicator on scroll --- */
+    ScrollTrigger.create({
+      trigger: 'body',
+      start: 'top+=300 top',
+      onEnter: () => {
+        gsap.to('#scroll-indicator', { autoAlpha: 0, duration: 0.5 });
+      },
+      onLeaveBack: () => {
+        gsap.to('#scroll-indicator', { autoAlpha: 1, duration: 0.5 });
+      }
+    });
+
+    /* --- Stats Counter --- */
+    document.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseInt(el.getAttribute('data-count'));
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo({ val: 0 }, {
+            val: target,
+            duration: 2,
+            ease: 'power2.out',
+            onUpdate: function() {
+              const suffix = el.querySelector('.stat-suffix');
+              el.childNodes[0].textContent = Math.round(this.targets()[0].val);
+              if (suffix) el.appendChild(suffix);
+            }
+          }, {});
+        }
+      });
+    });
+
+    /* --- Philosophy Cards --- */
+    gsap.from('.philosophy-card', {
+      immediateRender: false,
+      y: gsap.utils.random(20, 28),
+      autoAlpha: 0,
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09,
+      scrollTrigger: {
+        trigger: '.philosophy-grid',
+        start: 'top 85%',
+        once: true
+      }
+    });
+
+    /* --- Services Grid --- */
+    gsap.from('.service-card', {
+      immediateRender: false,
+      y: 24,
+      autoAlpha: 0,
+      duration: 1.1,
+      ease: 'power2.out',
+      stagger: 0.09,
+      scrollTrigger: {
+        trigger: '.services-grid',
+        start: 'top 85%',
+        once: true
+      }
+    });
+
+    /* --- Workshop --- */
+    gsap.from('.workshop-visual', {
+      immediateRender: false,
+      x: -40,
+      autoAlpha: 0,
+      duration: 1.2,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.workshop-inner',
+        start: 'top 80%',
+        once: true
+      }
+    });
+    gsap.from('.workshop-content', {
+      immediateRender: false,
+      x: 40,
+      autoAlpha: 0,
+      duration: 1.2,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.workshop-inner',
+        start: 'top 80%',
+        once: true
+      }
+    });
+
+    /* --- Process Steps --- */
+    gsap.from('.process-step', {
+      immediateRender: false,
+      y: gsap.utils.random(20, 28),
+      autoAlpha: 0,
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09,
+      scrollTrigger: {
+        trigger: '.process-timeline',
+        start: 'top 80%',
+        once: true
+      }
+    });
+
+    /* --- Heritage Images --- */
+    gsap.from('.heritage-img', {
+      immediateRender: false,
+      scale: 0.96,
+      autoAlpha: 0,
+      duration: 1.2,
+      ease: 'power2.out',
+      stagger: 0.12,
+      scrollTrigger: {
+        trigger: '.heritage-images',
+        start: 'top 80%',
+        once: true
+      }
+    });
+
+    /* --- Testimonials Swiper --- */
+    new Swiper('.swiper-testimonials', {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      loop: true,
+      autoplay: { delay: 6000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 2 }
+      }
+    });
+
+    /* --- Commission Section --- */
+    gsap.from('.commission-title, .commission-text, .commission-btns', {
+      immediateRender: false,
+      y: 22,
+      autoAlpha: 0,
+      duration: 1.1,
+      ease: 'power2.out',
+      stagger: 0.12,
+      scrollTrigger: {
+        trigger: '.commission-section',
+        start: 'top 80%',
+        once: true
+      }
+    });
+
+    /* --- General fade-in for section titles --- */
+    gsap.utils.toArray('.section-label, .section-title, .section-divider').forEach(el => {
+      gsap.from(el, {
+        immediateRender: false,
+        y: 18,
+        autoAlpha: 0,
+        duration: 1.0,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          once: true
+        }
+      });
+    });
+  </script>
+</body>
+</html>

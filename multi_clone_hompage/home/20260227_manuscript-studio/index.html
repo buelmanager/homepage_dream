@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCRIPTORIUM — Written in Gold, Read Through Ages</title>
+  <meta name="description" content="Medieval manuscript illumination studio of the highest order. Vellum, quill, and gold leaf — each commission a testament to centuries-old calligraphic tradition." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <style>
+    /* ─── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── CSS VARIABLES ──────────────────────────────────────────── */
+    :root {
+      --bg:           #181818;
+      --surface:      #222222;
+      --surface2:     #2A2A2A;
+      --accent:       #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark:  #808090;
+      --ivory:        #EEEEF2;
+      --smoke:        #909090;
+      --muted:        #606060;
+      --border:       #1E1E1E;
+      --font-serif:   'Spectral', Georgia, serif;
+      --font-sans:    'Mulish', sans-serif;
+      --transition:   0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--muted); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ─── BASE ───────────────────────────────────────────────────── */
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── PRELOADER ──────────────────────────────────────────────── */
+    #preloader {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .preloader-quill {
+      width: 4px;
+      height: 64px;
+      background: linear-gradient(to bottom, var(--accent-light), var(--accent-dark));
+      border-radius: 2px 2px 0 0;
+      position: relative;
+      margin-bottom: 32px;
+      animation: quillWrite 1.8s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+
+    .preloader-quill::before {
+      content: '';
+      position: absolute;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 18px solid var(--accent-dark);
+    }
+
+    .preloader-ink {
+      position: absolute;
+      bottom: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 0;
+      background: var(--accent);
+      animation: inkFlow 1.8s ease-in-out infinite;
+    }
+
+    @keyframes quillWrite {
+      0%, 100% { transform: rotate(-12deg); }
+      25% { transform: rotate(8deg); }
+      50% { transform: rotate(-6deg); }
+      75% { transform: rotate(10deg); }
+    }
+
+    @keyframes inkFlow {
+      0% { height: 0; opacity: 1; }
+      60% { height: 28px; opacity: 0.8; }
+      100% { height: 0; opacity: 0; }
+    }
+
+    .preloader-text {
+      font-family: var(--font-serif);
+      font-size: 11px;
+      letter-spacing: 0.5em;
+      color: var(--accent);
+      text-transform: uppercase;
+      animation: preloaderPulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes preloaderPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* ─── SCROLL INDICATOR ───────────────────────────────────────── */
+    #scroll-indicator {
+      position: fixed;
+      left: 32px; top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+
+    .scroll-label {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.25; transform: scaleY(0.85); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 22px 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 500;
+      background: linear-gradient(to bottom, rgba(24,24,24,0.96), transparent);
+      transition: background var(--transition), padding var(--transition), border-color var(--transition);
+      border-bottom: 1px solid transparent;
+    }
+
+    nav.scrolled {
+      background: rgba(24,24,24,0.97);
+      padding: 14px 52px;
+      border-bottom-color: var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--ivory); }
+
+    .nav-cta {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      border: 1px solid rgba(176,176,192,0.4);
+      padding: 8px 22px;
+      color: var(--accent) !important;
+      transition: all 0.3s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent) !important;
+      color: var(--bg) !important;
+      border-color: var(--accent) !important;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      display: block; width: 24px; height: 1px;
+      background: var(--ivory);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ─── HERO TYPE G — SCROLL-DRIVEN TEXT TRANSFORM ─────────────── */
+    .hero {
+      height: 220vh;
+      position: relative;
+    }
+
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('images/hero-1.webp');
+      background-size: cover;
+      background-position: center 30%;
+      will-change: transform;
+    }
+
+    .hero-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(24,24,24,0.78) 0%,
+        rgba(24,24,24,0.52) 50%,
+        rgba(24,24,24,0.72) 100%
+      );
+    }
+
+    .hero-text-wrap {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hero-word {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: clamp(4.5rem, 14vw, 15rem);
+      font-weight: 300;
+      line-height: 0.88;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: var(--ivory);
+      will-change: transform, letter-spacing;
+    }
+
+    .word-1 { color: var(--ivory); }
+    .word-2 { color: var(--accent); }
+
+    .hero-tagline {
+      margin-top: 2.4rem;
+      font-family: var(--font-sans);
+      font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      will-change: opacity, transform;
+    }
+
+    .hero-cta {
+      margin-top: 2.8rem;
+      will-change: opacity, transform;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      border: 1px solid rgba(176,176,192,0.5);
+      padding: 14px 38px;
+      color: var(--ivory);
+      transition: all 0.4s;
+      pointer-events: all;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      font-family: var(--font-sans);
+      font-size: 20px;
+      color: var(--accent);
+      animation: bounceDown 2s ease-in-out infinite;
+    }
+
+    @keyframes bounceDown {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+      50% { transform: translateX(-50%) translateY(8px); opacity: 1; }
+    }
+
+    /* ─── SECTION BASE ───────────────────────────────────────────── */
+    .section-label {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      color: var(--ivory);
+      line-height: 1.12;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .section-sub {
+      font-size: 0.88rem;
+      line-height: 1.85;
+      color: var(--smoke);
+      max-width: 600px;
+    }
+
+    /* ─── STATS ──────────────────────────────────────────────────── */
+    .stats {
+      background: var(--surface);
+      padding: 6rem 52px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 300;
+      color: var(--accent-light);
+      line-height: 1;
+      margin-bottom: 0.6rem;
+    }
+
+    .stat-label {
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      font-style: italic;
+      font-family: var(--font-serif);
+    }
+
+    /* ─── PHILOSOPHY ─────────────────────────────────────────────── */
+    .philosophy {
+      padding: 10rem 52px;
+      background: var(--bg);
+    }
+
+    .philosophy-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .phil-card {
+      background: var(--surface);
+      padding: 3.5rem 2.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phil-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
+      transform: scaleX(0);
+      transition: transform 0.6s ease;
+    }
+
+    .phil-card:hover::before { transform: scaleX(1); }
+
+    .phil-number {
+      font-family: var(--font-serif);
+      font-size: 4rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      transition: color 0.4s;
+    }
+
+    .phil-card:hover .phil-number { color: var(--surface2); }
+
+    .phil-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .phil-text {
+      font-size: 0.84rem;
+      line-height: 1.85;
+      color: var(--smoke);
+    }
+
+    /* ─── COMMISSION COLLECTION ──────────────────────────────────── */
+    .collection {
+      padding: 10rem 52px;
+      background: var(--surface);
+    }
+
+    .collection-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+      max-width: 1200px;
+      margin: 0 auto 4rem;
+    }
+
+    .collection-item {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .collection-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+
+    .collection-item:hover img { transform: scale(1.06); }
+
+    .collection-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(24,24,24,0.9) 0%, rgba(24,24,24,0.15) 60%, transparent 100%);
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 2.8rem;
+    }
+
+    .collection-tag {
+      font-size: 8px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .collection-name {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .collection-desc {
+      font-size: 0.78rem;
+      color: var(--smoke);
+      line-height: 1.6;
+    }
+
+    .collection-cta {
+      text-align: center;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      border: 1px solid var(--muted);
+      padding: 14px 38px;
+      color: var(--smoke);
+      transition: all 0.4s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--ivory);
+    }
+
+    /* ─── WORKSHOP ───────────────────────────────────────────────── */
+    .workshop {
+      padding: 10rem 52px;
+      background: var(--bg);
+    }
+
+    .workshop-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7rem;
+      align-items: center;
+    }
+
+    .workshop-img-stack {
+      position: relative;
+      height: 560px;
+    }
+
+    .workshop-img-main {
+      position: absolute;
+      top: 0; left: 0;
+      width: 75%;
+      height: 82%;
+      overflow: hidden;
+    }
+
+    .workshop-img-main img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .workshop-img-secondary {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 55%;
+      height: 52%;
+      overflow: hidden;
+      border: 4px solid var(--bg);
+    }
+
+    .workshop-img-secondary img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .workshop-content { padding-top: 2rem; }
+
+    .workshop-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.2;
+      margin-bottom: 1.6rem;
+    }
+
+    .workshop-text {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: var(--smoke);
+      margin-bottom: 2rem;
+    }
+
+    .workshop-list {
+      list-style: none;
+      margin-bottom: 2.4rem;
+    }
+
+    .workshop-list li {
+      font-size: 0.82rem;
+      color: var(--smoke);
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .workshop-list li::before {
+      content: '—';
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ─── PROCESS ────────────────────────────────────────────────── */
+    .process {
+      padding: 10rem 52px;
+      background: var(--surface);
+    }
+
+    .process-header {
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+
+    .process-timeline {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .process-timeline::before {
+      content: '';
+      position: absolute;
+      left: 60px; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--accent-dark), transparent);
+    }
+
+    .process-step {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 3rem;
+      padding: 2.8rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .process-step:last-child { border-bottom: none; }
+
+    .step-num {
+      display: flex;
+      align-items: flex-start;
+      padding-top: 0.3rem;
+    }
+
+    .step-num-inner {
+      font-family: var(--font-serif);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .step-num-inner::before {
+      content: '';
+      position: absolute;
+      left: -7px; top: 50%;
+      transform: translateY(-50%);
+      width: 14px; height: 14px;
+      border: 1px solid var(--accent-dark);
+      border-radius: 50%;
+      background: var(--surface);
+    }
+
+    .step-body {}
+
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--ivory);
+      margin-bottom: 0.7rem;
+    }
+
+    .step-text {
+      font-size: 0.84rem;
+      line-height: 1.85;
+      color: var(--smoke);
+    }
+
+    /* ─── HERITAGE ───────────────────────────────────────────────── */
+    .heritage {
+      padding: 10rem 52px;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .heritage-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7rem;
+      align-items: center;
+    }
+
+    .heritage-content {}
+
+    .heritage-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2.5vw, 1.85rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent-light);
+      line-height: 1.55;
+      margin: 2rem 0;
+      padding-left: 2rem;
+      border-left: 1px solid var(--accent-dark);
+    }
+
+    .heritage-text {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: var(--smoke);
+      margin-bottom: 2rem;
+    }
+
+    .heritage-media {
+      position: relative;
+    }
+
+    .heritage-img-wrap {
+      width: 100%;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+    }
+
+    .heritage-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.9s ease;
+    }
+
+    .heritage-img-wrap:hover img { transform: scale(1.04); }
+
+    .heritage-badge {
+      position: absolute;
+      bottom: -2rem;
+      left: -2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      width: 180px;
+    }
+
+    .heritage-badge-year {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .heritage-badge-text {
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 0.4rem;
+    }
+
+    /* ─── TESTIMONIALS ───────────────────────────────────────────── */
+    .testimonials {
+      padding: 10rem 52px;
+      background: var(--surface);
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .swiper { overflow: visible; }
+
+    .swiper-wrapper { overflow: visible; }
+
+    .swiper-slide {
+      opacity: 0.35;
+      transition: opacity 0.5s;
+    }
+
+    .swiper-slide-active { opacity: 1; }
+
+    .testimonial-card {
+      background: var(--surface2);
+      padding: 3.5rem 3rem;
+      border: 1px solid var(--border);
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .testimonial-quote-mark {
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      line-height: 0.6;
+      color: var(--accent-dark);
+      margin-bottom: 1.5rem;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .author-line {
+      width: 32px; height: 1px;
+      background: var(--accent);
+    }
+
+    .author-name {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .author-title {
+      font-size: 10px;
+      color: var(--muted);
+      margin-left: 0.5rem;
+    }
+
+    .swiper-pagination {
+      margin-top: 3rem;
+      position: static;
+    }
+
+    .swiper-pagination-bullet {
+      width: 6px; height: 6px;
+      background: var(--muted);
+      opacity: 1;
+      border-radius: 0;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: var(--accent);
+      width: 24px;
+    }
+
+    /* ─── COMMISSION FORM ────────────────────────────────────────── */
+    .commission-form {
+      padding: 10rem 52px;
+      background: var(--bg);
+    }
+
+    .commission-form-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .commission-form-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+
+    input, select, textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 300;
+      padding: 14px 18px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.3s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent-dark);
+    }
+
+    select { cursor: pointer; }
+
+    select option { background: var(--surface2); }
+
+    textarea { resize: vertical; min-height: 130px; }
+
+    .form-submit {
+      text-align: center;
+      margin-top: 2.4rem;
+    }
+
+    .btn-submit {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 16px 52px;
+      cursor: pointer;
+      transition: all 0.4s;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-light);
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 5rem 52px 3rem;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand-text {
+      font-size: 0.82rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex; flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--ivory); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .footer-copy span { color: var(--accent-dark); }
+
+    .footer-ornament {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--border);
+      letter-spacing: 0.6em;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      nav { padding: 18px 28px; }
+      nav.scrolled { padding: 12px 28px; }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+
+      .collection-grid { grid-template-columns: 1fr; }
+
+      .workshop-inner { grid-template-columns: 1fr; gap: 4rem; }
+      .workshop-img-stack { height: 420px; }
+
+      .heritage-inner { grid-template-columns: 1fr; gap: 4rem; }
+
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 3rem; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      nav.scrolled { padding: 12px 20px; }
+
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+
+      .hero { height: 180vh; }
+
+      .stats { padding: 5rem 20px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 0; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat-item:nth-child(odd) { border-right: 1px solid var(--border); }
+
+      .philosophy { padding: 6rem 20px; }
+      .philosophy-grid { grid-template-columns: 1fr; gap: 3px; }
+
+      .collection { padding: 6rem 20px; }
+      .collection-grid { grid-template-columns: 1fr; }
+
+      .workshop { padding: 6rem 20px; }
+      .workshop-img-stack { height: 320px; }
+
+      .process { padding: 6rem 20px; }
+      .process-timeline::before { left: 36px; }
+      .process-step { grid-template-columns: 80px 1fr; gap: 1.5rem; }
+
+      .heritage { padding: 6rem 20px; }
+      .heritage-badge { display: none; }
+
+      .testimonials { padding: 6rem 20px; }
+
+      .commission-form { padding: 6rem 20px; }
+      .form-grid { grid-template-columns: 1fr; }
+
+      footer { padding: 4rem 20px 2.5rem; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-quill">
+      <div class="preloader-ink"></div>
+    </div>
+    <div class="preloader-text">Scriptorium</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">Scriptorium</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Commissions</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html" class="nav-cta">Commission</a></li>
+    </ul>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO TYPE G — SCROLL-DRIVEN TEXT TRANSFORM -->
+  <section class="hero hero-text-driven" id="hero">
+    <div class="hero-sticky">
+      <div class="hero-bg"></div>
+      <div class="hero-text-wrap">
+        <div class="hero-word word-1">SCRIPTO</div>
+        <div class="hero-word word-2">RIUM</div>
+        <div class="hero-tagline">Written in Gold, Read Through Ages</div>
+        <div class="hero-cta"><a href="collection.html" class="btn-primary">Commission a Manuscript</a></div>
+      </div>
+      <div class="hero-scroll-hint">↓</div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats" id="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">300+</div>
+        <div class="stat-label">Manuscripts Completed</div>
+        <div class="stat-sub">Since Est. 1997</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">23</div>
+        <div class="stat-label">Historical Scripts</div>
+        <div class="stat-sub">From Carolingian to Insular</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">Vellum<br>& Gold</div>
+        <div class="stat-label">Materials of the Ancients</div>
+        <div class="stat-sub">Authentic Calf &amp; Kidskin</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">15</div>
+        <div class="stat-label">Languages Illuminated</div>
+        <div class="stat-sub">Latin, Greek, Hebrew &amp; more</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="philosophy-header">
+      <span class="section-label">Our Creed</span>
+      <h2 class="section-title">The Pillars of the <em>Scriptorium</em></h2>
+    </div>
+    <div class="philosophy-grid">
+      <div class="phil-card">
+        <div class="phil-number">I</div>
+        <h3 class="phil-title">Fidelity to Tradition</h3>
+        <p class="phil-text">Every stroke adheres to the canons set by medieval monks in their silent scriptoria. We train for years before touching vellum, studying the manuscripts of Lindisfarne, the Book of Kells, and the Winchester Bible with meticulous reverence.</p>
+      </div>
+      <div class="phil-card">
+        <div class="phil-number">II</div>
+        <h3 class="phil-title">Gold as Language</h3>
+        <p class="phil-text">Gold leaf is not decoration — it is theology made visible. Each gilded initial is raised on gesso, burnished by hand with a stone agate until it mirrors the candlelight that first gave it purpose. No shortcuts. No substitutes.</p>
+      </div>
+      <div class="phil-card">
+        <div class="phil-number">III</div>
+        <h3 class="phil-title">Time as Material</h3>
+        <p class="phil-text">A commission from Scriptorium is never hurried. We allocate months, sometimes years, to a single work. The medieval masters understood that permanence requires patience. So do we. Your manuscript will outlast centuries.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMISSION COLLECTION -->
+  <section class="collection" id="collection">
+    <div class="collection-header">
+      <span class="section-label">Commissions</span>
+      <h2 class="section-title">Works of Enduring <em>Illumination</em></h2>
+      <p class="section-sub" style="margin: 1.5rem auto 0; text-align: center;">Each piece begins with a consultation, progresses through meticulous preparation, and culminates in an artefact that transcends its era.</p>
+    </div>
+    <div class="collection-grid">
+      <div class="collection-item">
+        <img src="images/product-1.webp" alt="Book of Hours commission" loading="lazy" />
+        <div class="collection-overlay">
+          <div class="collection-tag">Signature Commission</div>
+          <div class="collection-name">Book of Hours</div>
+          <div class="collection-desc">Devotional manuscript with calendar, prayers, illuminated borders, and gilded miniatures — the pinnacle of medieval personal piety.</div>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/product-2.webp" alt="Wedding manuscript commission" loading="lazy" />
+        <div class="collection-overlay">
+          <div class="collection-tag">Heirloom Piece</div>
+          <div class="collection-name">Wedding Manuscript</div>
+          <div class="collection-desc">Vows and verse rendered in iron-gall ink on calf vellum, adorned with acanthus borders and twin portrait medallions in gold.</div>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/product-3.webp" alt="Family crest illumination" loading="lazy" />
+        <div class="collection-overlay">
+          <div class="collection-tag">Heraldic Record</div>
+          <div class="collection-name">Family Crest &amp; Genealogy</div>
+          <div class="collection-desc">Armorial bearings researched, drawn, and blazoned in traditional heraldic colours with gold-raised quarterings and lineage text.</div>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/product-4.webp" alt="Illuminated poem manuscript" loading="lazy" />
+        <div class="collection-overlay">
+          <div class="collection-tag">Literary Gift</div>
+          <div class="collection-name">Illuminated Poem Book</div>
+          <div class="collection-desc">A beloved poem or sonnet transcribed in uncial hand, opened by a historiated initial, with hand-painted foliate borders throughout.</div>
+        </div>
+      </div>
+    </div>
+    <div class="collection-cta">
+      <a href="collection.html" class="btn-secondary">View All Commissions</a>
+    </div>
+  </section>
+
+  <!-- WORKSHOP -->
+  <section class="workshop" id="workshop">
+    <div class="workshop-inner">
+      <div class="workshop-img-stack">
+        <div class="workshop-img-main">
+          <img src="images/ambient-1.webp" alt="Scriptorium workshop interior" loading="lazy" />
+        </div>
+        <div class="workshop-img-secondary">
+          <img src="images/ambient-2.webp" alt="Gold leaf application detail" loading="lazy" />
+        </div>
+      </div>
+      <div class="workshop-content">
+        <span class="section-label">The Workshop</span>
+        <h2 class="workshop-title">A Scriptorium Reborn<br>in the Modern Age</h2>
+        <p class="workshop-text">Our studio occupies a converted stone granary in rural England, where natural north light falls upon inclined writing desks unchanged in form since the twelfth century. We work exclusively by hand — no digital underpainting, no reproduced gilding.</p>
+        <p class="workshop-text">Three master illuminators and two calligraphers share this space, each trained in a different historical tradition. Together, we cover every style from the geometrically severe to the lushly zoomorphic.</p>
+        <ul class="workshop-list">
+          <li>Genuine calf and kidskin vellum, prepared in-house</li>
+          <li>Iron-gall ink ground from oak galls and iron vitriol</li>
+          <li>Shell gold and transfer gold leaf, 23¾ carat</li>
+          <li>Gum ammoniac, Armenian bole, and rabbit-skin gesso</li>
+          <li>Pigments from lapis lazuli, malachite, and vermilion</li>
+        </ul>
+        <a href="about.html" class="btn-secondary">Meet the Illuminators</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="process-header">
+      <span class="section-label">The Method</span>
+      <h2 class="section-title">From Vellum to <em>Illumination</em></h2>
+    </div>
+    <div class="process-timeline">
+      <div class="process-step">
+        <div class="step-num">
+          <div class="step-num-inner">I</div>
+        </div>
+        <div class="step-body">
+          <h3 class="step-title">Consultation &amp; Iconographic Programme</h3>
+          <p class="step-text">We begin with a detailed discussion of your text, intent, and the historical period you wish to invoke. From this we draft an iconographic programme — a plan that assigns imagery, borders, and gilding to each page opening.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">
+          <div class="step-num-inner">II</div>
+        </div>
+        <div class="step-body">
+          <h3 class="step-title">Vellum Preparation &amp; Ruling</h3>
+          <p class="step-text">Vellum is scraped, stretched, and pumiced until it accepts ink without bleed. Lead point or dry-point ruling establishes the text block. Every sheet is handled with the gravity it deserves.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">
+          <div class="step-num-inner">III</div>
+        </div>
+        <div class="step-body">
+          <h3 class="step-title">Calligraphic Transcription</h3>
+          <p class="step-text">The chosen script — Uncial, Carolingian, Gothic Textura, or another — is written with a hand-cut quill or reed pen. No corrections are permissible; flawed sheets are discarded and begun again.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">
+          <div class="step-num-inner">IV</div>
+        </div>
+        <div class="step-body">
+          <h3 class="step-title">Gilding &amp; Gesso Raising</h3>
+          <p class="step-text">Raised gilding begins with a gesso ground applied in multiple coats, allowed to dry, then polished smooth. Gold leaf is laid and burnished with an agate stone to achieve the mirror finish seen in the great medieval bibles.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">
+          <div class="step-num-inner">V</div>
+        </div>
+        <div class="step-body">
+          <h3 class="step-title">Illumination &amp; Painting</h3>
+          <p class="step-text">Ground mineral pigments are bound in gum arabic and applied with sable brushes of a single hair's width. Layers are built up slowly, shadows and highlights glazed over weeks, until the colours achieve their medieval luminosity.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">
+          <div class="step-num-inner">VI</div>
+        </div>
+        <div class="step-body">
+          <h3 class="step-title">Binding &amp; Delivery</h3>
+          <p class="step-text">Folios are gathered into quires and sewn onto leather-covered oak boards using Coptic or medieval chain-stitch bindings. The finished work is packed in archival tissue and shipped in a bespoke oak presentation casket.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="heritage-inner">
+      <div class="heritage-content">
+        <span class="section-label">Medieval Heritage</span>
+        <h2 class="section-title">Seven Centuries of<br>Unbroken <em>Tradition</em></h2>
+        <blockquote class="heritage-quote">
+          "The pen is the tongue of the mind." — Miguel de Cervantes, echoing what every illuminator already knew.
+        </blockquote>
+        <p class="heritage-text">The scriptorium was the nerve-centre of medieval intellectual life. Within its disciplined silence, monks and lay scribes preserved the totality of antique knowledge, rendering it not merely legible but beautiful — a demonstration that sacred text deserved sacred form.</p>
+        <p class="heritage-text">Our studio inherits this conviction. Every decision — the weight of a stroke, the geometry of an initial, the tint of a parchment ground — is made in dialogue with eight hundred years of accumulated practice. We are not imitators. We are continuators.</p>
+        <a href="about.html" class="btn-secondary">Our History</a>
+      </div>
+      <div class="heritage-media">
+        <div class="heritage-img-wrap">
+          <img src="images/ambient-3.webp" alt="Medieval manuscript detail" loading="lazy" />
+        </div>
+        <div class="heritage-badge">
+          <div class="heritage-badge-year">Est.<br>1997</div>
+          <div class="heritage-badge-text">Master Illuminators</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="testimonials-header">
+      <span class="section-label">Patrons</span>
+      <h2 class="section-title">Words of <em>Commendation</em></h2>
+    </div>
+    <div class="swiper testimonials-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-quote-mark">"</div>
+            <p class="testimonial-text">The Book of Hours created for our family is beyond anything I imagined possible in the modern era. The gold catches light exactly as I have seen in museum manuscripts. It is an object of genuine power.</p>
+            <div class="testimonial-author">
+              <div class="author-line"></div>
+              <span class="author-name">Lady Constance Whitmore-Hale</span>
+              <span class="author-title">— Somerset, England</span>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-quote-mark">"</div>
+            <p class="testimonial-text">I commissioned a genealogical manuscript for my father's eightieth birthday. The Scriptorium team took eight months. The result reduced him to tears. No other gift I have given came remotely close.</p>
+            <div class="testimonial-author">
+              <div class="author-line"></div>
+              <span class="author-name">Prof. Alistair Mackinnon</span>
+              <span class="author-title">— Edinburgh, Scotland</span>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-quote-mark">"</div>
+            <p class="testimonial-text">Our wedding vows, written in Gothic Textura on calf vellum with a gilded initial — it hangs in our home's entrance hall. Every guest asks where we found something so extraordinary. The Scriptorium is simply incomparable.</p>
+            <div class="testimonial-author">
+              <div class="author-line"></div>
+              <span class="author-name">Dr. Isabelle &amp; Thomas Vauclaire</span>
+              <span class="author-title">— Lyon, France</span>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-quote-mark">"</div>
+            <p class="testimonial-text">I work with rare books and manuscripts professionally. The Scriptorium's work is indistinguishable in technique from the greatest workshop productions of fifteenth-century Flanders. That is the highest compliment I can offer.</p>
+            <div class="testimonial-author">
+              <div class="author-line"></div>
+              <span class="author-name">Dr. Marta Szymańska</span>
+              <span class="author-title">— Rare Books Curator, Kraków</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION FORM -->
+  <section class="commission-form" id="commission-form">
+    <div class="commission-form-inner">
+      <div class="commission-form-header">
+        <span class="section-label">Begin Your Commission</span>
+        <h2 class="section-title">Write to the <em>Scriptorium</em></h2>
+        <p class="section-sub" style="text-align: center; margin: 1.2rem auto 0;">All commissions begin with a conversation. Tell us about your vision and we shall respond within five working days.</p>
+      </div>
+      <form id="commissionForm" onsubmit="handleSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Your given name" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Surname</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Your family name" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" placeholder="England, France, USA…" />
+          </div>
+          <div class="form-group full">
+            <label for="commissionType">Type of Commission</label>
+            <select id="commissionType" name="commissionType">
+              <option value="">— Select a commission type —</option>
+              <option value="hours">Book of Hours</option>
+              <option value="wedding">Wedding Manuscript</option>
+              <option value="heraldic">Family Crest &amp; Genealogy</option>
+              <option value="poem">Illuminated Poem or Scripture</option>
+              <option value="other">Other — please describe below</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label for="message">Your Vision</label>
+            <textarea id="message" name="message" placeholder="Describe the text, the occasion, the style of illumination you have in mind. The more detail you provide, the richer our conversation will be." required></textarea>
+          </div>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="btn-submit">Send Commission Enquiry</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-name">Scriptorium</div>
+          <p class="footer-brand-text">A medieval manuscript illumination studio dedicated to the art of vellum, quill, and gold leaf. Every commission a testament to the written arts of antiquity.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Navigate</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="collection.html">Commissions</a></li>
+            <li><a href="process.html">Our Process</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Commissions</div>
+          <ul class="footer-links">
+            <li><a href="collection.html#hours">Books of Hours</a></li>
+            <li><a href="collection.html#wedding">Wedding Manuscripts</a></li>
+            <li><a href="collection.html#heraldic">Family Crests</a></li>
+            <li><a href="collection.html#poem">Poem Books</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="mailto:atelier@scriptorium.art">atelier@scriptorium.art</a></li>
+            <li><a href="#">+44 1865 000 000</a></li>
+            <li><a href="#">Stone Granary, Oxfordshire</a></li>
+            <li><a href="contact.html">Commission Enquiry</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2025 Scriptorium. All rights reserved. <span>Written in Gold.</span></div>
+        <div class="footer-ornament">✦ ✦ ✦</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- SplitText polyfill -->
+  <script>
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+  </script>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    /* ─── INIT ───────────────────────────────────────────────────── */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ─── PRELOADER ──────────────────────────────────────────────── */
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      const scrollIndicator = document.getElementById('scroll-indicator');
+
+      setTimeout(() => {
+        preloader.classList.add('hidden');
+        scrollIndicator.classList.add('visible');
+
+        // Hero entrance animations
+        gsap.from('.word-1', {
+          immediateRender: false,
+          opacity: 0, y: 60,
+          duration: 1.4, ease: 'power2.inOut',
+          delay: 0.1
+        });
+        gsap.from('.word-2', {
+          immediateRender: false,
+          opacity: 0, y: 60,
+          duration: 1.4, ease: 'power2.inOut',
+          delay: 0.25
+        });
+        gsap.from('.hero-tagline', {
+          immediateRender: false,
+          opacity: 0, y: 20,
+          duration: 1.2, ease: 'power2.inOut',
+          delay: 0.5
+        });
+        gsap.from('.hero-cta', {
+          immediateRender: false,
+          opacity: 0, y: 20,
+          duration: 1.2, ease: 'power2.inOut',
+          delay: 0.7
+        });
+      }, 1600);
+
+      // Fallback scroll indicator
+      setTimeout(() => {
+        scrollIndicator.classList.add('visible');
+      }, 4000);
+    });
+
+    /* ─── NAVBAR ─────────────────────────────────────────────────── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    /* ─── HAMBURGER ──────────────────────────────────────────────── */
+    document.getElementById('hamburger').addEventListener('click', function () {
+      this.classList.toggle('open');
+    });
+
+    /* ─── HERO TYPE G — SCROLL-DRIVEN TEXT TRANSFORM ─────────────── */
+    const heroSection = document.querySelector('.hero');
+    const heroSticky  = document.querySelector('.hero-sticky');
+    const word1       = document.querySelector('.word-1');
+    const word2       = document.querySelector('.word-2');
+    const heroBg      = document.querySelector('.hero-bg');
+
+    ScrollTrigger.create({
+      trigger: heroSection,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => {
+        const p = self.progress;
+
+        // Scale words outward
+        const scale = 1 + p * 0.55;
+        const spread = p * 40;
+        word1.style.transform = `translateX(-${spread}px) scale(${scale})`;
+        word2.style.transform = `translateX(${spread}px) scale(${scale})`;
+
+        // Letter spacing expansion
+        const ls = -0.01 + p * 0.35;
+        word1.style.letterSpacing = `${ls}em`;
+        word2.style.letterSpacing = `${ls}em`;
+
+        // Fade tagline and CTA on scroll start
+        const fadeOut = Math.max(0, 1 - p * 5);
+        document.querySelector('.hero-tagline').style.opacity = fadeOut;
+        document.querySelector('.hero-cta').style.opacity = fadeOut;
+
+        // Parallax on background
+        heroBg.style.transform = `scale(${1 + p * 0.12}) translateY(${p * -60}px)`;
+      }
+    });
+
+    /* ─── SCROLL INDICATOR HIDE ON SCROLL ────────────────────────── */
+    window.addEventListener('scroll', () => {
+      const si = document.getElementById('scroll-indicator');
+      if (window.scrollY > 300) si.classList.remove('visible');
+      else if (window.scrollY < 100) si.classList.add('visible');
+    });
+
+    /* ─── STATS COUNTER ANIMATION ────────────────────────────────── */
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(el => {
+      const text = el.textContent.trim();
+      const numMatch = text.match(/^(\d+)/);
+      if (!numMatch) return;
+      const target = parseInt(numMatch[1]);
+      const suffix = text.replace(numMatch[0], '');
+      el.textContent = '0' + suffix;
+
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          gsap.to({ val: 0 }, {
+            val: target,
+            duration: 2,
+            ease: 'power2.out',
+            onUpdate: function() {
+              el.textContent = Math.round(this.targets()[0].val) + suffix;
+            }
+          });
+        }
+      });
+    });
+
+    /* ─── SECTION REVEALS ────────────────────────────────────────── */
+    function revealOnScroll(selector, vars = {}) {
+      document.querySelectorAll(selector).forEach((el, i) => {
+        gsap.from(el, {
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            once: true
+          },
+          opacity: 0,
+          y: vars.y !== undefined ? vars.y : 40,
+          duration: vars.duration || 1.2,
+          ease: vars.ease || 'power2.inOut',
+          delay: vars.stagger ? i * vars.stagger : 0,
+          ...vars
+        });
+      });
+    }
+
+    revealOnScroll('.stat-item', { y: 30, stagger: 0.08 });
+    revealOnScroll('.phil-card', { y: 40, stagger: 0.15 });
+    revealOnScroll('.collection-item', { y: 40, stagger: 0.12 });
+    revealOnScroll('.workshop-img-main', { x: -40, y: 0 });
+    revealOnScroll('.workshop-img-secondary', { x: 40, y: 0, delay: 0.2 });
+    revealOnScroll('.workshop-content', { y: 40 });
+    revealOnScroll('.process-step', { y: 30, stagger: 0.1 });
+    revealOnScroll('.heritage-content', { x: -40, y: 0 });
+    revealOnScroll('.heritage-media', { x: 40, y: 0 });
+    revealOnScroll('.testimonial-card', { y: 30 });
+    revealOnScroll('.commission-form-inner', { y: 40 });
+
+    /* ─── SWIPER ─────────────────────────────────────────────────── */
+    new Swiper('.testimonials-swiper', {
+      slidesPerView: 1,
+      centeredSlides: true,
+      spaceBetween: 40,
+      loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: {
+        768: { slidesPerView: 1.2 }
+      }
+    });
+
+    /* ─── SECTION LABELS ─────────────────────────────────────────── */
+    document.querySelectorAll('.section-label').forEach(el => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+        opacity: 0, x: -20,
+        duration: 0.8, ease: 'power2.out'
+      });
+    });
+
+    document.querySelectorAll('.section-title').forEach(el => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+        opacity: 0, y: 30,
+        duration: 1.2, ease: 'power2.inOut'
+      });
+    });
+
+    /* ─── FORM SUBMIT ────────────────────────────────────────────── */
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      btn.textContent = 'Enquiry Received — We Shall Write';
+      btn.style.background = 'var(--accent-dark)';
+      btn.style.cursor = 'default';
+      btn.disabled = true;
+    }
+  </script>
+</body>
+</html>

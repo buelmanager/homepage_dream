@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BRODERIE — Every Stitch, a Meditation | Fine Hand Embroidery Studio</title>
+  <meta name="description" content="BRODERIE is a fine hand embroidery studio offering couture embroidery, bridal pieces, wall art, and heirloom needlework. Every stitch, a meditation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    /* ========== CSS CUSTOM PROPERTIES ========== */
+    :root {
+      --bg: #1A0A0E;
+      --surface: #241016;
+      --surface2: #2C1420;
+      --accent: #C96A8A;
+      --accent-light: #E090A8;
+      --accent-dark: #8A3A5C;
+      --ivory: #F0DCE4;
+      --smoke: #A08088;
+      --muted: #604A52;
+      --border: #200C12;
+      --font-serif: 'Bodoni Moda', 'Didot', serif;
+      --font-sans: 'Work Sans', system-ui, sans-serif;
+      --transition: 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --section-pad: clamp(80px, 10vw, 140px);
+    }
+
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ========== CUSTOM SCROLLBAR ========== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ========== PRELOADER ========== */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .preloader-brand {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+    }
+    .preloader-line {
+      width: 120px;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .preloader-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: var(--accent);
+      animation: preloader-sweep 2s ease-in-out infinite;
+    }
+    @keyframes preloader-sweep {
+      0% { left: -100%; }
+      50% { left: 0; }
+      100% { left: 100%; }
+    }
+    .preloader-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    /* ========== SCROLL INDICATOR ========== */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.6s;
+    }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-indicator.hidden { opacity: 0; pointer-events: none; }
+    .scroll-indicator span {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+    .scroll-mouse {
+      width: 22px;
+      height: 34px;
+      border: 1px solid var(--accent);
+      border-radius: 11px;
+      position: relative;
+    }
+    .scroll-mouse::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 1px;
+      animation: scroll-bob 1.6s ease-in-out infinite;
+    }
+    @keyframes scroll-bob {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+      80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
+    }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background var(--transition), padding var(--transition);
+    }
+    .navbar.scrolled {
+      background: rgba(26, 10, 14, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 16px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent-light); }
+    .nav-cta {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      border: 1px solid var(--accent);
+      padding: 10px 24px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: var(--transition);
+    }
+
+    /* ========== HERO TYPE E — GRID/PATTERN CANVAS ========== */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      min-height: 600px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-grid-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/hero-1.webp');
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+      transform: scale(1.08);
+      transition: transform 8s ease-out;
+    }
+    .hero-bg.loaded { transform: scale(1); }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(26,10,14,0.82) 0%,
+        rgba(26,10,14,0.55) 50%,
+        rgba(26,10,14,0.75) 100%
+      );
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      max-width: 800px;
+      padding: 0 24px;
+    }
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      display: block;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(5rem, 14vw, 12rem);
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      line-height: 0.9;
+      color: var(--ivory);
+      margin-bottom: 28px;
+    }
+    .hero-subtitle {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      color: var(--smoke);
+      letter-spacing: 0.08em;
+      margin-bottom: 48px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .btn-outline {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      border: 1px solid var(--accent);
+      color: var(--ivory);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .btn-outline:hover { background: rgba(201,106,138,0.1); transform: translateY(-2px); }
+
+    /* Hero corner accents */
+    .hero-corner-accents {
+      position: absolute;
+      inset: 28px;
+      z-index: 4;
+      pointer-events: none;
+    }
+    .corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: var(--accent);
+      border-style: solid;
+      opacity: 0.6;
+    }
+    .corner.tl { top: 0; left: 0; border-width: 1px 0 0 1px; }
+    .corner.tr { top: 0; right: 0; border-width: 1px 1px 0 0; }
+    .corner.bl { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
+    .corner.br { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+
+    /* ========== SECTION COMMONS ========== */
+    section { padding: var(--section-pad) 0; }
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 400;
+      color: var(--ivory);
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .section-body {
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.85;
+      max-width: 560px;
+    }
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--accent-dark);
+      margin: 0 auto 60px;
+    }
+
+    /* ========== STATS ========== */
+    .stats-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .stat-item {
+      padding: 60px 40px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: var(--accent);
+      display: block;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* ========== PHILOSOPHY ========== */
+    .philosophy-section { background: var(--bg); }
+    .philosophy-header {
+      text-align: center;
+      margin-bottom: 72px;
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    .philosophy-card {
+      padding: 48px 36px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      transition: border-color 0.4s, transform 0.4s;
+    }
+    .philosophy-card:hover {
+      border-color: var(--accent-dark);
+      transform: translateY(-6px);
+    }
+    .philosophy-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.5s ease;
+    }
+    .philosophy-card:hover::before { height: 100%; }
+    .philosophy-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 24px;
+    }
+    .philosophy-icon svg { width: 100%; height: 100%; stroke: var(--accent); fill: none; }
+    .philosophy-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+    .philosophy-card-text {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.85;
+    }
+
+    /* ========== COLLECTION ========== */
+    .collection-section { background: var(--surface); }
+    .collection-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 60px;
+      gap: 40px;
+    }
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+    .collection-card {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+    }
+    .collection-card:first-child {
+      grid-row: span 2;
+      aspect-ratio: auto;
+    }
+    .collection-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s var(--transition);
+      background: var(--surface2);
+    }
+    .collection-card:hover .collection-img { transform: scale(1.06); }
+    .collection-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 32px;
+      background: linear-gradient(to top, rgba(26,10,14,0.9) 0%, transparent 100%);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.5s, opacity 0.5s;
+    }
+    .collection-card:hover .collection-info { transform: translateY(0); opacity: 1; }
+    .collection-card-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .collection-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--ivory);
+    }
+
+    /* ========== ATELIER ========== */
+    .atelier-section { background: var(--bg); }
+    .atelier-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .atelier-visual {
+      position: relative;
+    }
+    .atelier-main-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      background: var(--surface2);
+    }
+    .atelier-accent-img {
+      position: absolute;
+      width: 45%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      bottom: -36px;
+      right: -36px;
+      border: 3px solid var(--bg);
+      background: var(--surface);
+    }
+    .atelier-text { }
+    .atelier-quote {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: var(--ivory);
+      line-height: 1.6;
+      margin-top: 40px;
+      padding-left: 24px;
+      border-left: 2px solid var(--accent);
+    }
+
+    /* ========== PROCESS ========== */
+    .process-section { background: var(--surface2); }
+    .process-header { text-align: center; margin-bottom: 72px; }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 32px;
+      left: calc(12.5%);
+      right: calc(12.5%);
+      height: 1px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .process-step {
+      text-align: center;
+      padding: 0 28px;
+      position: relative;
+      z-index: 1;
+    }
+    .process-num {
+      width: 64px;
+      height: 64px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      color: var(--accent);
+      background: var(--surface2);
+    }
+    .process-step-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .process-step-text {
+      font-size: 0.8rem;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+
+    /* ========== HERITAGE ========== */
+    .heritage-section { background: var(--surface); }
+    .heritage-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .heritage-visual {
+      position: relative;
+    }
+    .heritage-img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      background: var(--surface2);
+    }
+    .heritage-badge {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 100px;
+      height: 100px;
+      background: var(--accent-dark);
+      border: 1px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .heritage-badge-num {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      color: var(--ivory);
+      line-height: 1;
+    }
+    .heritage-badge-text {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+    }
+    .heritage-list {
+      list-style: none;
+      margin-top: 40px;
+    }
+    .heritage-list li {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--smoke);
+    }
+    .heritage-list li::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      flex-shrink: 0;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    }
+
+    /* ========== TESTIMONIALS ========== */
+    .testimonials-section { background: var(--bg); }
+    .testimonials-header { text-align: center; margin-bottom: 60px; }
+    .swiper-testimonials { overflow: hidden; }
+    .swiper-slide-testimonial {
+      padding: 52px 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .testimonial-stars {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 28px;
+    }
+    .star {
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+    .testimonial-body {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--ivory);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .testimonial-author {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .swiper-pagination-bullet {
+      background: var(--muted) !important;
+      opacity: 1 !important;
+      width: 6px;
+      height: 6px;
+    }
+    .swiper-pagination-bullet-active { background: var(--accent) !important; }
+
+    /* ========== COMMISSION ========== */
+    .commission-section {
+      background: var(--surface2);
+    }
+    .commission-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .commission-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color 0.3s;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-group select option { background: var(--bg); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .commission-info {}
+    .commission-details { margin-top: 40px; display: flex; flex-direction: column; gap: 20px; }
+    .commission-detail-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .detail-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .detail-icon svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; }
+    .detail-content-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+    .detail-content-text { font-size: 0.82rem; color: var(--smoke); }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 0 40px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+    .footer-brand-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--smoke);
+      margin-bottom: 24px;
+    }
+    .footer-brand-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 280px;
+    }
+    .footer-col-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .footer-col-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-col-links a {
+      font-size: 0.8rem;
+      color: var(--smoke);
+      transition: color 0.3s;
+    }
+    .footer-col-links a:hover { color: var(--accent-light); }
+    .footer-bottom {
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ========== MOBILE MENU ========== */
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 990;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .nav-mobile.open { display: flex; }
+    .nav-mobile a {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      color: var(--ivory);
+      letter-spacing: 0.1em;
+      transition: color 0.3s;
+    }
+    .nav-mobile a:hover { color: var(--accent); }
+    .nav-mobile-close {
+      position: absolute;
+      top: 24px;
+      right: 48px;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      .container { padding: 0 32px; }
+      .navbar { padding: 20px 32px; }
+      .navbar.scrolled { padding: 14px 32px; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-toggle { display: flex; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item { border-bottom: 1px solid var(--border); }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .collection-card:first-child { aspect-ratio: 4/5; grid-row: auto; }
+      .atelier-inner, .heritage-inner, .commission-inner { grid-template-columns: 1fr; gap: 48px; }
+      .atelier-accent-img { right: -16px; bottom: -16px; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); gap: 48px; }
+      .process-steps::before { display: none; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .hero-corner-accents { inset: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-brand">BRODERIE</div>
+    <div class="preloader-line"></div>
+    <div class="preloader-tagline">Fine Hand Embroidery Studio</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollIndicator">
+    <span>Scroll</span>
+    <div class="scroll-mouse"></div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <nav class="nav-mobile" id="navMobile">
+    <button class="nav-mobile-close" id="navClose">Close</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="collection.html">Collection</a>
+    <a href="process.html">Process</a>
+    <a href="contact.html">Commission</a>
+  </nav>
+
+  <!-- NAVBAR -->
+  <header class="navbar" id="navbar">
+    <a href="index.html" class="nav-brand">BRODERIE</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="process.html">Process</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Commission a Piece</a>
+    <div class="nav-toggle" id="navToggle">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <!-- HERO TYPE E -->
+  <section class="hero" id="hero">
+    <canvas class="hero-grid-canvas" id="heroCanvas"></canvas>
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-eyebrow">Fine Hand Embroidery Since 1995</span>
+      <h1 class="hero-title" id="heroTitle">BRODERIE</h1>
+      <p class="hero-subtitle" id="heroSubtitle">Every Stitch, a Meditation</p>
+      <div class="hero-ctas">
+        <a href="collection.html" class="btn-primary">The Collection</a>
+        <a href="contact.html" class="btn-outline">Commission a Piece</a>
+      </div>
+    </div>
+    <div class="hero-corner-accents">
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number" data-count="30">30</span>
+          <span class="stat-label">Years of Practice</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="1200">1,200+</span>
+          <span class="stat-label">Commissions Completed</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="47">47</span>
+          <span class="stat-label">Stitch Techniques</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="18">18</span>
+          <span class="stat-label">Countries Served</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy-section" id="philosophy">
+    <div class="container">
+      <div class="philosophy-header">
+        <span class="section-label">Our Philosophy</span>
+        <h2 class="section-title">The Art of <em>Slow Making</em></h2>
+        <div class="divider"></div>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <div class="philosophy-icon">
+            <svg viewBox="0 0 40 40" stroke-width="1">
+              <path d="M20 4 L36 20 L20 36 L4 20 Z" />
+              <path d="M20 10 L30 20 L20 30 L10 20 Z" />
+              <circle cx="20" cy="20" r="3" fill="var(--accent)" stroke="none"/>
+            </svg>
+          </div>
+          <h3 class="philosophy-card-title">Meditative Process</h3>
+          <p class="philosophy-card-text">Each piece begins in silence. Our embroiderers enter a state of focused calm before the first needle is threaded, allowing mindfulness to flow into every stitch and knot.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-icon">
+            <svg viewBox="0 0 40 40" stroke-width="1">
+              <circle cx="20" cy="20" r="14" />
+              <path d="M20 6 Q28 13 28 20 Q28 27 20 34 Q12 27 12 20 Q12 13 20 6Z" stroke-dasharray="2,3"/>
+              <line x1="20" y1="6" x2="20" y2="34" />
+              <line x1="6" y1="20" x2="34" y2="20" />
+            </svg>
+          </div>
+          <h3 class="philosophy-card-title">Heirloom Quality</h3>
+          <p class="philosophy-card-text">We use only the finest 100% silk threads, Japanese needles, and archival linen grounds. Every material is chosen to last centuries, not seasons.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-icon">
+            <svg viewBox="0 0 40 40" stroke-width="1">
+              <path d="M8 32 Q14 8 20 16 Q26 24 32 8" />
+              <circle cx="8" cy="32" r="2" fill="var(--accent)" stroke="none"/>
+              <circle cx="20" cy="16" r="2" fill="var(--accent)" stroke="none"/>
+              <circle cx="32" cy="8" r="2" fill="var(--accent)" stroke="none"/>
+            </svg>
+          </div>
+          <h3 class="philosophy-card-title">Narrative Thread</h3>
+          <p class="philosophy-card-text">Every commission carries a story. We collaborate intimately with each client to weave personal symbols, botanical motifs, and familial heritage into enduring textile art.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION PREVIEW -->
+  <section class="collection-section" id="collection">
+    <div class="container">
+      <div class="collection-header">
+        <div>
+          <span class="section-label">The Collection</span>
+          <h2 class="section-title">Works of <em>Singular Beauty</em></h2>
+        </div>
+        <a href="collection.html" class="btn-outline">View All Works</a>
+      </div>
+      <div class="collection-grid">
+        <div class="collection-card">
+          <img class="collection-img" src="images/product-1.webp" alt="Couture Embroidery — botanical silk thread piece" loading="lazy" />
+          <div class="collection-info">
+            <div class="collection-card-label">Couture</div>
+            <div class="collection-card-title">Silk Botanical Series</div>
+          </div>
+        </div>
+        <div class="collection-card">
+          <img class="collection-img" src="images/product-2.webp" alt="Bridal Embroidery — heirloom wedding piece" loading="lazy" />
+          <div class="collection-info">
+            <div class="collection-card-label">Bridal</div>
+            <div class="collection-card-title">Heirloom Bridal Veil</div>
+          </div>
+        </div>
+        <div class="collection-card">
+          <img class="collection-img" src="images/product-3.webp" alt="Wall Art Embroidery — framed needlework" loading="lazy" />
+          <div class="collection-info">
+            <div class="collection-card-label">Wall Art</div>
+            <div class="collection-card-title">Framed Garden Study</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier-section" id="atelier">
+    <div class="container">
+      <div class="atelier-inner">
+        <div class="atelier-visual">
+          <img class="atelier-main-img" src="images/ambient-1.webp" alt="The BRODERIE atelier — a quiet studio of focused making" loading="lazy" />
+          <img class="atelier-accent-img" src="images/hero-2.webp" alt="Silk threads arranged in the atelier" loading="lazy" />
+        </div>
+        <div class="atelier-text">
+          <span class="section-label">The Atelier</span>
+          <h2 class="section-title">A Studio of <em>Sacred Craft</em></h2>
+          <p class="section-body">Nestled in a converted Victorian workshop, the BRODERIE atelier is a place where time slows and intention quickens. Morning light filters through linen curtains onto frames of stretched silk, and the only sound is the whisper of thread through cloth.</p>
+          <p class="section-body" style="margin-top:20px;">Our four master embroiderers each bring decades of training in European goldwork, Japanese Sashiko, and French Broderie Anglaise. The studio accepts only twenty commissions each season to ensure the absolute devotion each piece deserves.</p>
+          <blockquote class="atelier-quote">"We do not make things quickly. We make things forever."</blockquote>
+          <div style="margin-top:40px;">
+            <a href="about.html" class="btn-outline">Discover Our Story</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS OVERVIEW -->
+  <section class="process-section" id="process">
+    <div class="container">
+      <div class="process-header">
+        <span class="section-label">The Process</span>
+        <h2 class="section-title">From <em>Concept</em> to Creation</h2>
+        <div class="divider"></div>
+        <p class="section-body" style="margin:0 auto;text-align:center;">Every commission passes through four sacred stages of creation, each as deliberate and considered as the next.</p>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="process-num">I</div>
+          <h3 class="process-step-title">Consultation</h3>
+          <p class="process-step-text">A deep conversation about vision, heritage, and intent. We listen before we draw, ensuring the final piece resonates with profound personal meaning.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-num">II</div>
+          <h3 class="process-step-title">Design & Transfer</h3>
+          <p class="process-step-text">Our artisans draft the pattern by hand, then transfer it to museum-grade linen using archival methods. No digital shortcuts — only pencil and practiced eye.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-num">III</div>
+          <h3 class="process-step-title">The Stitching</h3>
+          <p class="process-step-text">Thread by thread, the design emerges. Depending on complexity, a single piece may require 200 to 800 hours of focused needlework across several months.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-num">IV</div>
+          <h3 class="process-step-title">Framing & Delivery</h3>
+          <p class="process-step-text">Finished works are mounted on conservation-grade stretchers, framed under museum glass, and delivered with a provenance certificate of authenticity.</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:60px;">
+        <a href="process.html" class="btn-outline">Explore the Full Process</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage-section" id="heritage">
+    <div class="container">
+      <div class="heritage-inner">
+        <div class="heritage-text">
+          <span class="section-label">Heritage & Legacy</span>
+          <h2 class="section-title">Thirty Years of <em>Living Tradition</em></h2>
+          <p class="section-body">Founded in 1995 by master embroiderer Éléonore Voss, BRODERIE has carried forward the unbroken tradition of European fine needlework into the twenty-first century. What began as a one-woman atelier has grown into a studio of four master artisans, each trained in a different classical tradition.</p>
+          <ul class="heritage-list">
+            <li>French Broderie Anglaise &amp; Silk Shading</li>
+            <li>Japanese Sashiko &amp; Kogin-zashi Techniques</li>
+            <li>English Goldwork &amp; Metal Thread Embroidery</li>
+            <li>Hungarian Kalocsa Folk Embroidery Tradition</li>
+            <li>Hardanger Whitework &amp; Needle Lace</li>
+          </ul>
+        </div>
+        <div class="heritage-visual">
+          <img class="heritage-img" src="images/ambient-2.webp" alt="Heritage needlework collection at the BRODERIE atelier" loading="lazy" />
+          <div class="heritage-badge">
+            <span class="heritage-badge-num">30</span>
+            <span class="heritage-badge-text">Years of<br>Excellence</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="testimonials-header">
+        <span class="section-label">Client Voices</span>
+        <h2 class="section-title">Words from <em>Those Who Wait</em></h2>
+        <div class="divider"></div>
+      </div>
+      <div class="swiper swiper-testimonials" id="testimonialsSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide swiper-slide-testimonial">
+            <div class="testimonial-stars">
+              <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+            </div>
+            <p class="testimonial-body">"The bridal veil BRODERIE created for my daughter's wedding was beyond anything I could have imagined. It has already become a family heirloom we will pass through generations. The craftsmanship is breathtaking."</p>
+            <span class="testimonial-author">— Constance P., London, United Kingdom</span>
+          </div>
+          <div class="swiper-slide swiper-slide-testimonial">
+            <div class="testimonial-stars">
+              <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+            </div>
+            <p class="testimonial-body">"I commissioned a wall piece incorporating my grandmother's garden and my late mother's initials. What arrived six months later reduced me to tears. BRODERIE understood everything I could not say out loud."</p>
+            <span class="testimonial-author">— Yuki T., Kyoto, Japan</span>
+          </div>
+          <div class="swiper-slide swiper-slide-testimonial">
+            <div class="testimonial-stars">
+              <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+            </div>
+            <p class="testimonial-body">"As a couture house, we have collaborated with many artisan studios. BRODERIE stands utterly apart. Their silk shading technique gives fabric a luminosity that no digital method can replicate. An irreplaceable creative partner."</p>
+            <span class="testimonial-author">— Maison Aurel, Paris, France</span>
+          </div>
+          <div class="swiper-slide swiper-slide-testimonial">
+            <div class="testimonial-stars">
+              <span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span>
+            </div>
+            <p class="testimonial-body">"The wait is the experience. When my commission arrived after nine months, I understood what patience truly means. Every hour of work is visible in the piece. It is not decoration — it is devotion."</p>
+            <span class="testimonial-author">— Henrik M., Stockholm, Sweden</span>
+          </div>
+        </div>
+        <div class="swiper-pagination" style="margin-top:40px;position:relative;bottom:auto;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMISSION CTA -->
+  <section class="commission-section" id="commission">
+    <div class="container">
+      <div class="commission-inner">
+        <div class="commission-info">
+          <span class="section-label">Begin a Commission</span>
+          <h2 class="section-title">Entrust Us with <em>Your Story</em></h2>
+          <p class="section-body">Every commission begins with a conversation. Share your vision, your timeline, and the emotion you wish to preserve. We accept a limited number of pieces each season to honour the time each work deserves.</p>
+          <div class="commission-details">
+            <div class="commission-detail-item">
+              <div class="detail-icon">
+                <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+              </div>
+              <div>
+                <div class="detail-content-title">Timeline</div>
+                <div class="detail-content-text">12 to 36 weeks depending on complexity and current studio schedule</div>
+              </div>
+            </div>
+            <div class="commission-detail-item">
+              <div class="detail-icon">
+                <svg viewBox="0 0 16 16"><path d="M2 4h12v9a1 1 0 01-1 1H3a1 1 0 01-1-1V4z"/><path d="M5 4V3a1 1 0 011-1h4a1 1 0 011 1v1"/></svg>
+              </div>
+              <div>
+                <div class="detail-content-title">Investment</div>
+                <div class="detail-content-text">Starting from £1,800 for small pieces; bespoke pricing on consultation</div>
+              </div>
+            </div>
+            <div class="commission-detail-item">
+              <div class="detail-icon">
+                <svg viewBox="0 0 16 16"><path d="M13 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1z"/><path d="M5 8h6M5 5h6M5 11h4"/></svg>
+              </div>
+              <div>
+                <div class="detail-content-title">Certificate</div>
+                <div class="detail-content-text">All works delivered with a signed provenance certificate and care guide</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="commission-form-wrap">
+          <form class="commission-form" id="commissionForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" placeholder="Constance" />
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" placeholder="Pemberton" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="constance@email.com" />
+            </div>
+            <div class="form-group">
+              <label for="pieceType">Type of Piece</label>
+              <select id="pieceType">
+                <option value="">Select a category</option>
+                <option value="couture">Couture Embroidery</option>
+                <option value="bridal">Bridal Piece</option>
+                <option value="wall-art">Wall Art</option>
+                <option value="heirloom">Personal Heirloom</option>
+                <option value="corporate">Corporate Commission</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="vision">Your Vision</label>
+              <textarea id="vision" rows="5" placeholder="Describe the story you wish to preserve in thread..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="border:none;cursor:pointer;font-family:var(--font-sans);">Begin the Conversation</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-name">BRODERIE</div>
+          <div class="footer-brand-tagline">Every Stitch, a Meditation</div>
+          <p class="footer-brand-text">A fine hand embroidery studio dedicated to the art of slow, intentional needlework. Accepting commissions by appointment, worldwide.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Navigation</div>
+          <ul class="footer-col-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About the Studio</a></li>
+            <li><a href="collection.html">The Collection</a></li>
+            <li><a href="process.html">Our Process</a></li>
+            <li><a href="contact.html">Commission</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Techniques</div>
+          <ul class="footer-col-links">
+            <li><a href="process.html">Silk Shading</a></li>
+            <li><a href="process.html">Goldwork</a></li>
+            <li><a href="process.html">Sashiko</a></li>
+            <li><a href="process.html">Whitework</a></li>
+            <li><a href="process.html">Hardanger</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-col-links">
+            <li><a href="mailto:hello@broderie-studio.com">hello@broderie-studio.com</a></li>
+            <li><a href="contact.html">Commission Form</a></li>
+            <li><a href="about.html">Studio Address</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2025 BRODERIE Fine Embroidery Studio. All rights reserved.</span>
+        <span>Every stitch, a meditation.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    /* ========== SPLITTEXT POLYFILL ========== */
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+
+    /* ========== GSAP SETUP ========== */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ========== HERO CANVAS GRID ========== */
+    (function initHeroCanvas() {
+      const canvas = document.getElementById('heroCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W, H, animId;
+      let dots = [];
+      let t = 0;
+
+      function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+        buildDots();
+      }
+
+      function buildDots() {
+        dots = [];
+        const spacing = 38;
+        const cols = Math.ceil(W / spacing) + 2;
+        const rows = Math.ceil(H / spacing) + 2;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            dots.push({
+              x: c * spacing - spacing / 2,
+              y: r * spacing - spacing / 2,
+              ox: c * spacing - spacing / 2,
+              oy: r * spacing - spacing / 2,
+              phase: Math.random() * Math.PI * 2,
+              amp: 1.5 + Math.random() * 2
+            });
+          }
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        t += 0.012;
+
+        // Draw fine grid lines
+        ctx.strokeStyle = 'rgba(201,106,138,0.07)';
+        ctx.lineWidth = 0.5;
+        const spacing = 38;
+        for (let x = 0; x < W + spacing; x += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, H);
+          ctx.stroke();
+        }
+        for (let y = 0; y < H + spacing; y += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(W, y);
+          ctx.stroke();
+        }
+
+        // Animated dot grid
+        ctx.fillStyle = 'rgba(201,106,138,0.12)';
+        for (let i = 0; i < dots.length; i++) {
+          const d = dots[i];
+          const pulse = Math.sin(t + d.phase) * d.amp;
+          const glow = (Math.sin(t * 0.7 + d.phase) + 1) / 2;
+          const alpha = 0.06 + glow * 0.18;
+          const radius = 1.2 + glow * 1.5;
+          ctx.globalAlpha = alpha;
+          ctx.beginPath();
+          ctx.arc(d.ox + pulse, d.oy + pulse * 0.5, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        // Diagonal accent lines (cross-stitch pattern)
+        ctx.strokeStyle = 'rgba(201,106,138,0.05)';
+        ctx.lineWidth = 0.5;
+        const diagSpacing = 76;
+        for (let x = -H; x < W + H; x += diagSpacing) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x + H, H);
+          ctx.stroke();
+        }
+
+        animId = requestAnimationFrame(draw);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      draw();
+    })();
+
+    /* ========== PRELOADER ========== */
+    window.addEventListener('load', function() {
+      const preloader = document.getElementById('preloader');
+      const scrollIndicator = document.getElementById('scrollIndicator');
+      const heroBg = document.getElementById('heroBg');
+
+      gsap.to(preloader, {
+        duration: 0.8,
+        delay: 1.6,
+        opacity: 0,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          preloader.style.display = 'none';
+          if (heroBg) heroBg.classList.add('loaded');
+          // Show scroll indicator after preloader
+          setTimeout(() => {
+            scrollIndicator.classList.add('visible');
+          }, 400);
+          // Animate hero content
+          animateHero();
+        }
+      });
+
+      // Fallback scroll indicator
+      setTimeout(() => {
+        scrollIndicator.classList.add('visible');
+      }, 4000);
+    });
+
+    function animateHero() {
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        ease: 'power2.inOut',
+        delay: 0.1
+      });
+
+      const titleSplit = new SplitText('#heroTitle', { type: 'chars' });
+      if (titleSplit.chars.length > 0) {
+        gsap.from(titleSplit.chars, {
+          immediateRender: false,
+          opacity: 0,
+          y: 60,
+          duration: 1.0,
+          ease: 'power2.inOut',
+          stagger: 0.07,
+          delay: 0.3
+        });
+      }
+
+      gsap.from('#heroSubtitle', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.2,
+        ease: 'power2.inOut',
+        delay: 0.9
+      });
+
+      gsap.from('.hero-ctas', {
+        immediateRender: false,
+        opacity: 0,
+        y: 40,
+        duration: 1.0,
+        ease: 'power2.inOut',
+        delay: 1.2
+      });
+
+      gsap.from('.corner', {
+        immediateRender: false,
+        opacity: 0,
+        scale: 0.5,
+        duration: 1.4,
+        ease: 'power2.inOut',
+        stagger: 0.1,
+        delay: 0.4
+      });
+    }
+
+    /* ========== NAVBAR ========== */
+    const navbar = document.getElementById('navbar');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+        scrollIndicator.classList.add('hidden');
+      } else {
+        navbar.classList.remove('scrolled');
+        scrollIndicator.classList.remove('hidden');
+      }
+    });
+
+    /* ========== MOBILE NAV ========== */
+    const navToggle = document.getElementById('navToggle');
+    const navMobile = document.getElementById('navMobile');
+    const navClose = document.getElementById('navClose');
+
+    navToggle.addEventListener('click', () => navMobile.classList.add('open'));
+    navClose.addEventListener('click', () => navMobile.classList.remove('open'));
+    navMobile.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navMobile.classList.remove('open')));
+
+    /* ========== SCROLL ANIMATIONS ========== */
+    // Stats
+    gsap.from('.stat-item', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: '.stats-section',
+        start: 'top 80%'
+      }
+    });
+
+    // Philosophy cards
+    gsap.from('.philosophy-card', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: '.philosophy-grid',
+        start: 'top 80%'
+      }
+    });
+
+    // Philosophy header
+    gsap.from('.philosophy-header', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.philosophy-header',
+        start: 'top 85%'
+      }
+    });
+
+    // Collection
+    gsap.from('.collection-card', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: '.collection-grid',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.collection-header', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.collection-header',
+        start: 'top 85%'
+      }
+    });
+
+    // Atelier
+    gsap.from('.atelier-visual', {
+      immediateRender: false,
+      opacity: 0,
+      x: -50,
+      duration: 1.4,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.atelier-inner',
+        start: 'top 75%'
+      }
+    });
+
+    gsap.from('.atelier-text', {
+      immediateRender: false,
+      opacity: 0,
+      x: 50,
+      duration: 1.4,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.atelier-inner',
+        start: 'top 75%'
+      }
+    });
+
+    // Process steps
+    gsap.from('.process-step', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: '.process-steps',
+        start: 'top 80%'
+      }
+    });
+
+    gsap.from('.process-header', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.process-header',
+        start: 'top 85%'
+      }
+    });
+
+    // Heritage
+    gsap.from('.heritage-text', {
+      immediateRender: false,
+      opacity: 0,
+      x: -50,
+      duration: 1.4,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.heritage-inner',
+        start: 'top 75%'
+      }
+    });
+
+    gsap.from('.heritage-visual', {
+      immediateRender: false,
+      opacity: 0,
+      x: 50,
+      duration: 1.4,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.heritage-inner',
+        start: 'top 75%'
+      }
+    });
+
+    // Testimonials
+    gsap.from('.testimonials-header', {
+      immediateRender: false,
+      opacity: 0,
+      y: 40,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.testimonials-header',
+        start: 'top 85%'
+      }
+    });
+
+    // Commission
+    gsap.from('.commission-info', {
+      immediateRender: false,
+      opacity: 0,
+      x: -50,
+      duration: 1.4,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.commission-inner',
+        start: 'top 75%'
+      }
+    });
+
+    gsap.from('.commission-form-wrap', {
+      immediateRender: false,
+      opacity: 0,
+      x: 50,
+      duration: 1.4,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: '.commission-inner',
+        start: 'top 75%'
+      }
+    });
+
+    /* ========== TESTIMONIALS SWIPER ========== */
+    new Swiper('#testimonialsSwiper', {
+      loop: true,
+      autoplay: { delay: 6000, disableOnInteraction: false },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      slidesPerView: 1,
+      speed: 800
+    });
+
+    /* ========== FORM SUBMIT ========== */
+    document.getElementById('commissionForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = this.querySelector('button[type="submit"]');
+      const orig = btn.textContent;
+      btn.textContent = 'Request Received — We Will Be in Touch';
+      btn.style.background = 'var(--accent-dark)';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+        this.reset();
+      }, 4000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INTONACO — Painting the World's Walls</title>
+  <meta name="description" content="Renaissance fresco and mural art studio. We breathe ancient technique into monumental walls — bespoke commissions, restoration, and architectural art of enduring grandeur.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    /* ===== RESET & ROOT ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #130F1A;
+      --surface: #1C1626;
+      --surface2: #231D30;
+      --accent: #9B6EDB;
+      --accent-light: #B894EE;
+      --accent-dark: #6840A8;
+      --ivory: #EAE0F8;
+      --smoke: #907890;
+      --muted: #544860;
+      --border: #181420;
+      --font-serif: 'Spectral', Georgia, serif;
+      --font-sans: 'Mulish', sans-serif;
+      --max-w: 1280px;
+      --section-pad: clamp(80px, 10vw, 140px);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    img { display: block; width: 100%; object-fit: cover; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 32px;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+    .pre-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+    }
+    .pre-line {
+      width: 280px; height: 1px;
+      background: var(--muted);
+      position: relative; overflow: hidden;
+    }
+    .pre-line::after {
+      content: '';
+      position: absolute; left: -100%; top: 0; height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: preload-line 2s ease-in-out forwards;
+    }
+    @keyframes preload-line { to { left: 100%; } }
+    .pre-sub {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    /* ===== SCROLL INDICATOR ===== */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 36px; left: 50%; transform: translateX(-50%);
+      z-index: 100;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0; transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-indicator span {
+      font-size: 0.65rem; letter-spacing: 0.25em;
+      color: var(--smoke); text-transform: uppercase;
+    }
+    .scroll-mouse {
+      width: 22px; height: 36px;
+      border: 1px solid var(--muted);
+      border-radius: 12px;
+      position: relative; display: flex; justify-content: center;
+    }
+    .scroll-mouse::after {
+      content: '';
+      width: 3px; height: 8px;
+      background: var(--accent);
+      border-radius: 2px;
+      position: absolute; top: 6px;
+      animation: scroll-wheel 1.6s ease-in-out infinite;
+    }
+    @keyframes scroll-wheel {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(14px); }
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed; top: 0; left: 0; width: 100%;
+      z-index: 500; padding: 20px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(19, 15, 26, 0.94);
+      backdrop-filter: blur(12px);
+      padding: 14px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.25rem; font-weight: 300;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.75rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--smoke);
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent-light); }
+    .nav-cta {
+      font-size: 0.72rem; letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      color: var(--accent-light);
+      padding: 9px 22px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; background: none; border: none;
+    }
+    .nav-hamburger span { width: 24px; height: 1px; background: var(--ivory); display: block; transition: 0.3s; }
+    .nav-mobile {
+      display: none; position: fixed; inset: 0; z-index: 490;
+      background: rgba(19, 15, 26, 0.98);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 36px;
+    }
+    .nav-mobile.open { display: flex; }
+    .nav-mobile a {
+      font-family: var(--font-serif);
+      font-size: 2rem; font-weight: 300;
+      letter-spacing: 0.1em; color: var(--ivory);
+    }
+    .nav-mobile-close {
+      position: absolute; top: 24px; right: 36px;
+      background: none; border: none; color: var(--ivory);
+      font-size: 1.8rem; cursor: pointer; line-height: 1;
+    }
+
+    /* ===== HERO TYPE E ===== */
+    .hero {
+      position: relative; height: 100vh; min-height: 700px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-grid-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      z-index: 1; pointer-events: none;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background-size: cover; background-position: center;
+      transform: scale(1.06);
+      transition: transform 8s ease;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 2;
+      background: linear-gradient(
+        to bottom,
+        rgba(19, 15, 26, 0.55) 0%,
+        rgba(19, 15, 26, 0.4) 40%,
+        rgba(19, 15, 26, 0.75) 100%
+      );
+    }
+    .hero-content {
+      position: relative; z-index: 3;
+      text-align: center;
+      max-width: 900px; padding: 0 24px;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--accent-light);
+      margin-bottom: 28px;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(4.5rem, 12vw, 10rem);
+      font-weight: 300; letter-spacing: 0.18em;
+      line-height: 1; color: var(--ivory);
+      margin-bottom: 24px;
+    }
+    .hero-subtitle {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      font-weight: 300; font-style: italic;
+      color: var(--smoke); margin-bottom: 48px;
+      letter-spacing: 0.06em;
+    }
+    .hero-ctas { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 16px 40px;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-block;
+      border: 1px solid var(--smoke);
+      color: var(--ivory);
+      font-size: 0.75rem; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 16px 40px;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent-light); }
+    .hero-corner-accents { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+    .corner {
+      position: absolute; width: 44px; height: 44px;
+    }
+    .corner.tl { top: 36px; left: 36px; border-top: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+    .corner.tr { top: 36px; right: 36px; border-top: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+    .corner.bl { bottom: 36px; left: 36px; border-bottom: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+    .corner.br { bottom: 36px; right: 36px; border-bottom: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+
+    /* ===== STATS STRIP ===== */
+    .stats-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 40px;
+    }
+    .stats-inner {
+      max-width: var(--max-w); margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .stat-item {
+      text-align: center; padding: 0 20px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 300; color: var(--accent-light);
+      line-height: 1; display: block; margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 0.72rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--smoke);
+    }
+
+    /* ===== SECTION COMMON ===== */
+    section { position: relative; }
+    .section-label {
+      font-size: 0.68rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 20px; display: block;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 300; color: var(--ivory);
+      line-height: 1.2; margin-bottom: 24px;
+    }
+    .section-body {
+      font-size: 0.95rem; color: var(--smoke);
+      max-width: 640px; line-height: 1.85;
+    }
+    .divider {
+      width: 48px; height: 1px;
+      background: var(--accent); margin: 28px 0;
+    }
+
+    /* ===== PHILOSOPHY ===== */
+    .philosophy {
+      padding: var(--section-pad) 40px;
+      background: var(--bg);
+    }
+    .philosophy-inner {
+      max-width: var(--max-w); margin: 0 auto;
+    }
+    .philosophy-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: end;
+      margin-bottom: 80px;
+    }
+    .philosophy-header-right { color: var(--smoke); font-size: 0.95rem; line-height: 1.85; }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .philo-card {
+      background: var(--surface);
+      padding: 48px 40px;
+      transition: background 0.3s ease;
+    }
+    .philo-card:hover { background: var(--surface2); }
+    .philo-num {
+      font-family: var(--font-serif);
+      font-size: 3.5rem; font-weight: 300;
+      color: var(--accent-dark); line-height: 1;
+      margin-bottom: 24px;
+    }
+    .philo-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem; font-weight: 400;
+      color: var(--ivory); margin-bottom: 16px;
+    }
+    .philo-text { font-size: 0.875rem; color: var(--smoke); line-height: 1.8; }
+
+    /* ===== PORTFOLIO ===== */
+    .portfolio {
+      padding: var(--section-pad) 40px;
+      background: var(--surface);
+    }
+    .portfolio-inner { max-width: var(--max-w); margin: 0 auto; }
+    .portfolio-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; margin-bottom: 64px;
+      flex-wrap: wrap; gap: 24px;
+    }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto;
+      gap: 1px;
+      background: var(--border);
+      overflow: visible;
+    }
+    .port-card {
+      position: relative; overflow: hidden;
+      background: var(--bg);
+    }
+    .port-card:nth-child(1) { grid-column: 1 / 8; grid-row: 1 / 2; aspect-ratio: 16/10; }
+    .port-card:nth-child(2) { grid-column: 8 / 13; grid-row: 1 / 2; aspect-ratio: 16/10; }
+    .port-card:nth-child(3) { grid-column: 1 / 5; grid-row: 2 / 3; aspect-ratio: 4/3; }
+    .port-card:nth-child(4) { grid-column: 5 / 9; grid-row: 2 / 3; aspect-ratio: 4/3; }
+    .port-card:nth-child(5) { grid-column: 9 / 13; grid-row: 2 / 3; aspect-ratio: 4/3; }
+    .port-card img { height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+    .port-card:hover img { transform: scale(1.05); }
+    .port-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(19,15,26,0.88) 0%, transparent 60%);
+      display: flex; align-items: flex-end;
+      padding: 32px; opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .port-card:hover .port-overlay { opacity: 1; }
+    .port-info { color: var(--ivory); }
+    .port-cat {
+      font-size: 0.65rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--accent-light);
+      margin-bottom: 6px; display: block;
+    }
+    .port-name { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; }
+    .port-link {
+      display: inline-block; margin-top: 60px;
+      font-size: 0.75rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent-light);
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 4px;
+      transition: color 0.3s ease;
+    }
+    .port-link:hover { color: var(--ivory); }
+
+    /* ===== ATELIER ===== */
+    .atelier {
+      padding: var(--section-pad) 0;
+      background: var(--bg);
+    }
+    .atelier-inner {
+      max-width: var(--max-w); margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: 620px;
+    }
+    .atelier-image { position: relative; overflow: hidden; }
+    .atelier-image img { height: 100%; object-fit: cover; }
+    .atelier-content {
+      padding: 80px 80px 80px 72px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .atelier-quote {
+      font-family: var(--font-serif);
+      font-size: 1.5rem; font-weight: 300; font-style: italic;
+      color: var(--ivory); line-height: 1.6;
+      margin-bottom: 36px;
+      border-left: 2px solid var(--accent);
+      padding-left: 28px;
+    }
+
+    /* ===== PROCESS ===== */
+    .process {
+      padding: var(--section-pad) 40px;
+      background: var(--surface);
+    }
+    .process-inner { max-width: var(--max-w); margin: 0 auto; }
+    .process-header { max-width: 560px; margin-bottom: 72px; }
+    .process-steps {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 1px; background: var(--border);
+    }
+    .process-step {
+      background: var(--bg);
+      padding: 40px 28px;
+      position: relative;
+    }
+    .step-num {
+      font-family: var(--font-serif);
+      font-size: 0.75rem; font-weight: 300;
+      color: var(--accent); letter-spacing: 0.2em;
+      display: block; margin-bottom: 20px;
+    }
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem; font-weight: 400;
+      color: var(--ivory); margin-bottom: 16px;
+    }
+    .step-text { font-size: 0.83rem; color: var(--smoke); line-height: 1.75; }
+
+    /* ===== HERITAGE ===== */
+    .heritage {
+      padding: var(--section-pad) 40px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .heritage-inner {
+      max-width: var(--max-w); margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 100px; align-items: center;
+    }
+    .heritage-images {
+      position: relative; height: 600px;
+    }
+    .heritage-img-main {
+      position: absolute; top: 0; left: 0;
+      width: 70%; height: 80%; object-fit: cover;
+    }
+    .heritage-img-accent {
+      position: absolute; bottom: 0; right: 0;
+      width: 56%; height: 56%; object-fit: cover;
+      border: 8px solid var(--bg);
+    }
+    .heritage-tag {
+      position: absolute; bottom: 60px; left: 0;
+      background: var(--accent);
+      color: var(--bg); padding: 12px 24px;
+      font-size: 0.75rem; letter-spacing: 0.18em;
+      text-transform: uppercase; font-weight: 500;
+    }
+    .heritage-facts { margin-top: 40px; }
+    .fact-item {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .fact-item:first-child { border-top: 1px solid var(--border); }
+    .fact-icon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      border: 1px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fact-icon svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; }
+    .fact-text h4 {
+      font-family: var(--font-serif); font-size: 0.95rem;
+      font-weight: 400; color: var(--ivory); margin-bottom: 4px;
+    }
+    .fact-text p { font-size: 0.83rem; color: var(--smoke); }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials {
+      padding: var(--section-pad) 40px;
+      background: var(--surface2);
+    }
+    .testimonials-inner { max-width: var(--max-w); margin: 0 auto; }
+    .testimonials-header { text-align: center; margin-bottom: 64px; }
+    .testimonials-header .section-label { display: block; text-align: center; }
+    .swiper-testimonials { overflow: hidden; }
+    .testimonial-card {
+      background: var(--surface);
+      padding: 52px 48px;
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '\201C';
+      font-family: var(--font-serif);
+      font-size: 8rem; line-height: 0.6;
+      color: var(--accent-dark); opacity: 0.4;
+      position: absolute; top: 36px; left: 36px;
+    }
+    .test-text {
+      font-family: var(--font-serif);
+      font-size: 1.1rem; font-weight: 300; font-style: italic;
+      color: var(--ivory); line-height: 1.75;
+      margin-bottom: 36px; position: relative; z-index: 1;
+    }
+    .test-author { display: flex; align-items: center; gap: 16px; }
+    .test-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%; background: var(--accent-dark);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory);
+      flex-shrink: 0;
+    }
+    .test-name {
+      font-family: var(--font-serif); font-size: 0.95rem;
+      font-weight: 400; color: var(--ivory);
+    }
+    .test-role { font-size: 0.78rem; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--accent); opacity: 0.3; }
+    .swiper-pagination-bullet-active { opacity: 1; }
+
+    /* ===== COMMISSION FORM ===== */
+    .commission {
+      padding: var(--section-pad) 40px;
+      background: var(--bg);
+    }
+    .commission-inner {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
+    }
+    .form-group { margin-bottom: 24px; }
+    label {
+      display: block;
+      font-size: 0.72rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--smoke);
+      margin-bottom: 10px;
+    }
+    input, select, textarea {
+      width: 100%; background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ivory); font-family: var(--font-sans);
+      font-size: 0.9rem; font-weight: 300;
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 120px; }
+    select { background-color: var(--surface); cursor: pointer; }
+    select option { background: var(--surface); }
+    .form-submit {
+      width: 100%;
+      background: var(--accent);
+      border: none; cursor: pointer;
+      color: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      padding: 18px;
+      transition: background 0.3s ease;
+      margin-top: 8px;
+    }
+    .form-submit:hover { background: var(--accent-light); }
+    .commission-info h3 {
+      font-family: var(--font-serif);
+      font-size: 1.5rem; font-weight: 300;
+      color: var(--ivory); margin-bottom: 20px;
+    }
+    .commission-info p { font-size: 0.9rem; color: var(--smoke); line-height: 1.8; margin-bottom: 32px; }
+    .contact-details { list-style: none; }
+    .contact-details li {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 0.875rem; color: var(--smoke);
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .contact-details li:first-child { border-top: 1px solid var(--border); }
+    .c-icon { color: var(--accent); flex-shrink: 0; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 72px 40px 36px;
+    }
+    .footer-inner {
+      max-width: var(--max-w); margin: 0 auto;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px; margin-bottom: 64px;
+    }
+    .footer-brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.5rem; font-weight: 300;
+      letter-spacing: 0.2em; color: var(--ivory);
+      margin-bottom: 16px;
+    }
+    .footer-brand-tagline {
+      font-size: 0.83rem; font-style: italic;
+      font-family: var(--font-serif);
+      color: var(--smoke); line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; color: var(--smoke);
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .footer-social a:hover { border-color: var(--accent); color: var(--accent-light); }
+    .footer-col h4 {
+      font-size: 0.72rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ivory);
+      margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a {
+      font-size: 0.85rem; color: var(--smoke);
+      transition: color 0.3s ease;
+    }
+    .footer-col ul a:hover { color: var(--accent-light); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { font-size: 0.78rem; color: var(--muted); transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--smoke); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-right: 1px solid var(--border); border-top: 1px solid var(--border); }
+      .stat-item:nth-child(4) { border-right: none; border-top: 1px solid var(--border); }
+      .philosophy-header { grid-template-columns: 1fr; gap: 32px; }
+      .philosophy-grid { grid-template-columns: repeat(2, 1fr); }
+      .port-card:nth-child(1) { grid-column: 1 / 13; grid-row: 1 / 2; }
+      .port-card:nth-child(2) { grid-column: 1 / 7; grid-row: 2 / 3; }
+      .port-card:nth-child(3) { grid-column: 7 / 13; grid-row: 2 / 3; }
+      .port-card:nth-child(4) { grid-column: 1 / 7; grid-row: 3 / 4; }
+      .port-card:nth-child(5) { grid-column: 7 / 13; grid-row: 3 / 4; }
+      .atelier-inner { grid-template-columns: 1fr; }
+      .atelier-image { height: 400px; }
+      .atelier-content { padding: 60px 40px; }
+      .process-steps { grid-template-columns: repeat(3, 1fr); }
+      .heritage-inner { grid-template-columns: 1fr; gap: 60px; }
+      .heritage-images { height: 440px; }
+      .commission-inner { grid-template-columns: 1fr; gap: 48px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      .navbar { padding: 16px 24px; }
+      .navbar.scrolled { padding: 12px 24px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .hero-title { font-size: clamp(3rem, 14vw, 5rem); }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .atelier-content { padding: 48px 24px; }
+      .footer-top { grid-template-columns: 1fr; }
+      .commission-inner { gap: 40px; }
+    }
+    @media (max-width: 480px) {
+      .stats-inner { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .process-steps { grid-template-columns: 1fr; }
+      .hero-ctas { flex-direction: column; align-items: center; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="pre-logo">INTONACO</div>
+  <div class="pre-line"></div>
+  <div class="pre-sub">Renaissance Fresco & Mural Studio</div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div class="scroll-indicator" id="scrollIndicator">
+  <div class="scroll-mouse"></div>
+  <span>Scroll</span>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="nav-logo">INTONACO</a>
+  <ul class="nav-links">
+    <li><a href="about.html">Studio</a></li>
+    <li><a href="collection.html">Commissions</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html" class="nav-cta">Inquire</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-mobile" id="navMobile">
+  <button class="nav-mobile-close" id="navClose">&times;</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">Studio</a>
+  <a href="collection.html">Commissions</a>
+  <a href="process.html">Process</a>
+  <a href="contact.html">Inquire</a>
+</div>
+
+<!-- HERO TYPE E -->
+<section class="hero" id="hero">
+  <canvas class="hero-grid-canvas" id="heroCanvas"></canvas>
+  <div class="hero-bg" style="background-image: url('images/hero-1.webp')"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content" id="heroContent">
+    <div class="hero-eyebrow" id="heroEyebrow">Renaissance Art Studio — Est. MMXII</div>
+    <h1 class="hero-title" id="heroTitle">INTONACO</h1>
+    <p class="hero-subtitle" id="heroSubtitle">Painting the World's Walls</p>
+    <div class="hero-ctas" id="heroCtas">
+      <a href="collection.html" class="btn-primary">View Commissions</a>
+      <a href="about.html" class="btn-outline">Our Story</a>
+    </div>
+  </div>
+  <div class="hero-corner-accents">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-num" data-target="340">340</span>
+      <span class="stat-label">Commissions Realized</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="28">28</span>
+      <span class="stat-label">Countries</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="12">12</span>
+      <span class="stat-label">Years of Excellence</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="47">47</span>
+      <span class="stat-label">Master Artisans</span>
+    </div>
+  </div>
+</div>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy" id="philosophy">
+  <div class="philosophy-inner">
+    <div class="philosophy-header">
+      <div class="philosophy-header-left">
+        <span class="section-label">Our Philosophy</span>
+        <h2 class="section-title">Art That Outlasts<br>Its Maker</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="philosophy-header-right">
+        <p>We work in the tradition of Cimabue and Giotto — not as pastiche, but as living practice. True buon fresco demands the wall itself receive pigment while plaster breathes. This irreversible communion between art and architecture is our discipline, our obsession, and our gift to every space we touch.</p>
+      </div>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philo-card">
+        <div class="philo-num">01</div>
+        <h3 class="philo-title">Buon Fresco</h3>
+        <p class="philo-text">We paint exclusively into freshly laid plaster — the ancient method that bonds pigment at the molecular level. Each day's work is final, demanding total mastery and absolute intention.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-num">02</div>
+        <h3 class="philo-title">Mineral Pigments</h3>
+        <p class="philo-text">Synthetic dyes fade, but earth minerals endure centuries. We source every hue — azurite, malachite, ochre, lapis — from the same quarries that supplied the Renaissance masters.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-num">03</div>
+        <h3 class="philo-title">Site Specificity</h3>
+        <p class="philo-text">No two walls are alike. We study light, proportion, and purpose for months before lifting a brush. The mural must feel as if it grew from the architecture, not applied upon it.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-num">04</div>
+        <h3 class="philo-title">Restoration Lineage</h3>
+        <p class="philo-text">Our principals trained under the conservation teams of the Vatican Museums and the Uffizi. Restoration and creation are one practice: you cannot make what you cannot preserve.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-num">05</div>
+        <h3 class="philo-title">Long Commission</h3>
+        <p class="philo-text">We accept fewer than eight projects annually. This is not exclusivity for its own sake but necessity: exceptional fresco cannot be rushed, delegated, or manufactured at scale.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-num">06</div>
+        <h3 class="philo-title">Living Legacy</h3>
+        <p class="philo-text">A completed INTONACO commission carries our conservation guarantee across three generations. We document every layer, every pigment, every plaster formula for the custodians who follow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+  <div class="portfolio-inner">
+    <div class="portfolio-header">
+      <div>
+        <span class="section-label">Selected Commissions</span>
+        <h2 class="section-title">Where Our Work<br>Now Lives</h2>
+      </div>
+      <a href="collection.html" class="port-link">Full Portfolio &rarr;</a>
+    </div>
+    <div class="portfolio-grid">
+      <div class="port-card">
+        <img src="images/hero-2.webp" alt="Grand Palazzo Commission, Venice">
+        <div class="port-overlay">
+          <div class="port-info">
+            <span class="port-cat">Residential — Palazzo</span>
+            <div class="port-name">Grand Salone, Venice</div>
+          </div>
+        </div>
+      </div>
+      <div class="port-card">
+        <img src="images/product-1.webp" alt="Chapel Dome Fresco, Tuscany">
+        <div class="port-overlay">
+          <div class="port-info">
+            <span class="port-cat">Sacred — Chapel</span>
+            <div class="port-name">Santa Lucia Chapel, Tuscany</div>
+          </div>
+        </div>
+      </div>
+      <div class="port-card">
+        <img src="images/ambient-1.webp" alt="Hotel Grand Hall Mural">
+        <div class="port-overlay">
+          <div class="port-info">
+            <span class="port-cat">Hospitality — Grand Hotel</span>
+            <div class="port-name">Palazzo Borghese, Rome</div>
+          </div>
+        </div>
+      </div>
+      <div class="port-card">
+        <img src="images/product-2.webp" alt="Library Vault Fresco">
+        <div class="port-overlay">
+          <div class="port-info">
+            <span class="port-cat">Institutional — Library</span>
+            <div class="port-name">La Biblioteca, Madrid</div>
+          </div>
+        </div>
+      </div>
+      <div class="port-card">
+        <img src="images/hero-3.webp" alt="Salon Ceiling Fresco, Paris">
+        <div class="port-overlay">
+          <div class="port-info">
+            <span class="port-cat">Residential — Salon</span>
+            <div class="port-name">Hôtel Particulier, Paris</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATELIER -->
+<section class="atelier" id="atelier">
+  <div class="atelier-inner">
+    <div class="atelier-image">
+      <img src="images/ambient-2.webp" alt="INTONACO Atelier in Florence">
+    </div>
+    <div class="atelier-content">
+      <span class="section-label">The Atelier</span>
+      <h2 class="section-title">A Studio<br>In the Florentine<br>Tradition</h2>
+      <div class="divider"></div>
+      <blockquote class="atelier-quote">"The wall must breathe. The pigment must sing. And the hand that joins them must know centuries of silence before it speaks."</blockquote>
+      <p class="section-body">Founded in Florence in 2012, INTONACO was built on an apprenticeship model recovered from the 15th century workshop system. Every painter who bears our name has completed no fewer than seven years of study — three in traditional fresco technique, two in restoration science, and two under a named master.</p>
+      <br>
+      <a href="about.html" class="btn-outline" style="display: inline-block; margin-top: 16px;">Discover the Atelier</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <div class="process-header">
+      <span class="section-label">Our Method</span>
+      <h2 class="section-title">Five Movements,<br>One Masterwork</h2>
+      <div class="divider"></div>
+      <p class="section-body">Fresco is not applied — it is alchemized. From first conversation to final varnish, each commission unfolds through five essential movements, each as irreversible and precise as the next.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step">
+        <span class="step-num">Step I</span>
+        <h3 class="step-title">Consultation & Vision</h3>
+        <p class="step-text">We begin with weeks of dialogue. Architecture is measured, light studied at every hour, historical references assembled. The vision must be total before a single line is drawn.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">Step II</span>
+        <h3 class="step-title">Sinopia & Cartoon</h3>
+        <p class="step-text">The full-scale preparatory drawing — the sinopia — is transferred onto brown plaster. The cartoon is then pricked and pounced, transferring the final composition onto each day's fresh surface.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">Step III</span>
+        <h3 class="step-title">Intonaco Laying</h3>
+        <p class="step-text">The final plaster layer — the intonaco itself — is laid each morning in the exact area that can be completed by dusk. This giornata rhythm governs the entire enterprise.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">Step IV</span>
+        <h3 class="step-title">Pigment Application</h3>
+        <p class="step-text">Pure mineral pigments suspended in water are applied to the damp plaster with squirrel and hog hair brushes. As the plaster carbonizes, it permanently crystallizes the colour within itself.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">Step V</span>
+        <h3 class="step-title">Documentation & Care</h3>
+        <p class="step-text">Every commission is documented layer by layer — photographic, spectroscopic, and written — and entered into our conservation archive. A care protocol is prepared for the custodian.</p>
+      </div>
+    </div>
+    <div style="margin-top: 48px; text-align: center;">
+      <a href="process.html" class="btn-outline">Full Process Guide</a>
+    </div>
+  </div>
+</section>
+
+<!-- HERITAGE -->
+<section class="heritage" id="heritage">
+  <div class="heritage-inner">
+    <div class="heritage-images">
+      <img class="heritage-img-main" src="images/hero-4.webp" alt="Heritage fresco technique">
+      <img class="heritage-img-accent" src="images/ambient-3.webp" alt="INTONACO studio workspace">
+      <div class="heritage-tag">Est. Florence, 2012</div>
+    </div>
+    <div class="heritage-content">
+      <span class="section-label">Heritage & Lineage</span>
+      <h2 class="section-title">Descended from<br>the Masters</h2>
+      <div class="divider"></div>
+      <p class="section-body" style="margin-bottom: 36px;">Our founder, Maestro Aldo Ferrante, studied under Professor Giorgio Meloni at the Accademia di Belle Arti di Firenze before apprenticing with the Vatican restoration workshop under Professor Marco Torretti. The lineage is traceable, documented, and living.</p>
+      <div class="heritage-facts">
+        <div class="fact-item">
+          <div class="fact-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 3L2 12h3v9h6v-6h2v6h6v-9h3L12 3z"/></svg>
+          </div>
+          <div class="fact-text">
+            <h4>Accademia di Belle Arti, Florence</h4>
+            <p>Principal lineage through Italy's oldest fine art academy, founded 1563</p>
+          </div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="fact-text">
+            <h4>Vatican Museums Conservation</h4>
+            <p>Restoration apprenticeship under Vatican's Laboratorio di Restauro</p>
+          </div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="fact-text">
+            <h4>Seven-Year Apprenticeship</h4>
+            <p>Every INTONACO painter completes the full traditional formation</p>
+          </div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div class="fact-text">
+            <h4>Published Research</h4>
+            <p>INTONACO's pigment research published in the Journal of Cultural Heritage</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-inner">
+    <div class="testimonials-header">
+      <span class="section-label">Client Voices</span>
+      <h2 class="section-title" style="text-align:center;">In Their Own Words</h2>
+    </div>
+    <div class="swiper swiper-testimonials">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <p class="test-text">"INTONACO transformed our palazzo's grand salone from a beautiful room into a work of architecture that will be studied centuries from now. The consultation process alone was an education in seeing. What they created surpassed every expectation — and our expectations were not modest."</p>
+            <div class="test-author">
+              <div class="test-avatar">A</div>
+              <div>
+                <div class="test-name">Count Alessandro Barbieri</div>
+                <div class="test-role">Palazzo Barbieri, Venice</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <p class="test-text">"We commissioned INTONACO for our hotel's entrance hall knowing it would be the first thing guests see. Four years later, it remains the most-photographed room in our property — not by us, but by the guests themselves. The return on that investment is incalculable."</p>
+            <div class="test-author">
+              <div class="test-avatar">S</div>
+              <div>
+                <div class="test-name">Sophia Laurent-Moreau</div>
+                <div class="test-role">Directrice, Hôtel La Lumière, Paris</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <p class="test-text">"The restoration of our chapel's 18th-century frescoes was, quite literally, an act of salvation. INTONACO not only conserved what remained but matched the original master's hand so precisely that even I — who have lived with these walls for thirty years — can no longer see where the old work ends."</p>
+            <div class="test-author">
+              <div class="test-avatar">F</div>
+              <div>
+                <div class="test-name">Father Benedetto Caruso</div>
+                <div class="test-role">Abbot, Abbazia di Sant'Angelo, Umbria</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="margin-top: 36px; position: relative;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMISSION FORM -->
+<section class="commission" id="commission">
+  <div class="commission-inner">
+    <div>
+      <span class="section-label">Begin a Commission</span>
+      <h2 class="section-title">Your Wall<br>Awaits Its Story</h2>
+      <div class="divider"></div>
+      <form id="commissionForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="type">Commission Type</label>
+          <select id="type" name="type">
+            <option value="">Select type...</option>
+            <option>Residential Fresco</option>
+            <option>Sacred / Chapel</option>
+            <option>Hospitality / Hotel</option>
+            <option>Institutional / Public</option>
+            <option>Restoration</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="scale">Approximate Scale (m²)</label>
+          <input type="text" id="scale" name="scale" placeholder="e.g. 40m², ceiling vault">
+        </div>
+        <div class="form-group">
+          <label for="message">Vision & Context</label>
+          <textarea id="message" name="message" placeholder="Tell us about the space, desired iconography, historical references, and your aspirations for the commission..." rows="5"></textarea>
+        </div>
+        <button type="submit" class="form-submit">Submit Commission Inquiry</button>
+      </form>
+    </div>
+    <div class="commission-info">
+      <h3>The Inquiry Process</h3>
+      <p>Every extraordinary commission begins with a single conversation. We review all inquiries personally and respond within 48 hours. Accepted commissions enter a formal consultation period — typically 6–12 weeks — before any contractual agreement.</p>
+      <p>We maintain a maximum of eight concurrent active commissions to ensure the undivided attention each wall deserves.</p>
+      <ul class="contact-details">
+        <li><span class="c-icon">&#9830;</span> Studio Intonaco, Via delle Terme 12, Firenze 50122</li>
+        <li><span class="c-icon">&#9830;</span> info@intonaco-studio.com</li>
+        <li><span class="c-icon">&#9830;</span> +39 055 234 7891</li>
+        <li><span class="c-icon">&#9830;</span> By appointment — Florence & worldwide</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">INTONACO</div>
+        <p class="footer-brand-tagline">"Painting the World's Walls"<br>Renaissance Fresco & Mural Studio<br>Florence — Rome — Paris — New York</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="Pinterest">PT</a>
+          <a href="#" aria-label="LinkedIn">LI</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="about.html">About INTONACO</a></li>
+          <li><a href="about.html#masters">Our Masters</a></li>
+          <li><a href="about.html#lineage">Lineage</a></li>
+          <li><a href="about.html#awards">Recognition</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Work</h4>
+        <ul>
+          <li><a href="collection.html">Commissions</a></li>
+          <li><a href="collection.html#residential">Residential</a></li>
+          <li><a href="collection.html#sacred">Sacred Spaces</a></li>
+          <li><a href="collection.html#restoration">Restoration</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Commission</h4>
+        <ul>
+          <li><a href="process.html">Our Process</a></li>
+          <li><a href="contact.html">Inquire</a></li>
+          <li><a href="contact.html#faq">FAQ</a></li>
+          <li><a href="contact.html#care">Conservation Care</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2024 INTONACO Studio. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+        <a href="#">Conservation Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  // ===== SPLITTEXT POLYFILL =====
+  class SplitText {
+    constructor(target, opts = {}) {
+      const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+      this.chars = []; this.words = []; this.lines = [];
+      if (!el) return; this._el = el;
+      const type = (opts.type || 'chars,words').toLowerCase();
+      const original = el.textContent;
+      el.setAttribute('data-split-orig', original);
+      if (type.includes('chars')) {
+        el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+        this.chars = Array.from(el.querySelectorAll('.char'));
+      } else if (type.includes('words')) {
+        el.innerHTML = original.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+        this.words = Array.from(el.querySelectorAll('.word'));
+      }
+      this.lines = [el];
+    }
+    revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+  }
+
+  // ===== GSAP + SCROLLTRIGGER INIT =====
+  gsap.registerPlugin(ScrollTrigger);
+
+  // ===== HERO GRID CANVAS =====
+  (function initHeroCanvas() {
+    const canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, animId;
+    let time = 0;
+
+    function resize() {
+      W = canvas.width = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    }
+
+    function drawGrid() {
+      ctx.clearRect(0, 0, W, H);
+      const spacing = 60;
+      const cols = Math.ceil(W / spacing) + 2;
+      const rows = Math.ceil(H / spacing) + 2;
+      const pulse = Math.sin(time * 0.4) * 0.03 + 0.09;
+
+      ctx.strokeStyle = `rgba(155,110,219,0.12)`;
+      ctx.lineWidth = 0.8;
+
+      // Vertical lines
+      for (let i = 0; i <= cols; i++) {
+        const x = i * spacing;
+        const wave = Math.sin(time * 0.3 + i * 0.4) * 4;
+        ctx.beginPath();
+        ctx.moveTo(x + wave, 0);
+        ctx.lineTo(x - wave, H);
+        ctx.stroke();
+      }
+
+      // Horizontal lines
+      for (let j = 0; j <= rows; j++) {
+        const y = j * spacing;
+        const wave = Math.cos(time * 0.25 + j * 0.5) * 3;
+        ctx.beginPath();
+        ctx.moveTo(0, y + wave);
+        ctx.lineTo(W, y - wave);
+        ctx.stroke();
+      }
+
+      // Accent nodes at intersections (random glow)
+      ctx.fillStyle = `rgba(184,148,238,${pulse})`;
+      for (let i = 0; i <= cols; i += 3) {
+        for (let j = 0; j <= rows; j += 3) {
+          const x = i * spacing;
+          const y = j * spacing;
+          const glow = Math.sin(time + i * 1.2 + j * 0.9) * 0.5 + 0.5;
+          if (glow > 0.7) {
+            ctx.beginPath();
+            ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      // Diagonal accent lines
+      ctx.strokeStyle = 'rgba(155,110,219,0.05)';
+      ctx.lineWidth = 0.5;
+      for (let k = -rows; k <= cols + rows; k += 6) {
+        ctx.beginPath();
+        ctx.moveTo(k * spacing, 0);
+        ctx.lineTo((k + rows) * spacing, H);
+        ctx.stroke();
+      }
+
+      time += 0.012;
+      animId = requestAnimationFrame(drawGrid);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    drawGrid();
+  })();
+
+  // ===== PRELOADER =====
+  const scrollIndicator = document.getElementById('scrollIndicator');
+
+  window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+
+    setTimeout(() => {
+      preloader.classList.add('hidden');
+
+      // Hero animations after preloader
+      const tl = gsap.timeline();
+
+      tl.from('#heroEyebrow', {
+        immediateRender: false,
+        opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut'
+      })
+      .from('#heroTitle', {
+        immediateRender: false,
+        opacity: 0, y: 40, duration: 1.3, ease: 'power2.inOut', stagger: 0.15
+      }, '-=0.7')
+      .from('#heroSubtitle', {
+        immediateRender: false,
+        opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut'
+      }, '-=0.7')
+      .from('#heroCtas .btn-primary, #heroCtas .btn-outline', {
+        immediateRender: false,
+        opacity: 0, y: 40, duration: 1.0, ease: 'power2.inOut', stagger: 0.15
+      }, '-=0.6');
+
+      // Show scroll indicator after preloader
+      scrollIndicator.classList.add('visible');
+
+      // Hero bg parallax
+      document.querySelector('.hero-bg').style.transform = 'scale(1)';
+
+    }, 2200);
+
+    // Fallback scroll indicator
+    setTimeout(() => {
+      scrollIndicator.classList.add('visible');
+    }, 4000);
+  });
+
+  // ===== HIDE SCROLL INDICATOR ON SCROLL =====
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+      scrollIndicator.classList.remove('visible');
+    }
+  }, { passive: true });
+
+  // ===== NAVBAR SCROLL =====
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) { navbar.classList.add('scrolled'); }
+    else { navbar.classList.remove('scrolled'); }
+  }, { passive: true });
+
+  // ===== MOBILE NAV =====
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('navMobile').classList.add('open');
+  });
+  document.getElementById('navClose').addEventListener('click', () => {
+    document.getElementById('navMobile').classList.remove('open');
+  });
+
+  // ===== SCROLL ANIMATIONS =====
+
+  // Stats strip
+  gsap.from('.stat-item', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.stats-strip', start: 'top 80%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', stagger: 0.15
+  });
+
+  // Philosophy header
+  gsap.from('.philosophy-header-left', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.philosophy', start: 'top 80%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut'
+  });
+  gsap.from('.philosophy-header-right', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.philosophy', start: 'top 80%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', delay: 0.2
+  });
+  gsap.from('.philo-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true },
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15
+  });
+
+  // Portfolio
+  gsap.from('.portfolio-header', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.portfolio', start: 'top 80%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut'
+  });
+  gsap.from('.port-card', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.portfolio-grid', start: 'top 85%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', stagger: 0.15
+  });
+
+  // Atelier
+  gsap.from('.atelier-image', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.atelier', start: 'top 80%', once: true },
+    opacity: 0, x: -40, duration: 1.3, ease: 'power2.inOut'
+  });
+  gsap.from('.atelier-content > *', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.atelier', start: 'top 80%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', stagger: 0.15
+  });
+
+  // Process steps
+  gsap.from('.process-header', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.process', start: 'top 80%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut'
+  });
+  gsap.from('.process-step', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.process-steps', start: 'top 85%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', stagger: 0.15
+  });
+
+  // Heritage
+  gsap.from('.heritage-img-main', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.heritage', start: 'top 80%', once: true },
+    opacity: 0, x: -40, duration: 1.3, ease: 'power2.inOut'
+  });
+  gsap.from('.heritage-img-accent', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.heritage', start: 'top 80%', once: true },
+    opacity: 0, x: 40, duration: 1.3, ease: 'power2.inOut', delay: 0.2
+  });
+  gsap.from('.heritage-content > *', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.heritage-content', start: 'top 85%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', stagger: 0.15
+  });
+  gsap.from('.fact-item', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.heritage-facts', start: 'top 85%', once: true },
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15
+  });
+
+  // Testimonials
+  gsap.from('.testimonials-header', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.testimonials', start: 'top 80%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut'
+  });
+
+  // Commission
+  gsap.from('.commission-inner > *', {
+    immediateRender: false,
+    scrollTrigger: { trigger: '.commission', start: 'top 80%', once: true },
+    opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', stagger: 0.15
+  });
+
+  // ===== SWIPER =====
+  new Swiper('.swiper-testimonials', {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    loop: true,
+    autoplay: { delay: 6000, disableOnInteraction: false },
+    pagination: { el: '.swiper-pagination', clickable: true },
+    breakpoints: {
+      768: { slidesPerView: 1 },
+      1024: { slidesPerView: 1 }
+    }
+  });
+
+  // ===== FORM SUBMIT =====
+  document.getElementById('commissionForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = 'Inquiry Received — We Will Respond Within 48 Hours';
+    btn.style.background = 'var(--accent-dark)';
+    btn.disabled = true;
+  });
+</script>
+</body>
+</html>

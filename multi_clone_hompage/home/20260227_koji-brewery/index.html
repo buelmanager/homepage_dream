@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOJI — Ancient Spores, Living Flavors</title>
+  <meta name="description" content="Artisan koji brewery and fermentation studio. We cultivate rare koji mold strains to produce exceptional sake, miso, shio koji, and fermented foods rooted in 400 years of Japanese tradition.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141810;
+      --surface: #1C2018;
+      --surface2: #222A1E;
+      --accent: #8AB56A;
+      --accent-light: #AACE8A;
+      --accent-dark: #5A8040;
+      --ivory: #E4EEE0;
+      --smoke: #889880;
+      --muted: #4E5E48;
+      --border: #181E14;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', system-ui, sans-serif;
+      --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--surface);
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      color: var(--accent);
+    }
+
+    .preloader-tagline {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      letter-spacing: 0.25em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    .preloader-bar-wrap {
+      width: 160px;
+      height: 1px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-bar {
+      position: absolute;
+      inset: 0 100% 0 0;
+      background: var(--accent);
+      animation: preload-fill 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes preload-fill {
+      to { right: 0; }
+    }
+
+    /* ============================================================
+       SCROLL INDICATOR
+    ============================================================ */
+    .scroll-indicator {
+      position: fixed;
+      right: 2rem;
+      bottom: 2.5rem;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .scroll-indicator-line {
+      width: 1px;
+      height: 60px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-indicator-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: scroll-line 2s ease-in-out infinite;
+    }
+
+    @keyframes scroll-line {
+      0% { top: -100%; }
+      50% { top: 0; }
+      100% { top: 100%; }
+    }
+
+    .scroll-indicator-text {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      writing-mode: vertical-rl;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background var(--transition), padding var(--transition);
+    }
+
+    .navbar.scrolled {
+      background: rgba(20, 24, 16, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--accent-light); }
+
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 0.6rem 1.4rem;
+      border-radius: 2px;
+      transition: background var(--transition);
+    }
+
+    .nav-cta:hover { background: var(--accent-light); }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--ivory);
+      transition: var(--transition);
+    }
+
+    /* ============================================================
+       HERO — TYPE G (Scroll-Driven Text Transform)
+    ============================================================ */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/hero-1.webp');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.08);
+      filter: brightness(0.45);
+      will-change: transform;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(20, 24, 16, 0.2) 0%,
+        rgba(20, 24, 16, 0.1) 40%,
+        rgba(20, 24, 16, 0.7) 100%
+      );
+    }
+
+    .hero-text-wrap {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 2rem;
+    }
+
+    .hero-word {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: clamp(5rem, 16vw, 14rem);
+      line-height: 0.88;
+      color: var(--ivory);
+      will-change: transform, opacity;
+      display: block;
+    }
+
+    .word-1 {
+      color: var(--accent);
+      letter-spacing: 0.25em;
+    }
+
+    .word-2 {
+      letter-spacing: 0.1em;
+      font-style: italic;
+      color: var(--ivory);
+    }
+
+    .hero-tagline {
+      font-family: var(--font-sans);
+      font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 2rem;
+    }
+
+    .hero-cta {
+      margin-top: 2.5rem;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 0.9rem 2.5rem;
+      border-radius: 2px;
+      transition: background var(--transition), transform var(--transition);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.9rem 2.5rem;
+      border-radius: 2px;
+      transition: all var(--transition);
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: var(--bg);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+      color: var(--accent);
+      animation: bounce-hint 2.5s ease-in-out infinite;
+      z-index: 3;
+    }
+
+    @keyframes bounce-hint {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ============================================================
+       SECTION COMMONS
+    ============================================================ */
+    section {
+      padding: 7rem 0;
+      position: relative;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--ivory);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .section-body {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--smoke);
+      max-width: 620px;
+    }
+
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: var(--accent-dark);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ============================================================
+       STATS
+    ============================================================ */
+    .stats-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 2rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* ============================================================
+       PHILOSOPHY
+    ============================================================ */
+    .philosophy-section {
+      background: var(--bg);
+    }
+
+    .philosophy-header {
+      max-width: 700px;
+      margin-bottom: 4rem;
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .philosophy-card {
+      background: var(--surface);
+      padding: 3rem 2.5rem;
+      border: 1px solid var(--border);
+      transition: border-color var(--transition);
+    }
+
+    .philosophy-card:hover {
+      border-color: var(--accent-dark);
+    }
+
+    .philosophy-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+
+    .philosophy-icon svg {
+      width: 100%;
+      height: 100%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.2;
+    }
+
+    .philosophy-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 1rem;
+    }
+
+    .philosophy-card p {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--smoke);
+    }
+
+    /* ============================================================
+       PRODUCT COLLECTION
+    ============================================================ */
+    .collection-section {
+      background: var(--surface);
+    }
+
+    .collection-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3.5rem;
+      gap: 2rem;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5px;
+    }
+
+    .product-card {
+      background: var(--bg);
+      overflow: visible;
+      position: relative;
+      transition: transform var(--transition);
+    }
+
+    .product-card:hover { transform: translateY(-6px); }
+
+    .product-img-wrap {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .product-card:hover .product-img-wrap img {
+      transform: scale(1.06);
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 0.3rem 0.7rem;
+      border-radius: 1px;
+    }
+
+    .product-info {
+      padding: 1.5rem;
+      background: var(--surface2);
+    }
+
+    .product-name {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 0.4rem;
+    }
+
+    .product-sub {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--smoke);
+      margin-bottom: 1rem;
+    }
+
+    .product-price {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* ============================================================
+       FERMENTATION CHAMBER (Ambient Feature)
+    ============================================================ */
+    .chamber-section {
+      padding: 0;
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chamber-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/ambient-1.webp');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35);
+    }
+
+    .chamber-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      padding: 7rem 2rem 7rem 8vw;
+    }
+
+    .chamber-content .section-title {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+    }
+
+    .chamber-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+    }
+
+    .chamber-stat {
+      border-left: 1px solid var(--accent-dark);
+      padding-left: 1.5rem;
+    }
+
+    .chamber-stat-num {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .chamber-stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* ============================================================
+       PROCESS
+    ============================================================ */
+    .process-section {
+      background: var(--surface);
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      margin-top: 4rem;
+    }
+
+    .process-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .process-step {
+      display: flex;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step-number {
+      font-family: var(--font-serif);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      letter-spacing: 0.1em;
+      flex-shrink: 0;
+      padding-top: 0.35rem;
+    }
+
+    .step-content h4 {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--smoke);
+    }
+
+    .process-image {
+      border-radius: 2px;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+    }
+
+    .process-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ============================================================
+       HERITAGE
+    ============================================================ */
+    .heritage-section {
+      background: var(--bg);
+    }
+
+    .heritage-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .heritage-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 280px 280px;
+      gap: 8px;
+    }
+
+    .heritage-images .img-main {
+      grid-row: 1 / 3;
+    }
+
+    .heritage-images img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 1px;
+    }
+
+    .heritage-text .section-body {
+      margin-bottom: 2rem;
+    }
+
+    .heritage-quote {
+      border-left: 2px solid var(--accent-dark);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .heritage-quote blockquote {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.6;
+    }
+
+    .heritage-quote cite {
+      display: block;
+      margin-top: 0.75rem;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      font-style: normal;
+    }
+
+    /* ============================================================
+       TESTIMONIALS (Swiper)
+    ============================================================ */
+    .testimonials-section {
+      background: var(--surface);
+      padding: 7rem 0;
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .testimonials-header .section-label,
+    .testimonials-header .divider {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .swiper-testimonials {
+      padding-bottom: 3rem;
+    }
+
+    .testimonial-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .testimonial-stars {
+      color: var(--accent);
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.7;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .author-info strong {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ivory);
+    }
+
+    .author-info span {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--smoke);
+    }
+
+    .swiper-pagination-bullet {
+      background: var(--muted);
+      width: 6px;
+      height: 6px;
+      opacity: 1;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: var(--accent);
+      width: 24px;
+      border-radius: 3px;
+    }
+
+    /* ============================================================
+       ORDER FORM
+    ============================================================ */
+    .order-section {
+      background: var(--bg);
+    }
+
+    .order-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 6rem;
+      align-items: flex-start;
+    }
+
+    .order-info .section-body { margin-bottom: 2.5rem; }
+
+    .order-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .order-contact-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .order-contact-item span {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--smoke);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-group label {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 300;
+      padding: 0.85rem 1rem;
+      transition: border-color var(--transition);
+      outline: none;
+      width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent-dark);
+    }
+
+    .form-group select option {
+      background: var(--surface);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 120px; }
+
+    .form-submit {
+      margin-top: 0.8rem;
+      grid-column: 1 / -1;
+    }
+
+    .form-submit button {
+      width: 100%;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 1.1rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .form-submit button:hover { background: var(--accent-light); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 5rem 0 2.5rem;
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    .footer-brand .logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand p {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--smoke);
+      max-width: 260px;
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .footer-col ul li a {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--smoke);
+      transition: color var(--transition);
+    }
+
+    .footer-col ul li a:hover { color: var(--accent-light); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-bottom p {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--muted);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--smoke);
+      transition: all var(--transition);
+    }
+
+    .footer-social a:hover {
+      border-color: var(--accent-dark);
+      color: var(--accent);
+    }
+
+    .footer-social a svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* ============================================================
+       MOBILE NAV OVERLAY
+    ============================================================ */
+    .mobile-nav {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 24, 16, 0.98);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      transform: translateX(100%);
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .mobile-nav.open { transform: translateX(0); }
+
+    .mobile-nav a {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--ivory);
+      letter-spacing: 0.08em;
+      transition: color var(--transition);
+    }
+
+    .mobile-nav a:hover { color: var(--accent); }
+
+    .mobile-nav-close {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      font-size: 1.5rem;
+      color: var(--smoke);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-right: 1px solid var(--border); }
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .process-grid { gap: 3rem; }
+      .heritage-inner { gap: 3rem; }
+      .order-inner { gap: 3rem; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 1.2rem 1.5rem; }
+      .navbar.scrolled { padding: 0.9rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+
+      .hero-word { font-size: clamp(4rem, 18vw, 8rem); }
+
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .process-grid { grid-template-columns: 1fr; }
+      .process-image { display: none; }
+      .heritage-inner { grid-template-columns: 1fr; }
+      .heritage-images { grid-template-rows: 200px 200px; }
+      .order-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+      .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+      .chamber-content { padding: 5rem 1.5rem; }
+      .chamber-stats { flex-direction: column; gap: 1.5rem; }
+      .collection-header { flex-direction: column; align-items: flex-start; }
+      .scroll-indicator { right: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">KOJI</div>
+    <div class="preloader-tagline">Ancient Spores, Living Flavors</div>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar"></div>
+    </div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollIndicator">
+    <div class="scroll-indicator-text">Scroll</div>
+    <div class="scroll-indicator-line"></div>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="collection.html">Collection</a>
+    <a href="process.html">Process</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <!-- NAVBAR -->
+  <header class="navbar" id="navbar">
+    <div class="nav-logo">KOJI</div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Order Now</a>
+    <div class="nav-hamburger" id="hamburger" role="button" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO — TYPE G -->
+    <section class="hero hero-text-driven" id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-text-wrap">
+        <div class="hero-word word-1">KOJI</div>
+        <div class="hero-word word-2">LIVING</div>
+        <div class="hero-tagline">Ancient Spores, Living Flavors</div>
+        <div class="hero-cta">
+          <a href="collection.html" class="btn-primary">Discover Our Products</a>
+        </div>
+      </div>
+      <div class="hero-scroll-hint">↓</div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-num" data-count="120">0</div>
+            <div class="stat-label">Fermented Products</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">400<span style="font-size:2rem">yr</span></div>
+            <div class="stat-label">Traditional Method</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num" data-count="15">0</div>
+            <div class="stat-label">Koji Strains Cultivated</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">1</div>
+            <div class="stat-label">Master Brewer</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="philosophy-section">
+      <div class="container">
+        <div class="philosophy-header">
+          <div class="section-label">Our Philosophy</div>
+          <div class="divider"></div>
+          <h2 class="section-title">Cultivated with <em>Patience</em></h2>
+          <p class="section-body">Koji is not merely an ingredient — it is a living collaborator. We partner with Aspergillus oryzae to transform humble grains into vessels of extraordinary flavor, guided by traditions passed across four centuries.</p>
+        </div>
+        <div class="philosophy-grid">
+          <div class="philosophy-card">
+            <div class="philosophy-icon">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="18"/>
+                <path d="M24 6 C16 14, 12 20, 14 28 C16 36, 24 40, 24 40 C24 40, 32 36, 34 28 C36 20, 32 14, 24 6Z"/>
+                <line x1="24" y1="6" x2="24" y2="40"/>
+              </svg>
+            </div>
+            <h3>Living Culture</h3>
+            <p>Every batch begins with a living culture — koji spores nurtured across generations in our cedar-lined chambers. The mold breathes, transforms, and reveals the hidden sugars within each grain.</p>
+          </div>
+          <div class="philosophy-card">
+            <div class="philosophy-icon">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 38 L24 10 L40 38 Z"/>
+                <path d="M16 38 L24 24 L32 38"/>
+                <line x1="24" y1="10" x2="24" y2="38"/>
+              </svg>
+            </div>
+            <h3>Ancient Mastery</h3>
+            <p>Our head brewer has trained under fifth-generation koji masters in Nishiki, Kyoto. Each technique — from the temperature of steamed rice to the timing of inoculation — carries four centuries of memory.</p>
+          </div>
+          <div class="philosophy-card">
+            <div class="philosophy-icon">
+              <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 24 C8 14, 16 8, 24 8 C32 8, 40 14, 40 24 C40 34, 32 40, 24 40 C16 40, 8 34, 8 24Z"/>
+                <path d="M16 20 C18 16, 22 14, 26 16 C30 18, 30 22, 28 26 C26 30, 22 32, 18 30"/>
+              </svg>
+            </div>
+            <h3>Umami Depth</h3>
+            <p>Koji enzymes — amylase, protease, lipase — unlock umami compounds invisible to the naked tongue. We guide this biochemical alchemy to create layers of flavor that unfold slowly over time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT COLLECTION -->
+    <section class="collection-section">
+      <div class="container">
+        <div class="collection-header">
+          <div>
+            <div class="section-label">The Collection</div>
+            <div class="divider"></div>
+            <h2 class="section-title">Signature <em>Ferments</em></h2>
+          </div>
+          <a href="collection.html" class="btn-outline">View All Products</a>
+        </div>
+        <div class="collection-grid">
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/product-1.webp" alt="Shio Koji — Salt Koji" loading="lazy">
+              <div class="product-badge">Bestseller</div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Shio Koji</div>
+              <div class="product-sub">Salt-Fermented Koji Paste</div>
+              <div class="product-price">From ¥2,800</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/product-2.webp" alt="Amazake — Sweet Fermented Rice" loading="lazy">
+              <div class="product-badge">Seasonal</div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Amazake</div>
+              <div class="product-sub">Sweet Fermented Rice Drink</div>
+              <div class="product-price">From ¥1,600</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/product-3.webp" alt="Mugi Miso — Barley Miso" loading="lazy">
+            </div>
+            <div class="product-info">
+              <div class="product-name">Mugi Miso</div>
+              <div class="product-sub">Aged Barley Miso Paste</div>
+              <div class="product-price">From ¥3,400</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/product-4.webp" alt="Sake Lees — Sake Kasu" loading="lazy">
+            </div>
+            <div class="product-info">
+              <div class="product-name">Sake Kasu</div>
+              <div class="product-sub">Pure Sake Lees &amp; Pickling Bed</div>
+              <div class="product-price">From ¥2,100</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FERMENTATION CHAMBER -->
+    <section class="chamber-section">
+      <div class="chamber-bg"></div>
+      <div class="chamber-content">
+        <div class="section-label">The Muro</div>
+        <div class="divider"></div>
+        <h2 class="section-title">Our <em>Sacred</em> Chamber</h2>
+        <p class="section-body" style="color: var(--smoke);">The muro — our cedar-lined fermentation chamber — is held at 28–32°C with 85% humidity. Within this womb of warmth and moisture, koji spores awaken and colonize steamed rice grain by grain over 48 hours of continuous care.</p>
+        <div class="chamber-stats">
+          <div class="chamber-stat">
+            <div class="chamber-stat-num">48h</div>
+            <div class="chamber-stat-label">Koji Cultivation</div>
+          </div>
+          <div class="chamber-stat">
+            <div class="chamber-stat-num">30°C</div>
+            <div class="chamber-stat-label">Chamber Temperature</div>
+          </div>
+          <div class="chamber-stat">
+            <div class="chamber-stat-num">85%</div>
+            <div class="chamber-stat-label">Humidity Level</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="process-section">
+      <div class="container">
+        <div class="section-label">From Grain to Glass</div>
+        <div class="divider"></div>
+        <h2 class="section-title">The Art of <em>Transformation</em></h2>
+        <div class="process-grid">
+          <div class="process-steps">
+            <div class="process-step">
+              <div class="step-number">01</div>
+              <div class="step-content">
+                <h4>Grain Selection</h4>
+                <p>We source single-origin heirloom rice and barley from Yamagata prefecture, polished to precise ratios that expose the starchy heart for koji colonization.</p>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">02</div>
+              <div class="step-content">
+                <h4>Steaming</h4>
+                <p>Grain is soaked overnight and steamed in cedar-slatted koshiki vessels at dawn. The texture must be firm on the outside, soft within — the perfect medium for spore growth.</p>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">03</div>
+              <div class="step-content">
+                <h4>Inoculation</h4>
+                <p>While still warm, steamed rice is spread on koji tables and dusted with tane-koji spores using a hand-held sieve. Uniformity of distribution is essential; experienced hands guide every movement.</p>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">04</div>
+              <div class="step-content">
+                <h4>Incubation</h4>
+                <p>Over 48 hours in the muro, the brewer sleeps in two-hour intervals, rising every second hour to turn and knead the koji by hand, managing heat and moisture with precise intuition.</p>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">05</div>
+              <div class="step-content">
+                <h4>Harvest</h4>
+                <p>At peak enzyme activity, the koji is harvested — a bloom of white mycelium covering each grain, releasing a chestnut-sweet fragrance that signals perfection.</p>
+              </div>
+            </div>
+          </div>
+          <div class="process-image">
+            <img src="images/ambient-2.webp" alt="Koji cultivation process — grain inoculation" loading="lazy">
+          </div>
+        </div>
+        <div style="margin-top:3rem; text-align:center;">
+          <a href="process.html" class="btn-outline">Explore Full Process</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- HERITAGE -->
+    <section class="heritage-section">
+      <div class="container">
+        <div class="heritage-inner">
+          <div class="heritage-images">
+            <div class="img-main">
+              <img src="images/hero-2.webp" alt="Master brewer at work" loading="lazy">
+            </div>
+            <div>
+              <img src="images/hero-3.webp" alt="Cedar fermentation chamber" loading="lazy">
+            </div>
+            <div>
+              <img src="images/ambient-3.webp" alt="Koji spores under magnification" loading="lazy">
+            </div>
+          </div>
+          <div class="heritage-text">
+            <div class="section-label">Our Heritage</div>
+            <div class="divider"></div>
+            <h2 class="section-title">Four Centuries of <em>Living Craft</em></h2>
+            <p class="section-body">The koji tradition traces its lineage to the Edo period, when brewers first codified the muro rituals that remain largely unchanged today. KOJI Fermentation Studio was founded to carry this knowledge beyond Japan — not as appropriation, but as devotion.</p>
+            <div class="heritage-quote">
+              <blockquote>"Koji does not submit to the brewer. The brewer submits to koji. You learn to listen."</blockquote>
+              <cite>— Hayashi Kenji, Head Brewer & Founder</cite>
+            </div>
+            <a href="about.html" class="btn-outline">Our Story</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section">
+      <div class="container">
+        <div class="testimonials-header">
+          <div class="section-label">Voices</div>
+          <div class="divider"></div>
+          <h2 class="section-title">What Chefs <em>Say</em></h2>
+        </div>
+        <div class="swiper swiper-testimonials">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Their shio koji has permanently replaced salt in my kitchen. The depth it adds to proteins is nothing short of transformative — three days of marination yields something that tastes like a week."</p>
+                <div class="testimonial-author">
+                  <div class="author-avatar">RN</div>
+                  <div class="author-info">
+                    <strong>René Nakamura</strong>
+                    <span>Executive Chef, Forêt — Tokyo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"We feature the mugi miso in our tasting menu as a standalone course. Guests are astonished that something fermented for eighteen months can taste simultaneously of the earth and of the sea."</p>
+                <div class="testimonial-author">
+                  <div class="author-avatar">EP</div>
+                  <div class="author-info">
+                    <strong>Elena Papadimitriou</strong>
+                    <span>Head Chef, Umami Atelier — Copenhagen</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"I have visited Hayashi-san's muro twice. The silence in that cedar room, the smell of working koji — it taught me more about flavor in forty-eight hours than four years in culinary school."</p>
+                <div class="testimonial-author">
+                  <div class="author-avatar">MV</div>
+                  <div class="author-info">
+                    <strong>Marco Vellante</strong>
+                    <span>Fermentation Researcher, Noma Projects</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"The amazake is the most refined non-alcoholic beverage I have ever served. Our sommelier pairs it with dessert courses to extraordinary effect — our guests ask for it by name before they even see the menu."</p>
+                <div class="testimonial-author">
+                  <div class="author-avatar">SL</div>
+                  <div class="author-info">
+                    <strong>Sophie Leclerc</strong>
+                    <span>F&amp;B Director, Épure — Hong Kong</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDER FORM -->
+    <section class="order-section">
+      <div class="container">
+        <div class="order-inner">
+          <div class="order-info">
+            <div class="section-label">Order &amp; Inquiries</div>
+            <div class="divider"></div>
+            <h2 class="section-title">Begin Your <em>Fermentation</em> Journey</h2>
+            <p class="section-body">We welcome inquiries from restaurants, wholesale partners, and private collectors. All products are made in small batches and available by pre-order. Please allow 2–4 weeks for fulfillment.</p>
+            <div style="margin-top:2rem; display:flex; flex-direction:column; gap:0.8rem;">
+              <div class="order-contact-item">
+                <svg viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>koji@kojibrewery.com</span>
+              </div>
+              <div class="order-contact-item">
+                <svg viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 15.72V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                <span>+81 75 000 0000</span>
+              </div>
+              <div class="order-contact-item">
+                <svg viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Nishiki, Kyoto Prefecture, Japan</span>
+              </div>
+            </div>
+          </div>
+          <div class="order-form-wrap">
+            <form class="form-grid" id="orderForm" novalidate>
+              <div class="form-group">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" name="fname" placeholder="Kenji" required>
+              </div>
+              <div class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" id="lname" name="lname" placeholder="Hayashi" required>
+              </div>
+              <div class="form-group full">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="chef@restaurant.com" required>
+              </div>
+              <div class="form-group full">
+                <label for="org">Restaurant / Organization</label>
+                <input type="text" id="org" name="org" placeholder="Restaurant Name">
+              </div>
+              <div class="form-group full">
+                <label for="interest">Product Interest</label>
+                <select id="interest" name="interest">
+                  <option value="">Select a product...</option>
+                  <option value="shio-koji">Shio Koji</option>
+                  <option value="amazake">Amazake</option>
+                  <option value="mugi-miso">Mugi Miso</option>
+                  <option value="sake-kasu">Sake Kasu</option>
+                  <option value="wholesale">Wholesale Inquiry</option>
+                  <option value="custom">Custom Fermentation Project</option>
+                </select>
+              </div>
+              <div class="form-group full">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Tell us about your project, quantity needs, or any questions about our ferments..."></textarea>
+              </div>
+              <div class="form-group form-submit">
+                <button type="submit">Send Inquiry</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="logo">KOJI</div>
+          <p>Artisan Fermentation Studio rooted in Kyoto. We cultivate rare koji strains and traditional ferments for chefs, collectors, and those who taste deeply.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="collection.html">Collection</a></li>
+            <li><a href="process.html">Process</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Products</h4>
+          <ul>
+            <li><a href="collection.html">Shio Koji</a></li>
+            <li><a href="collection.html">Amazake</a></li>
+            <li><a href="collection.html">Mugi Miso</a></li>
+            <li><a href="collection.html">Sake Kasu</a></li>
+            <li><a href="collection.html">Seasonal</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Studio</h4>
+          <ul>
+            <li><a href="about.html">Our Heritage</a></li>
+            <li><a href="process.html">The Muro</a></li>
+            <li><a href="contact.html">Wholesale</a></li>
+            <li><a href="contact.html">Masterclasses</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 KOJI Fermentation Studio. All rights reserved.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="#" aria-label="X / Twitter">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    /* ============================================================
+       SPLITTEXT POLYFILL
+    ============================================================ */
+    class SplitText {
+      constructor(t, o = {}) {
+        const e = typeof t === 'string' ? document.querySelector(t) : (t instanceof Element ? t : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!e) return;
+        this._el = e;
+        const tp = (o.type || 'chars,words').toLowerCase();
+        const orig = e.textContent;
+        e.setAttribute('data-split-orig', orig);
+        if (tp.includes('chars')) {
+          e.innerHTML = orig.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(e.querySelectorAll('.char'));
+        } else if (tp.includes('words')) {
+          e.innerHTML = orig.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(e.querySelectorAll('.word'));
+        }
+        this.lines = [e];
+      }
+      revert() {
+        if (this._el) {
+          const o = this._el.getAttribute('data-split-orig');
+          if (o) this._el.textContent = o;
+        }
+      }
+    }
+
+    /* ============================================================
+       GSAP INIT
+    ============================================================ */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    const preloader = document.getElementById('preloader');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+
+    window.addEventListener('load', () => {
+      gsap.to(preloader, {
+        duration: 0.8,
+        delay: 1.9,
+        autoAlpha: 0,
+        onComplete: () => {
+          preloader.style.display = 'none';
+
+          // Show scroll indicator after preloader exits
+          gsap.fromTo(scrollIndicator,
+            { autoAlpha: 0 },
+            { autoAlpha: 1, duration: 1, delay: 0.3 }
+          );
+
+          // Hero entrance
+          animateHero();
+        }
+      });
+    });
+
+    // Fallback scroll indicator reveal
+    setTimeout(() => {
+      if (scrollIndicator && getComputedStyle(scrollIndicator).opacity === '0') {
+        gsap.to(scrollIndicator, { autoAlpha: 1, duration: 1 });
+      }
+    }, 4000);
+
+    /* ============================================================
+       HERO ANIMATION (TYPE G — scroll-driven text transform)
+    ============================================================ */
+    function animateHero() {
+      const word1 = document.querySelector('.word-1');
+      const word2 = document.querySelector('.word-2');
+      const tagline = document.querySelector('.hero-tagline');
+      const cta = document.querySelector('.hero-cta');
+      const heroBg = document.querySelector('.hero-bg');
+
+      const tl = gsap.timeline({ defaults: { ease: 'power1.out', immediateRender: false } });
+      tl.from(heroBg, { scale: 1.15, duration: 2.5, ease: 'power2.out' })
+        .from(word1, { y: 60, duration: 1.5, autoAlpha: 0 }, '-=1.8')
+        .from(word2, { y: 40, duration: 1.5, autoAlpha: 0 }, '-=1.2')
+        .from(tagline, { y: 14, duration: 1.5, autoAlpha: 0 }, '-=1.0')
+        .from(cta, { y: 14, duration: 1.5, autoAlpha: 0 }, '-=1.0');
+
+      // Scroll-driven parallax on hero words
+      gsap.to('.word-1', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.5
+        },
+        y: -120,
+        scale: 0.8
+      });
+
+      gsap.to('.word-2', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.5
+        },
+        y: -60,
+        scale: 0.9
+      });
+
+      gsap.to('.hero-bg', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1
+        },
+        y: 60,
+        scale: 1.0
+      });
+    }
+
+    /* ============================================================
+       NAVBAR SCROLL BEHAVIOR
+    ============================================================ */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      // Hide scroll indicator after scrolling
+      if (window.scrollY > window.innerHeight * 0.6) {
+        gsap.to(scrollIndicator, { autoAlpha: 0, duration: 0.5 });
+      }
+    });
+
+    /* ============================================================
+       MOBILE NAVIGATION
+    ============================================================ */
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileNavClose = document.getElementById('mobileNavClose');
+
+    hamburger.addEventListener('click', () => mobileNav.classList.add('open'));
+    mobileNavClose.addEventListener('click', () => mobileNav.classList.remove('open'));
+
+    /* ============================================================
+       SCROLL ANIMATIONS (A2 — Whisper)
+    ============================================================ */
+    const whisperDefaults = {
+      duration: 1.5,
+      y: 14,
+      stagger: 0.06,
+      ease: 'power1.out',
+      immediateRender: false
+    };
+
+    // Stats
+    gsap.from('.stat-item', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      stagger: 0.1,
+      scrollTrigger: { trigger: '.stats-section', start: 'top 80%' }
+    });
+
+    // Counter animation
+    document.querySelectorAll('.stat-num[data-count]').forEach(el => {
+      const target = +el.getAttribute('data-count');
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          gsap.to({ val: 0 }, {
+            val: target,
+            duration: 2,
+            ease: 'power2.out',
+            onUpdate: function () {
+              el.textContent = Math.round(this.targets()[0].val);
+            }
+          });
+        }
+      });
+    });
+
+    // Philosophy cards
+    gsap.from('.philosophy-card', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      y: 20,
+      stagger: 0.1,
+      scrollTrigger: { trigger: '.philosophy-grid', start: 'top 80%' }
+    });
+
+    // Section headers
+    document.querySelectorAll('.section-label, .section-title, .section-body').forEach(el => {
+      gsap.from(el, {
+        ...whisperDefaults,
+        autoAlpha: 0,
+        scrollTrigger: { trigger: el, start: 'top 88%' }
+      });
+    });
+
+    // Product cards
+    gsap.from('.product-card', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      y: 20,
+      stagger: 0.1,
+      scrollTrigger: { trigger: '.collection-grid', start: 'top 80%' }
+    });
+
+    // Chamber content
+    gsap.from('.chamber-content > *', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      stagger: 0.12,
+      scrollTrigger: { trigger: '.chamber-section', start: 'top 75%' }
+    });
+
+    // Process steps
+    gsap.from('.process-step', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      x: -20,
+      stagger: 0.12,
+      scrollTrigger: { trigger: '.process-steps', start: 'top 80%' }
+    });
+
+    // Heritage
+    gsap.from('.heritage-images', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      x: -30,
+      scrollTrigger: { trigger: '.heritage-inner', start: 'top 80%' }
+    });
+
+    gsap.from('.heritage-text > *', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      x: 20,
+      stagger: 0.1,
+      scrollTrigger: { trigger: '.heritage-text', start: 'top 80%' }
+    });
+
+    // Testimonials
+    gsap.from('.testimonials-section', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      scrollTrigger: { trigger: '.testimonials-section', start: 'top 85%' }
+    });
+
+    // Order section
+    gsap.from('.order-info > *', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      stagger: 0.1,
+      scrollTrigger: { trigger: '.order-section', start: 'top 80%' }
+    });
+
+    gsap.from('.form-group', {
+      ...whisperDefaults,
+      autoAlpha: 0,
+      y: 10,
+      stagger: 0.08,
+      scrollTrigger: { trigger: '.order-form-wrap', start: 'top 80%' }
+    });
+
+    /* ============================================================
+       SWIPER
+    ============================================================ */
+    new Swiper('.swiper-testimonials', {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+      },
+      autoplay: { delay: 5000, disableOnInteraction: false }
+    });
+
+    /* ============================================================
+       FORM HANDLER
+    ============================================================ */
+    document.getElementById('orderForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const btn = this.querySelector('button[type="submit"]');
+      btn.textContent = 'Inquiry Sent — Thank You';
+      btn.style.background = 'var(--accent-dark)';
+      btn.disabled = true;
+    });
+  </script>
+</body>
+</html>

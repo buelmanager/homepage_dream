@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Programs — TALON Ancient Falconry School</title>
+  <meta name="description" content="Four falconry programs: Beginner Course, Advanced Hawking, Medieval Hunt Experience, and Private Sessions. UNESCO-recognized training in the ancient art." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --bg:           #181818;
+      --surface:      #222222;
+      --surface2:     #2A2A2A;
+      --accent:       #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark:  #808090;
+      --ivory:        #EEEEF2;
+      --smoke:        #909090;
+      --muted:        #606060;
+      --border:       #1E1E1E;
+      --font-serif:   'Bebas Neue', Impact, sans-serif;
+      --font-sans:    'DM Sans', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 2px; }
+
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 4rem; background: rgba(24,24,24,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0.25em; color: var(--ivory); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ivory); }
+    .nav-cta { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; border: 1px solid rgba(176,176,192,0.4); padding: 0.6rem 1.6rem; color: var(--accent); transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-hamburger span { width: 24px; height: 1px; background: var(--ivory); display: block; }
+    .mobile-menu { display: none; position: fixed; inset: 0; background: rgba(24,24,24,0.98); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-serif); font-size: 2.5rem; letter-spacing: 0.15em; color: var(--ivory); transition: color 0.3s; }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-close { position: absolute; top: 2rem; right: 2rem; font-size: 1.4rem; color: var(--smoke); cursor: pointer; background: none; border: none; }
+
+    .page-hero { height: 60vh; position: relative; display: flex; align-items: flex-end; padding: 5rem 4rem; }
+    .page-hero-bg { position: absolute; inset: 0; background-image: url('images/hero-1.webp'); background-size: cover; background-position: center 40%; }
+    .page-hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(24,24,24,0.95) 0%, rgba(24,24,24,0.35) 60%); }
+    .page-hero-content { position: relative; z-index: 1; }
+    .page-hero-label { font-size: 0.58rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .page-hero-title { font-family: var(--font-serif); font-size: clamp(3.5rem, 8vw, 8rem); line-height: 0.88; letter-spacing: 0.05em; color: var(--ivory); }
+
+    .section-label { font-size: 0.58rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); line-height: 0.92; color: var(--ivory); letter-spacing: 0.04em; }
+    .section-body { font-size: 0.9rem; line-height: 1.85; color: var(--smoke); }
+    .btn-primary { display: inline-block; font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 1rem 2.8rem; background: var(--accent); color: var(--bg); font-weight: 500; border: none; cursor: pointer; transition: all 0.35s; }
+    .btn-primary:hover { background: var(--ivory); }
+    .btn-outline { display: inline-block; font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 0.9rem 2.5rem; border: 1px solid var(--accent); color: var(--accent); transition: all 0.35s; }
+    .btn-outline:hover { background: var(--accent); color: var(--bg); }
+
+    /* FILTER */
+    .programs-intro { padding: 5rem 4rem 3rem; background: var(--surface); }
+    .programs-intro-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .filter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+    .filter-tab { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; padding: 0.5rem 1.2rem; border: 1px solid var(--border); color: var(--smoke); cursor: pointer; transition: all 0.3s; background: none; font-family: var(--font-sans); }
+    .filter-tab.active, .filter-tab:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+    /* PROGRAMS FULL */
+    .programs-list { padding: 3rem 4rem 8rem; background: var(--surface); }
+    .programs-list-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 2px; }
+
+    .program-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--surface2);
+      overflow: hidden;
+      min-height: 480px;
+    }
+    .program-row:nth-child(even) .program-row-img { order: 2; }
+    .program-row:nth-child(even) .program-row-body { order: 1; }
+
+    .program-row-img { overflow: hidden; }
+    .program-row-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+    .program-row:hover .program-row-img img { transform: scale(1.04); }
+
+    .program-row-body { padding: 4rem; display: flex; flex-direction: column; justify-content: center; }
+    .program-row-tag { font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 1rem; }
+    .program-row-name { font-family: var(--font-serif); font-size: clamp(2rem, 3.5vw, 3.5rem); letter-spacing: 0.06em; color: var(--ivory); margin-bottom: 1.2rem; line-height: 0.95; }
+    .program-row-desc { font-size: 0.85rem; line-height: 1.85; color: var(--smoke); margin-bottom: 2rem; }
+    .program-row-specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 1.5rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+    .spec-item { }
+    .spec-label { font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent-dark); display: block; margin-bottom: 0.3rem; }
+    .spec-value { font-size: 0.88rem; color: var(--ivory); }
+    .program-row-includes { margin-bottom: 2rem; }
+    .includes-title { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .includes-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .includes-list li { font-size: 0.82rem; color: var(--smoke); display: flex; gap: 0.8rem; align-items: flex-start; }
+    .includes-list li::before { content: '—'; color: var(--accent); flex-shrink: 0; }
+
+    /* BIRDS SECTION */
+    .birds { padding: 10rem 4rem; background: var(--bg); }
+    .birds-header { text-align: center; margin-bottom: 6rem; }
+    .birds-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; max-width: 1200px; margin: 0 auto; }
+    .bird-card { background: var(--surface); padding: 2.5rem 2rem; text-align: center; border-bottom: 2px solid transparent; transition: border-color 0.3s; }
+    .bird-card:hover { border-bottom-color: var(--accent); }
+    .bird-icon { font-size: 2rem; color: var(--accent); margin-bottom: 1.2rem; display: block; }
+    .bird-name { font-family: var(--font-serif); font-size: 1.5rem; letter-spacing: 0.08em; color: var(--ivory); margin-bottom: 0.5rem; }
+    .bird-latin { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent-dark); font-style: italic; margin-bottom: 1rem; display: block; }
+    .bird-desc { font-size: 0.78rem; line-height: 1.75; color: var(--smoke); }
+
+    /* CTA BAND */
+    .cta-band { padding: 8rem 4rem; background: var(--surface2); text-align: center; }
+    .cta-band h2 { font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 7rem); line-height: 0.9; color: var(--ivory); margin-bottom: 2rem; }
+    .cta-band p { font-size: 0.9rem; color: var(--smoke); margin-bottom: 3rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+    .footer { background: var(--bg); border-top: 1px solid var(--border); padding: 5rem 4rem 3rem; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 5rem; }
+    .footer-brand-logo { font-family: var(--font-serif); font-size: 2.5rem; letter-spacing: 0.2em; color: var(--ivory); margin-bottom: 1rem; }
+    .footer-brand-text { font-size: 0.82rem; line-height: 1.85; color: var(--muted); }
+    .footer-col-title { font-size: 0.58rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; display: block; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-col ul a { font-size: 0.8rem; color: var(--muted); transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2rem; border-top: 1px solid var(--border); }
+    .footer-copy { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--muted); }
+    .footer-legal { display: flex; gap: 2rem; }
+    .footer-legal a { font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--ivory); }
+
+    @media (max-width: 1024px) {
+      .program-row { grid-template-columns: 1fr; }
+      .program-row:nth-child(even) .program-row-img { order: 0; }
+      .program-row:nth-child(even) .program-row-body { order: 0; }
+      .birds-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav { padding: 1.4rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .page-hero { padding: 5rem 1.5rem 3rem; }
+      .programs-intro { padding: 4rem 1.5rem 2rem; }
+      .programs-intro-inner { flex-direction: column; align-items: flex-start; }
+      .programs-list { padding: 2rem 1.5rem 5rem; }
+      .program-row-body { padding: 2.5rem 1.5rem; }
+      .program-row-specs { grid-template-columns: 1fr 1fr; }
+      .birds { padding: 6rem 1.5rem; }
+      .birds-grid { grid-template-columns: 1fr 1fr; }
+      .cta-band { padding: 5rem 1.5rem; }
+      .footer { padding: 4rem 1.5rem 2.5rem; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">Heritage</a>
+    <a href="collection.html">Programs</a>
+    <a href="process.html">Training</a>
+    <a href="contact.html">Enroll</a>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-logo">TALON</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">Heritage</a></li>
+      <li><a href="collection.html" class="active">Programs</a></li>
+      <li><a href="process.html">Training</a></li>
+      <li><a href="contact.html">Enroll</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Begin Training</a>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content" id="heroContent">
+      <span class="page-hero-label">Programs</span>
+      <h1 class="page-hero-title">Choose<br>Your Path</h1>
+    </div>
+  </section>
+
+  <!-- PROGRAMS INTRO -->
+  <div class="programs-intro">
+    <div class="programs-intro-inner">
+      <div data-anim>
+        <span class="section-label">Four Disciplines</span>
+        <p class="section-body" style="max-width:500px;margin-top:0.5rem">Each program is built on the same three-thousand-year lineage. The bird, the terrain, and the pace change. The discipline does not.</p>
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab active">All Programs</button>
+        <button class="filter-tab">Foundation</button>
+        <button class="filter-tab">Advanced</button>
+        <button class="filter-tab">Experience</button>
+        <button class="filter-tab">Private</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRAMS LIST -->
+  <div class="programs-list">
+    <div class="programs-list-inner">
+
+      <!-- BEGINNER -->
+      <div class="program-row" id="beginner" data-anim>
+        <div class="program-row-img">
+          <img src="images/product-1.webp" alt="Beginner Falconry Course" />
+        </div>
+        <div class="program-row-body">
+          <span class="program-row-tag">Foundation — Course 01</span>
+          <div class="program-row-name">Beginner<br>Course</div>
+          <p class="program-row-desc">An immersive three-day introduction to the ancient art. You will learn the foundational vocabulary of the glove — manning, weighing, feeding, equipment fitting, and your first lure flights with a Harris Hawk under master supervision. No prior experience required or assumed.</p>
+          <div class="program-row-specs">
+            <div class="spec-item">
+              <span class="spec-label">Duration</span>
+              <span class="spec-value">3 Days</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Group Size</span>
+              <span class="spec-value">2–4 Students</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Prerequisite</span>
+              <span class="spec-value">None</span>
+            </div>
+          </div>
+          <div class="program-row-includes">
+            <span class="includes-title">What's Included</span>
+            <ul class="includes-list">
+              <li>Daily morning and afternoon sessions with allocated bird</li>
+              <li>Full equipment provision — glove, lure, jesses, hood</li>
+              <li>One-to-one ratio of student to supervising falconer for lure work</li>
+              <li>TALON Introductory Certificate upon completion</li>
+              <li>Lunch at the estate house daily</li>
+            </ul>
+          </div>
+          <a href="contact.html" class="btn-primary">Enquire Now</a>
+        </div>
+      </div>
+
+      <!-- ADVANCED -->
+      <div class="program-row" id="advanced" data-anim>
+        <div class="program-row-img">
+          <img src="images/product-2.webp" alt="Advanced Hawking Program" />
+        </div>
+        <div class="program-row-body">
+          <span class="program-row-tag">Advanced — Course 02</span>
+          <div class="program-row-name">Advanced<br>Hawking</div>
+          <p class="program-row-desc">For those who have completed a foundation course elsewhere or with us. A week of intensive field work across moorland and forest, flying Peregrines and Red-tailed Hawks. Hood training, telemetry operation, and free flight at altitude above 400 metres. Demanding, precise, exceptional.</p>
+          <div class="program-row-specs">
+            <div class="spec-item">
+              <span class="spec-label">Duration</span>
+              <span class="spec-value">7 Days</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Group Size</span>
+              <span class="spec-value">1–2 Students</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Prerequisite</span>
+              <span class="spec-value">Prior Experience</span>
+            </div>
+          </div>
+          <div class="program-row-includes">
+            <span class="includes-title">What's Included</span>
+            <ul class="includes-list">
+              <li>Full week residential on the Aldric Estate (lodging not included)</li>
+              <li>Access to our Peregrine and Red-tail flight roster</li>
+              <li>Telemetry equipment training and field use</li>
+              <li>Hood training and equipment maintenance sessions</li>
+              <li>TALON Advanced Certificate upon completion</li>
+            </ul>
+          </div>
+          <a href="contact.html" class="btn-primary">Enquire Now</a>
+        </div>
+      </div>
+
+      <!-- MEDIEVAL HUNT -->
+      <div class="program-row" id="medieval" data-anim>
+        <div class="program-row-img">
+          <img src="images/ambient-1.webp" alt="Medieval Hunt Experience" />
+        </div>
+        <div class="program-row-body">
+          <span class="program-row-tag">Experience — Course 03</span>
+          <div class="program-row-name">Medieval<br>Hunt</div>
+          <p class="program-row-desc">A full-day excursion into the tradition of medieval hawking. Period dress is provided. A mounted escort leads the party across the estate while Golden Eagles and Red Kites are flown in sequence. The hunt as it was conducted in the courts of Henry II, enacted with complete authenticity. Ideal for corporate retreats, private celebrations, or the discerning individual.</p>
+          <div class="program-row-specs">
+            <div class="spec-item">
+              <span class="spec-label">Duration</span>
+              <span class="spec-value">Full Day</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Group Size</span>
+              <span class="spec-value">Up to 12</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Prerequisite</span>
+              <span class="spec-value">None</span>
+            </div>
+          </div>
+          <div class="program-row-includes">
+            <span class="includes-title">What's Included</span>
+            <ul class="includes-list">
+              <li>Period costume fitting on arrival (authentic reproductions)</li>
+              <li>Mounted escort and estate carriage transport</li>
+              <li>Golden Eagle and Red Kite flight demonstrations</li>
+              <li>Medieval banquet lunch in the great hall</li>
+              <li>Commemorative manuscript and wax seal certificate</li>
+            </ul>
+          </div>
+          <a href="contact.html" class="btn-primary">Enquire Now</a>
+        </div>
+      </div>
+
+      <!-- PRIVATE -->
+      <div class="program-row" id="private" data-anim>
+        <div class="program-row-img">
+          <img src="images/product-4.webp" alt="Private Falconry Sessions" />
+        </div>
+        <div class="program-row-body">
+          <span class="program-row-tag">Private — Course 04</span>
+          <div class="program-row-name">Private<br>Sessions</div>
+          <p class="program-row-desc">Bespoke one-to-one training with our most senior falconer. You choose the raptor species, the terrain, the pace, and the objective — from a single half-day introduction to a full season preparing for independent bird ownership. No published schedule. No shared time. Your programme, built around your ambition.</p>
+          <div class="program-row-specs">
+            <div class="spec-item">
+              <span class="spec-label">Duration</span>
+              <span class="spec-value">Flexible</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Group Size</span>
+              <span class="spec-value">1:1 Only</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Prerequisite</span>
+              <span class="spec-value">Any Level</span>
+            </div>
+          </div>
+          <div class="program-row-includes">
+            <span class="includes-title">What's Included</span>
+            <ul class="includes-list">
+              <li>Dedicated master falconer for the full session duration</li>
+              <li>Species selection consultation in advance</li>
+              <li>Access to full estate acreage and private flight grounds</li>
+              <li>Ownership preparation pathway for long-term students</li>
+              <li>Ongoing advisory relationship after program completion</li>
+            </ul>
+          </div>
+          <a href="contact.html" class="btn-primary">Enquire Now</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BIRDS WE TRAIN -->
+  <section class="birds">
+    <div class="birds-header">
+      <span class="section-label">The Raptors</span>
+      <h2 class="section-title">Birds of the Mews</h2>
+      <p class="section-body" style="margin-top:1.5rem;max-width:520px;margin-left:auto;margin-right:auto;text-align:center">Our 34 birds span four primary training categories. Each species demands a distinct approach, a distinct relationship, a distinct art.</p>
+    </div>
+    <div class="birds-grid">
+      <div class="bird-card" data-anim>
+        <span class="bird-icon">◈</span>
+        <div class="bird-name">Harris Hawk</div>
+        <span class="bird-latin">Parabuteo unicinctus</span>
+        <p class="bird-desc">The ideal first bird. Social, trainable, and forgiving of beginner error without sacrificing the full dignity of the art. Ideal for foundation courses and the early phases of private training.</p>
+      </div>
+      <div class="bird-card" data-anim>
+        <span class="bird-icon">◈</span>
+        <div class="bird-name">Peregrine</div>
+        <span class="bird-latin">Falco peregrinus</span>
+        <p class="bird-desc">The fastest animal on earth. A Peregrine in stoop is falconry in its most distilled form — precision, power, and speed in a body weighing less than a kilogram. Reserved for advanced students.</p>
+      </div>
+      <div class="bird-card" data-anim>
+        <span class="bird-icon">◈</span>
+        <div class="bird-name">Golden Eagle</div>
+        <span class="bird-latin">Aquila chrysaetos</span>
+        <p class="bird-desc">The bird of kings and emperors. Our three Golden Eagles are flown exclusively in the Medieval Hunt Experience. They require a specialist handler and are not subject to student training programmes.</p>
+      </div>
+      <div class="bird-card" data-anim>
+        <span class="bird-icon">◈</span>
+        <div class="bird-name">Gyrfalcon</div>
+        <span class="bird-latin">Falco rusticolus</span>
+        <p class="bird-desc">The highest bird in medieval rank — reserved by law for kings. Our two Gyrfalcons are available only through private sessions and represent the summit of the falconer's ambition in long-wing discipline.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <h2 data-anim>Ready to<br>Begin?</h2>
+    <p data-anim>Places are strictly limited across all programmes. Submit an enquiry and a master falconer will respond within 48 hours.</p>
+    <div data-anim>
+      <a href="contact.html" class="btn-primary">Submit Enquiry</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">TALON</div>
+        <p class="footer-brand-text">Ancient Falconry School, established 1147. UNESCO-recognized tradition.</p>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Navigate</span>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">Our Heritage</a></li>
+          <li><a href="collection.html">Programs</a></li>
+          <li><a href="process.html">Training Method</a></li>
+          <li><a href="contact.html">Enroll</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Programs</span>
+        <ul>
+          <li><a href="#beginner">Beginner Course</a></li>
+          <li><a href="#advanced">Advanced Hawking</a></li>
+          <li><a href="#medieval">Medieval Hunt</a></li>
+          <li><a href="#private">Private Sessions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Contact</span>
+        <ul>
+          <li><a href="#">Aldric Estate, Northumberland</a></li>
+          <li><a href="tel:+441234567890">+44 1234 567 890</a></li>
+          <li><a href="mailto:enquiries@talon-school.com">enquiries@talon-school.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 TALON Ancient Falconry School. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('#heroContent', {
+      immediateRender: false,
+      opacity: 0, x: -20,
+      duration: 0.75, ease: 'power3.out', delay: 0.3
+    });
+
+    document.querySelectorAll('[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        opacity: 0, x: -20,
+        duration: 0.75, ease: 'power3.out',
+        delay: (i % 3) * 0.04
+      });
+    });
+
+    // Filter tabs (visual only)
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+
+    document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+    document.getElementById('mobileClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+  </script>
+</body>
+</html>

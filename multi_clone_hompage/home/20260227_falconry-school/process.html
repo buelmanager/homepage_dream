@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Training Method — TALON Ancient Falconry School</title>
+  <meta name="description" content="Five stages of falconry training: Manning, Jessing, Lure Work, Hood Training, and Field Work. The ancient method, unchanged for three thousand years." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --bg:           #181818;
+      --surface:      #222222;
+      --surface2:     #2A2A2A;
+      --accent:       #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark:  #808090;
+      --ivory:        #EEEEF2;
+      --smoke:        #909090;
+      --muted:        #606060;
+      --border:       #1E1E1E;
+      --font-serif:   'Bebas Neue', Impact, sans-serif;
+      --font-sans:    'DM Sans', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 2px; }
+
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 4rem; background: rgba(24,24,24,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0.25em; color: var(--ivory); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ivory); }
+    .nav-cta { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; border: 1px solid rgba(176,176,192,0.4); padding: 0.6rem 1.6rem; color: var(--accent); transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-hamburger span { width: 24px; height: 1px; background: var(--ivory); display: block; }
+    .mobile-menu { display: none; position: fixed; inset: 0; background: rgba(24,24,24,0.98); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-serif); font-size: 2.5rem; letter-spacing: 0.15em; color: var(--ivory); transition: color 0.3s; }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-close { position: absolute; top: 2rem; right: 2rem; font-size: 1.4rem; color: var(--smoke); cursor: pointer; background: none; border: none; }
+
+    .page-hero { height: 60vh; position: relative; display: flex; align-items: flex-end; padding: 5rem 4rem; }
+    .page-hero-bg { position: absolute; inset: 0; background-image: url('images/hero-3.webp'); background-size: cover; background-position: center 25%; }
+    .page-hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(24,24,24,0.95) 0%, rgba(24,24,24,0.4) 60%); }
+    .page-hero-content { position: relative; z-index: 1; }
+    .page-hero-label { font-size: 0.58rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .page-hero-title { font-family: var(--font-serif); font-size: clamp(3.5rem, 8vw, 8rem); line-height: 0.88; letter-spacing: 0.05em; color: var(--ivory); }
+
+    .section-label { font-size: 0.58rem; letter-spacing: 0.45em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); line-height: 0.92; color: var(--ivory); letter-spacing: 0.04em; }
+    .section-body { font-size: 0.9rem; line-height: 1.85; color: var(--smoke); }
+    .btn-primary { display: inline-block; font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 1rem 2.8rem; background: var(--accent); color: var(--bg); font-weight: 500; transition: all 0.35s; }
+    .btn-primary:hover { background: var(--ivory); }
+    .btn-outline { display: inline-block; font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 0.9rem 2.5rem; border: 1px solid var(--accent); color: var(--accent); transition: all 0.35s; }
+    .btn-outline:hover { background: var(--accent); color: var(--bg); }
+
+    /* PROCESS INTRO */
+    .process-intro { padding: 8rem 4rem; background: var(--surface); display: grid; grid-template-columns: 1fr 1fr; gap: 8rem; align-items: center; }
+
+    /* FIVE STAGES */
+    .stages { padding: 0 4rem 10rem; background: var(--surface); }
+    .stages-inner { max-width: 1200px; margin: 0 auto; }
+
+    .stage {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 4rem;
+      padding: 5rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .stage:first-child { border-top: 1px solid var(--border); }
+
+    .stage-num {
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      letter-spacing: 0.04em;
+      color: var(--border);
+      line-height: 1;
+    }
+
+    .stage-content {}
+    .stage-title { font-family: var(--font-serif); font-size: 2.5rem; letter-spacing: 0.06em; color: var(--ivory); margin-bottom: 0.5rem; }
+    .stage-subtitle { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; display: block; }
+    .stage-desc { font-size: 0.85rem; line-height: 1.85; color: var(--smoke); }
+
+    .stage-detail {}
+    .stage-detail-title { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .stage-notes { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .stage-notes li { font-size: 0.82rem; line-height: 1.7; color: var(--smoke); display: flex; gap: 1rem; align-items: flex-start; }
+    .stage-notes li::before { content: '—'; color: var(--accent); flex-shrink: 0; }
+    .stage-duration {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.8rem;
+    }
+
+    /* PRINCIPLES */
+    .principles { padding: 10rem 4rem; background: var(--bg); }
+    .principles-header { text-align: center; margin-bottom: 6rem; }
+    .principles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; max-width: 1200px; margin: 0 auto; background: var(--border); }
+    .principle-card { background: var(--surface2); padding: 3.5rem 3rem; }
+    .principle-num { font-family: var(--font-serif); font-size: 3rem; color: var(--border); line-height: 1; margin-bottom: 1.2rem; display: block; }
+    .principle-title { font-family: var(--font-serif); font-size: 1.8rem; letter-spacing: 0.07em; color: var(--ivory); margin-bottom: 1rem; }
+    .principle-text { font-size: 0.82rem; line-height: 1.85; color: var(--smoke); }
+
+    /* IMAGE BREAK */
+    .image-break { position: relative; height: 50vh; overflow: hidden; }
+    .image-break img { width: 100%; height: 100%; object-fit: cover; }
+    .image-break::after { content: ''; position: absolute; inset: 0; background: rgba(24,24,24,0.5); }
+    .image-break-text { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center; }
+    .image-break-quote { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 4rem); letter-spacing: 0.05em; color: var(--ivory); text-align: center; max-width: 900px; padding: 0 2rem; line-height: 1.1; }
+
+    /* EQUIPMENT */
+    .equipment { padding: 10rem 4rem; background: var(--surface); }
+    .equipment-header { margin-bottom: 5rem; }
+    .equipment-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; max-width: 1200px; margin: 0 auto; }
+    .equip-card { background: var(--surface2); padding: 2.5rem; border-bottom: 2px solid transparent; transition: border-color 0.3s; }
+    .equip-card:hover { border-bottom-color: var(--accent); }
+    .equip-name { font-family: var(--font-serif); font-size: 1.5rem; letter-spacing: 0.07em; color: var(--ivory); margin-bottom: 0.5rem; }
+    .equip-origin { font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
+    .equip-desc { font-size: 0.78rem; line-height: 1.75; color: var(--smoke); }
+
+    /* CTA */
+    .process-cta { padding: 8rem 4rem; background: var(--bg); text-align: center; }
+    .process-cta h2 { font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 6rem); line-height: 0.9; color: var(--ivory); margin-bottom: 2rem; }
+    .process-cta p { font-size: 0.9rem; color: var(--smoke); margin-bottom: 3rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+    .footer { background: var(--bg); border-top: 1px solid var(--border); padding: 5rem 4rem 3rem; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 5rem; }
+    .footer-brand-logo { font-family: var(--font-serif); font-size: 2.5rem; letter-spacing: 0.2em; color: var(--ivory); margin-bottom: 1rem; }
+    .footer-brand-text { font-size: 0.82rem; line-height: 1.85; color: var(--muted); }
+    .footer-col-title { font-size: 0.58rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; display: block; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-col ul a { font-size: 0.8rem; color: var(--muted); transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2rem; border-top: 1px solid var(--border); }
+    .footer-copy { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--muted); }
+    .footer-legal { display: flex; gap: 2rem; }
+    .footer-legal a { font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--ivory); }
+
+    @media (max-width: 1024px) {
+      .process-intro { grid-template-columns: 1fr; gap: 3rem; }
+      .stage { grid-template-columns: 60px 1fr; gap: 2rem; }
+      .stage-detail { grid-column: 2; }
+      .principles-grid { grid-template-columns: 1fr 1fr; }
+      .equipment-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav { padding: 1.4rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .page-hero { padding: 5rem 1.5rem 3rem; }
+      .process-intro { padding: 5rem 1.5rem; }
+      .stages { padding: 0 1.5rem 6rem; }
+      .stage { grid-template-columns: 50px 1fr; gap: 1.5rem; padding: 3rem 0; }
+      .stage-detail { grid-column: 1 / -1; }
+      .principles { padding: 6rem 1.5rem; }
+      .principles-grid { grid-template-columns: 1fr; }
+      .equipment { padding: 6rem 1.5rem; }
+      .equipment-grid { grid-template-columns: 1fr 1fr; }
+      .process-cta { padding: 5rem 1.5rem; }
+      .footer { padding: 4rem 1.5rem 2.5rem; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">Heritage</a>
+    <a href="collection.html">Programs</a>
+    <a href="process.html">Training</a>
+    <a href="contact.html">Enroll</a>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-logo">TALON</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">Heritage</a></li>
+      <li><a href="collection.html">Programs</a></li>
+      <li><a href="process.html" class="active">Training</a></li>
+      <li><a href="contact.html">Enroll</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Begin Training</a>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content" id="heroContent">
+      <span class="page-hero-label">The Method</span>
+      <h1 class="page-hero-title">Five Stages.<br>One Art.</h1>
+    </div>
+  </section>
+
+  <!-- PROCESS INTRO -->
+  <section class="process-intro">
+    <div data-anim>
+      <span class="section-label">The Ancient Method</span>
+      <h2 class="section-title">Unchanged for<br>Three Thousand Years</h2>
+    </div>
+    <div class="section-body" data-anim>
+      <p>The stages of falconry training were established before writing systems could record them. We know them from the oldest texts — Persian, Arabic, Chinese — and from the hands of those who taught us. The sequence does not change because the bird does not change.</p>
+      <p style="margin-top:1.2rem">What varies is time, temperament, and the relationship built between a specific falconer and a specific bird. Every bird is an individual. Every training timeline is its own. What we teach is not a procedure — it is a way of paying attention.</p>
+    </div>
+  </section>
+
+  <!-- FIVE STAGES -->
+  <section class="stages">
+    <div class="stages-inner">
+
+      <div class="stage" data-anim>
+        <div class="stage-num">01</div>
+        <div class="stage-content">
+          <div class="stage-title">Manning</div>
+          <span class="stage-subtitle">The First Trust</span>
+          <p class="stage-desc">Manning is the process by which the bird learns to accept the falconer's presence without alarm. This is not domestication — the hawk remains a wild animal. It is, rather, an agreement: that the human presence is not a threat, and that the glove can be trusted as a perch. It requires many hours of patient proximity, quiet voice, and deliberate stillness. The falconer learns as much as the bird.</p>
+          <span class="stage-duration">Duration: Week 1–2</span>
+        </div>
+        <div class="stage-detail">
+          <span class="stage-detail-title">Key Techniques</span>
+          <ul class="stage-notes">
+            <li>Carrying the bird on the fist for extended periods — first in quiet spaces, then introducing gradual exposure to noise and movement</li>
+            <li>Feeding from the glove only, establishing the fist as the primary site of reward</li>
+            <li>Monitoring wing position, foot grip, and bating frequency as indicators of stress level</li>
+            <li>Gradually introducing hood — early sessions use a temporary hood to regulate exposure</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stage" data-anim>
+        <div class="stage-num">02</div>
+        <div class="stage-content">
+          <div class="stage-title">Jessing</div>
+          <span class="stage-subtitle">Equipment and Control</span>
+          <p class="stage-desc">Jesses are the leather anklets that connect the bird to the leash and allow the falconer to retain control while building the bird's confidence. Traditional aylmeri jesses in tanned calf leather are fitted by hand to the bird's individual leg dimensions. The jessing process teaches the bird that restraint is temporary and non-threatening — a lesson it must trust before free flight becomes possible.</p>
+          <span class="stage-duration">Duration: Week 2–3</span>
+        </div>
+        <div class="stage-detail">
+          <span class="stage-detail-title">Equipment Introduced</span>
+          <ul class="stage-notes">
+            <li>Aylmeri anklets — traditional perforated leather, custom-fitted and hand-stitched</li>
+            <li>Mews jesses for secured perching — replaced with field jesses before flights</li>
+            <li>Swivel and leash — minimal torsion design, inspected before every session</li>
+            <li>Block perch and bow perch — student learns to tie falconer's knot correctly</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stage" data-anim>
+        <div class="stage-num">03</div>
+        <div class="stage-content">
+          <div class="stage-title">Lure Training</div>
+          <span class="stage-subtitle">The First Flight</span>
+          <p class="stage-desc">The lure is a padded leather weight swung on a cord to simulate prey in flight. The hawk is recalled to it over increasing distances, initially on a creance — a long, light line that allows freedom while preventing loss. Lure work establishes the recall signal and begins the development of the hawk's hunting instinct in a controlled environment. The arc and timing of the swing must be tailored to the bird's flight style.</p>
+          <span class="stage-duration">Duration: Week 3–5</span>
+        </div>
+        <div class="stage-detail">
+          <span class="stage-detail-title">Progression Markers</span>
+          <ul class="stage-notes">
+            <li>Reliable step-up to fist at 1 metre, extending to 10m, 30m, 50m on creance</li>
+            <li>Consistent response to recall whistle across wind directions</li>
+            <li>Smooth footing of lure without striking at falconer's hands</li>
+            <li>Weight management to maintain hunting weight without distress</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stage" data-anim>
+        <div class="stage-num">04</div>
+        <div class="stage-content">
+          <div class="stage-title">Hood Training</div>
+          <span class="stage-subtitle">Calm in the Field</span>
+          <p class="stage-desc">The hood is one of falconry's oldest tools — a leather cap that covers the bird's eyes and immediately reduces its arousal. A hooded hawk is a calm hawk: essential for transport across terrain, for preventing pre-flight stress, and for managing the hawk between sorties in the field. Hood training is incremental: the bird must accept the hood being placed and removed without bating, and must sit quietly under it for extended periods.</p>
+          <span class="stage-duration">Duration: Week 4–6</span>
+        </div>
+        <div class="stage-detail">
+          <span class="stage-detail-title">Hood Types Used</span>
+          <ul class="stage-notes">
+            <li>Dutch hood — soft braces, used for daily training sessions and transport</li>
+            <li>Anglo-Indian hood — for long journeys and high-stress situations</li>
+            <li>Bating assessment under hood to measure tolerance development</li>
+            <li>Student learns one-hand hooding and unhooding technique progressively</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stage" data-anim>
+        <div class="stage-num">05</div>
+        <div class="stage-content">
+          <div class="stage-title">Field Work</div>
+          <span class="stage-subtitle">The Full Art</span>
+          <p class="stage-desc">Free flight on the estate. The bird is unhooded and cast off to find a vantage — a high point, a thermal — from which it can hunt. The falconer reads wind, terrain, and the hawk's mood. Quarry may be flushed or the hawk may pursue independently. Telemetry monitors every sortie. The student learns to read all of this simultaneously, to anticipate, and to remain still when stillness is the right response. This is where the art becomes whole.</p>
+          <span class="stage-duration">Duration: Week 5 onwards</span>
+        </div>
+        <div class="stage-detail">
+          <span class="stage-detail-title">Field Competencies</span>
+          <ul class="stage-notes">
+            <li>Reading hawk position and hunt intent from body posture and wing angle</li>
+            <li>Telemetry operation — fitting, frequency, directional tracking</li>
+            <li>Quarry identification and legal quarry species in current season</li>
+            <li>Post-flight management: reward, cool-down, weight recording</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- IMAGE BREAK -->
+  <div class="image-break">
+    <img src="images/hero-2.webp" alt="Falconry field work" />
+    <div class="image-break-text">
+      <div class="image-break-quote" data-anim>"The art is in the waiting. The hawk teaches you everything about patience that your life never did."</div>
+    </div>
+  </div>
+
+  <!-- PRINCIPLES -->
+  <section class="principles">
+    <div class="principles-header">
+      <span class="section-label">Core Doctrine</span>
+      <h2 class="section-title">Three Principles<br>That Do Not Change</h2>
+    </div>
+    <div class="principles-grid">
+      <div class="principle-card" data-anim>
+        <span class="principle-num">I</span>
+        <div class="principle-title">The Bird Decides</div>
+        <p class="principle-text">No method of coercion produces a reliable hawk. The bird that returns does so from choice, not compulsion. All training at TALON is built on this premise. We manage the conditions; the hawk makes the decisions.</p>
+      </div>
+      <div class="principle-card" data-anim>
+        <span class="principle-num">II</span>
+        <div class="principle-title">Weight is Everything</div>
+        <p class="principle-text">A hawk's hunting weight is the precise point at which it is hungry enough to respond to the lure and healthy enough to fly. Too heavy and it ignores you. Too light and you have harmed it. Learning to read this is the first skill of the falconer.</p>
+      </div>
+      <div class="principle-card" data-anim>
+        <span class="principle-num">III</span>
+        <div class="principle-title">Observation Before Action</div>
+        <p class="principle-text">The instinct is always to intervene. Falconry teaches you to suppress it. Watch the hawk first. Read it completely before you move. Most errors in the field come from premature action. Most successes come from the falconer who waited.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EQUIPMENT -->
+  <section class="equipment">
+    <div class="equipment-header">
+      <span class="section-label">The Kit</span>
+      <h2 class="section-title">Traditional Equipment</h2>
+      <p class="section-body" style="margin-top:1.2rem;max-width:520px">All equipment provided by TALON is crafted to traditional specifications. Nothing synthetic where leather will serve. Nothing modern where the ancient form remains superior.</p>
+    </div>
+    <div class="equipment-grid">
+      <div class="equip-card" data-anim>
+        <div class="equip-name">The Glove</div>
+        <span class="equip-origin">Origin: Persia, pre-7th Century</span>
+        <p class="equip-desc">Heavy double-stitched deer leather, long-cuffed for forearm protection. Fitted to each student's hand on day one. Our gloves are made by a single craftsman in Northumberland from a pattern unchanged since 1840.</p>
+      </div>
+      <div class="equip-card" data-anim>
+        <div class="equip-name">The Hood</div>
+        <span class="equip-origin">Origin: Arab falconry, 9th Century</span>
+        <p class="equip-desc">Dutch hood in vegetable-tanned calf leather with silk-thread braces. Shaped and fitted to each individual bird. Three sizes in stock; custom hoods made by appointment. The fitting of a good hood is itself a craft.</p>
+      </div>
+      <div class="equip-card" data-anim>
+        <div class="equip-name">The Lure</div>
+        <span class="equip-origin">Origin: Medieval Europe, 12th Century</span>
+        <p class="equip-desc">Padded kangaroo leather weighted with lead — a sufficient food reward is tied to the striking face. Swung on a braided cord of 1.2 metres. The swing technique is specific to the species being trained.</p>
+      </div>
+      <div class="equip-card" data-anim>
+        <div class="equip-name">The Perch</div>
+        <span class="equip-origin">Origin: Universal falconry tradition</span>
+        <p class="equip-desc">Hardwood block perch for falcons (which prefer a raised platform) and bow perch for hawks (which perch on a natural bowed form). Each bird has its own perch, turf-anchored or padded for the weathering ground.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="process-cta">
+    <h2 data-anim>Begin the<br>First Stage</h2>
+    <p data-anim>The Beginner Course takes you through manning and lure training under master supervision. Three days. One bird. The start of something that does not end.</p>
+    <div data-anim style="display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;">
+      <a href="collection.html" class="btn-outline">View All Programs</a>
+      <a href="contact.html" class="btn-primary">Enroll Now</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">TALON</div>
+        <p class="footer-brand-text">Ancient Falconry School, established 1147. UNESCO-recognized tradition.</p>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Navigate</span>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">Our Heritage</a></li>
+          <li><a href="collection.html">Programs</a></li>
+          <li><a href="process.html">Training Method</a></li>
+          <li><a href="contact.html">Enroll</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Programs</span>
+        <ul>
+          <li><a href="collection.html#beginner">Beginner Course</a></li>
+          <li><a href="collection.html#advanced">Advanced Hawking</a></li>
+          <li><a href="collection.html#medieval">Medieval Hunt</a></li>
+          <li><a href="collection.html#private">Private Sessions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Contact</span>
+        <ul>
+          <li><a href="#">Aldric Estate, Northumberland</a></li>
+          <li><a href="tel:+441234567890">+44 1234 567 890</a></li>
+          <li><a href="mailto:enquiries@talon-school.com">enquiries@talon-school.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 TALON Ancient Falconry School. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('#heroContent', {
+      immediateRender: false,
+      opacity: 0, x: -20,
+      duration: 0.75, ease: 'power3.out', delay: 0.3
+    });
+
+    document.querySelectorAll('[data-anim]').forEach((el, i) => {
+      gsap.from(el, {
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%' },
+        opacity: 0, x: -20,
+        duration: 0.75, ease: 'power3.out',
+        delay: (i % 3) * 0.04
+      });
+    });
+
+    document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+    document.getElementById('mobileClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+  </script>
+</body>
+</html>

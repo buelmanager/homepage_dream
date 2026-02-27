@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHINRIN — Let the Forest Breathe You</title>
+  <meta name="description" content="Shinrin-yoku forest bathing retreat. Ancient forest wisdom meets quiet luxury. Certified guides lead you into the healing embrace of old-growth forest.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    /* =========================================
+       CSS CUSTOM PROPERTIES — Dark Olive P10
+       ========================================= */
+    :root {
+      --bg: #141810;
+      --surface: #1C2018;
+      --surface2: #222A1E;
+      --accent: #8AB56A;
+      --accent-light: #AACE8A;
+      --accent-dark: #5A8040;
+      --ivory: #E4EEE0;
+      --smoke: #889880;
+      --muted: #4E5E48;
+      --border: #181E14;
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --transition: 0.6s var(--ease-out);
+    }
+
+    /* =========================================
+       RESET & BASE
+       ========================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 2px; }
+
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+
+    /* =========================================
+       PRELOADER
+       ========================================= */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+    }
+
+    .preloader-logo span {
+      color: var(--accent);
+    }
+
+    .preloader-bar {
+      width: 200px;
+      height: 1px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: barLoad 2s var(--ease-out) forwards;
+    }
+
+    @keyframes barLoad {
+      to { left: 0; }
+    }
+
+    .preloader-text {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    /* =========================================
+       SCROLL INDICATOR
+       ========================================= */
+    #scroll-indicator {
+      position: fixed;
+      right: 2rem;
+      bottom: 2.5rem;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.6s;
+      pointer-events: none;
+    }
+
+    #scroll-indicator.visible { opacity: 1; }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    .scroll-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* =========================================
+       NAVBAR
+       ========================================= */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 1.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, padding 0.4s;
+    }
+
+    #navbar.scrolled {
+      background: rgba(20, 24, 16, 0.92);
+      backdrop-filter: blur(16px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--accent-light); }
+    .nav-links a.active { color: var(--ivory); }
+
+    .nav-cta {
+      padding: 0.6rem 1.5rem;
+      border: 1px solid var(--accent);
+      color: var(--accent) !important;
+      border-radius: 2px;
+      transition: background 0.3s, color 0.3s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg) !important;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: transform 0.3s;
+    }
+
+    /* =========================================
+       HERO — TYPE B (Parallax + Ken Burns)
+       ========================================= */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-layer {
+      position: absolute;
+      inset: -10%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    #hero-layer-1 {
+      background-image: url('images/hero-1.webp');
+      filter: brightness(0.6);
+      animation: kenBurns1 18s ease-in-out infinite alternate;
+    }
+
+    #hero-layer-2 {
+      background-image: url('images/hero-2.webp');
+      background-blend-mode: overlay;
+      background-color: rgba(20, 24, 16, 0.3);
+      animation: kenBurns2 22s ease-in-out infinite alternate;
+      mix-blend-mode: soft-light;
+    }
+
+    @keyframes kenBurns1 {
+      from { transform: scale(1) translate(0, 0); }
+      to   { transform: scale(1.08) translate(-2%, 1%); }
+    }
+
+    @keyframes kenBurns2 {
+      from { transform: scale(1.05) translate(1%, -1%); }
+      to   { transform: scale(1) translate(-1%, 2%); }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(20, 24, 16, 0.55) 0%,
+        rgba(20, 24, 16, 0.2) 50%,
+        rgba(20, 24, 16, 0.6) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3.5rem, 8vw, 7.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--ivory);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: var(--smoke);
+      font-weight: 300;
+      margin-bottom: 3rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 1rem 2.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      padding: 1rem 2.5rem;
+      border: 1px solid rgba(228, 238, 224, 0.4);
+      color: var(--ivory);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 400;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+
+    /* Floating Badge */
+    .hero-badge {
+      position: absolute;
+      bottom: 3rem;
+      left: 4rem;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+
+    .hero-badge-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .hero-badge-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .hero-badge-value {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      color: var(--ivory);
+    }
+
+    /* Scroll down arrow */
+    .hero-scroll-arrow {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+    }
+
+    .hero-scroll-arrow span {
+      display: block;
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollDown 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollDown {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* =========================================
+       SECTION UTILITY
+       ========================================= */
+    section {
+      padding: 8rem 4rem;
+    }
+
+    .section-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--ivory);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .section-body {
+      color: var(--smoke);
+      max-width: 600px;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* =========================================
+       STATS SECTION
+       ========================================= */
+    #stats {
+      background: var(--surface);
+      padding: 5rem 4rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 4vw, 3.5rem);
+      font-weight: 300;
+      color: var(--accent-light);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* =========================================
+       PHILOSOPHY SECTION — 3-col CSS grid
+       ========================================= */
+    #philosophy {
+      background: var(--bg);
+    }
+
+    .philosophy-header {
+      max-width: 1280px;
+      margin: 0 auto 5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 2rem;
+    }
+
+    .philosophy-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .philosophy-card {
+      background: var(--surface);
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s;
+    }
+
+    .philosophy-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.5s var(--ease-out);
+    }
+
+    .philosophy-card:hover::before { height: 100%; }
+    .philosophy-card:hover { background: var(--surface2); }
+
+    .philosophy-number {
+      font-family: var(--font-serif);
+      font-size: 4rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .philosophy-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+
+    .philosophy-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--ivory);
+      margin-bottom: 1rem;
+    }
+
+    .philosophy-desc {
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    /* =========================================
+       EXPERIENCE COLLECTION
+       ========================================= */
+    #experiences {
+      background: var(--surface);
+    }
+
+    .experiences-header {
+      max-width: 1280px;
+      margin: 0 auto 4rem;
+    }
+
+    .experiences-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+    }
+
+    .experience-card {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+
+    .experience-card img {
+      transition: transform 0.8s var(--ease-out);
+    }
+
+    .experience-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .experience-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(20,24,16,0.85) 0%, transparent 60%);
+      transition: opacity 0.4s;
+    }
+
+    .experience-card-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2.5rem;
+      transform: translateY(0);
+      transition: transform 0.4s var(--ease-out);
+    }
+
+    .experience-card:hover .experience-card-content {
+      transform: translateY(-8px);
+    }
+
+    .experience-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .experience-title {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--ivory);
+      margin-bottom: 0.5rem;
+    }
+
+    .experience-duration {
+      font-size: 0.75rem;
+      color: var(--smoke);
+      letter-spacing: 0.1em;
+    }
+
+    .experience-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-top: 1rem;
+      border-bottom: 1px solid var(--accent-dark);
+      padding-bottom: 2px;
+    }
+
+    /* =========================================
+       FOREST STUDIO — Full-width ambient
+       ========================================= */
+    #studio {
+      position: relative;
+      height: 80vh;
+      min-height: 600px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0;
+    }
+
+    .studio-bg {
+      position: absolute;
+      inset: 0;
+    }
+
+    .studio-bg img {
+      object-position: center 30%;
+      filter: brightness(0.5);
+    }
+
+    .studio-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(20,24,16,0.8) 0%, rgba(20,24,16,0.3) 60%, rgba(20,24,16,0.1) 100%);
+    }
+
+    .studio-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 8rem;
+      max-width: 700px;
+    }
+
+    .studio-content .section-title {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      margin-bottom: 2rem;
+    }
+
+    .studio-content .section-body {
+      max-width: 500px;
+      margin-bottom: 3rem;
+    }
+
+    /* =========================================
+       PROCESS / WALK STEPS
+       ========================================= */
+    #process {
+      background: var(--bg);
+    }
+
+    .process-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .process-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .process-step {
+      display: flex;
+      gap: 2rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: padding-left 0.3s;
+    }
+
+    .process-step:hover { padding-left: 0.5rem; }
+
+    .step-number {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 300;
+      min-width: 36px;
+      padding-top: 0.2rem;
+    }
+
+    .step-content {}
+
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--ivory);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+
+    .process-image {
+      position: sticky;
+      top: 8rem;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+
+    .process-image img {
+      transition: transform 0.6s;
+    }
+
+    /* =========================================
+       HERITAGE SECTION
+       ========================================= */
+    #heritage {
+      background: var(--surface);
+      padding: 8rem 4rem;
+    }
+
+    .heritage-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: center;
+    }
+
+    .heritage-images {
+      position: relative;
+    }
+
+    .heritage-main-image {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+    }
+
+    .heritage-accent-image {
+      position: absolute;
+      bottom: -3rem;
+      right: -3rem;
+      width: 55%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      border: 4px solid var(--bg);
+    }
+
+    .heritage-text {}
+
+    .heritage-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      padding-left: 2rem;
+      border-left: 2px solid var(--accent);
+    }
+
+    /* =========================================
+       TESTIMONIALS
+       ========================================= */
+    #testimonials {
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .testimonials-header {
+      max-width: 1280px;
+      margin: 0 auto 4rem;
+      text-align: center;
+    }
+
+    .swiper {
+      max-width: 900px;
+      margin: 0 auto;
+      overflow: visible !important;
+    }
+
+    .swiper-slide {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .testimonial-stars {
+      display: flex;
+      justify-content: center;
+      gap: 0.3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .testimonial-stars span {
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ivory);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .testimonial-author {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .testimonial-role {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    .swiper-pagination-bullet {
+      background: var(--muted) !important;
+      opacity: 1 !important;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: var(--accent) !important;
+      transform: scale(1.3);
+    }
+
+    /* =========================================
+       BOOKING FORM
+       ========================================= */
+    #booking {
+      background: var(--surface);
+    }
+
+    .booking-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .booking-info {}
+
+    .booking-detail {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .booking-detail-icon {
+      color: var(--accent);
+      font-size: 1.2rem;
+      min-width: 24px;
+      margin-top: 0.1rem;
+    }
+
+    .booking-detail-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .booking-detail-value {
+      font-size: 0.95rem;
+      color: var(--ivory);
+    }
+
+    .booking-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      padding: 0.9rem 1.2rem;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 300;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.3s;
+      width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .form-group select option { background: var(--surface2); }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .form-submit {
+      padding: 1.1rem;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* =========================================
+       FOOTER
+       ========================================= */
+    footer {
+      background: var(--bg);
+      padding: 6rem 4rem 3rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .footer-brand .nav-logo {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .footer-desc {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.8;
+      max-width: 280px;
+      margin-bottom: 2rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--smoke);
+      font-size: 0.8rem;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .footer-social a:hover { border-color: var(--accent); color: var(--accent); }
+
+    .footer-col h4 {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-col ul li a {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      transition: color 0.3s;
+    }
+
+    .footer-col ul li a:hover { color: var(--accent-light); }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 3rem auto 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-legal a {
+      font-size: 0.75rem;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+
+    .footer-legal a:hover { color: var(--smoke); }
+
+    /* =========================================
+       MOBILE RESPONSIVE
+       ========================================= */
+    @media (max-width: 1024px) {
+      #navbar { padding: 1.5rem 2rem; }
+      #navbar.scrolled { padding: 1rem 2rem; }
+      section { padding: 6rem 2rem; }
+      #stats { padding: 4rem 2rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .heritage-container { grid-template-columns: 1fr; gap: 4rem; }
+      .heritage-images { max-width: 500px; margin-bottom: 4rem; }
+      .process-container { grid-template-columns: 1fr; }
+      .process-image { display: none; }
+      .booking-container { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .studio-content { padding: 0 4rem; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .hero-badge { display: none; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .experiences-grid { grid-template-columns: 1fr; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .studio-content { padding: 0 2rem; }
+      section { padding: 5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">SHIN<span>RIN</span></div>
+    <div class="preloader-bar"></div>
+    <div class="preloader-text">Entering the Forest</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">SHIN<span>RIN</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">Our Forest</a></li>
+      <li><a href="collection.html">Experiences</a></li>
+      <li><a href="process.html">The Walk</a></li>
+      <li><a href="contact.html" class="nav-cta">Book Now</a></li>
+    </ul>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO — TYPE B -->
+  <section id="hero">
+    <div class="hero-layer" id="hero-layer-1"></div>
+    <div class="hero-layer" id="hero-layer-2"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Certified Shinrin-yoku Forest Therapy</p>
+      <h1 class="hero-title">
+        Let the Forest<br>
+        <em>Breathe You</em>
+      </h1>
+      <p class="hero-tagline">Ancient Japanese forest medicine, practiced in old-growth sanctuaries.</p>
+      <div class="hero-actions">
+        <a href="collection.html" class="btn-primary">Explore Experiences</a>
+        <a href="about.html" class="btn-outline">Our Philosophy</a>
+      </div>
+    </div>
+
+    <!-- Floating badge -->
+    <div class="hero-badge">
+      <div class="hero-badge-icon">✦</div>
+      <div class="hero-badge-label">Certified Guide</div>
+      <div class="hero-badge-value">Shinrin-yoku Association</div>
+    </div>
+
+    <div class="hero-scroll-arrow">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">1982</div>
+        <div class="stat-label">Year Shinrin-yoku Was Founded</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">800+</div>
+        <div class="stat-label">Acres of Old-Growth Forest</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">48%</div>
+        <div class="stat-label">Average Cortisol Reduction</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">2,400</div>
+        <div class="stat-label">Guests Guided Since 2015</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY — 3-col grid -->
+  <section id="philosophy">
+    <div class="philosophy-header">
+      <div>
+        <p class="section-eyebrow">Our Philosophy</p>
+        <h2 class="section-title">Three Pillars of<br><em>Forest Immersion</em></h2>
+      </div>
+      <p class="section-body">Shinrin-yoku is not a hike. It is a medicine. We guide you to slow down, open your senses, and let the forest do what it has always known how to do.</p>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <div class="philosophy-number">01</div>
+        <h3 class="philosophy-title">Phytoncide Immersion</h3>
+        <p class="philosophy-desc">Trees breathe out aromatic compounds — phytoncides — that measurably boost NK (natural killer) cell activity, strengthen immunity, and reduce inflammatory markers. Simply being present in the forest is biochemically restorative.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-number">02</div>
+        <h3 class="philosophy-title">Sensory Awakening</h3>
+        <p class="philosophy-desc">Our guides use evidence-based invitations to draw you into deep sensory presence. Touch bark, taste clean air, follow sound to its source. Attention narrows; the nervous system softens from sympathetic to parasympathetic.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-number">03</div>
+        <h3 class="philosophy-title">Silent Communion</h3>
+        <p class="philosophy-desc">The oldest trees in our sanctuary are over 300 years old. Sitting beneath them, we practice the Japanese art of "Komorebi" — receiving the filtering light through leaves — as a doorway to contemplative stillness.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE COLLECTION -->
+  <section id="experiences">
+    <div class="experiences-header">
+      <p class="section-eyebrow">Our Offerings</p>
+      <h2 class="section-title">Curated Forest<br><em>Experiences</em></h2>
+    </div>
+    <div class="experiences-grid">
+      <div class="experience-card">
+        <img src="images/product-1.webp" alt="Half-Day Forest Bath">
+        <div class="experience-card-overlay"></div>
+        <div class="experience-card-content">
+          <div class="experience-tag">Signature</div>
+          <h3 class="experience-title">Half-Day Forest Bath</h3>
+          <p class="experience-duration">3 hours · Morning or Afternoon · 6 guests max</p>
+          <a href="collection.html" class="experience-cta">Discover More →</a>
+        </div>
+      </div>
+      <div class="experience-card">
+        <img src="images/product-2.webp" alt="Full Immersion Day">
+        <div class="experience-card-overlay"></div>
+        <div class="experience-card-content">
+          <div class="experience-tag">Premium</div>
+          <h3 class="experience-title">Full Immersion Day</h3>
+          <p class="experience-duration">7 hours · Sunrise to Dusk · 4 guests max</p>
+          <a href="collection.html" class="experience-cta">Discover More →</a>
+        </div>
+      </div>
+      <div class="experience-card">
+        <img src="images/product-3.webp" alt="Moonlit Forest Walk">
+        <div class="experience-card-overlay"></div>
+        <div class="experience-card-content">
+          <div class="experience-tag">Rare</div>
+          <h3 class="experience-title">Moonlit Forest Walk</h3>
+          <p class="experience-duration">2.5 hours · Full Moon nights · 4 guests max</p>
+          <a href="collection.html" class="experience-cta">Discover More →</a>
+        </div>
+      </div>
+      <div class="experience-card">
+        <img src="images/product-4.webp" alt="Corporate Restoration">
+        <div class="experience-card-overlay"></div>
+        <div class="experience-card-content">
+          <div class="experience-tag">Private</div>
+          <h3 class="experience-title">Corporate Restoration</h3>
+          <p class="experience-duration">Full Day · Custom · Up to 20 guests</p>
+          <a href="collection.html" class="experience-cta">Discover More →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOREST STUDIO — Ambient full-width -->
+  <section id="studio">
+    <div class="studio-bg">
+      <img src="images/ambient-1.webp" alt="Ancient Forest Canopy">
+    </div>
+    <div class="studio-overlay"></div>
+    <div class="studio-content">
+      <p class="section-eyebrow">Our Sanctuary</p>
+      <h2 class="section-title">800 Acres of<br><em>Old-Growth Forest</em></h2>
+      <p class="section-body">Our forest has never been logged. Ancient hemlock, cedar, and maple form a continuous canopy that creates a unique microclimate — cooler, more humid, richer in phytoncides than any managed woodland. This is not a park. It is a living elder.</p>
+      <a href="about.html" class="btn-outline">Learn About Our Forest</a>
+    </div>
+  </section>
+
+  <!-- PROCESS / WALK -->
+  <section id="process">
+    <div class="process-container">
+      <div>
+        <p class="section-eyebrow">The Protocol</p>
+        <h2 class="section-title">How a Forest<br><em>Bath Unfolds</em></h2>
+        <p class="section-body" style="margin-bottom:3rem;">Each session follows the ANFT (Association of Nature and Forest Therapy) protocol — adapted for our specific forest ecosystem and the unique needs of each guest group.</p>
+        <div class="process-steps">
+          <div class="process-step">
+            <span class="step-number">01</span>
+            <div class="step-content">
+              <h3 class="step-title">Threshold Crossing</h3>
+              <p class="step-desc">We pause at the forest edge. A brief grounding exercise helps you leave behind devices, schedules, and the noise of ordinary time.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-number">02</span>
+            <div class="step-content">
+              <h3 class="step-title">Sensory Invitations</h3>
+              <p class="step-desc">Your guide offers a series of open-ended invitations — not instructions — that draw your attention to what is alive around you.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-number">03</span>
+            <div class="step-content">
+              <h3 class="step-title">Sit Spot Practice</h3>
+              <p class="step-desc">Each guest finds their own silent sitting place for 20 unstructured minutes. No goal, no achievement. Just receiving.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-number">04</span>
+            <div class="step-content">
+              <h3 class="step-title">Tea Ceremony</h3>
+              <p class="step-desc">We close each walk with a forest-gathered tea ceremony — pine needle, cedar tip, or wild mint — shared in a circle with gentle reflection.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="process-image">
+        <img src="images/ambient-2.webp" alt="Shinrin-yoku forest path">
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section id="heritage">
+    <div class="heritage-container">
+      <div class="heritage-images">
+        <div class="heritage-main-image">
+          <img src="images/ambient-3.webp" alt="Forest guide">
+        </div>
+        <div class="heritage-accent-image">
+          <img src="images/product-1.webp" alt="Forest healing">
+        </div>
+      </div>
+      <div class="heritage-text">
+        <p class="section-eyebrow">Our Heritage</p>
+        <h2 class="section-title">A Decade of<br><em>Forest Medicine</em></h2>
+        <blockquote class="heritage-quote">
+          "The forest is not scenery. It is medicine. And you are the patient it has been waiting for."
+        </blockquote>
+        <p class="section-body" style="margin-bottom:2rem;">SHINRIN was founded in 2015 by a Japanese-trained forest therapy guide who spent seven years studying under masters of Shinrin-yoku in Akasawa, Japan — the birthplace of the practice. We carry that lineage into every walk.</p>
+        <p class="section-body" style="margin-bottom:2.5rem;">Our guides hold certification from the Association of Nature and Forest Therapy (ANFT) and undergo ongoing training in forest ecology, trauma-informed care, and contemplative practice.</p>
+        <a href="about.html" class="btn-primary">Meet Our Guides</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="testimonials-header">
+      <p class="section-eyebrow">Guest Voices</p>
+      <h2 class="section-title">What the Forest<br><em>Gave Them</em></h2>
+    </div>
+    <div class="swiper testimonials-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonial-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-text">"I arrived holding two years of grief. The forest did not fix it. But it held me in a way nothing else had. I left lighter — as if the trees had absorbed something I could not carry anymore."</p>
+          <p class="testimonial-author">— Eleanor M.</p>
+          <p class="testimonial-role">Architect · Full Immersion Day</p>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-text">"Our entire leadership team was burned out and fractured. After one day in the forest with SHINRIN, something shifted. People began speaking to each other differently. The walk did what three years of retreats could not."</p>
+          <p class="testimonial-author">— James K.</p>
+          <p class="testimonial-role">CEO · Corporate Restoration Program</p>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-text">"I studied Shinrin-yoku for years in books. Nothing prepared me for what it feels like to actually surrender to the forest. SHINRIN's guide gave me the permission I didn't know I needed — to simply be there."</p>
+          <p class="testimonial-author">— Yuki T.</p>
+          <p class="testimonial-role">Physician · Half-Day Forest Bath</p>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="testimonial-text">"The moonlit walk was unlike any experience I have ever had. Standing in a 300-year-old forest under a full moon, in complete silence, with strangers who became something more — it was sacred."</p>
+          <p class="testimonial-author">— Sofia R.</p>
+          <p class="testimonial-role">Artist · Moonlit Forest Walk</p>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- BOOKING FORM -->
+  <section id="booking">
+    <div class="booking-container">
+      <div class="booking-info">
+        <p class="section-eyebrow">Reserve Your Walk</p>
+        <h2 class="section-title">Begin Your<br><em>Forest Journey</em></h2>
+        <p class="section-body" style="margin-bottom:3rem;">All experiences are by reservation only. Groups are intentionally small. Each booking is confirmed personally by one of our guides within 24 hours.</p>
+        <div class="booking-detail">
+          <span class="booking-detail-icon">◈</span>
+          <div>
+            <div class="booking-detail-label">Season</div>
+            <div class="booking-detail-value">Year-round · Best April–November</div>
+          </div>
+        </div>
+        <div class="booking-detail">
+          <span class="booking-detail-icon">◈</span>
+          <div>
+            <div class="booking-detail-label">Group Size</div>
+            <div class="booking-detail-value">2–20 guests depending on experience</div>
+          </div>
+        </div>
+        <div class="booking-detail">
+          <span class="booking-detail-icon">◈</span>
+          <div>
+            <div class="booking-detail-label">Location</div>
+            <div class="booking-detail-value">Old-growth forest, Pacific Northwest</div>
+          </div>
+        </div>
+        <div class="booking-detail">
+          <span class="booking-detail-icon">◈</span>
+          <div>
+            <div class="booking-detail-label">Confirmation</div>
+            <div class="booking-detail-value">Within 24 hours by personal guide</div>
+          </div>
+        </div>
+      </div>
+      <form class="booking-form" onsubmit="return false;">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" placeholder="Eleanor">
+          </div>
+          <div class="form-group">
+            <label for="last-name">Last Name</label>
+            <input type="text" id="last-name" placeholder="Morrison">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="eleanor@example.com">
+        </div>
+        <div class="form-group">
+          <label for="experience">Select Experience</label>
+          <select id="experience">
+            <option value="">Choose your forest journey</option>
+            <option>Half-Day Forest Bath (3 hrs)</option>
+            <option>Full Immersion Day (7 hrs)</option>
+            <option>Moonlit Forest Walk (2.5 hrs)</option>
+            <option>Corporate Restoration (Custom)</option>
+          </select>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="date">Preferred Date</label>
+            <input type="date" id="date">
+          </div>
+          <div class="form-group">
+            <label for="guests">Number of Guests</label>
+            <input type="number" id="guests" min="1" max="20" placeholder="2">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="message">Notes or Questions</label>
+          <textarea id="message" rows="4" placeholder="Tell us about any accessibility needs, intentions for the walk, or questions you have..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Send Inquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">SHIN<span>RIN</span></a>
+        <p class="footer-desc">Certified Shinrin-yoku forest therapy in old-growth sanctuary. Ancient Japanese forest medicine for the modern world.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="Facebook">fb</a>
+          <a href="#" aria-label="Pinterest">pt</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="about.html">Our Forest</a></li>
+          <li><a href="collection.html">Experiences</a></li>
+          <li><a href="process.html">The Walk</a></li>
+          <li><a href="contact.html">Book Now</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Experiences</h4>
+        <ul>
+          <li><a href="collection.html">Half-Day Forest Bath</a></li>
+          <li><a href="collection.html">Full Immersion Day</a></li>
+          <li><a href="collection.html">Moonlit Walk</a></li>
+          <li><a href="collection.html">Corporate Programs</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:hello@shinrin.co">hello@shinrin.co</a></li>
+          <li><a href="tel:+15033219876">+1 (503) 321-9876</a></li>
+          <li><a href="#">Pacific Northwest, Oregon</a></li>
+          <li><a href="#">Directions & Access</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 SHINRIN Forest Bathing Retreat. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    // =========================================
+    // SPLITTEXT POLYFILL
+    // =========================================
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+
+    // =========================================
+    // GSAP + SCROLLTRIGGER INIT
+    // =========================================
+    gsap.registerPlugin(ScrollTrigger);
+
+    // =========================================
+    // PRELOADER
+    // =========================================
+    const preloader = document.getElementById('preloader');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+
+    function hidePreloader() {
+      gsap.to(preloader, {
+        duration: 0.8,
+        opacity: 0,
+        ease: 'power2.out',
+        onComplete: () => {
+          preloader.style.display = 'none';
+          scrollIndicator.classList.add('visible');
+          initHeroAnimations();
+        }
+      });
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(hidePreloader, 2200);
+    });
+
+    // Show scroll indicator after 4s fallback
+    setTimeout(() => {
+      scrollIndicator.classList.add('visible');
+    }, 4000);
+
+    // Hide scroll indicator on scroll
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 200) {
+        scrollIndicator.classList.remove('visible');
+      }
+    }, { passive: true });
+
+    // =========================================
+    // NAVBAR SCROLL
+    // =========================================
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // =========================================
+    // HERO MOUSEMOVE PARALLAX
+    // =========================================
+    function initHeroAnimations() {
+      const hero = document.getElementById('hero');
+      const layer1 = document.getElementById('hero-layer-1');
+      const layer2 = document.getElementById('hero-layer-2');
+
+      hero.addEventListener('mousemove', (e) => {
+        const rect = hero.getBoundingClientRect();
+        const xRatio = (e.clientX - rect.left) / rect.width - 0.5;
+        const yRatio = (e.clientY - rect.top) / rect.height - 0.5;
+
+        gsap.to(layer1, {
+          x: xRatio * -28,
+          y: yRatio * -18,
+          duration: 1.2,
+          ease: 'power2.out'
+        });
+
+        gsap.to(layer2, {
+          x: xRatio * 18,
+          y: yRatio * 12,
+          duration: 1.6,
+          ease: 'power2.out'
+        });
+      });
+
+      // Hero content entrance
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        y: gsap.utils.random(20, 28),
+        duration: gsap.utils.random(1.0, 1.4),
+        ease: 'power2.out',
+        delay: 0.3
+      });
+
+      // SplitText hero title
+      const heroTitleEl = document.querySelector('.hero-title');
+      if (heroTitleEl) {
+        const split = new SplitText(heroTitleEl, { type: 'words' });
+        gsap.from(split.words, {
+          immediateRender: false,
+          y: gsap.utils.random(20, 28),
+          duration: gsap.utils.random(1.0, 1.4),
+          ease: 'power2.out',
+          stagger: 0.09,
+          delay: 0.5
+        });
+      }
+
+      gsap.from('.hero-tagline', {
+        immediateRender: false,
+        y: gsap.utils.random(20, 28),
+        duration: gsap.utils.random(1.0, 1.4),
+        ease: 'power2.out',
+        delay: 0.8
+      });
+
+      gsap.from('.hero-actions', {
+        immediateRender: false,
+        y: gsap.utils.random(20, 28),
+        duration: gsap.utils.random(1.0, 1.4),
+        ease: 'power2.out',
+        delay: 1.0
+      });
+
+      gsap.from('.hero-badge', {
+        immediateRender: false,
+        x: -30,
+        duration: gsap.utils.random(1.0, 1.4),
+        ease: 'power2.out',
+        delay: 1.3
+      });
+    }
+
+    // =========================================
+    // STATS ANIMATION
+    // =========================================
+    gsap.from('.stat-item', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#stats',
+        start: 'top 80%'
+      },
+      y: gsap.utils.random(20, 28),
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+
+    // =========================================
+    // PHILOSOPHY GRID ANIMATION
+    // =========================================
+    gsap.from('.philosophy-header > *', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#philosophy',
+        start: 'top 80%'
+      },
+      y: gsap.utils.random(20, 28),
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+
+    gsap.from('.philosophy-card', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.philosophy-grid',
+        start: 'top 80%'
+      },
+      y: gsap.utils.random(20, 28),
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+
+    // =========================================
+    // EXPERIENCES ANIMATION
+    // =========================================
+    gsap.from('.experience-card', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.experiences-grid',
+        start: 'top 80%'
+      },
+      y: gsap.utils.random(20, 28),
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+
+    // =========================================
+    // PROCESS STEPS ANIMATION
+    // =========================================
+    gsap.from('.process-step', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.process-steps',
+        start: 'top 80%'
+      },
+      x: -24,
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+
+    // =========================================
+    // HERITAGE SECTION PARALLAX
+    // =========================================
+    gsap.to('.heritage-main-image img', {
+      scrollTrigger: {
+        trigger: '#heritage',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5
+      },
+      y: -60
+    });
+
+    // =========================================
+    // STUDIO PARALLAX
+    // =========================================
+    gsap.to('#studio .studio-bg img', {
+      scrollTrigger: {
+        trigger: '#studio',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5
+      },
+      y: -80
+    });
+
+    gsap.from('.studio-content > *', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#studio',
+        start: 'top 70%'
+      },
+      y: gsap.utils.random(20, 28),
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+
+    // =========================================
+    // BOOKING SECTION ANIMATION
+    // =========================================
+    gsap.from('.booking-info > *', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#booking',
+        start: 'top 80%'
+      },
+      y: gsap.utils.random(20, 28),
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+
+    gsap.from('.booking-form > *', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.booking-form',
+        start: 'top 85%'
+      },
+      y: gsap.utils.random(20, 28),
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+
+    // =========================================
+    // SWIPER TESTIMONIALS
+    // =========================================
+    const swiper = new Swiper('.testimonials-swiper', {
+      loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      speed: 700,
+      effect: 'fade',
+      fadeEffect: { crossFade: true }
+    });
+
+    // =========================================
+    // MOBILE HAMBURGER
+    // =========================================
+    document.getElementById('hamburger').addEventListener('click', function() {
+      const links = document.querySelector('.nav-links');
+      if (links.style.display === 'flex') {
+        links.style.display = 'none';
+      } else {
+        links.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(20,24,16,0.97);align-items:center;justify-content:center;gap:2rem;z-index:400;';
+      }
+    });
+
+    // =========================================
+    // FOOTER ANIMATION
+    // =========================================
+    gsap.from('.footer-grid > *', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: 'footer',
+        start: 'top 85%'
+      },
+      y: gsap.utils.random(20, 28),
+      duration: gsap.utils.random(1.0, 1.4),
+      ease: 'power2.out',
+      stagger: 0.09
+    });
+  </script>
+</body>
+</html>

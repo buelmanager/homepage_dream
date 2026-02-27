@@ -1,0 +1,2199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MERIDIAN — Where Land Meets the Infinite Sea | Lighthouse Inn</title>
+  <meta name="description" content="Historic 1887 lighthouse converted to boutique coastal inn. Eight maritime rooms, Atlantic panoramas, Michelin-starred dining. Where land meets the infinite sea." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    /* ─────────────────────────────────────────────
+       ROOT VARIABLES & RESET
+    ───────────────────────────────────────────── */
+    :root {
+      --bg: #141820;
+      --surface: #1C2030;
+      --surface2: #222838;
+      --accent: #A0C4D8;
+      --accent-light: #C4DCE8;
+      --accent-dark: #6090B0;
+      --ivory: #DCE8F0;
+      --smoke: #809098;
+      --muted: #505860;
+      --border: #181C28;
+      --text: #DCE8F0;
+      --text-muted: #809098;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Lato', sans-serif;
+      --nav-h: 80px;
+      --transition: 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+      --radius: 4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── CUSTOM SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ─────────────────────────────────────────────
+       PRELOADER
+    ───────────────────────────────────────────── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0C1018;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+    }
+
+    .preloader-icon {
+      width: 72px;
+      height: 72px;
+      position: relative;
+    }
+
+    .preloader-lighthouse-svg {
+      width: 72px;
+      height: 72px;
+    }
+
+    .lighthouse-beam {
+      transform-origin: 36px 72px;
+      animation: rotatBeam 2s linear infinite;
+    }
+
+    @keyframes rotatBeam {
+      0% { transform: rotate(-30deg); opacity: 0.3; }
+      50% { transform: rotate(30deg); opacity: 1; }
+      100% { transform: rotate(-30deg); opacity: 0.3; }
+    }
+
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .preloader-bar {
+      width: 160px;
+      height: 1px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-bar-fill {
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: translateX(-100%);
+      animation: loadBar 2.4s ease forwards;
+    }
+
+    @keyframes loadBar {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(0); }
+    }
+
+    .preloader-tagline {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    /* ─────────────────────────────────────────────
+       SCROLL INDICATOR
+    ───────────────────────────────────────────── */
+    #scroll-indicator {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .scroll-label {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    .scroll-mouse {
+      width: 22px;
+      height: 36px;
+      border: 1.5px solid rgba(160,196,216,0.5);
+      border-radius: 11px;
+      position: relative;
+    }
+
+    .scroll-dot {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: scrollDot 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollDot {
+      0%,100% { top: 6px; opacity: 1; }
+      60% { top: 20px; opacity: 0; }
+    }
+
+    /* ─────────────────────────────────────────────
+       NAVBAR
+    ───────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      padding: 0 48px;
+      transition: background var(--transition), backdrop-filter var(--transition), border-bottom var(--transition);
+    }
+
+    #navbar.scrolled {
+      background: rgba(20,24,32,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(160,196,216,0.12);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      text-decoration: none;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      margin: 0 auto;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color var(--transition);
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width var(--transition);
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: var(--bg);
+      background: var(--accent);
+      text-decoration: none;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      transition: background var(--transition), transform var(--transition);
+      flex-shrink: 0;
+    }
+
+    .nav-cta:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      margin-left: auto;
+      padding: 8px;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: var(--transition);
+    }
+
+    /* ─────────────────────────────────────────────
+       HERO — TYPE B (Parallax + Ken Burns)
+    ───────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-layer {
+      position: absolute;
+      inset: -5%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+    }
+
+    .hero-layer-1 {
+      background-image: url('images/hero-1.webp');
+      animation: kenBurns1 20s ease-in-out infinite alternate;
+      z-index: 1;
+    }
+
+    .hero-layer-2 {
+      background-image: url('images/hero-2.webp');
+      z-index: 2;
+      mix-blend-mode: overlay;
+      animation: kenBurns2 25s ease-in-out infinite alternate;
+    }
+
+    @keyframes kenBurns1 {
+      0% { transform: scale(1) translateX(0); }
+      100% { transform: scale(1.08) translateX(-2%); }
+    }
+
+    @keyframes kenBurns2 {
+      0% { transform: scale(1.05) translateX(2%); }
+      100% { transform: scale(1) translateX(0); }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(20,24,32,0.35) 0%,
+        rgba(20,24,32,0.15) 40%,
+        rgba(20,24,32,0.65) 80%,
+        rgba(20,24,32,0.92) 100%
+      );
+      z-index: 3;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 4;
+      text-align: center;
+      padding: 0 24px;
+      max-width: 900px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(160,196,216,0.35);
+      padding: 8px 20px;
+      margin-bottom: 32px;
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      background: rgba(20,24,32,0.5);
+      backdrop-filter: blur(8px);
+      animation: badgePulse 4s ease-in-out infinite;
+    }
+
+    @keyframes badgePulse {
+      0%,100% { border-color: rgba(160,196,216,0.35); }
+      50% { border-color: rgba(160,196,216,0.7); }
+    }
+
+    .hero-badge::before,
+    .hero-badge::after {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--ivory);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .hero-sub {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      color: var(--accent);
+      margin-bottom: 28px;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-desc {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--smoke);
+      max-width: 560px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 16px 40px;
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(160,196,216,0.25);
+    }
+
+    .btn-outline {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--ivory);
+      background: transparent;
+      padding: 16px 40px;
+      border: 1px solid rgba(160,196,216,0.4);
+      cursor: pointer;
+      transition: border-color var(--transition), color var(--transition), transform var(--transition);
+      display: inline-block;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-wave-line {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: waveLine 2s ease-in-out infinite;
+    }
+
+    @keyframes waveLine {
+      0%,100% { width: 20px; opacity: 0.4; }
+      50% { width: 60px; opacity: 1; }
+    }
+
+    /* ─────────────────────────────────────────────
+       SECTION COMMON
+    ───────────────────────────────────────────── */
+    section { padding: 120px 0; }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.62rem;
+      letter-spacing: 0.4em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .section-eyebrow::after {
+      content: '';
+      flex: 1;
+      max-width: 48px;
+      height: 1px;
+      background: var(--accent-dark);
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+
+    .section-title em { font-style: italic; color: var(--accent-light); }
+
+    .section-subtitle {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--smoke);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: var(--accent-dark);
+      margin: 24px 0;
+    }
+
+    /* ─────────────────────────────────────────────
+       STATS SECTION
+    ───────────────────────────────────────────── */
+    #stats {
+      padding: 80px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat-item {
+      padding: 48px 40px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 20px;
+      color: var(--accent);
+    }
+
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--ivory);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-number sup {
+      font-size: 1.2rem;
+      vertical-align: super;
+    }
+
+    .stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    .stat-desc {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* ─────────────────────────────────────────────
+       PHILOSOPHY SECTION — CSS GRID (3-col)
+    ───────────────────────────────────────────── */
+    #philosophy {
+      background: var(--bg);
+    }
+
+    .philosophy-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 80px;
+    }
+
+    .philosophy-header .section-eyebrow {
+      justify-content: center;
+    }
+
+    .philosophy-header .section-eyebrow::after { display: none; }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .philosophy-card {
+      background: var(--surface);
+      padding: 56px 48px;
+      position: relative;
+      overflow: hidden;
+      transition: background var(--transition);
+    }
+
+    .philosophy-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      transform: scaleX(0);
+      transition: transform 0.6s ease;
+    }
+
+    .philosophy-card:hover { background: var(--surface2); }
+    .philosophy-card:hover::before { transform: scaleX(1); }
+
+    .philosophy-number {
+      font-family: var(--font-serif);
+      font-size: 4rem;
+      font-weight: 700;
+      color: rgba(160,196,216,0.08);
+      line-height: 1;
+      margin-bottom: 24px;
+      position: absolute;
+      top: 24px;
+      right: 32px;
+    }
+
+    .philosophy-icon {
+      width: 48px;
+      height: 48px;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .philosophy-title {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+
+    .philosophy-text {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    /* ─────────────────────────────────────────────
+       ROOM COLLECTION
+    ───────────────────────────────────────────── */
+    #collection {
+      background: var(--surface);
+    }
+
+    .collection-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 64px;
+      gap: 32px;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      overflow: visible;
+    }
+
+    .room-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--bg);
+    }
+
+    .room-card-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      background: var(--surface2);
+      display: block;
+      transition: transform 0.8s ease;
+    }
+
+    .room-card:hover .room-card-img { transform: scale(1.06); }
+
+    .room-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(20,24,32,0.95) 0%, transparent 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px 24px;
+    }
+
+    .room-card-tag {
+      font-family: var(--font-sans);
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .room-card-name {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--ivory);
+      margin-bottom: 6px;
+    }
+
+    .room-card-price {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--smoke);
+    }
+
+    .room-card-price strong {
+      color: var(--accent-light);
+      font-weight: 400;
+    }
+
+    /* ─────────────────────────────────────────────
+       CAPTAIN'S QUARTERS — FULL FEATURE
+    ───────────────────────────────────────────── */
+    #captains-quarters {
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .captains-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 600px;
+    }
+
+    .captains-visual {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .captains-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: var(--surface2);
+      display: block;
+      transition: transform 0.8s ease;
+    }
+
+    .captains-visual:hover .captains-img { transform: scale(1.04); }
+
+    .captains-badge {
+      position: absolute;
+      top: 40px;
+      left: 40px;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+    }
+
+    .captains-content {
+      padding: 80px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--surface);
+    }
+
+    .captains-feature-list {
+      list-style: none;
+      margin: 32px 0 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .captains-feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--smoke);
+    }
+
+    .captains-feature-list li::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .captains-price-block {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .captains-price {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      color: var(--ivory);
+    }
+
+    .captains-price-unit {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--smoke);
+      letter-spacing: 0.1em;
+    }
+
+    /* ─────────────────────────────────────────────
+       GUEST JOURNEY / PROCESS
+    ───────────────────────────────────────────── */
+    #journey {
+      background: var(--surface);
+    }
+
+    .journey-header {
+      text-align: center;
+      max-width: 580px;
+      margin: 0 auto 80px;
+    }
+
+    .journey-header .section-eyebrow { justify-content: center; }
+    .journey-header .section-eyebrow::after { display: none; }
+
+    .journey-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+
+    .journey-steps::before {
+      content: '';
+      position: absolute;
+      top: 32px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent-dark), var(--accent), var(--accent-dark));
+    }
+
+    .journey-step {
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .journey-step-num {
+      width: 64px;
+      height: 64px;
+      border: 1px solid var(--accent-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--accent);
+      background: var(--surface);
+      position: relative;
+      z-index: 1;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .journey-step:hover .journey-step-num {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .journey-step-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+
+    .journey-step-text {
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    /* ─────────────────────────────────────────────
+       MARITIME HERITAGE
+    ───────────────────────────────────────────── */
+    #heritage {
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .heritage-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .heritage-images {
+      position: relative;
+      height: 600px;
+    }
+
+    .heritage-img-main {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 75%;
+      height: 80%;
+      object-fit: cover;
+      background: var(--surface2);
+      display: block;
+    }
+
+    .heritage-img-accent {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 55%;
+      height: 55%;
+      object-fit: cover;
+      background: var(--surface);
+      display: block;
+      border: 4px solid var(--bg);
+    }
+
+    .heritage-year-badge {
+      position: absolute;
+      top: 50%;
+      right: 12%;
+      transform: translateY(-50%);
+      background: var(--accent);
+      color: var(--bg);
+      padding: 20px 28px;
+      text-align: center;
+    }
+
+    .heritage-year-badge .year {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .heritage-year-badge .year-label {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .heritage-content {}
+
+    .heritage-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .heritage-stat {
+      padding: 24px;
+      background: var(--surface);
+      border-left: 2px solid var(--accent-dark);
+    }
+
+    .heritage-stat-num {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      color: var(--accent);
+      display: block;
+    }
+
+    .heritage-stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: var(--smoke);
+      letter-spacing: 0.1em;
+    }
+
+    /* ─────────────────────────────────────────────
+       TESTIMONIALS — SWIPER
+    ───────────────────────────────────────────── */
+    #testimonials {
+      background: var(--surface);
+    }
+
+    .testimonials-header {
+      text-align: center;
+      max-width: 540px;
+      margin: 0 auto 64px;
+    }
+
+    .testimonials-header .section-eyebrow { justify-content: center; }
+    .testimonials-header .section-eyebrow::after { display: none; }
+
+    .testimonials-swiper-wrap {
+      position: relative;
+    }
+
+    .swiper-testimonials {
+      padding-bottom: 60px !important;
+    }
+
+    .testimonial-card {
+      background: var(--bg);
+      padding: 48px;
+      position: relative;
+    }
+
+    .testimonial-quote-icon {
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      line-height: 0.6;
+      color: var(--accent-dark);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--ivory);
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    .testimonial-divider {
+      width: 32px;
+      height: 1px;
+      background: var(--accent-dark);
+      margin-bottom: 24px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .testimonial-author-info {}
+
+    .testimonial-author-name {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--ivory);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .testimonial-author-role {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: var(--smoke);
+    }
+
+    .testimonial-stars {
+      margin-left: auto;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    .swiper-pagination-bullet {
+      background: var(--muted) !important;
+      opacity: 1 !important;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: var(--accent) !important;
+    }
+
+    /* ─────────────────────────────────────────────
+       RESERVATION FORM
+    ───────────────────────────────────────────── */
+    #reservation {
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #reservation::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(96,144,176,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .reservation-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .reservation-info {}
+
+    .reservation-promise {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .promise-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      color: var(--smoke);
+    }
+
+    .promise-icon {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--accent);
+    }
+
+    .reservation-form {
+      background: var(--surface);
+      padding: 48px;
+    }
+
+    .form-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      color: var(--ivory);
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color var(--transition);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .form-control:focus { border-color: var(--accent-dark); }
+
+    .form-control::placeholder { color: var(--muted); }
+
+    select.form-control {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23809098' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    select.form-control option { background: var(--surface2); }
+
+    .form-submit {
+      width: 100%;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 18px;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      margin-top: 8px;
+    }
+
+    .form-submit:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+    /* ─────────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────────── */
+    footer {
+      background: var(--bg);
+      padding: 80px 0 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand-logo {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .footer-brand-logo em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .footer-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--smoke);
+      margin-bottom: 24px;
+    }
+
+    .footer-address {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-sans);
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-copy {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-social a {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color var(--transition);
+    }
+
+    .footer-social a:hover { color: var(--accent); }
+
+    /* ─────────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .container { padding: 0 32px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-top: 1px solid var(--border); }
+      .stat-item:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .captains-inner { grid-template-columns: 1fr; }
+      .captains-visual { height: 400px; }
+      .captains-img { height: 400px; }
+      .captains-content { padding: 56px 40px; }
+      .journey-steps { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+      .journey-steps::before { display: none; }
+      .heritage-inner { grid-template-columns: 1fr; gap: 56px; }
+      .heritage-images { height: 400px; }
+      .reservation-inner { grid-template-columns: 1fr; gap: 48px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 80px 0; }
+      .container { padding: 0 24px; }
+      #navbar { padding: 0 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .hero-title { font-size: 2.8rem; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .collection-header { flex-direction: column; align-items: flex-start; }
+      .journey-steps { grid-template-columns: 1fr; gap: 32px; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .heritage-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-actions { flex-direction: column; width: 100%; }
+      .btn-primary, .btn-outline { width: 100%; text-align: center; }
+      .reservation-form { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-icon">
+      <svg class="preloader-lighthouse-svg" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Lighthouse body -->
+        <rect x="28" y="30" width="16" height="36" fill="none" stroke="#A0C4D8" stroke-width="1.5"/>
+        <rect x="24" y="26" width="24" height="8" fill="none" stroke="#A0C4D8" stroke-width="1.5"/>
+        <rect x="30" y="18" width="12" height="12" fill="none" stroke="#A0C4D8" stroke-width="1.5"/>
+        <circle cx="36" cy="22" r="3" fill="#A0C4D8"/>
+        <!-- Water base -->
+        <path d="M8 66 Q18 62 28 66 Q38 70 48 66 Q58 62 68 66" stroke="#6090B0" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- Beam -->
+        <g class="lighthouse-beam">
+          <line x1="36" y1="22" x2="68" y2="8" stroke="#A0C4D8" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>
+        </g>
+        <!-- Stars -->
+        <circle cx="10" cy="10" r="1.5" fill="#C4DCE8" opacity="0.6"/>
+        <circle cx="62" cy="6" r="1" fill="#C4DCE8" opacity="0.5"/>
+        <circle cx="48" cy="14" r="1" fill="#C4DCE8" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="preloader-logo">MERIDIAN</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill"></div></div>
+    <div class="preloader-tagline">Where Land Meets the Infinite Sea</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator" style="display:none;">
+    <span class="scroll-label">Explore</span>
+    <div class="scroll-mouse"><div class="scroll-dot"></div></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">MERI<em>DIAN</em></a>
+    <ul class="nav-links">
+      <li><a href="about.html">Our Story</a></li>
+      <li><a href="collection.html">Rooms</a></li>
+      <li><a href="process.html">Experience</a></li>
+      <li><a href="contact.html">Reserve</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Book Now</a>
+    <div class="nav-hamburger" id="nav-hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO — TYPE B: Parallax + Ken Burns -->
+  <section id="hero">
+    <div class="hero-layer hero-layer-1" id="heroLayer1"></div>
+    <div class="hero-layer hero-layer-2" id="heroLayer2"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">Historic 1887 Lighthouse</div>
+      <h1 class="hero-title" id="heroTitle">
+        MERI<em>DIAN</em><br>Lighthouse Inn
+      </h1>
+      <p class="hero-sub">Where Land Meets the Infinite Sea</p>
+      <p class="hero-desc">
+        A historic 1887 lighthouse sentinel, now transformed into an intimate eight-room coastal retreat. Maritime tradition meets curated luxury on the Atlantic shore.
+      </p>
+      <div class="hero-actions">
+        <a href="contact.html" class="btn-primary">Reserve Your Room</a>
+        <a href="collection.html" class="btn-outline">Explore Rooms</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <div class="hero-wave-line"></div>
+    </div>
+  </section>
+
+  <!-- STATS SECTION -->
+  <section id="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <svg class="stat-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 4 L28 14 H32 L32 36 H8 L8 14 H12 Z"/>
+            <circle cx="20" cy="22" r="3"/>
+            <path d="M20 4 L20 8"/>
+          </svg>
+          <div class="stat-number">8</div>
+          <div class="stat-label">Lighthouse Rooms</div>
+          <div class="stat-desc">Each uniquely crafted</div>
+        </div>
+        <div class="stat-item">
+          <svg class="stat-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="20" cy="20" r="14"/>
+            <path d="M20 6 V10 M20 30 V34 M6 20 H10 M30 20 H34"/>
+            <path d="M20 20 L26 14"/>
+          </svg>
+          <div class="stat-number">1887</div>
+          <div class="stat-label">Year Founded</div>
+          <div class="stat-desc">Historic sentinel of the coast</div>
+        </div>
+        <div class="stat-item">
+          <svg class="stat-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 28 Q12 20 20 24 Q28 28 36 16"/>
+            <circle cx="20" cy="20" r="3"/>
+            <path d="M2 34 H38" stroke-dasharray="2 2"/>
+          </svg>
+          <div class="stat-number">180<sup>°</sup></div>
+          <div class="stat-label">Atlantic Views</div>
+          <div class="stat-desc">Unobstructed ocean panoramas</div>
+        </div>
+        <div class="stat-item">
+          <svg class="stat-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 4 L23.5 14 H34 L25.5 20.5 L29 31 L20 25 L11 31 L14.5 20.5 L6 14 H16.5 Z"/>
+          </svg>
+          <div class="stat-number">1<sup>★</sup></div>
+          <div class="stat-label">Michelin Dining</div>
+          <div class="stat-desc">The Keeper's Table restaurant</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY SECTION -->
+  <section id="philosophy">
+    <div class="container">
+      <div class="philosophy-header">
+        <div class="section-eyebrow">Our Philosophy</div>
+        <h2 class="section-title">The Art of <em>Coastal Living</em></h2>
+        <p class="section-subtitle">
+          Three guiding principles shaped by generations of maritime life — authenticity, reverence, and the enduring beauty of the sea.
+        </p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <span class="philosophy-number">01</span>
+          <svg class="philosophy-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M24 6 L30 18 H42 L32 26 L36 38 L24 30 L12 38 L16 26 L6 18 H18 Z"/>
+          </svg>
+          <h3 class="philosophy-title">Maritime Authenticity</h3>
+          <p class="philosophy-text">Every timber, every brass fitting, every wave-worn stone tells the story of those who kept the light burning. We preserve this heritage with devotion and meticulous care.</p>
+        </div>
+        <div class="philosophy-card">
+          <span class="philosophy-number">02</span>
+          <svg class="philosophy-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="24" cy="24" r="16"/>
+            <path d="M8 28 Q16 20 24 24 Q32 28 40 16"/>
+            <path d="M24 8 V12 M24 36 V40 M8 24 H12 M36 24 H40"/>
+          </svg>
+          <h3 class="philosophy-title">Ocean Reverence</h3>
+          <p class="philosophy-text">The Atlantic is not merely a backdrop — it is our living companion. Our rhythms follow the tides, our menus honor the harvest, our architecture frames every horizon.</p>
+        </div>
+        <div class="philosophy-card">
+          <span class="philosophy-number">03</span>
+          <svg class="philosophy-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 40 Q16 30 24 32 Q32 34 40 24"/>
+            <path d="M12 40 V44 M20 40 V44 M28 40 V44 M36 40 V44" stroke-dasharray="2"/>
+            <path d="M4 36 H44"/>
+          </svg>
+          <h3 class="philosophy-title">Curated Solitude</h3>
+          <p class="philosophy-text">Only eight rooms. Only the sound of waves and wind. We believe luxury is not excess but absence — the quiet space for the sea to speak and the soul to rest.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM COLLECTION -->
+  <section id="collection">
+    <div class="container">
+      <div class="collection-header">
+        <div>
+          <div class="section-eyebrow">Our Rooms</div>
+          <h2 class="section-title">The <em>Collection</em></h2>
+          <p class="section-subtitle">Eight distinct maritime sanctuaries, from the historic lantern room at the apex to the fog-kissed tide suites below.</p>
+        </div>
+        <a href="collection.html" class="btn-outline">View All Rooms</a>
+      </div>
+      <div class="collection-grid">
+        <div class="room-card">
+          <img src="images/product-1.webp" alt="Keeper's Suite" class="room-card-img" loading="lazy" />
+          <div class="room-card-overlay">
+            <span class="room-card-tag">Penthouse Suite</span>
+            <h3 class="room-card-name">Keeper's Suite</h3>
+            <p class="room-card-price">from <strong>$680</strong> / night</p>
+          </div>
+        </div>
+        <div class="room-card">
+          <img src="images/product-2.webp" alt="Lantern Room" class="room-card-img" loading="lazy" />
+          <div class="room-card-overlay">
+            <span class="room-card-tag">Signature Room</span>
+            <h3 class="room-card-name">Lantern Room</h3>
+            <p class="room-card-price">from <strong>$490</strong> / night</p>
+          </div>
+        </div>
+        <div class="room-card">
+          <img src="images/product-3.webp" alt="Fog Horn Loft" class="room-card-img" loading="lazy" />
+          <div class="room-card-overlay">
+            <span class="room-card-tag">Loft Room</span>
+            <h3 class="room-card-name">Fog Horn Loft</h3>
+            <p class="room-card-price">from <strong>$380</strong> / night</p>
+          </div>
+        </div>
+        <div class="room-card">
+          <img src="images/product-4.webp" alt="Tide Room" class="room-card-img" loading="lazy" />
+          <div class="room-card-overlay">
+            <span class="room-card-tag">Ocean View Room</span>
+            <h3 class="room-card-name">Tide Room</h3>
+            <p class="room-card-price">from <strong>$310</strong> / night</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPTAIN'S QUARTERS FEATURE -->
+  <section id="captains-quarters">
+    <div class="captains-inner">
+      <div class="captains-visual">
+        <img src="images/ambient-1.webp" alt="Captain's Quarters — MERIDIAN Lighthouse Inn" class="captains-img" loading="lazy" />
+        <div class="captains-badge">Most Coveted Room</div>
+      </div>
+      <div class="captains-content">
+        <div class="section-eyebrow">Featured Experience</div>
+        <h2 class="section-title">The Captain's <em>Quarters</em></h2>
+        <div class="divider"></div>
+        <p class="section-subtitle">
+          Perched at the lighthouse's historic captain level, this expansive suite commands a full 180-degree panorama of the Atlantic. Original brass instruments, chart-table writing desk, and a private wraparound deck where the morning mist rises from the sea.
+        </p>
+        <ul class="captains-feature-list">
+          <li>Wraparound ocean-view terrace</li>
+          <li>Original 1887 lighthouse brass fittings</li>
+          <li>Four-poster driftwood bed, sea-glass inlay</li>
+          <li>Soaking tub with Atlantic horizon view</li>
+          <li>Private morning fog ritual experience</li>
+          <li>In-room chef breakfast service</li>
+        </ul>
+        <div class="captains-price-block">
+          <span class="captains-price">$850</span>
+          <span class="captains-price-unit">per night</span>
+        </div>
+        <a href="contact.html" class="btn-primary">Inquire &amp; Reserve</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUEST JOURNEY PROCESS -->
+  <section id="journey">
+    <div class="container">
+      <div class="journey-header">
+        <div class="section-eyebrow">Your Journey</div>
+        <h2 class="section-title">A <em>Maritime</em> Experience</h2>
+        <p class="section-subtitle">From arrival by coastal road to departure with salt in your hair and sea in your heart — every moment is curated.</p>
+      </div>
+      <div class="journey-steps">
+        <div class="journey-step">
+          <div class="journey-step-num">I</div>
+          <h3 class="journey-step-title">Coastal Arrival</h3>
+          <p class="journey-step-text">The lighthouse appears on the horizon long before you reach us. Our keeper greets you at the maritime gate with a sea-glass welcome.</p>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">II</div>
+          <h3 class="journey-step-title">Room Immersion</h3>
+          <p class="journey-step-text">Each room is introduced with a historical story of its namesake keeper, paired with aged maritime charts of your window's exact view.</p>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">III</div>
+          <h3 class="journey-step-title">Dining at Sea</h3>
+          <p class="journey-step-text">The Keeper's Table presents daily ocean harvest menus, paired with coastal wines and illuminated by the original Fresnel lens overhead.</p>
+        </div>
+        <div class="journey-step">
+          <div class="journey-step-num">IV</div>
+          <h3 class="journey-step-title">Farewell Tide</h3>
+          <p class="journey-step-text">Depart with a hand-wrapped package of locally harvested sea salt and a tide chart for your window's view — a piece of the sea to carry home.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARITIME HERITAGE -->
+  <section id="heritage">
+    <div class="container">
+      <div class="heritage-inner">
+        <div class="heritage-images">
+          <img src="images/ambient-2.webp" alt="Historic lighthouse MERIDIAN 1887" class="heritage-img-main" loading="lazy" />
+          <img src="images/ambient-3.webp" alt="Maritime heritage detail" class="heritage-img-accent" loading="lazy" />
+          <div class="heritage-year-badge">
+            <span class="year">1887</span>
+            <span class="year-label">Est.</span>
+          </div>
+        </div>
+        <div class="heritage-content">
+          <div class="section-eyebrow">Our Heritage</div>
+          <h2 class="section-title">138 Years of <em>Coastal Legend</em></h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">
+            Built in 1887 to guide Atlantic merchantmen through treacherous coastal shoals, the Meridian Light guided over four generations of keepers. Each left their mark — in the worn timber of the stairs, the names carved into the lamp room beams, and the stories that live on in every room.
+          </p>
+          <p class="section-subtitle" style="margin-top:16px;">
+            In 2018, the Meridian family opened the lighthouse as an intimate inn, restoring every original element while adding the quiet comforts of a world-class coastal retreat.
+          </p>
+          <div class="heritage-stats">
+            <div class="heritage-stat">
+              <span class="heritage-stat-num">138</span>
+              <span class="heritage-stat-label">Years of History</span>
+            </div>
+            <div class="heritage-stat">
+              <span class="heritage-stat-num">4</span>
+              <span class="heritage-stat-label">Keeper Generations</span>
+            </div>
+            <div class="heritage-stat">
+              <span class="heritage-stat-num">52m</span>
+              <span class="heritage-stat-label">Tower Height</span>
+            </div>
+            <div class="heritage-stat">
+              <span class="heritage-stat-num">24nm</span>
+              <span class="heritage-stat-label">Original Beam Range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="testimonials-header">
+        <div class="section-eyebrow">Guest Voices</div>
+        <h2 class="section-title">From Those Who <em>Stayed</em></h2>
+      </div>
+      <div class="testimonials-swiper-wrap">
+        <div class="swiper swiper-testimonials">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <span class="testimonial-quote-icon">"</span>
+                <p class="testimonial-text">Waking to the sound of Atlantic swells beneath the Lantern Room window, I understood why lighthouse keepers spoke of the sea as a living presence. MERIDIAN doesn't just accommodate guests — it initiates them into something ancient and beautiful.</p>
+                <div class="testimonial-divider"></div>
+                <div class="testimonial-author">
+                  <div class="testimonial-avatar">E</div>
+                  <div class="testimonial-author-info">
+                    <div class="testimonial-author-name">Eleanor Hartwell</div>
+                    <div class="testimonial-author-role">Travel Editor, Coastal Living Magazine</div>
+                  </div>
+                  <div class="testimonial-stars">★★★★★</div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <span class="testimonial-quote-icon">"</span>
+                <p class="testimonial-text">The Keeper's Table served the finest bouillabaisse I have encountered outside of Marseille. The Fresnel lens above, the Atlantic below — dining here is an experience of time suspended between the historic and the eternal.</p>
+                <div class="testimonial-divider"></div>
+                <div class="testimonial-author">
+                  <div class="testimonial-avatar">J</div>
+                  <div class="testimonial-author-info">
+                    <div class="testimonial-author-name">James Moreau</div>
+                    <div class="testimonial-author-role">Restaurant Critic, The Atlantic Table</div>
+                  </div>
+                  <div class="testimonial-stars">★★★★★</div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="testimonial-card">
+                <span class="testimonial-quote-icon">"</span>
+                <p class="testimonial-text">Three nights in the Captain's Quarters changed my relationship with silence. The morning fog ritual — standing on the private deck as the Atlantic emerged from the mist — was the most profound 20 minutes of my year.</p>
+                <div class="testimonial-divider"></div>
+                <div class="testimonial-author">
+                  <div class="testimonial-avatar">A</div>
+                  <div class="testimonial-author-info">
+                    <div class="testimonial-author-name">Anastasia Voss</div>
+                    <div class="testimonial-author-role">Founder, Curated Retreats Collective</div>
+                  </div>
+                  <div class="testimonial-stars">★★★★★</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESERVATION FORM -->
+  <section id="reservation">
+    <div class="container">
+      <div class="reservation-inner">
+        <div class="reservation-info">
+          <div class="section-eyebrow">Reserve</div>
+          <h2 class="section-title">Begin Your <em>Coastal</em> Journey</h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">
+            With only eight rooms, MERIDIAN remains intentionally intimate. We invite you to secure your stay and let us craft a bespoke maritime experience in your honor.
+          </p>
+          <div class="reservation-promise">
+            <div class="promise-item">
+              <div class="promise-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M2 8 L6 12 L14 4"/>
+                </svg>
+              </div>
+              <span>Complimentary airport transfer by private coastal road</span>
+            </div>
+            <div class="promise-item">
+              <div class="promise-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M2 8 L6 12 L14 4"/>
+                </svg>
+              </div>
+              <span>Flexible cancellation up to 48 hours before arrival</span>
+            </div>
+            <div class="promise-item">
+              <div class="promise-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M2 8 L6 12 L14 4"/>
+                </svg>
+              </div>
+              <span>Personal maritime concierge assigned to every guest</span>
+            </div>
+            <div class="promise-item">
+              <div class="promise-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M2 8 L6 12 L14 4"/>
+                </svg>
+              </div>
+              <span>Daily artisan breakfast included with every room</span>
+            </div>
+          </div>
+        </div>
+        <div class="reservation-form">
+          <h3 class="form-title">Reserve Your Room</h3>
+          <form id="reserveForm" action="#" method="POST">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="firstName">First Name</label>
+                <input type="text" id="firstName" class="form-control" placeholder="Eleanor" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lastName">Last Name</label>
+                <input type="text" id="lastName" class="form-control" placeholder="Hartwell" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address</label>
+              <input type="email" id="email" class="form-control" placeholder="eleanor@example.com" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="checkin">Arrival Date</label>
+                <input type="date" id="checkin" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="checkout">Departure Date</label>
+                <input type="date" id="checkout" class="form-control" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="roomType">Preferred Room</label>
+              <select id="roomType" class="form-control">
+                <option value="">Select a Room</option>
+                <option value="keepers-suite">Keeper's Suite — $850/night</option>
+                <option value="captains-quarters">Captain's Quarters — $680/night</option>
+                <option value="lantern-room">Lantern Room — $490/night</option>
+                <option value="foghorn-loft">Fog Horn Loft — $380/night</option>
+                <option value="tide-room">Tide Room — $310/night</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="message">Special Requests</label>
+              <textarea id="message" class="form-control" rows="3" placeholder="Anniversary celebration, dietary requirements, accessibility needs..."></textarea>
+            </div>
+            <button type="submit" class="form-submit">Request Reservation</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand-logo">MERI<em>DIAN</em></div>
+          <p class="footer-tagline">"Where Land Meets the Infinite Sea"</p>
+          <address class="footer-address" style="font-style:normal;">
+            1 Lighthouse Point Road<br>
+            Cape Meridian, ME 04105<br>
+            United States<br><br>
+            +1 (207) 555 0187<br>
+            hello@meridian-inn.com
+          </address>
+        </div>
+        <div>
+          <div class="footer-col-title">Navigate</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="collection.html">The Rooms</a></li>
+            <li><a href="process.html">Experience</a></li>
+            <li><a href="contact.html">Reserve</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">The Rooms</div>
+          <ul class="footer-links">
+            <li><a href="collection.html">Keeper's Suite</a></li>
+            <li><a href="collection.html">Captain's Quarters</a></li>
+            <li><a href="collection.html">Lantern Room</a></li>
+            <li><a href="collection.html">Fog Horn Loft</a></li>
+            <li><a href="collection.html">Tide Room</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Experiences</div>
+          <ul class="footer-links">
+            <li><a href="process.html">The Keeper's Table</a></li>
+            <li><a href="process.html">Morning Fog Ritual</a></li>
+            <li><a href="process.html">Coastal Excursions</a></li>
+            <li><a href="process.html">Maritime Archive</a></li>
+            <li><a href="contact.html">Gift Voyages</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2025 MERIDIAN Lighthouse Inn. All rights reserved. Historic Lighthouse Est. 1887.</p>
+        <div class="footer-social">
+          <a href="#">Instagram</a>
+          <a href="#">Pinterest</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    // ─── SPLIT TEXT POLYFILL ───────────────────────────────────────────────
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ─── PRELOADER ────────────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      const scrollIndicator = document.getElementById('scroll-indicator');
+
+      gsap.to(preloader, {
+        duration: 0.8,
+        delay: 2.6,
+        opacity: 0,
+        onComplete: () => {
+          preloader.style.display = 'none';
+          // Show scroll indicator after preloader
+          scrollIndicator.style.display = 'flex';
+          gsap.from(scrollIndicator, { immediateRender: false, duration: 1, opacity: 0, y: 10 });
+
+          // Hide scroll indicator on first scroll
+          const hideScroll = () => {
+            gsap.to(scrollIndicator, { duration: 0.4, opacity: 0, onComplete: () => { scrollIndicator.style.display = 'none'; } });
+            window.removeEventListener('scroll', hideScroll);
+          };
+          window.addEventListener('scroll', hideScroll);
+        }
+      });
+
+      // Fallback: scroll indicator after 4 seconds
+      setTimeout(() => {
+        if (scrollIndicator.style.display !== 'flex') {
+          scrollIndicator.style.display = 'flex';
+          gsap.from(scrollIndicator, { immediateRender: false, duration: 1, opacity: 0, y: 10 });
+        }
+      }, 4000);
+    });
+
+    // ─── NAVBAR SCROLL ────────────────────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    // ─── HERO MOUSEMOVE PARALLAX ──────────────────────────────────────────
+    const heroLayer1 = document.getElementById('heroLayer1');
+    const heroLayer2 = document.getElementById('heroLayer2');
+
+    document.addEventListener('mousemove', (e) => {
+      const xRatio = (e.clientX / window.innerWidth - 0.5) * 2;
+      const yRatio = (e.clientY / window.innerHeight - 0.5) * 2;
+      gsap.to(heroLayer1, { x: xRatio * 18, y: yRatio * 12, duration: 1.6, ease: 'power1.out' });
+      gsap.to(heroLayer2, { x: xRatio * -10, y: yRatio * -6, duration: 2, ease: 'power1.out' });
+    });
+
+    // ─── HERO CONTENT ANIMATION ───────────────────────────────────────────
+    const heroTl = gsap.timeline({ delay: 2.8 });
+    heroTl
+      .from('.hero-badge',   { immediateRender: false, duration: 0.9, opacity: 0, y: 20, ease: 'power2.out' })
+      .from('.hero-title',   { immediateRender: false, duration: 1.1, opacity: 0, y: 28, ease: 'power2.out' }, '-=0.5')
+      .from('.hero-sub',     { immediateRender: false, duration: 1.0, opacity: 0, y: 20, ease: 'power2.out' }, '-=0.7')
+      .from('.hero-desc',    { immediateRender: false, duration: 1.0, opacity: 0, y: 20, ease: 'power2.out' }, '-=0.7')
+      .from('.hero-actions', { immediateRender: false, duration: 0.9, opacity: 0, y: 20, ease: 'power2.out' }, '-=0.6');
+
+    // ─── STATS ────────────────────────────────────────────────────────────
+    gsap.from('.stat-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#stats', start: 'top 80%' },
+      duration: 1.1,
+      opacity: 0,
+      y: 24,
+      stagger: 0.10,
+      ease: 'power2.out'
+    });
+
+    // ─── PHILOSOPHY ───────────────────────────────────────────────────────
+    gsap.from('.philosophy-header', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy', start: 'top 80%' },
+      duration: 1.1,
+      opacity: 0,
+      y: 24,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.philosophy-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.philosophy-grid', start: 'top 80%' },
+      duration: 1.1,
+      opacity: 0,
+      y: 28,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    // ─── COLLECTION ───────────────────────────────────────────────────────
+    gsap.from('.collection-header', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#collection', start: 'top 80%' },
+      duration: 1.0,
+      opacity: 0,
+      y: 24,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.room-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.collection-grid', start: 'top 80%' },
+      duration: 1.1,
+      opacity: 0,
+      y: 28,
+      stagger: 0.10,
+      ease: 'power2.out'
+    });
+
+    // ─── CAPTAIN'S QUARTERS ───────────────────────────────────────────────
+    gsap.from('.captains-visual', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#captains-quarters', start: 'top 75%' },
+      duration: 1.1,
+      opacity: 0,
+      x: -40,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.captains-content', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#captains-quarters', start: 'top 75%' },
+      duration: 1.1,
+      opacity: 0,
+      x: 40,
+      ease: 'power2.out'
+    });
+
+    // ─── JOURNEY STEPS ────────────────────────────────────────────────────
+    gsap.from('.journey-step', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.journey-steps', start: 'top 80%' },
+      duration: 1.1,
+      opacity: 0,
+      y: 28,
+      stagger: 0.10,
+      ease: 'power2.out'
+    });
+
+    // ─── HERITAGE ─────────────────────────────────────────────────────────
+    gsap.from('.heritage-images', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#heritage', start: 'top 75%' },
+      duration: 1.1,
+      opacity: 0,
+      x: -32,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.heritage-content', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#heritage', start: 'top 75%' },
+      duration: 1.1,
+      opacity: 0,
+      x: 32,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.heritage-stat', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '.heritage-stats', start: 'top 85%' },
+      duration: 0.9,
+      opacity: 0,
+      y: 20,
+      stagger: 0.08,
+      ease: 'power2.out'
+    });
+
+    // ─── TESTIMONIALS ─────────────────────────────────────────────────────
+    gsap.from('.testimonials-header', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#testimonials', start: 'top 80%' },
+      duration: 1.0,
+      opacity: 0,
+      y: 24,
+      ease: 'power2.out'
+    });
+
+    // ─── RESERVATION ──────────────────────────────────────────────────────
+    gsap.from('.reservation-info', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#reservation', start: 'top 80%' },
+      duration: 1.1,
+      opacity: 0,
+      x: -28,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.reservation-form', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#reservation', start: 'top 80%' },
+      duration: 1.1,
+      opacity: 0,
+      x: 28,
+      ease: 'power2.out'
+    });
+
+    // ─── FOOTER ───────────────────────────────────────────────────────────
+    gsap.from('footer', {
+      immediateRender: false,
+      scrollTrigger: { trigger: 'footer', start: 'top 90%' },
+      duration: 1.0,
+      opacity: 0,
+      y: 20,
+      ease: 'power2.out'
+    });
+
+    // ─── SWIPER ───────────────────────────────────────────────────────────
+    new Swiper('.swiper-testimonials', {
+      slidesPerView: 1,
+      spaceBetween: 32,
+      loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 2 }
+      }
+    });
+
+    // ─── FORM SUBMIT ──────────────────────────────────────────────────────
+    document.getElementById('reserveForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('.form-submit');
+      btn.textContent = 'Request Sent — We\'ll Confirm Shortly';
+      btn.style.background = 'var(--accent-dark)';
+    });
+  </script>
+</body>
+</html>

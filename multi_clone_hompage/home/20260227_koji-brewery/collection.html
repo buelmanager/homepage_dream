@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection — KOJI Fermentation Studio</title>
+  <meta name="description" content="Explore KOJI's artisan collection: Shio Koji, Amazake, Mugi Miso, Shoyu, Sake Kasu, and seasonal ferments from our Kyoto studio.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141810;
+      --surface: #1C2018;
+      --surface2: #222A1E;
+      --accent: #8AB56A;
+      --accent-light: #AACE8A;
+      --accent-dark: #5A8040;
+      --ivory: #E4EEE0;
+      --smoke: #889880;
+      --muted: #4E5E48;
+      --border: #181E14;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', system-ui, sans-serif;
+      --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent) var(--surface); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
+
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 400; line-height: 1.7; overflow-x: hidden; }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAVBAR */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 1.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(20, 24, 16, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.3em; color: var(--accent); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--smoke); transition: color var(--transition); }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent-light); }
+    .nav-cta { font-family: var(--font-sans); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 0.6rem 1.4rem; border-radius: 2px; transition: background var(--transition); }
+    .nav-cta:hover { background: var(--accent-light); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-hamburger span { display: block; width: 24px; height: 1.5px; background: var(--ivory); }
+
+    .mobile-nav { position: fixed; inset: 0; background: rgba(20, 24, 16, 0.98); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; transform: translateX(100%); transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .mobile-nav.open { transform: translateX(0); }
+    .mobile-nav a { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--ivory); }
+    .mobile-nav a:hover { color: var(--accent); }
+    .mobile-nav-close { position: absolute; top: 2rem; right: 2rem; font-size: 1.5rem; cursor: pointer; background: none; border: none; color: var(--smoke); }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 10rem 0 5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 3rem; }
+
+    .page-header-text .section-label {
+      font-family: var(--font-sans);
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+    }
+
+    .page-header-text h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700; line-height: 1.1; color: var(--ivory);
+    }
+
+    .page-header-text h1 em { font-style: italic; color: var(--accent); }
+    .divider { width: 48px; height: 1px; background: var(--accent-dark); margin-bottom: 1.5rem; }
+
+    .page-header-text p {
+      font-family: var(--font-sans);
+      font-size: 1rem; font-weight: 300; line-height: 1.8; color: var(--smoke);
+      max-width: 540px; margin-top: 1.5rem;
+    }
+
+    /* FILTER BAR */
+    .filter-section {
+      background: var(--bg);
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 72px;
+      z-index: 100;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 0.5rem 1.2rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .filter-btn:hover { border-color: var(--accent-dark); color: var(--accent); }
+    .filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+    /* PRODUCT GRID */
+    .collection-grid-section { padding: 5rem 0; background: var(--bg); }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+
+    .product-card {
+      background: var(--surface);
+      overflow: visible;
+      position: relative;
+      transition: transform var(--transition);
+    }
+
+    .product-card:hover { transform: translateY(-6px); }
+
+    .product-img-wrap {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .product-card:hover .product-img-wrap img { transform: scale(1.06); }
+
+    .product-badge {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      font-family: var(--font-sans);
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--bg); background: var(--accent);
+      padding: 0.3rem 0.7rem; border-radius: 1px;
+    }
+
+    .product-badge.limited { background: var(--accent-dark); color: var(--ivory); }
+    .product-badge.seasonal { background: var(--muted); color: var(--ivory); }
+
+    .product-info {
+      padding: 1.8rem;
+      background: var(--surface2);
+    }
+
+    .product-category {
+      font-family: var(--font-sans);
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.4rem;
+    }
+
+    .product-name {
+      font-family: var(--font-serif);
+      font-size: 1.15rem; font-weight: 700; color: var(--ivory); margin-bottom: 0.3rem;
+    }
+
+    .product-name-jp {
+      font-family: var(--font-sans);
+      font-size: 0.78rem; font-weight: 300; color: var(--smoke); margin-bottom: 0.75rem;
+    }
+
+    .product-desc {
+      font-family: var(--font-sans);
+      font-size: 0.85rem; font-weight: 300; line-height: 1.6; color: var(--smoke); margin-bottom: 1.2rem;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .product-price {
+      font-family: var(--font-sans);
+      font-size: 0.9rem; font-weight: 600; color: var(--accent);
+    }
+
+    .product-age {
+      font-family: var(--font-sans);
+      font-size: 0.72rem; font-weight: 300; letter-spacing: 0.1em; color: var(--muted);
+    }
+
+    .product-order-btn {
+      font-family: var(--font-sans);
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--bg); background: var(--accent);
+      padding: 0.45rem 1rem; border-radius: 2px; border: none; cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .product-order-btn:hover { background: var(--accent-light); }
+
+    /* FEATURED PRODUCT SPOTLIGHT */
+    .spotlight-section {
+      background: var(--surface);
+      padding: 7rem 0;
+    }
+
+    .spotlight-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .spotlight-image {
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+
+    .spotlight-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    .spotlight-text .section-label {
+      font-family: var(--font-sans);
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+    }
+
+    .spotlight-text h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700; color: var(--ivory); margin-bottom: 1.5rem;
+    }
+
+    .spotlight-text h2 em { font-style: italic; color: var(--accent); }
+
+    .spotlight-text p {
+      font-family: var(--font-sans);
+      font-size: 0.95rem; font-weight: 300; line-height: 1.8; color: var(--smoke); margin-bottom: 1rem;
+    }
+
+    .spotlight-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .detail-item strong {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.3rem;
+    }
+
+    .detail-item span {
+      font-family: var(--font-sans);
+      font-size: 0.85rem; font-weight: 300; color: var(--smoke);
+    }
+
+    /* SEASONAL */
+    .seasonal-section {
+      background: var(--bg);
+      padding: 7rem 0;
+    }
+
+    .seasonal-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      margin-top: 3rem;
+    }
+
+    .seasonal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .seasonal-season {
+      font-family: var(--font-sans);
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.5rem;
+    }
+
+    .seasonal-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1rem; font-weight: 700; color: var(--ivory); margin-bottom: 0.5rem;
+    }
+
+    .seasonal-card p {
+      font-family: var(--font-sans);
+      font-size: 0.82rem; font-weight: 300; line-height: 1.6; color: var(--smoke);
+    }
+
+    /* PAIRING GUIDE */
+    .pairing-section {
+      background: var(--surface);
+      padding: 7rem 0;
+    }
+
+    .pairing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2.5rem;
+    }
+
+    .pairing-table th {
+      font-family: var(--font-sans);
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .pairing-table td {
+      font-family: var(--font-sans);
+      font-size: 0.88rem; font-weight: 300; color: var(--smoke);
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pairing-table tr:last-child td { border-bottom: none; }
+
+    .pairing-table tr:hover td { background: var(--surface2); }
+
+    .pairing-product {
+      font-family: var(--font-serif);
+      font-size: 0.95rem; font-weight: 700; color: var(--ivory);
+    }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      padding: 5rem 0;
+      text-align: center;
+    }
+
+    .cta-banner h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; color: var(--ivory); margin-bottom: 1rem; }
+    .cta-banner h2 em { font-style: italic; color: var(--accent); }
+    .cta-banner p { font-family: var(--font-sans); font-size: 1rem; font-weight: 300; color: var(--smoke); margin-bottom: 2.5rem; }
+
+    .btn-primary { display: inline-block; font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 0.9rem 2.5rem; border-radius: 2px; transition: background var(--transition), transform var(--transition); }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 5rem 0 2.5rem; }
+    .footer-inner { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 4rem; }
+    .footer-brand .logo { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; color: var(--accent); margin-bottom: 1rem; }
+    .footer-brand p { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 300; line-height: 1.7; color: var(--smoke); max-width: 260px; }
+    .footer-col h4 { font-family: var(--font-sans); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ivory); margin-bottom: 1.2rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+    .footer-col ul li a { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 300; color: var(--smoke); transition: color var(--transition); }
+    .footer-col ul li a:hover { color: var(--accent-light); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .footer-bottom p { font-family: var(--font-sans); font-size: 0.78rem; font-weight: 300; color: var(--muted); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+      .seasonal-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 1.2rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .page-header-inner { flex-direction: column; }
+      .product-grid { grid-template-columns: 1fr; }
+      .spotlight-inner { grid-template-columns: 1fr; }
+      .spotlight-image { display: none; }
+      .seasonal-grid { grid-template-columns: 1fr 1fr; }
+      .pairing-table { font-size: 0.8rem; }
+      .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="collection.html">Collection</a>
+    <a href="process.html">Process</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <header class="navbar">
+    <div class="nav-logo">KOJI</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html" class="active">Collection</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Order Now</a>
+    <div class="nav-hamburger" id="hamburger" role="button">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <main>
+    <!-- PAGE HEADER -->
+    <section class="page-header">
+      <div class="container">
+        <div class="page-header-inner">
+          <div class="page-header-text">
+            <div class="section-label">The Collection</div>
+            <div class="divider"></div>
+            <h1>Signature <em>Ferments</em></h1>
+            <p>Each product is produced in small batches, available by pre-order. Fermentation times range from 48 hours to 18 months. Every jar carries the living intelligence of Aspergillus oryzae and four centuries of practice.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILTER BAR -->
+    <div class="filter-section">
+      <div class="container">
+        <div class="filter-bar">
+          <button class="filter-btn active">All Products</button>
+          <button class="filter-btn">Koji Base</button>
+          <button class="filter-btn">Miso</button>
+          <button class="filter-btn">Beverages</button>
+          <button class="filter-btn">Condiments</button>
+          <button class="filter-btn">Seasonal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT GRID -->
+    <section class="collection-grid-section">
+      <div class="container">
+        <div class="product-grid">
+
+          <!-- Shio Koji -->
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/product-1.webp" alt="Shio Koji Salt-Fermented Koji Paste" loading="lazy">
+              <div class="product-badge">Bestseller</div>
+            </div>
+            <div class="product-info">
+              <div class="product-category">Koji Base</div>
+              <div class="product-name">Shio Koji</div>
+              <div class="product-name-jp">塩麹 / Salt-Fermented Koji Paste</div>
+              <p class="product-desc">A living paste of koji rice, sea salt, and water — aged for a minimum of 10 days until the enzymes reach peak activity. The essential marinading tool of Japanese cuisine: tenderizes proteins, accelerates umami development, and replaces salt in every application.</p>
+              <div class="product-footer">
+                <div>
+                  <div class="product-price">From ¥2,800</div>
+                  <div class="product-age">200g / 500g jars</div>
+                </div>
+                <button class="product-order-btn" onclick="window.location='contact.html'">Inquire</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Amazake -->
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/product-2.webp" alt="Amazake Sweet Fermented Rice Drink" loading="lazy">
+              <div class="product-badge seasonal">Seasonal</div>
+            </div>
+            <div class="product-info">
+              <div class="product-category">Beverages</div>
+              <div class="product-name">Amazake</div>
+              <div class="product-name-jp">甘酒 / Sweet Fermented Rice</div>
+              <p class="product-desc">A thick, non-alcoholic rice beverage produced by fermenting steamed rice with fresh koji at a controlled 55–60°C over 8 hours. Naturally sweet through enzymatic starch conversion alone — no sugar added. Rich in B vitamins, amino acids, and digestive enzymes.</p>
+              <div class="product-footer">
+                <div>
+                  <div class="product-price">From ¥1,600</div>
+                  <div class="product-age">400ml bottles</div>
+                </div>
+                <button class="product-order-btn" onclick="window.location='contact.html'">Inquire</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mugi Miso -->
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/product-3.webp" alt="Mugi Miso Aged Barley Miso" loading="lazy">
+            </div>
+            <div class="product-info">
+              <div class="product-category">Miso</div>
+              <div class="product-name">Mugi Miso</div>
+              <div class="product-name-jp">麦味噌 / Aged Barley Miso Paste</div>
+              <p class="product-desc">Produced from heirloom Shirotsuru barley and organic soybeans inoculated with our Kyushu-style koji strain. Aged for a minimum of 18 months in cedar barrels. The flavor is simultaneously sweet, earthy, and complex — a profile that deepens for years in the jar.</p>
+              <div class="product-footer">
+                <div>
+                  <div class="product-price">From ¥3,400</div>
+                  <div class="product-age">Aged 18 months minimum</div>
+                </div>
+                <button class="product-order-btn" onclick="window.location='contact.html'">Inquire</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sake Kasu -->
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/product-4.webp" alt="Sake Kasu Sake Lees Pickling Bed" loading="lazy">
+            </div>
+            <div class="product-info">
+              <div class="product-category">Condiments</div>
+              <div class="product-name">Sake Kasu</div>
+              <div class="product-name-jp">酒粕 / Sake Lees &amp; Pickling Bed</div>
+              <p class="product-desc">The pressed lees remaining after sake pressing — soft, fragrant, and dense with amino acids. Use as a pickling medium for fish and vegetables, as a soup enricher, or blended into sauces. Each batch carries the aromatic profile of its parent sake mash.</p>
+              <div class="product-footer">
+                <div>
+                  <div class="product-price">From ¥2,100</div>
+                  <div class="product-age">Fresh &amp; aged varieties</div>
+                </div>
+                <button class="product-order-btn" onclick="window.location='contact.html'">Inquire</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shiro Shoyu Koji -->
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/ambient-1.webp" alt="Shiro Shoyu Koji White Soy Sauce" loading="lazy">
+              <div class="product-badge limited">Limited</div>
+            </div>
+            <div class="product-info">
+              <div class="product-category">Condiments</div>
+              <div class="product-name">Shiro Shoyu Koji</div>
+              <div class="product-name-jp">白醤油麹 / White Soy Sauce with Koji</div>
+              <p class="product-desc">An extraordinary marriage of our shiro shoyu — brewed from 90% wheat and 10% soy — with fresh koji paste. The result is a luminous, amber-gold sauce with intense umami, floral sweetness, and none of the harsh salinity of standard soy. Available in very limited quantities.</p>
+              <div class="product-footer">
+                <div>
+                  <div class="product-price">From ¥4,800</div>
+                  <div class="product-age">180ml bottles only</div>
+                </div>
+                <button class="product-order-btn" onclick="window.location='contact.html'">Inquire</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kome Koji (Raw) -->
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="images/ambient-2.webp" alt="Kome Koji Raw Rice Koji" loading="lazy">
+            </div>
+            <div class="product-info">
+              <div class="product-category">Koji Base</div>
+              <div class="product-name">Kome Koji</div>
+              <div class="product-name-jp">米麹 / Fresh Rice Koji</div>
+              <p class="product-desc">Our freshly harvested rice koji — the living foundation of all fermentation. Fully colonized Koshihikari rice with visible white mycelium and the characteristic chestnut-sweet fragrance of peak enzyme activity. Use immediately to make your own shio koji, miso, or sake at home.</p>
+              <div class="product-footer">
+                <div>
+                  <div class="product-price">From ¥3,200</div>
+                  <div class="product-age">500g / 1kg (refrigerated)</div>
+                </div>
+                <button class="product-order-btn" onclick="window.location='contact.html'">Inquire</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED SPOTLIGHT -->
+    <section class="spotlight-section">
+      <div class="container">
+        <div class="spotlight-inner">
+          <div class="spotlight-image">
+            <img src="images/hero-3.webp" alt="Mugi Miso — KOJI's signature product aged 18 months" loading="lazy">
+          </div>
+          <div class="spotlight-text">
+            <div class="section-label">Featured Product</div>
+            <div class="divider"></div>
+            <h2>Mugi Miso — <em>18 Month Reserve</em></h2>
+            <p>Our signature product is the mugi miso aged for a minimum of eighteen months in century-old cedar barrels salvaged from a decommissioned brewery in Kumamoto. Time is the primary ingredient.</p>
+            <p>The flavor profile shifts markedly from the fresh version at six months: where the young miso is bright and slightly sweet, the reserve carries notes of dark caramel, roasted grain, deep earth, and a sustained umami finish that can persist for minutes on the palate.</p>
+            <div class="spotlight-details">
+              <div class="detail-item">
+                <strong>Grain</strong>
+                <span>Shirotsuru barley, Tottori</span>
+              </div>
+              <div class="detail-item">
+                <strong>Aging</strong>
+                <span>18+ months in cedar</span>
+              </div>
+              <div class="detail-item">
+                <strong>Koji Strain</strong>
+                <span>Kyushu mugi-koji (heritage)</span>
+              </div>
+              <div class="detail-item">
+                <strong>Salt</strong>
+                <span>Oshima Island sea salt, 11%</span>
+              </div>
+            </div>
+            <a href="contact.html" class="btn-primary">Order Reserve Miso</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEASONAL RELEASES -->
+    <section class="seasonal-section">
+      <div class="container">
+        <div style="max-width:600px;">
+          <div class="section-label">Seasonal</div>
+          <div class="divider"></div>
+          <h2 style="font-family: var(--font-serif); font-size: clamp(1.8rem,3.5vw,2.8rem); font-weight:700; color:var(--ivory); margin-bottom:1rem;">The Living <em style="font-style:italic;color:var(--accent);">Calendar</em></h2>
+          <p style="font-family:var(--font-sans); font-size:0.95rem; font-weight:300; line-height:1.8; color:var(--smoke);">Koji follows the seasons. Temperature and humidity shifts through the year produce distinct enzyme profiles, flavors, and fermentation characters. Our seasonal releases celebrate these natural variations.</p>
+        </div>
+        <div class="seasonal-grid">
+          <div class="seasonal-card">
+            <div class="seasonal-season">Spring</div>
+            <h3>Sakura Shio Koji</h3>
+            <p>Cherry blossom petals salt-preserved and folded into fresh shio koji — a fleeting, floral marinade available for two weeks only in late March.</p>
+          </div>
+          <div class="seasonal-card">
+            <div class="seasonal-season">Summer</div>
+            <h3>Shochu Kasu</h3>
+            <p>The lees of summer-pressed sweet potato shochu — fiery, aromatic, and extraordinary as a cure for oily fish such as mackerel or amberjack.</p>
+          </div>
+          <div class="seasonal-card">
+            <div class="seasonal-season">Autumn</div>
+            <h3>Kuri Amazake</h3>
+            <p>Fresh mountain chestnuts sourced from Tamba blended into our amazake base — a seasonal drink of extraordinary sweetness and earthen depth.</p>
+          </div>
+          <div class="seasonal-card">
+            <div class="seasonal-season">Winter</div>
+            <h3>Yuzu Miso</h3>
+            <p>Aged mugi miso blended with freshly pressed yuzu zest — a condiment of fierce fragrance and deep umami for winter nabe and hot pot preparations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAIRING GUIDE -->
+    <section class="pairing-section">
+      <div class="container">
+        <div style="max-width:600px; margin-bottom:2rem;">
+          <div class="section-label">Chef's Guide</div>
+          <div class="divider"></div>
+          <h2 style="font-family:var(--font-serif); font-size:clamp(1.8rem,3.5vw,2.8rem); font-weight:700; color:var(--ivory);">Pairing <em style="font-style:italic;color:var(--accent);">Principles</em></h2>
+        </div>
+        <table class="pairing-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Primary Application</th>
+              <th>Flavor Profile</th>
+              <th>Chef's Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pairing-product">Shio Koji</span></td>
+              <td>Protein marinade, curing, seasoning</td>
+              <td>Saline, sweet, mellow umami</td>
+              <td>Substitute 1:1 for salt in any marinade. Allow 3–7 days for optimal enzyme penetration.</td>
+            </tr>
+            <tr>
+              <td><span class="pairing-product">Amazake</span></td>
+              <td>Beverage, dessert base, glaze</td>
+              <td>Sweet, creamy, lightly fermented</td>
+              <td>Reduce by half and use as a lacquer on roasted vegetables or as a frozen dessert base.</td>
+            </tr>
+            <tr>
+              <td><span class="pairing-product">Mugi Miso</span></td>
+              <td>Soups, braises, butter enrichment</td>
+              <td>Earthy, complex, sustained umami</td>
+              <td>A half-teaspoon in beef bourguignon transforms the dish. Never boil after adding — heat kills enzymes.</td>
+            </tr>
+            <tr>
+              <td><span class="pairing-product">Sake Kasu</span></td>
+              <td>Pickling, poaching, grilling plank</td>
+              <td>Alcoholic, floral, rich amino acids</td>
+              <td>Wrap fatty fish in kasu and bake at 180°C — the lees crust caramelizes, the flesh cures simultaneously.</td>
+            </tr>
+            <tr>
+              <td><span class="pairing-product">Shiro Shoyu Koji</span></td>
+              <td>Finishing sauce, dressings, glazes</td>
+              <td>Delicate, sweet, intense umami</td>
+              <td>Never cook. Use only as a finishing element — a few drops over raw seafood or on cold tofu is revelatory.</td>
+            </tr>
+            <tr>
+              <td><span class="pairing-product">Kome Koji</span></td>
+              <td>DIY fermentation, enzyme bath, curing</td>
+              <td>Nutty, chestnut-sweet, earthy</td>
+              <td>Blend fresh koji with cream cheese for an immediate umami spread that rivals aged varieties.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-banner">
+      <div class="container">
+        <h2>Ready to <em>Ferment</em>?</h2>
+        <p>All products are available by pre-order. Wholesale pricing available for restaurants and retailers.</p>
+        <a href="contact.html" class="btn-primary">Place an Order</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="logo">KOJI</div>
+          <p>Artisan Fermentation Studio rooted in Kyoto. We cultivate rare koji strains and traditional ferments for chefs, collectors, and those who taste deeply.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="collection.html">Collection</a></li>
+            <li><a href="process.html">Process</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Products</h4>
+          <ul>
+            <li><a href="collection.html">Shio Koji</a></li>
+            <li><a href="collection.html">Amazake</a></li>
+            <li><a href="collection.html">Mugi Miso</a></li>
+            <li><a href="collection.html">Sake Kasu</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Studio</h4>
+          <ul>
+            <li><a href="about.html">Heritage</a></li>
+            <li><a href="process.html">Process</a></li>
+            <li><a href="contact.html">Wholesale</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 KOJI Fermentation Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    const whisper = { duration: 1.5, y: 14, ease: 'power1.out', immediateRender: false };
+
+    gsap.from('.page-header-text > *', { ...whisper, autoAlpha: 0, stagger: 0.1, delay: 0.2 });
+
+    gsap.from('.product-card', {
+      ...whisper, autoAlpha: 0, y: 20, stagger: 0.1,
+      scrollTrigger: { trigger: '.product-grid', start: 'top 80%' }
+    });
+
+    gsap.from('.spotlight-inner > *', {
+      ...whisper, autoAlpha: 0, stagger: 0.15,
+      scrollTrigger: { trigger: '.spotlight-inner', start: 'top 80%' }
+    });
+
+    gsap.from('.seasonal-card', {
+      ...whisper, autoAlpha: 0, y: 16, stagger: 0.1,
+      scrollTrigger: { trigger: '.seasonal-grid', start: 'top 80%' }
+    });
+
+    // Filter buttons (UI only)
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileNav').classList.add('open'));
+    document.getElementById('mobileNavClose').addEventListener('click', () => document.getElementById('mobileNav').classList.remove('open'));
+  </script>
+</body>
+</html>

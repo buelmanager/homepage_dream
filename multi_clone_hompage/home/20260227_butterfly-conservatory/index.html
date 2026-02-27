@@ -1,0 +1,2306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEPIDOPTERA — Where Wings Tell Stories</title>
+  <meta name="description" content="A living butterfly museum and tropical botanical garden. Discover 2000+ butterflies across 300 species in five immersive tropical zones." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    /* ============================================================
+       RESET & CUSTOM PROPERTIES
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F1A10;
+      --surface: #162016;
+      --surface2: #1A2A1A;
+      --accent: #4DAF6A;
+      --accent-light: #7ACC8A;
+      --accent-dark: #2E7A46;
+      --ivory: #DCF0DC;
+      --smoke: #809080;
+      --muted: #4A6050;
+      --border: #182018;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ============================================================
+       PRELOADER
+    ============================================================ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--ivory);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .preloader-tagline {
+      font-family: var(--font-sans);
+      font-weight: 300;
+      font-size: 0.85rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .preloader-bar {
+      width: 200px;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 2s var(--ease-out);
+    }
+
+    .preloader-wing {
+      width: 60px;
+      height: 60px;
+      position: relative;
+    }
+
+    .preloader-wing svg {
+      width: 100%;
+      height: 100%;
+      animation: wingFlap 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes wingFlap {
+      0% { transform: scaleX(1) rotate(-5deg); }
+      100% { transform: scaleX(0.7) rotate(5deg); }
+    }
+
+    /* ============================================================
+       SCROLL INDICATOR
+    ============================================================ */
+    #scroll-indicator {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .scroll-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      font-family: var(--font-sans);
+    }
+
+    .scroll-mouse {
+      width: 22px;
+      height: 36px;
+      border: 1px solid rgba(128, 144, 128, 0.5);
+      border-radius: 11px;
+      display: flex;
+      justify-content: center;
+      padding-top: 6px;
+    }
+
+    .scroll-dot {
+      width: 3px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: scrollBounce 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateY(0); opacity: 1; }
+      50% { transform: translateY(8px); opacity: 0.3; }
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 1.4rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease, padding 0.4s ease;
+    }
+
+    #navbar.scrolled {
+      background: rgba(15, 26, 16, 0.92);
+      backdrop-filter: blur(20px);
+      padding: 1rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      letter-spacing: 0.18em;
+      color: var(--ivory);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--ivory);
+    }
+
+    .nav-cta {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg) !important;
+      background: var(--accent);
+      padding: 0.6rem 1.4rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.3s ease !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-light) !important;
+      color: var(--bg) !important;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: transform 0.3s ease;
+    }
+
+    /* ============================================================
+       HERO — TYPE B (Parallax + Ken Burns)
+    ============================================================ */
+    #hero {
+      position: relative;
+      height: 100svh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-layer {
+      position: absolute;
+      inset: -8%;
+      background-size: cover;
+      background-position: center;
+      will-change: transform;
+      transition: transform 0.12s linear;
+    }
+
+    .hero-layer-1 {
+      background-image: url('images/hero-1.webp');
+      filter: brightness(0.65);
+      animation: kenBurns1 18s ease-in-out infinite alternate;
+    }
+
+    .hero-layer-2 {
+      background-image: url('images/hero-2.webp');
+      mix-blend-mode: overlay;
+      filter: brightness(0.5) saturate(1.3);
+      animation: kenBurns2 22s ease-in-out infinite alternate;
+    }
+
+    @keyframes kenBurns1 {
+      0% { transform: scale(1) translate(0, 0); }
+      100% { transform: scale(1.08) translate(-1%, -2%); }
+    }
+
+    @keyframes kenBurns2 {
+      0% { transform: scale(1.05) translate(1%, 0); }
+      100% { transform: scale(1) translate(-2%, 1%); }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(15, 26, 16, 0.4) 0%,
+        rgba(15, 26, 16, 0.15) 40%,
+        rgba(15, 26, 16, 0.6) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 0 2rem;
+      max-width: 900px;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      font-family: var(--font-sans);
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3.2rem, 8vw, 7rem);
+      line-height: 1.05;
+      color: var(--ivory);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 300;
+      color: rgba(220, 240, 220, 0.8);
+      max-width: 560px;
+      margin: 0 auto 3rem;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 1rem 2.5rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      background: transparent;
+      padding: 1rem 2.5rem;
+      border: 1px solid rgba(220, 240, 220, 0.4);
+      border-radius: 2px;
+      text-decoration: none;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--ivory);
+      background: rgba(220, 240, 220, 0.05);
+    }
+
+    /* Floating badge */
+    .hero-badge {
+      position: absolute;
+      bottom: 8rem;
+      right: 6rem;
+      background: rgba(22, 32, 22, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(77, 175, 106, 0.3);
+      border-radius: 4px;
+      padding: 1rem 1.4rem;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .hero-badge-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-badge-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--ivory);
+      line-height: 1.3;
+    }
+
+    /* ============================================================
+       SECTION SHARED STYLES
+    ============================================================ */
+    section {
+      background: var(--bg);
+    }
+
+    .section-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      line-height: 1.15;
+      color: var(--ivory);
+      margin-bottom: 1rem;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .section-lead {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--smoke);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: var(--accent);
+      margin: 1.5rem auto;
+    }
+
+    /* ============================================================
+       STATS SECTION
+    ============================================================ */
+    #stats {
+      padding: 6rem 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .stat-item:last-child {
+      border-right: none;
+    }
+
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(2.8rem, 4vw, 4rem);
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      line-height: 1.5;
+    }
+
+    .stat-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    /* ============================================================
+       PHILOSOPHY SECTION
+    ============================================================ */
+    #philosophy {
+      padding: 8rem 0;
+      background: var(--bg);
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      margin-top: 4rem;
+    }
+
+    .philosophy-card {
+      background: var(--surface);
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: border-color 0.4s ease;
+    }
+
+    .philosophy-card:hover {
+      border-color: rgba(77, 175, 106, 0.4);
+    }
+
+    .philosophy-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.5s ease;
+    }
+
+    .philosophy-card:hover::before {
+      height: 100%;
+    }
+
+    .philosophy-number {
+      font-family: var(--font-serif);
+      font-size: 4rem;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      transition: color 0.4s ease;
+    }
+
+    .philosophy-card:hover .philosophy-number {
+      color: var(--accent-dark);
+    }
+
+    .philosophy-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--ivory);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .philosophy-text {
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.8;
+    }
+
+    .philosophy-icon {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+
+    /* ============================================================
+       SPECIES COLLECTION
+    ============================================================ */
+    #collection {
+      padding: 8rem 0;
+      background: var(--surface);
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 4rem;
+    }
+
+    .collection-item {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .collection-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: var(--surface2);
+      transition: transform 0.7s var(--ease-out);
+    }
+
+    .collection-item:hover .collection-img {
+      transform: scale(1.08);
+    }
+
+    .collection-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(15, 26, 16, 0.95) 0%,
+        rgba(15, 26, 16, 0.4) 50%,
+        transparent 100%
+      );
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem 1.5rem;
+      transition: background 0.4s ease;
+    }
+
+    .collection-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 0.4rem;
+    }
+
+    .collection-name {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      color: var(--ivory);
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+    }
+
+    .collection-latin {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--smoke);
+    }
+
+    .collection-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.8rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ============================================================
+       GREENHOUSE SECTION
+    ============================================================ */
+    #greenhouse {
+      padding: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+    }
+
+    .greenhouse-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/ambient-1.webp');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35);
+    }
+
+    .greenhouse-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(15, 26, 16, 0.9) 0%,
+        rgba(15, 26, 16, 0.4) 60%,
+        transparent 100%
+      );
+    }
+
+    .greenhouse-content {
+      position: relative;
+      z-index: 5;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 8rem 2.5rem;
+      max-width: 55%;
+    }
+
+    .greenhouse-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+
+    .greenhouse-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1.1;
+      color: var(--ivory);
+      margin-bottom: 1.5rem;
+    }
+
+    .greenhouse-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .greenhouse-text {
+      font-size: 1rem;
+      color: rgba(220, 240, 220, 0.75);
+      line-height: 1.85;
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+
+    .greenhouse-zones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 3rem;
+    }
+
+    .zone-tag {
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      background: rgba(77, 175, 106, 0.1);
+      border: 1px solid rgba(77, 175, 106, 0.3);
+      padding: 0.4rem 0.9rem;
+      border-radius: 2px;
+    }
+
+    /* ============================================================
+       PROCESS / JOURNEY SECTION
+    ============================================================ */
+    #process {
+      padding: 8rem 0;
+      background: var(--surface);
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+      position: relative;
+    }
+
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 2rem;
+      left: 12.5%;
+      right: 12.5%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-dark), transparent);
+    }
+
+    .process-step {
+      text-align: center;
+      padding: 0 2rem;
+      position: relative;
+    }
+
+    .process-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin: 0 auto 2rem;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 0 4px rgba(77, 175, 106, 0.15);
+    }
+
+    .process-number {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.8rem;
+    }
+
+    .process-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      color: var(--ivory);
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .process-text {
+      font-size: 0.88rem;
+      color: var(--smoke);
+      line-height: 1.75;
+    }
+
+    /* ============================================================
+       HERITAGE SECTION
+    ============================================================ */
+    #heritage {
+      padding: 8rem 0;
+      background: var(--bg);
+    }
+
+    .heritage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .heritage-media {
+      position: relative;
+    }
+
+    .heritage-img-wrap {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+    }
+
+    .heritage-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: var(--surface2);
+    }
+
+    .heritage-img-accent {
+      position: absolute;
+      bottom: -2rem;
+      right: -2rem;
+      width: 50%;
+      aspect-ratio: 1;
+      background: var(--surface);
+      border: 3px solid var(--bg);
+      overflow: hidden;
+    }
+
+    .heritage-img-accent img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: var(--surface2);
+    }
+
+    .heritage-content .section-eyebrow {
+      text-align: left;
+    }
+
+    .heritage-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      color: var(--ivory);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .heritage-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .heritage-text {
+      font-size: 0.95rem;
+      color: var(--smoke);
+      line-height: 1.85;
+      margin-bottom: 1.5rem;
+    }
+
+    .heritage-facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .heritage-fact-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .heritage-fact-value {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--ivory);
+    }
+
+    /* ============================================================
+       TESTIMONIALS (Swiper)
+    ============================================================ */
+    #testimonials {
+      padding: 8rem 0;
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .testimonials-swiper {
+      margin-top: 4rem;
+      padding-bottom: 3rem !important;
+    }
+
+    .testimonial-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .testimonial-quote-mark {
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      color: var(--accent);
+      line-height: 0.6;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--ivory);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface2);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .testimonial-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .testimonial-name {
+      font-size: 0.9rem;
+      color: var(--ivory);
+      font-weight: 500;
+      margin-bottom: 0.15rem;
+    }
+
+    .testimonial-role {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .star {
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    .swiper-pagination-bullet {
+      background: var(--muted) !important;
+      opacity: 1 !important;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: var(--accent) !important;
+    }
+
+    /* ============================================================
+       EXPERIENCE BOOKING
+    ============================================================ */
+    #booking {
+      padding: 8rem 0;
+      background: var(--bg);
+    }
+
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .booking-experiences {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .experience-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1.5rem;
+      align-items: center;
+      transition: border-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .experience-card:hover {
+      border-color: rgba(77, 175, 106, 0.4);
+    }
+
+    .experience-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(77, 175, 106, 0.1);
+      border: 1px solid rgba(77, 175, 106, 0.2);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .experience-name {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--ivory);
+      margin-bottom: 0.3rem;
+    }
+
+    .experience-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .experience-price {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--accent);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .experience-price small {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .booking-form-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3rem;
+    }
+
+    .booking-form-title {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      color: var(--ivory);
+      margin-bottom: 0.5rem;
+    }
+
+    .booking-form-sub {
+      font-size: 0.85rem;
+      color: var(--smoke);
+      margin-bottom: 2rem;
+    }
+
+    .form-field {
+      margin-bottom: 1.4rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      padding: 0.8rem 1rem;
+      border-radius: 2px;
+      transition: border-color 0.3s ease;
+      appearance: none;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+      padding: 1rem;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-light);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    #footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 5rem 2.5rem 3rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--ivory);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-brand-tagline {
+      font-style: italic;
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      color: var(--smoke);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-about {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 280px;
+      margin-bottom: 2rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .footer-social a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .footer-col-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-light);
+    }
+
+    .footer-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-contact-icon {
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .footer-contact-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .footer-bottom {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.5rem 2.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-legal a {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-legal a:hover {
+      color: var(--smoke);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-top: 1px solid var(--border); }
+      .stat-item:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+      .heritage-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .booking-grid { grid-template-columns: 1fr; }
+      .footer-main { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+      .greenhouse-content { max-width: 70%; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); gap: 3rem; }
+      .process-steps::before { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      #navbar { padding: 1rem 1.5rem; }
+      #navbar.scrolled { padding: 0.8rem 1.5rem; }
+      .section-inner { padding: 0 1.5rem; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-badge { display: none; }
+      .footer-main { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1.5rem; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; padding: 1.5rem; }
+      .greenhouse-content { max-width: 100%; }
+      .booking-form-wrap { padding: 2rem 1.5rem; }
+    }
+
+    @media (max-width: 480px) {
+      .collection-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .heritage-facts { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       PRELOADER
+  ============================================================ -->
+  <div id="preloader">
+    <div class="preloader-wing">
+      <svg viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M40 30C40 30 10 5 5 20C0 35 25 50 40 30Z" fill="#4DAF6A" opacity="0.9"/>
+        <path d="M40 30C40 30 70 5 75 20C80 35 55 50 40 30Z" fill="#2E7A46" opacity="0.9"/>
+        <path d="M40 30C40 30 15 38 12 52C9 66 38 55 40 30Z" fill="#4DAF6A" opacity="0.7"/>
+        <path d="M40 30C40 30 65 38 68 52C71 66 42 55 40 30Z" fill="#2E7A46" opacity="0.7"/>
+        <line x1="40" y1="10" x2="40" y2="55" stroke="#7ACC8A" stroke-width="1.5" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="preloader-logo">Lepidoptera</div>
+    <div class="preloader-tagline">Where Wings Tell Stories</div>
+    <div class="preloader-bar">
+      <div class="preloader-fill" id="preloader-fill"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCROLL INDICATOR
+  ============================================================ -->
+  <div id="scroll-indicator">
+    <div class="scroll-mouse">
+      <div class="scroll-dot"></div>
+    </div>
+    <span class="scroll-label">Explore</span>
+  </div>
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">Lepi<span>d</span>optera</a>
+    <ul class="nav-links">
+      <li><a href="about.html">Our Story</a></li>
+      <li><a href="collection.html">Species</a></li>
+      <li><a href="process.html">Experience</a></li>
+      <li><a href="contact.html">Visit</a></li>
+      <li><a href="contact.html" class="nav-cta">Book Now</a></li>
+    </ul>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ============================================================
+       HERO — TYPE B (Parallax + Ken Burns)
+  ============================================================ -->
+  <section id="hero">
+    <div class="hero-layer hero-layer-1" id="heroLayer1"></div>
+    <div class="hero-layer hero-layer-2" id="heroLayer2"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <span class="hero-eyebrow">Living Butterfly Museum &amp; Botanical Garden</span>
+      <h1 class="hero-title">
+        Where <em>Wings</em><br>Tell Stories
+      </h1>
+      <p class="hero-subtitle">
+        Step inside a living canvas of color and flight. Home to 2,000 butterflies across 300 species, our five tropical zones transport you to ecosystems at the edge of wonder.
+      </p>
+      <div class="hero-actions">
+        <a href="contact.html" class="btn-primary">Reserve Your Visit</a>
+        <a href="collection.html" class="btn-ghost">Explore Species</a>
+      </div>
+    </div>
+
+    <div class="hero-badge">
+      <span class="hero-badge-label">Living Butterfly Museum</span>
+      <div class="hero-badge-title">300+ Species<br>in Residence</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       STATS
+  ============================================================ -->
+  <section id="stats">
+    <div class="section-inner">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" data-count="2000">2,000+</div>
+          <div class="stat-label">Living Butterflies</div>
+          <div class="stat-desc">In flight at any moment</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="300">300</div>
+          <div class="stat-label">Documented Species</div>
+          <div class="stat-desc">From six continents</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="5">5</div>
+          <div class="stat-label">Tropical Zones</div>
+          <div class="stat-desc">Distinct biome habitats</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="40">40°C</div>
+          <div class="stat-label">Habitat Temperature</div>
+          <div class="stat-desc">Precisely maintained</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PHILOSOPHY
+  ============================================================ -->
+  <section id="philosophy">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-eyebrow">Our Philosophy</span>
+        <h2 class="section-title">Conservation Through <em>Wonder</em></h2>
+        <div class="divider"></div>
+        <p class="section-lead">We believe the surest path to protecting nature is helping people fall in love with it. Every visit is a quiet revolution in perception.</p>
+      </div>
+
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <svg class="philosophy-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 4C18 4 8 14 8 22C8 27.5 12.5 32 18 32C23.5 32 28 27.5 28 22C28 14 18 4 18 4Z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M18 32V20" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <div class="philosophy-number">01</div>
+          <h3 class="philosophy-title">Living Conservation</h3>
+          <p class="philosophy-text">Every butterfly in our care is part of an active breeding and release program. We partner with tropical forest communities to protect habitats where our species naturally thrive.</p>
+        </div>
+        <div class="philosophy-card">
+          <svg class="philosophy-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="18" r="12" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M18 6V18L26 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div class="philosophy-number">02</div>
+          <h3 class="philosophy-title">Slow Encounter</h3>
+          <p class="philosophy-text">We deliberately limit visitor numbers. Butterfly watching rewards patience — a quality rare in modern life. Our guided journeys take you to the edge of stillness, where wings land uninvited.</p>
+        </div>
+        <div class="philosophy-card">
+          <svg class="philosophy-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 4L21 14H31L23 20L26 30L18 24L10 30L13 20L5 14H15L18 4Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <div class="philosophy-number">03</div>
+          <h3 class="philosophy-title">Scientific Artistry</h3>
+          <p class="philosophy-text">Our resident lepidopterists are both scientists and storytellers. The stories of migration, metamorphosis, and mimicry they share transform observation into awe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SPECIES COLLECTION
+  ============================================================ -->
+  <section id="collection">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-eyebrow">Featured Species</span>
+        <h2 class="section-title">Residents of <em>Lepidoptera</em></h2>
+        <div class="divider"></div>
+        <p class="section-lead">From iridescent morphos to the world's largest winged insects, our collection represents the full spectacle of butterfly evolution.</p>
+      </div>
+
+      <div class="collection-grid">
+        <div class="collection-item">
+          <div class="collection-img" style="background: linear-gradient(135deg, #1a3a5c 0%, #0d2040 100%); display:flex; align-items:center; justify-content:center;">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" opacity="0.4">
+              <path d="M40 40C40 40 15 15 10 30C5 45 28 58 40 40Z" fill="#4DAF6A"/>
+              <path d="M40 40C40 40 65 15 70 30C75 45 52 58 40 40Z" fill="#2E7A46"/>
+              <path d="M40 40C40 40 18 50 15 64C12 78 38 68 40 40Z" fill="#4DAF6A" opacity="0.7"/>
+              <path d="M40 40C40 40 62 50 65 64C68 78 42 68 40 40Z" fill="#2E7A46" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="collection-overlay">
+            <span class="collection-tag">Morpho Genus</span>
+            <h3 class="collection-name">Blue Morpho</h3>
+            <p class="collection-latin">Morpho peleides</p>
+            <a href="collection.html" class="collection-link">Discover →</a>
+          </div>
+        </div>
+        <div class="collection-item">
+          <div class="collection-img" style="background: linear-gradient(135deg, #3d2800 0%, #1a1000 100%); display:flex; align-items:center; justify-content:center;">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" opacity="0.4">
+              <path d="M40 40C40 40 15 15 10 30C5 45 28 58 40 40Z" fill="#FF8C00"/>
+              <path d="M40 40C40 40 65 15 70 30C75 45 52 58 40 40Z" fill="#CC6600"/>
+              <path d="M40 40C40 40 18 50 15 64C12 78 38 68 40 40Z" fill="#FF8C00" opacity="0.7"/>
+              <path d="M40 40C40 40 62 50 65 64C68 78 42 68 40 40Z" fill="#CC6600" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="collection-overlay">
+            <span class="collection-tag">Nymphalidae</span>
+            <h3 class="collection-name">Monarch</h3>
+            <p class="collection-latin">Danaus plexippus</p>
+            <a href="collection.html" class="collection-link">Discover →</a>
+          </div>
+        </div>
+        <div class="collection-item">
+          <div class="collection-img" style="background: linear-gradient(135deg, #2a1a00 0%, #150d00 100%); display:flex; align-items:center; justify-content:center;">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" opacity="0.4">
+              <path d="M40 40C40 40 8 10 5 28C2 46 30 60 40 40Z" fill="#8B7355"/>
+              <path d="M40 40C40 40 72 10 75 28C78 46 50 60 40 40Z" fill="#6B5335"/>
+              <path d="M40 40C40 40 12 52 8 68C4 84 38 72 40 40Z" fill="#8B7355" opacity="0.7"/>
+              <path d="M40 40C40 40 68 52 72 68C76 84 42 72 40 40Z" fill="#6B5335" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="collection-overlay">
+            <span class="collection-tag">Saturniidae</span>
+            <h3 class="collection-name">Atlas Moth</h3>
+            <p class="collection-latin">Attacus atlas</p>
+            <a href="collection.html" class="collection-link">Discover →</a>
+          </div>
+        </div>
+        <div class="collection-item">
+          <div class="collection-img" style="background: linear-gradient(135deg, #003344 0%, #001520 100%); display:flex; align-items:center; justify-content:center;">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" opacity="0.4">
+              <path d="M40 40C40 40 15 15 10 30C5 45 28 58 40 40Z" fill="#00AACC"/>
+              <path d="M40 40C40 40 65 15 70 30C75 45 52 58 40 40Z" fill="#007799"/>
+              <path d="M40 40C40 40 18 50 15 64C12 78 38 68 40 40Z" fill="#00AACC" opacity="0.7"/>
+              <path d="M40 40C40 40 62 50 65 64C68 78 42 68 40 40Z" fill="#007799" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="collection-overlay">
+            <span class="collection-tag">Papilionidae</span>
+            <h3 class="collection-name">Ulysses</h3>
+            <p class="collection-latin">Papilio ulysses</p>
+            <a href="collection.html" class="collection-link">Discover →</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:3rem;">
+        <a href="collection.html" class="btn-primary">View All 300 Species</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       GREENHOUSE
+  ============================================================ -->
+  <section id="greenhouse">
+    <div class="greenhouse-bg"></div>
+    <div class="greenhouse-overlay"></div>
+    <div class="greenhouse-content">
+      <span class="greenhouse-eyebrow">Five Tropical Zones</span>
+      <h2 class="greenhouse-title">Ecosystems Built<br>for <em>Living Art</em></h2>
+      <p class="greenhouse-text">
+        Each of our five greenhouse zones recreates a distinct tropical biome — from the cloud forests of Costa Rica to the rainforests of Borneo. Temperature, humidity, and plant life are precisely calibrated so every species flourishes naturally.
+      </p>
+      <div class="greenhouse-zones">
+        <span class="zone-tag">Amazon Basin</span>
+        <span class="zone-tag">Borneo Lowland</span>
+        <span class="zone-tag">Costa Rica Cloud</span>
+        <span class="zone-tag">Southeast Asian</span>
+        <span class="zone-tag">Afrotropical</span>
+      </div>
+      <a href="process.html" class="btn-primary">Explore the Zones</a>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROCESS / JOURNEY
+  ============================================================ -->
+  <section id="process">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-eyebrow">The Journey</span>
+        <h2 class="section-title">From Egg to <em>Wing</em></h2>
+        <div class="divider"></div>
+        <p class="section-lead">Watch the full arc of metamorphosis unfold before you. Our lifecycle displays let you witness one of nature's most profound transformations in real time.</p>
+      </div>
+
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="process-dot"></div>
+          <div class="process-number">Stage I</div>
+          <h3 class="process-title">The Egg Chamber</h3>
+          <p class="process-text">Observe butterfly eggs smaller than a pinhead as they're laid on host plants. Each species selects its plant with extraordinary precision.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-dot"></div>
+          <div class="process-number">Stage II</div>
+          <h3 class="process-title">Larval Gallery</h3>
+          <p class="process-text">Watch caterpillars in their many instars — feeding, molting, and growing — each species wearing its own remarkable camouflage.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-dot"></div>
+          <div class="process-number">Stage III</div>
+          <h3 class="process-title">The Chrysalis</h3>
+          <p class="process-text">The hanging chrysalides glow under light, some gold-tipped, others jade-green. Inside, a complete cellular reorganization unfolds over two weeks.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-dot"></div>
+          <div class="process-number">Stage IV</div>
+          <h3 class="process-title">Emergence & Release</h3>
+          <p class="process-text">The daily emergence ceremony is the heart of LEPIDOPTERA. Guests are invited to witness wings unfolding for the very first time.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:4rem;">
+        <a href="process.html" class="btn-ghost">Learn More About the Lifecycle</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HERITAGE
+  ============================================================ -->
+  <section id="heritage">
+    <div class="section-inner">
+      <div class="heritage-grid">
+        <div class="heritage-media">
+          <div class="heritage-img-wrap">
+            <div style="width:100%; height:100%; background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%); display:flex; align-items:center; justify-content:center;">
+              <svg width="120" height="120" viewBox="0 0 120 120" fill="none" opacity="0.25">
+                <path d="M60 60C60 60 20 20 12 45C4 70 40 88 60 60Z" fill="#4DAF6A"/>
+                <path d="M60 60C60 60 100 20 108 45C116 70 80 88 60 60Z" fill="#2E7A46"/>
+                <path d="M60 60C60 60 25 75 18 98C11 121 58 105 60 60Z" fill="#4DAF6A" opacity="0.6"/>
+                <path d="M60 60C60 60 95 75 102 98C109 121 62 105 60 60Z" fill="#2E7A46" opacity="0.6"/>
+              </svg>
+            </div>
+          </div>
+          <div class="heritage-img-accent">
+            <div style="width:100%; height:100%; background: var(--accent-dark); display:flex; align-items:center; justify-content:center; padding:1.5rem; text-align:center;">
+              <div>
+                <div style="font-family: var(--font-serif); font-size:2rem; color: var(--ivory);">1987</div>
+                <div style="font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color: rgba(220,240,220,0.6); margin-top:0.3rem;">Founded</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="heritage-content">
+          <span class="section-eyebrow">Our Heritage</span>
+          <h2 class="heritage-title">Three Decades of<br><em>Living Wonder</em></h2>
+          <p class="heritage-text">Founded in 1987 by lepidopterist Dr. Elena Maris and botanist Alejandro Vega, LEPIDOPTERA began as a single greenhouse on the edge of a tropical reserve. What started as a personal obsession became a world-renowned institution.</p>
+          <p class="heritage-text">Today our collection has grown to include species rescued from habitat destruction, bred under careful guidance, and released back into protected wild corridors. Conservation, science, and beauty are inseparable here.</p>
+          <a href="about.html" class="btn-ghost" style="display:inline-block;">Read Our Full Story</a>
+
+          <div class="heritage-facts">
+            <div>
+              <span class="heritage-fact-label">Founded</span>
+              <span class="heritage-fact-value">1987</span>
+            </div>
+            <div>
+              <span class="heritage-fact-label">Annual Visitors</span>
+              <span class="heritage-fact-value">140,000+</span>
+            </div>
+            <div>
+              <span class="heritage-fact-label">Released to Wild</span>
+              <span class="heritage-fact-value">500K+</span>
+            </div>
+            <div>
+              <span class="heritage-fact-label">Research Papers</span>
+              <span class="heritage-fact-value">212</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TESTIMONIALS (Swiper)
+  ============================================================ -->
+  <section id="testimonials">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-eyebrow">Guest Reflections</span>
+        <h2 class="section-title">Moments That <em>Stay</em></h2>
+        <div class="divider"></div>
+        <p class="section-lead">The encounter changes something. Visitors come for the spectacle; they leave with a quiet transformation of their own.</p>
+      </div>
+
+      <div class="swiper testimonials-swiper">
+        <div class="swiper-wrapper">
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <span class="testimonial-quote-mark">"</span>
+              <div class="testimonial-stars">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              </div>
+              <p class="testimonial-text">A Blue Morpho landed on my daughter's shoulder and stayed for nearly a minute. She was completely still. I have never seen her that still in eight years of life. Whatever LEPIDOPTERA does, it works on something deep.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background: var(--accent-dark); display:flex; align-items:center; justify-content:center; color: var(--ivory); font-family: var(--font-serif); font-size:1.1rem;">S</div>
+                <div>
+                  <div class="testimonial-name">Sarah M.</div>
+                  <div class="testimonial-role">Family Visit, Costa Rica Zone</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <span class="testimonial-quote-mark">"</span>
+              <div class="testimonial-stars">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              </div>
+              <p class="testimonial-text">As a field entomologist, I expected to be unmoved by a controlled environment. Instead, the chrysalis emergence ceremony humbled me. The care behind every detail — from plant selection to temperature zones — reflects genuine scientific rigor.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background: var(--accent-dark); display:flex; align-items:center; justify-content:center; color: var(--ivory); font-family: var(--font-serif); font-size:1.1rem;">D</div>
+                <div>
+                  <div class="testimonial-name">Dr. James Harlow</div>
+                  <div class="testimonial-role">Field Entomologist, Private Tour</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <span class="testimonial-quote-mark">"</span>
+              <div class="testimonial-stars">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              </div>
+              <p class="testimonial-text">We booked LEPIDOPTERA for our anniversary and it exceeded every expectation. The Borneo zone at dusk, fireflies just beginning, butterflies settling — it felt like a painting that breathed. The most beautiful hour of our trip.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background: var(--accent-dark); display:flex; align-items:center; justify-content:center; color: var(--ivory); font-family: var(--font-serif); font-size:1.1rem;">A</div>
+                <div>
+                  <div class="testimonial-name">Amira &amp; Leon Chen</div>
+                  <div class="testimonial-role">Anniversary Experience</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <span class="testimonial-quote-mark">"</span>
+              <div class="testimonial-stars">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              </div>
+              <p class="testimonial-text">The children's workshop was extraordinary. My students came in skeptical teenagers and left asking about conservation careers. That's the power of being inside a living system rather than watching a documentary about it.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background: var(--accent-dark); display:flex; align-items:center; justify-content:center; color: var(--ivory); font-family: var(--font-serif); font-size:1.1rem;">T</div>
+                <div>
+                  <div class="testimonial-name">Ms. Tanaka</div>
+                  <div class="testimonial-role">School Group Educator</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       EXPERIENCE BOOKING
+  ============================================================ -->
+  <section id="booking">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="section-eyebrow">Reserve an Experience</span>
+        <h2 class="section-title">Choose Your <em>Encounter</em></h2>
+        <div class="divider"></div>
+        <p class="section-lead">Every visit is curated. Select from our signature experiences or contact us to design something entirely your own.</p>
+      </div>
+
+      <div class="booking-grid">
+        <div class="booking-experiences">
+          <div class="experience-card">
+            <div class="experience-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2C12 2 4 8 4 14C4 18.4 7.6 22 12 22C16.4 22 20 18.4 20 14C20 8 12 2 12 2Z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="experience-name">Garden Passage</div>
+              <div class="experience-meta">2 Hours · All Five Zones · Self-Guided</div>
+            </div>
+            <div class="experience-price">$38<small>per person</small></div>
+          </div>
+          <div class="experience-card">
+            <div class="experience-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="8"/>
+                <path d="M12 4V12L16 14"/>
+              </svg>
+            </div>
+            <div>
+              <div class="experience-name">Emergence Ceremony</div>
+              <div class="experience-meta">3 Hours · Guided · Lifecycle Display</div>
+            </div>
+            <div class="experience-price">$75<small>per person</small></div>
+          </div>
+          <div class="experience-card">
+            <div class="experience-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="experience-name">Private Naturalist</div>
+              <div class="experience-meta">4 Hours · Exclusive · Expert Guide</div>
+            </div>
+            <div class="experience-price">$220<small>per group</small></div>
+          </div>
+          <div class="experience-card">
+            <div class="experience-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="4" width="18" height="16" rx="1"/>
+                <path d="M8 4V2M16 4V2M3 10H21"/>
+              </svg>
+            </div>
+            <div>
+              <div class="experience-name">Photography Dusk Session</div>
+              <div class="experience-meta">2.5 Hours · After Hours · Low Density</div>
+            </div>
+            <div class="experience-price">$130<small>per person</small></div>
+          </div>
+        </div>
+
+        <div class="booking-form-wrap">
+          <h3 class="booking-form-title">Reserve Your Visit</h3>
+          <p class="booking-form-sub">Complete the form and our team will confirm availability within 24 hours.</p>
+
+          <form>
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-input" placeholder="Elena" />
+              </div>
+              <div class="form-field">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-input" placeholder="Maris" />
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" placeholder="elena@example.com" />
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label">Experience</label>
+                <select class="form-select">
+                  <option value="">Select experience</option>
+                  <option>Garden Passage</option>
+                  <option>Emergence Ceremony</option>
+                  <option>Private Naturalist</option>
+                  <option>Photography Dusk</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Guests</label>
+                <select class="form-select">
+                  <option>1 Guest</option>
+                  <option>2 Guests</option>
+                  <option>3–5 Guests</option>
+                  <option>6–10 Guests</option>
+                  <option>Group 10+</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Preferred Date</label>
+              <input type="date" class="form-input" />
+            </div>
+            <button type="submit" class="btn-submit">Request Reservation</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer id="footer">
+    <div class="footer-main">
+      <div>
+        <div class="footer-brand-name">Lepidoptera</div>
+        <div class="footer-brand-tagline">"Where Wings Tell Stories"</div>
+        <p class="footer-about">A living butterfly museum and botanical garden dedicated to conservation through wonder. Since 1987, we have been bridging the gap between humanity and the natural world, one wing at a time.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram">In</a>
+          <a href="#" aria-label="Facebook">Fb</a>
+          <a href="#" aria-label="Twitter">Tw</a>
+          <a href="#" aria-label="YouTube">Yt</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="collection.html">Species Collection</a></li>
+          <li><a href="process.html">The Lifecycle</a></li>
+          <li><a href="contact.html">Plan Your Visit</a></li>
+          <li><a href="#">Conservation Program</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Experiences</div>
+        <ul class="footer-links">
+          <li><a href="#">Garden Passage</a></li>
+          <li><a href="#">Emergence Ceremony</a></li>
+          <li><a href="#">Private Naturalist</a></li>
+          <li><a href="#">Photography Session</a></li>
+          <li><a href="#">School Programs</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-contact-item">
+          <svg class="footer-contact-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+          <span class="footer-contact-text">Calle Lepidópteros 12<br>Zona Verde, Costa Rica</span>
+        </div>
+        <div class="footer-contact-item">
+          <svg class="footer-contact-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"/>
+            <path d="M22 6L12 13L2 6"/>
+          </svg>
+          <span class="footer-contact-text">hello@lepidoptera.co</span>
+        </div>
+        <div class="footer-contact-item">
+          <svg class="footer-contact-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M22 16.92V19.92C22 20.48 21.55 20.97 20.99 21C20.45 21.03 19.89 21 19.33 20.96C16.69 20.65 14.15 19.74 11.9 18.32C9.79 17.01 8.01 15.23 6.68 13.12C5.25 10.86 4.34 8.3 4.04 5.65C4 5.09 4 4.53 4.03 3.97C4.06 3.41 4.55 3 5.1 3H8.1C8.54 3 8.93 3.3 9.02 3.73C9.18 4.49 9.4 5.23 9.67 5.96C9.82 6.36 9.72 6.81 9.41 7.12L8.09 8.44C9.36 10.62 11.38 12.64 13.56 13.91L14.88 12.59C15.19 12.28 15.64 12.18 16.04 12.33C16.77 12.6 17.51 12.82 18.27 12.98C18.71 13.07 19.02 13.47 19 13.92V16.92H22Z"/>
+          </svg>
+          <span class="footer-contact-text">+506 2234 5678</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 LEPIDOPTERA Conservatory. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       SCRIPTS
+  ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    // SplitText Polyfill
+    class SplitText{constructor(t,o={}){const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null);this.chars=[];this.words=[];this.lines=[];if(!e)return;this._el=e;const tp=(o.type||'chars,words').toLowerCase();const orig=e.textContent;e.setAttribute('data-split-orig',orig);if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}}
+
+    /* ---- GSAP + ScrollTrigger ---- */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ---- PRELOADER ---- */
+    const fill = document.getElementById('preloader-fill');
+    const preloader = document.getElementById('preloader');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+
+    fill.style.width = '100%';
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        gsap.to(preloader, {
+          duration: 0.9,
+          opacity: 0,
+          ease: 'power2.out',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            // Show scroll indicator after preloader
+            gsap.to(scrollIndicator, { duration: 0.6, opacity: 1, delay: 0.2 });
+            // Trigger hero animations
+            animateHero();
+          }
+        });
+      }, 1800);
+    });
+
+    // Fallback scroll indicator
+    scrollIndicator.style.opacity = '0';
+    setTimeout(() => {
+      if (preloader.style.display !== 'none') return;
+      gsap.to(scrollIndicator, { duration: 0.6, opacity: 1 });
+    }, 4000);
+
+    // Hide scroll indicator on scroll
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        gsap.to(scrollIndicator, { duration: 0.4, opacity: 0 });
+      }
+    }, { passive: true });
+
+    /* ---- NAVBAR ---- */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    /* ---- HERO PARALLAX (mousemove) ---- */
+    const heroLayer1 = document.getElementById('heroLayer1');
+    const heroLayer2 = document.getElementById('heroLayer2');
+
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      gsap.to(heroLayer1, { duration: 1.2, x: x * 18, y: y * 12, ease: 'power2.out' });
+      gsap.to(heroLayer2, { duration: 1.6, x: x * -12, y: y * -8, ease: 'power2.out' });
+    });
+
+    /* ---- HERO ANIMATIONS ---- */
+    function animateHero() {
+      const eyebrow = document.querySelector('.hero-eyebrow');
+      const title = document.querySelector('.hero-title');
+      const subtitle = document.querySelector('.hero-subtitle');
+      const actions = document.querySelector('.hero-actions');
+      const badge = document.querySelector('.hero-badge');
+
+      const split = new SplitText(title, { type: 'words' });
+
+      gsap.from(eyebrow, {
+        immediateRender: false,
+        duration: 1.0,
+        opacity: 0,
+        y: gsap.utils.random(20, 28),
+        ease: 'power2.out'
+      });
+
+      gsap.from(split.words, {
+        immediateRender: false,
+        duration: gsap.utils.random(1.0, 1.4),
+        opacity: 0,
+        y: gsap.utils.random(20, 28),
+        stagger: 0.09,
+        ease: 'power2.out',
+        delay: 0.2
+      });
+
+      gsap.from(subtitle, {
+        immediateRender: false,
+        duration: 1.1,
+        opacity: 0,
+        y: gsap.utils.random(20, 28),
+        ease: 'power2.out',
+        delay: 0.6
+      });
+
+      gsap.from(actions, {
+        immediateRender: false,
+        duration: 1.0,
+        opacity: 0,
+        y: 20,
+        ease: 'power2.out',
+        delay: 0.9
+      });
+
+      if (badge) {
+        gsap.from(badge, {
+          immediateRender: false,
+          duration: 1.2,
+          opacity: 0,
+          x: 30,
+          ease: 'power2.out',
+          delay: 1.3
+        });
+      }
+    }
+
+    /* ---- SCROLL ANIMATIONS ---- */
+
+    // Stats
+    gsap.from('.stat-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#stats', start: 'top 80%' },
+      duration: gsap.utils.random(1.0, 1.4),
+      opacity: 0,
+      y: gsap.utils.random(20, 28),
+      stagger: 0.09,
+      ease: 'power2.out'
+    });
+
+    // Philosophy
+    gsap.from('.philosophy-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#philosophy', start: 'top 75%' },
+      duration: gsap.utils.random(1.0, 1.4),
+      opacity: 0,
+      y: gsap.utils.random(20, 28),
+      stagger: 0.09,
+      ease: 'power2.out'
+    });
+
+    // Section headers
+    document.querySelectorAll('.section-header').forEach(header => {
+      gsap.from(header.children, {
+        immediateRender: false,
+        scrollTrigger: { trigger: header, start: 'top 82%' },
+        duration: 1.0,
+        opacity: 0,
+        y: 24,
+        stagger: 0.1,
+        ease: 'power2.out'
+      });
+    });
+
+    // Collection items
+    gsap.from('.collection-item', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#collection', start: 'top 75%' },
+      duration: gsap.utils.random(1.0, 1.4),
+      opacity: 0,
+      y: gsap.utils.random(20, 28),
+      stagger: 0.09,
+      ease: 'power2.out'
+    });
+
+    // Greenhouse content
+    gsap.from('.greenhouse-content > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#greenhouse', start: 'top 70%' },
+      duration: 1.0,
+      opacity: 0,
+      x: -30,
+      stagger: 0.1,
+      ease: 'power2.out'
+    });
+
+    // Process steps
+    gsap.from('.process-step', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#process', start: 'top 80%' },
+      duration: gsap.utils.random(1.0, 1.4),
+      opacity: 0,
+      y: gsap.utils.random(20, 28),
+      stagger: 0.09,
+      ease: 'power2.out'
+    });
+
+    // Heritage
+    gsap.from('.heritage-media', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#heritage', start: 'top 75%' },
+      duration: 1.2,
+      opacity: 0,
+      x: -40,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.heritage-content > *', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#heritage', start: 'top 75%' },
+      duration: 1.0,
+      opacity: 0,
+      y: gsap.utils.random(20, 28),
+      stagger: 0.09,
+      ease: 'power2.out'
+    });
+
+    // Experience cards
+    gsap.from('.experience-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#booking', start: 'top 80%' },
+      duration: gsap.utils.random(1.0, 1.4),
+      opacity: 0,
+      y: gsap.utils.random(20, 28),
+      stagger: 0.09,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.booking-form-wrap', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#booking', start: 'top 80%' },
+      duration: 1.2,
+      opacity: 0,
+      x: 30,
+      ease: 'power2.out'
+    });
+
+    // Testimonials
+    gsap.from('.testimonial-card', {
+      immediateRender: false,
+      scrollTrigger: { trigger: '#testimonials', start: 'top 80%' },
+      duration: 1.0,
+      opacity: 0,
+      y: 30,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+
+    /* ---- SWIPER ---- */
+    new Swiper('.testimonials-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+      }
+    });
+
+    /* ---- SCROLL PARALLAX ON GREENHOUSE ---- */
+    gsap.to('.greenhouse-bg', {
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#greenhouse',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      },
+      y: -60,
+      ease: 'none'
+    });
+
+  </script>
+</body>
+</html>
