@@ -10,6 +10,46 @@
 - INSIGHTS: {{research-agent INSIGHTS.md 전체 내용}}
 - VALIDATED_IMAGES: {{validate-images.sh PASS URL 목록}}
 
+---
+
+## Design Brief (MANDATORY INPUT)
+
+**`/lp-create`로 실행된 경우**: `/tmp/{SLUG}-design-brief.md` 파일이 존재합니다.
+빌드 시작 전 반드시 읽고, 아래 항목을 **모두** 준수하세요.
+
+```
+design-brief.md 파일 위치: /tmp/{SLUG}-design-brief.md
+```
+
+### 필수 준수 항목 (위반 시 품질 게이트 실패)
+
+1. **Hero Layout Type**: Brief의 "Hero Layout: Type {X}" 를 정확히 구현
+   - `multi_clone_hompage/prompt/hero-layouts.md` 에서 해당 타입 코드 참조
+   - 임의로 다른 타입 선택 절대 금지
+
+2. **CSS :root 변수**: Brief의 "Color Palette" 섹션 hex값 그대로 사용
+   - `--bg`, `--surface`, `--surface2`, `--accent`, `--accent-light`, `--accent-dark` 전부 Brief 값
+   - 개인 취향으로 변경 금지
+
+3. **Google Fonts import**: Brief의 "Font Pair" 섹션에 명시된 폰트만 사용
+   - `--font-serif`, `--font-sans` Brief 값 그대로
+   - F1(Cormorant+Jost), F2(Playfair+Lato) Brief에 없으면 사용 금지
+
+4. **Animation Parameters**: Brief의 "Animation Personality" 기준 파라미터 적용
+   - duration, y, stagger, ease 값 범위 내에서 사용
+   - `immediateRender: false` 항상 포함 (별도 지시 없어도)
+
+5. **meta.json tier/price**: Brief의 "Tier & Price" 값 그대로
+   - `"free"` → `tier: "free", price: 0`
+   - `"premium"` → `tier: "premium", price: 49`
+
+6. **이미지 소스**: Brief의 "Forbidden Unsplash IDs" 목록 ID 사용 금지
+   - 로컬 이미지 모드(lp-create 파이프라인): `images/*.webp` 경로만 사용
+
+> **design-brief.md 파일이 없는 경우 (단독 실행 시)**: 이 섹션 무시하고 기본 동작 수행.
+
+---
+
 ## 핵심 원칙
 
 ### 오리지널리티 (필수)
