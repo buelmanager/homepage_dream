@@ -26,9 +26,35 @@
    phase, task, 체크박스 기반 진행 상태를 작성하세요.
 2) 선택한 업종에 대해 최소 3개 사이트를 리서치하세요.
 3) 포지셔닝, 톤, UX 패턴, 비주얼 단서를 추출해 오리지널 콘셉트를 설계하세요.
-4) 오리지널 럭셔리 랜딩 페이지 1개를 구현하세요.
+4) index.html (메인 홈) + 전체 서브페이지를 구현하세요. (아래 서브페이지 규칙 참고)
 5) phase 완료 시마다 docs/clone_plan.md를 즉시 업데이트하세요.
 6) 로딩 화면이 완전히 끝난 뒤에만 풀페이지 스크린샷을 캡처하세요.
+
+서브페이지 구현 규칙 (CRITICAL):
+- 네비게이션 메뉴에 있는 모든 항목은 반드시 실제 HTML 파일로 구현하세요.
+- 업종에 맞게 최소 4개 이상의 서브페이지를 생성하세요.
+- 일반적인 서브페이지 예시 (업종별로 조정):
+  - about.html — 브랜드 스토리, 팀, 철학
+  - collection.html 또는 services.html 또는 menu.html — 제품/서비스 목록
+  - process.html 또는 how-it-works.html — 프로세스/방법론
+  - contact.html — 문의/예약/위치
+  - (선택) gallery.html / journal.html / events.html 등 업종 특화 페이지
+- 서브페이지 공통 규칙:
+  1) index.html과 동일한 디자인 시스템(CSS 변수, 폰트, 컬러) 공유
+  2) 동일한 navbar + footer 포함 (active 상태 표시)
+  3) 각 서브페이지도 고유한 히어로 섹션 포함 (index보다 단순화 가능)
+  4) GSAP ScrollTrigger 애니메이션 동일하게 적용
+  5) 모든 nav 링크가 실제로 작동해야 함 (href="#" 금지)
+  6) 서브페이지 내 링크도 상호 연결 완성
+- 파일 구조 예시:
+  <project>/
+    index.html
+    about.html
+    collection.html
+    process.html
+    contact.html
+    images/
+    docs/
 
 히어로/인터랙션 요구사항(필수):
 1) 히어로는 흔한 “헤드라인+버튼” 형태가 아닌 창의적인 구조로 만드세요.
@@ -98,9 +124,12 @@
 - 상표/로고 오남용 금지
 
 필수 산출 파일:
+- <project>/index.html
+- <project>/about.html (+ 기타 서브페이지 최소 3개 추가)
 - <project>/images/fullpage.png
+- <project>/images/thumbnail.webp  ← 반드시 .webp 형식 (thumbnail.jpg는 gitignore 대상)
 - <project>/readme.md
-- <project>/meta.json 
+- <project>/meta.json
 - <project>/docs/originality_report.md
 - <project>/docs/image_validation.md
 
@@ -125,6 +154,18 @@ meta.json 규칙:
 - sourceUrl: null 또는 유효 URL
 - storageKey: PRO일 때 "templates/<slug>/source.zip"
 
+썸네일 생성 규칙 (CRITICAL):
+- thumbnail.jpg는 .gitignore 대상 — 절대 사용 금지
+- 반드시 thumbnail.webp로 생성해야 서비스에 노출됨
+- 생성 방법:
+  1. fullpage.png로부터 thumbnail.jpg 먼저 생성:
+     sips -s format jpeg -s formatOptions 75 -Z 600 images/fullpage.png --out images/thumbnail.jpg
+  2. thumbnail.jpg를 thumbnail.webp로 변환:
+     cwebp -q 80 -resize 600 0 images/thumbnail.jpg -o images/thumbnail.webp
+  3. thumbnail.jpg 삭제 (gitignore 대상이므로 불필요):
+     rm images/thumbnail.jpg
+- cwebp 없으면 설치: brew install webp
+
 최종 품질 게이트(전부 통과):
 - 프로젝트 폴더는 정확히 1개만 생성
 - 클론형 구조/카피 없음
@@ -136,6 +177,10 @@ meta.json 규칙:
 - 모바일 애니메이션 최적화
 - 필수 파일 경로/파일 모두 존재
 - /images/fullpage.png 존재
+- /images/thumbnail.webp 존재 (thumbnail.jpg 아님!)
+- 서브페이지 최소 4개 이상 생성됨
+- 모든 nav 링크가 실제 파일로 연결됨 (href="#" 없음)
+- 서브페이지 간 상호 링크 완성
 - docs/clone_plan.md 진행 상태가 실제 완료와 일치
 - 사용 이미지 전부 검증 통과
 ```
