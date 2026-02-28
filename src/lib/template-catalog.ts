@@ -86,7 +86,7 @@ export async function getCatalogTemplates(options?: { publishedOnly?: boolean })
       ? {
           ...m,
           ...db,
-          thumbnailUrl: db.thumbnailUrl ?? m.thumbnailUrl,
+          thumbnailUrl: db.thumbnailUrl || m.thumbnailUrl,
           createdAt: db.createdAt,
           updatedAt: db.updatedAt,
         }

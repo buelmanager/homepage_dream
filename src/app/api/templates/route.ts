@@ -61,6 +61,7 @@ export async function GET(request: NextRequest) {
       status: db?.status ?? m.status,
       price: db?.price ?? m.price,
       tier: db?.tier ?? (m.tier === "PRO" ? "PRO" : "FREE"),
+      thumbnailUrl: db?.thumbnailUrl || m.thumbnailUrl,
       viewCount: db?.viewCount ?? m.viewCount,
       createdAt: (db?.createdAt ?? new Date(m.createdAt)).toISOString(),
       _count: {
