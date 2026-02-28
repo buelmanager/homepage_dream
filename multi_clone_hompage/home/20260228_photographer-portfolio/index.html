@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMIÈRE STUDIO — Light Captured. Moments Preserved.</title>
+<meta name="description" content="Fine art and documentary photography by LUMIÈRE STUDIO. Gallery-grade presentation, analog film aesthetic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #181818;
+    --surface: #222222;
+    --surface2: #2A2A2A;
+    --accent: #B0B0C0;
+    --accent-light: #D0D0E0;
+    --accent-dark: #808090;
+    --ivory: #EEEEF2;
+    --smoke: #909090;
+    --muted: #606060;
+    --border: #1E1E1E;
+    --font-serif: 'Bodoni Moda', 'Didot', serif;
+    --font-sans: 'Work Sans', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ivory);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+
+  /* ─── PRELOADER ─── */
+  #preloader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #preloader.hidden { opacity: 0; visibility: hidden; }
+  .preloader-brand {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: 0.3em;
+    color: var(--ivory);
+    overflow: hidden;
+  }
+  .preloader-brand .char { display: inline-block; }
+  .preloader-tagline {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--smoke);
+    margin-top: 12px;
+    text-transform: uppercase;
+  }
+  .preloader-bar {
+    width: 120px; height: 1px;
+    background: var(--border);
+    margin-top: 32px;
+    position: relative; overflow: hidden;
+  }
+  .preloader-bar::after {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--accent);
+    animation: barSlide 1.8s ease forwards;
+  }
+  @keyframes barSlide { to { left: 0; } }
+
+  /* ─── SCROLL INDICATOR ─── */
+  #scroll-indicator {
+    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+    z-index: 100;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--smoke);
+    text-transform: uppercase;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  #scroll-indicator.visible { opacity: 1; }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* ─── NAVBAR ─── */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 60px;
+    transition: background 0.4s ease, padding 0.4s ease;
+  }
+  .navbar.scrolled {
+    background: rgba(24,24,24,0.95);
+    backdrop-filter: blur(12px);
+    padding: 18px 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    color: var(--ivory);
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 40px; }
+  .nav-links a {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    color: var(--smoke);
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 100%;
+    height: 1px; background: var(--accent);
+    transition: right 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--ivory); }
+  .nav-links a:hover::after { right: 0; }
+  .nav-cta {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    transition: all 0.3s ease;
+  }
+  .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+  /* ─── HERO TYPE B — PARALLAX ─── */
+  .hero {
+    position: relative;
+    width: 100%; height: 100vh;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-parallax-bg {
+    position: absolute; inset: -10%;
+    pointer-events: none;
+  }
+  .parallax-layer {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    will-change: transform;
+  }
+  .layer-1 {
+    background-image: url('images/hero-1.webp');
+    filter: brightness(0.6);
+  }
+  .layer-2 {
+    background-image: url('images/hero-2.webp');
+    mix-blend-mode: overlay;
+    opacity: 0.25;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(24,24,24,0.2) 0%,
+      rgba(24,24,24,0.1) 40%,
+      rgba(24,24,24,0.5) 80%,
+      rgba(24,24,24,0.95) 100%
+    );
+    z-index: 1;
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 0 40px;
+    max-width: 900px;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 10vw, 9rem);
+    font-weight: 400;
+    line-height: 0.9;
+    color: var(--ivory);
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent-light);
+  }
+  .hero-subtitle {
+    font-family: var(--font-sans);
+    font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+    letter-spacing: 0.2em;
+    color: var(--smoke);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .hero-ctas { display: flex; gap: 20px; justify-content: center; }
+  .hero-cta-primary {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    background: var(--accent);
+    color: var(--bg);
+    transition: all 0.3s ease;
+  }
+  .hero-cta-primary:hover { background: var(--ivory); }
+  .hero-cta-secondary {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    border: 1px solid rgba(176,176,192,0.4);
+    color: var(--smoke);
+    transition: all 0.3s ease;
+  }
+  .hero-cta-secondary:hover { border-color: var(--accent); color: var(--ivory); }
+  .hero-floating {
+    position: absolute; bottom: 60px; right: 60px;
+    z-index: 2; text-align: right;
+  }
+  .float-badge {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+  .float-badge strong { display: block; color: var(--accent); font-weight: 400; letter-spacing: 0.1em; }
+
+  /* ─── SECTION COMMON ─── */
+  section { position: relative; }
+  .section-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; }
+  .section-tag {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 20px;
+  }
+  .section-tag::before {
+    content: '';
+    display: block; width: 32px; height: 1px;
+    background: var(--accent);
+  }
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--ivory);
+    letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; color: var(--accent-light); }
+  .section-divider {
+    width: 60px; height: 1px;
+    background: var(--accent-dark);
+    margin: 24px 0;
+  }
+  .section-body {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--smoke);
+    line-height: 1.9;
+    max-width: 520px;
+  }
+
+  /* ─── VISION / ABOUT ─── */
+  .vision { padding: 140px 0; }
+  .vision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .vision-text { }
+  .vision-image {
+    position: relative;
+  }
+  .vision-image img {
+    width: 100%; aspect-ratio: 4/5;
+    object-fit: cover;
+    filter: brightness(0.9);
+  }
+  .vision-image-frame {
+    position: absolute;
+    top: -16px; right: -16px;
+    width: calc(100% - 32px); height: calc(100% - 32px);
+    border: 1px solid var(--accent-dark);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .vision-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; margin-top: 48px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+  .vision-stat-num {
+    font-family: var(--font-serif);
+    font-size: 2.4rem;
+    font-weight: 400;
+    color: var(--ivory);
+    display: block;
+  }
+  .vision-stat-label {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .vision-link {
+    display: inline-flex; align-items: center; gap: 12px;
+    margin-top: 36px;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    transition: gap 0.3s ease;
+  }
+  .vision-link::after { content: '→'; }
+  .vision-link:hover { gap: 20px; }
+
+  /* ─── SIGNATURE SERIES ─── */
+  .signature { padding: 120px 0; background: var(--surface); }
+  .signature-header { text-align: center; margin-bottom: 64px; }
+  .signature-header .section-divider { margin: 24px auto; }
+  .signature-header .section-body { margin: 0 auto; text-align: left; max-width: 560px; }
+  .signature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .sig-item {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .sig-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.5s ease;
+    filter: brightness(0.75) grayscale(20%);
+  }
+  .sig-item:hover img {
+    transform: scale(1.08);
+    filter: brightness(0.9) grayscale(0%);
+  }
+  .sig-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(24,24,24,0.85) 0%, transparent 60%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 28px 24px;
+  }
+  .sig-category {
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sig-title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--ivory);
+    font-style: italic;
+  }
+  .sig-count {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+  }
+
+  /* ─── FEATURED WORK ─── */
+  .featured { padding: 140px 0; }
+  .featured-header { margin-bottom: 56px; }
+  .featured-masonry {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 4px;
+    overflow: visible;
+  }
+  .feat-item {
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+  .feat-item:nth-child(1) { grid-row: span 2; }
+  .feat-item:nth-child(4) { grid-row: span 2; }
+  .feat-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    min-height: 280px;
+    transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .feat-item:hover img { transform: scale(1.05); }
+  .feat-label {
+    position: absolute; bottom: 16px; left: 16px;
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--ivory);
+    text-transform: uppercase;
+    background: rgba(24,24,24,0.7);
+    padding: 4px 10px;
+  }
+  .featured-cta { text-align: center; margin-top: 56px; }
+  .btn-outline {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 40px;
+    border: 1px solid var(--accent-dark);
+    color: var(--smoke);
+    transition: all 0.3s ease;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--ivory); }
+
+  /* ─── AWARDS & PRESS ─── */
+  .awards { padding: 120px 0; background: var(--surface2); }
+  .awards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 64px;
+  }
+  .award-item {
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+  }
+  .award-year {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .award-name {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--ivory);
+    margin-bottom: 6px;
+  }
+  .award-org {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .press-logos {
+    display: flex; gap: 40px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+  .press-logo {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    transition: color 0.3s ease;
+  }
+  .press-logo:hover { color: var(--accent); }
+
+  /* ─── CLIENT LIST ─── */
+  .clients { padding: 100px 0; }
+  .clients-inner { text-align: center; }
+  .clients-title {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .clients-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 32px;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .client-name {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--muted);
+    text-align: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+  .client-name:hover { color: var(--accent); border-color: var(--accent-dark); }
+
+  /* ─── COMMISSION CTA ─── */
+  .commission {
+    position: relative;
+    padding: 160px 0;
+    overflow: hidden;
+  }
+  .commission-bg {
+    position: absolute; inset: 0;
+    background-image: url('images/hero-3.webp');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.35);
+  }
+  .commission-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(24,24,24,0.6) 0%, rgba(24,24,24,0.3) 100%);
+  }
+  .commission-content {
+    position: relative; z-index: 1;
+    text-align: center; max-width: 680px; margin: 0 auto;
+    padding: 0 40px;
+  }
+  .commission-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .commission-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--ivory);
+    margin-bottom: 24px;
+  }
+  .commission-title em { font-style: italic; }
+  .commission-body {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--smoke);
+    line-height: 1.8;
+    margin-bottom: 48px;
+  }
+  .commission-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 40px;
+    background: var(--accent);
+    color: var(--bg);
+    transition: all 0.3s ease;
+  }
+  .btn-primary:hover { background: var(--ivory); }
+  .btn-ghost {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 40px;
+    border: 1px solid rgba(176,176,192,0.5);
+    color: var(--smoke);
+    transition: all 0.3s ease;
+  }
+  .btn-ghost:hover { border-color: var(--ivory); color: var(--ivory); }
+
+  /* ─── FOOTER ─── */
+  footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 0 40px; }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+  }
+  .footer-brand {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    color: var(--ivory);
+    margin-bottom: 16px;
+  }
+  .footer-tagline {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+    max-width: 240px;
+  }
+  .footer-col-title {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 10px; }
+  .footer-links a {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--muted);
+    transition: color 0.3s ease;
+  }
+  .footer-links a:hover { color: var(--ivory); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    color: var(--muted);
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-social { display: flex; gap: 20px; }
+  .footer-social a { color: var(--muted); transition: color 0.3s ease; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .footer-social a:hover { color: var(--accent); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .navbar { padding: 24px 40px; }
+    .navbar.scrolled { padding: 16px 40px; }
+    .section-inner { padding: 0 40px; }
+    .vision-grid { gap: 48px; }
+    .signature-grid { grid-template-columns: repeat(2, 1fr); }
+    .featured-masonry { grid-template-columns: repeat(2, 1fr); }
+    .feat-item:nth-child(4) { grid-row: span 1; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  }
+  @media (max-width: 768px) {
+    .navbar { padding: 20px 24px; }
+    .navbar.scrolled { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .section-inner { padding: 0 24px; }
+    .vision-grid { grid-template-columns: 1fr; }
+    .vision-image { order: -1; }
+    .signature-grid { grid-template-columns: 1fr; }
+    .featured-masonry { grid-template-columns: 1fr; }
+    .feat-item:nth-child(1) { grid-row: span 1; }
+    .awards-grid { grid-template-columns: 1fr; gap: 0; }
+    .clients-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-floating { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="preloader-brand" id="preloader-brand">LUMIÈRE STUDIO</div>
+  <div class="preloader-tagline">Fine Art Photography</div>
+  <div class="preloader-bar"></div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div id="scroll-indicator">
+  <span>Scroll</span>
+  <div class="scroll-line"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="nav-logo">LUMIÈRE <span>STUDIO</span></a>
+  <div class="nav-links">
+    <a href="about.html">About</a>
+    <a href="collection.html">Portfolio</a>
+    <a href="process.html">Process</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="contact.html" class="nav-cta">Commission</a>
+</nav>
+
+<!-- HERO — TYPE B PARALLAX -->
+<section class="hero" id="hero">
+  <div class="hero-parallax-bg">
+    <div class="parallax-layer layer-1"></div>
+    <div class="parallax-layer layer-2"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Fine Art &amp; Documentary Photography</div>
+    <h1 class="hero-title" id="hero-title">
+      LUMIÈRE<br><em>STUDIO</em>
+    </h1>
+    <p class="hero-subtitle">Light Captured. Moments Preserved.</p>
+    <div class="hero-ctas">
+      <a href="collection.html" class="hero-cta-primary">View Portfolio</a>
+      <a href="contact.html" class="hero-cta-secondary">Commission Work</a>
+    </div>
+  </div>
+  <div class="hero-floating">
+    <div class="float-badge">
+      <strong>Est. 2008</strong>
+      Fine Art Photography<br>
+      Paris — New York — Tokyo
+    </div>
+  </div>
+</section>
+
+<!-- VISION / ABOUT -->
+<section class="vision">
+  <div class="section-inner">
+    <div class="vision-grid">
+      <div class="vision-text">
+        <div class="section-tag vision-tag">The Artist</div>
+        <h2 class="section-title vision-title">
+          Chasing <em>light</em><br>through shadow
+        </h2>
+        <div class="section-divider"></div>
+        <p class="section-body">
+          LUMIÈRE STUDIO is the practice of photographer Élise Marchand — a two-decade exploration of light,
+          texture, and the fragile moments that define human experience. Working primarily with large-format
+          film and analogue techniques, every image is a deliberate act of preservation.
+        </p>
+        <p class="section-body" style="margin-top: 16px;">
+          From remote landscapes to intimate portraiture, the work occupies the space between documentation
+          and fine art — gallery-exhibited internationally and collected by private institutions.
+        </p>
+        <div class="vision-stats">
+          <div>
+            <span class="vision-stat-num" data-target="18">0</span>
+            <span class="vision-stat-label">Years Active</span>
+          </div>
+          <div>
+            <span class="vision-stat-num" data-target="34">0</span>
+            <span class="vision-stat-label">Exhibitions</span>
+          </div>
+          <div>
+            <span class="vision-stat-num" data-target="12">0</span>
+            <span class="vision-stat-label">Publications</span>
+          </div>
+        </div>
+        <a href="about.html" class="vision-link">Discover the artist</a>
+      </div>
+      <div class="vision-image">
+        <img src="images/workspace-1.webp" alt="Photographer's studio" loading="lazy">
+        <div class="vision-image-frame"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE SERIES -->
+<section class="signature">
+  <div class="section-inner">
+    <div class="signature-header">
+      <div class="section-tag" style="justify-content: center;">Portfolio</div>
+      <h2 class="section-title">Signature <em>Series</em></h2>
+      <div class="section-divider"></div>
+      <p class="section-body">
+        Three bodies of work that define the studio's visual language — each series a sustained inquiry
+        into a single theme, photographed over months or years.
+      </p>
+    </div>
+    <div class="signature-grid">
+      <div class="sig-item">
+        <img src="images/collection-1.webp" alt="Landscapes in Silence" loading="lazy">
+        <div class="sig-overlay">
+          <span class="sig-category">Landscapes</span>
+          <div class="sig-title">Silence &amp; Solitude</div>
+          <div class="sig-count">24 Prints</div>
+        </div>
+      </div>
+      <div class="sig-item">
+        <img src="images/collection-3.webp" alt="Urban Archaeology" loading="lazy">
+        <div class="sig-overlay">
+          <span class="sig-category">Documentary</span>
+          <div class="sig-title">Urban Archaeology</div>
+          <div class="sig-count">18 Prints</div>
+        </div>
+      </div>
+      <div class="sig-item">
+        <img src="images/collection-5.webp" alt="Light Studies" loading="lazy">
+        <div class="sig-overlay">
+          <span class="sig-category">Abstract</span>
+          <div class="sig-title">Studies in Light</div>
+          <div class="sig-count">32 Prints</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 48px;">
+      <a href="collection.html" class="btn-outline">View All Series</a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED WORK -->
+<section class="featured">
+  <div class="section-inner">
+    <div class="featured-header">
+      <div class="section-tag">Selected Works</div>
+      <h2 class="section-title">Featured <em>Photographs</em></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="featured-masonry">
+      <div class="feat-item">
+        <img src="images/collection-2.webp" alt="Featured work 1" loading="lazy">
+        <span class="feat-label">No. 001</span>
+      </div>
+      <div class="feat-item">
+        <img src="images/collection-4.webp" alt="Featured work 2" loading="lazy">
+        <span class="feat-label">No. 002</span>
+      </div>
+      <div class="feat-item">
+        <img src="images/ambient-1.webp" alt="Featured work 3" loading="lazy">
+        <span class="feat-label">No. 003</span>
+      </div>
+      <div class="feat-item">
+        <img src="images/collection-6.webp" alt="Featured work 4" loading="lazy">
+        <span class="feat-label">No. 004</span>
+      </div>
+      <div class="feat-item">
+        <img src="images/collection-7.webp" alt="Featured work 5" loading="lazy">
+        <span class="feat-label">No. 005</span>
+      </div>
+      <div class="feat-item">
+        <img src="images/collection-8.webp" alt="Featured work 6" loading="lazy">
+        <span class="feat-label">No. 006</span>
+      </div>
+    </div>
+    <div class="featured-cta">
+      <a href="collection.html" class="btn-outline">Explore Full Portfolio</a>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS & PRESS -->
+<section class="awards">
+  <div class="section-inner">
+    <div class="section-tag">Recognition</div>
+    <h2 class="section-title">Awards &amp; <em>Press</em></h2>
+    <div class="section-divider"></div>
+    <div class="awards-grid">
+      <div>
+        <div class="award-item">
+          <div class="award-year">2024</div>
+          <div class="award-name">Prix de la Photographie Paris</div>
+          <div class="award-org">Gold Award — Fine Art Category</div>
+        </div>
+        <div class="award-item" style="margin-top: 28px;">
+          <div class="award-year">2023</div>
+          <div class="award-name">International Photography Awards</div>
+          <div class="award-org">Honorable Mention — Landscape</div>
+        </div>
+        <div class="award-item" style="margin-top: 28px;">
+          <div class="award-year">2022</div>
+          <div class="award-name">World Press Photo</div>
+          <div class="award-org">Shortlisted — Documentary Single</div>
+        </div>
+      </div>
+      <div>
+        <div class="award-item">
+          <div class="award-year">2024</div>
+          <div class="award-name">Aperture Foundation Grant</div>
+          <div class="award-org">Emerging Artist Fellowship</div>
+        </div>
+        <div class="award-item" style="margin-top: 28px;">
+          <div class="award-year">2023</div>
+          <div class="award-name">Sony World Photography Awards</div>
+          <div class="award-org">Winner — Open Competition</div>
+        </div>
+        <div class="award-item" style="margin-top: 28px;">
+          <div class="award-year">2021</div>
+          <div class="award-name">Leica Oskar Barnack Award</div>
+          <div class="award-org">Shortlisted</div>
+        </div>
+      </div>
+    </div>
+    <div class="press-logos">
+      <span class="press-logo">Aperture</span>
+      <span class="press-logo">Vogue</span>
+      <span class="press-logo">Le Monde</span>
+      <span class="press-logo">The New Yorker</span>
+      <span class="press-logo">British Journal of Photography</span>
+      <span class="press-logo">Financial Times</span>
+      <span class="press-logo">Wallpaper*</span>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENT LIST -->
+<section class="clients">
+  <div class="section-inner">
+    <div class="clients-inner">
+      <div class="clients-title">Trusted By</div>
+      <div class="clients-grid">
+        <div class="client-name">Hermès</div>
+        <div class="client-name">Cartier</div>
+        <div class="client-name">Chanel</div>
+        <div class="client-name">Dior</div>
+        <div class="client-name">Monocle</div>
+        <div class="client-name">Gagosian</div>
+        <div class="client-name">Hauser &amp; Wirth</div>
+        <div class="client-name">White Cube</div>
+        <div class="client-name">MoMA PS1</div>
+        <div class="client-name">Tate Modern</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMISSION CTA -->
+<section class="commission">
+  <div class="commission-bg"></div>
+  <div class="commission-overlay"></div>
+  <div class="commission-content">
+    <div class="commission-eyebrow">Begin a Collaboration</div>
+    <h2 class="commission-title">
+      Every great image<br>begins with a <em>conversation</em>
+    </h2>
+    <p class="commission-body">
+      Whether you are seeking a limited edition print, commissioning an editorial project, or
+      inviting LUMIÈRE STUDIO to document your story — we begin with listening.
+    </p>
+    <div class="commission-ctas">
+      <a href="contact.html" class="btn-primary">Request Commission</a>
+      <a href="collection.html" class="btn-ghost">Browse Prints</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="section-inner">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand">LUMIÈRE STUDIO</div>
+        <p class="footer-tagline">Light Captured. Moments Preserved.<br>Fine art &amp; documentary photography since 2008.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="collection.html">Portfolio</a></li>
+          <li><a href="process.html">Process</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-links">
+          <li><a href="contact.html">Fine Art Prints</a></li>
+          <li><a href="contact.html">Commissions</a></li>
+          <li><a href="contact.html">Editorial</a></li>
+          <li><a href="contact.html">Exhibitions</a></li>
+          <li><a href="contact.html">Workshops</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Contact</div>
+        <ul class="footer-links">
+          <li><a href="mailto:studio@lumiere.art">studio@lumiere.art</a></li>
+          <li><a href="#">Paris — 75006</a></li>
+          <li><a href="#">New York — 10013</a></li>
+          <li><a href="#">By Appointment</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 LUMIÈRE STUDIO. All rights reserved.</span>
+      <div class="footer-social">
+        <a href="#">Instagram</a>
+        <a href="#">Behance</a>
+        <a href="#">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script>
+/* ─ SplitText Polyfill ─ */
+class SplitText {
+  constructor(el, opts = {}) {
+    this.el = typeof el === 'string' ? document.querySelectorAll(el) : (el.length ? el : [el]);
+    this.chars = []; this.words = []; this.lines = [];
+    this.el.forEach(e => {
+      const words = e.textContent.split(' ');
+      e.innerHTML = words.map(w => `<span class="word" style="display:inline-block;overflow:hidden"><span class="char" style="display:inline-block">${w}</span></span>`).join(' ');
+      this.words.push(...e.querySelectorAll('.word'));
+      this.chars.push(...e.querySelectorAll('.char'));
+    });
+  }
+  revert() { this.el.forEach(e => e.innerHTML = e._orig || e.textContent); }
+}
+
+/* ─ Smooth fade-in: pre-hide below-fold elements before GSAP runs ─ */
+;(function preHideBelowFold() {
+  const VH = window.innerHeight;
+  const selectors = [
+    '.vision-tag', '.vision-title', '.section-divider', '.section-body',
+    '.vision-stats', '.vision-link', '.vision-image',
+    '.sig-item', '.feat-item', '.award-item',
+    '.client-name', '.press-logo', '.footer-col',
+    '.commission-content', '[data-animate]'
+  ];
+  document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+    if (el.getBoundingClientRect().top > VH * 0.95) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.willChange = 'opacity, transform';
+    }
+  });
+})();
+
+/* ─ GSAP RegisterPlugin ─ */
+gsap.registerPlugin(ScrollTrigger);
+
+/* ─ PRELOADER ─ */
+window.addEventListener('DOMContentLoaded', () => {
+  const preloader = document.getElementById('preloader');
+  const brand = document.getElementById('preloader-brand');
+  const st = new SplitText(brand, { type: 'chars' });
+
+  gsap.from(st.chars, {
+    opacity: 0, y: 30, duration: 0.6, stagger: 0.05, ease: 'power2.out',
+    onComplete: () => {
+      setTimeout(() => {
+        gsap.to(preloader, {
+          opacity: 0, duration: 0.8, ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.classList.add('hidden');
+            // [1] Show scroll indicator after preloader
+            const si = document.getElementById('scroll-indicator');
+            if (si) si.classList.add('visible');
+            initHeroAnimation();
+          }
+        });
+      }, 1800);
+    }
+  });
+
+  // [2] Fallback scroll indicator
+  setTimeout(() => {
+    const si = document.getElementById('scroll-indicator');
+    if (si) si.classList.add('visible');
+  }, 4000);
+});
+
+/* ─ HERO ANIMATION ─ */
+function initHeroAnimation() {
+  const heroTitle = document.getElementById('hero-title');
+  const st = new SplitText(heroTitle, { type: 'chars' });
+  gsap.from(st.chars, {
+    opacity: 0, y: 40, duration: 1.2, stagger: 0.05,
+    ease: 'power2.inOut', delay: 0.2
+  });
+  gsap.from('.hero-eyebrow', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.inOut', delay: 0.4 });
+  gsap.from('.hero-subtitle', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.inOut', delay: 0.6 });
+  gsap.from('.hero-ctas', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.inOut', delay: 0.8 });
+  gsap.from('.hero-floating', { opacity: 0, x: 20, duration: 1.0, ease: 'power2.inOut', delay: 1.0 });
+}
+
+/* ─ NAVBAR SCROLL ─ */
+window.addEventListener('scroll', () => {
+  const navbar = document.getElementById('navbar');
+  if (window.scrollY > 80) navbar.classList.add('scrolled');
+  else navbar.classList.remove('scrolled');
+
+  // Hide scroll indicator after scroll start
+  if (window.scrollY > 120) {
+    const si = document.getElementById('scroll-indicator');
+    if (si) si.style.opacity = '0';
+  }
+});
+
+/* ─ HERO PARALLAX — mousemove ─ */
+document.querySelector('.hero').addEventListener('mousemove', e => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 30;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
+  gsap.to('.layer-1', { x: x * 0.5, y: y * 0.5, duration: 1, ease: 'power2.out' });
+  gsap.to('.layer-2', { x: x * 1.2, y: y * 1.0, duration: 1, ease: 'power2.out' });
+});
+
+/* ─ SCROLL ANIMATIONS ─ */
+
+// Vision section
+gsap.from('.vision-tag', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.vision', start: 'top 85%', once: true }
+});
+gsap.from('.vision-title', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', delay: 0.1,
+  scrollTrigger: { trigger: '.vision', start: 'top 85%', once: true }
+});
+gsap.from('.vision .section-divider', {
+  immediateRender: false,
+  scaleX: 0, duration: 1.0, ease: 'power2.inOut', transformOrigin: 'left',
+  scrollTrigger: { trigger: '.vision', start: 'top 80%', once: true }
+});
+gsap.from('.vision .section-body', {
+  immediateRender: false,
+  opacity: 0, y: 30, duration: 1.1, stagger: 0.1, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.vision .section-divider', start: 'top 85%', once: true }
+});
+gsap.from('.vision-stats > div', {
+  immediateRender: false,
+  opacity: 0, y: 24, duration: 1.0, stagger: 0.12, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.vision-stats', start: 'top 85%', once: true }
+});
+gsap.from('.vision-link', {
+  immediateRender: false,
+  opacity: 0, x: -20, duration: 1.0, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.vision-link', start: 'top 90%', once: true }
+});
+gsap.from('.vision-image', {
+  immediateRender: false,
+  opacity: 0, x: 40, duration: 1.3, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.vision-image', start: 'top 85%', once: true }
+});
+
+// Counter animation
+document.querySelectorAll('.vision-stat-num').forEach(el => {
+  const target = +el.dataset.target;
+  gsap.from(el, {
+    textContent: 0, duration: 2, ease: 'power2.out',
+    snap: { textContent: 1 }, immediateRender: false,
+    scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+  });
+});
+
+// Signature series
+gsap.from('.signature .section-tag', {
+  immediateRender: false,
+  opacity: 0, y: 30, duration: 1.1, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.signature', start: 'top 85%', once: true }
+});
+gsap.from('.signature .section-title', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', delay: 0.1,
+  scrollTrigger: { trigger: '.signature', start: 'top 85%', once: true }
+});
+gsap.from('.sig-item', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.2, stagger: 0.15, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.signature-grid', start: 'top 85%', once: true }
+});
+
+// Featured works
+gsap.from('.featured .section-tag', {
+  immediateRender: false,
+  opacity: 0, y: 30, duration: 1.1, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.featured', start: 'top 85%', once: true }
+});
+gsap.from('.feat-item', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.2, stagger: 0.12, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.featured-masonry', start: 'top 85%', once: true }
+});
+
+// Awards
+gsap.from('.awards .section-tag', {
+  immediateRender: false,
+  opacity: 0, y: 30, duration: 1.1, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.awards', start: 'top 85%', once: true }
+});
+gsap.from('.award-item', {
+  immediateRender: false,
+  opacity: 0, y: 24, duration: 1.0, stagger: 0.12, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.awards-grid', start: 'top 85%', once: true }
+});
+gsap.from('.press-logo', {
+  immediateRender: false,
+  opacity: 0, y: 20, duration: 1.0, stagger: 0.08, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.press-logos', start: 'top 90%', once: true }
+});
+
+// Clients
+gsap.from('.client-name', {
+  immediateRender: false,
+  opacity: 0, y: 24, duration: 1.0, stagger: 0.08, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.clients-grid', start: 'top 85%', once: true }
+});
+
+// Commission CTA
+gsap.from('.commission-content > *', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.2, stagger: 0.15, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.commission', start: 'top 75%', once: true }
+});
+
+// Footer
+gsap.from('.footer-col', {
+  immediateRender: false,
+  opacity: 0, y: 24, duration: 1.0, stagger: 0.12, ease: 'power2.inOut',
+  scrollTrigger: { trigger: 'footer', start: 'top 90%', once: true }
+});
+</script>
+</body>
+</html>

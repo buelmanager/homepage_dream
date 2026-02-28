@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KINETIC — Motion Design & Animation</title>
+  <meta name="description" content="Award-winning motion designer specializing in brand motion, title sequences, UI animation, and visual effects. Motion that moves culture.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES — Forest Night P3
+       ============================================= */
+    :root {
+      --bg: #0F1A10;
+      --surface: #162016;
+      --surface2: #1A2A1A;
+      --accent: #4DAF6A;
+      --accent-light: #7ACC8A;
+      --accent-dark: #2E7A46;
+      --ivory: #DCF0DC;
+      --smoke: #809080;
+      --muted: #4A6050;
+      --border: #182018;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --transition: 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      --nav-h: 72px;
+    }
+
+    /* =============================================
+       RESET & BASE
+       ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* =============================================
+       PRELOADER
+       ============================================= */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: clamp(48px, 8vw, 96px);
+      letter-spacing: 0.15em;
+      color: var(--ivory);
+      overflow: hidden;
+    }
+    .preloader-logo span {
+      display: inline-block;
+      transform: translateY(100%);
+    }
+    .preloader-bar-wrap {
+      width: 200px;
+      height: 1px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .preloader-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.05s linear;
+    }
+    .preloader-pct {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      font-weight: 300;
+    }
+
+    /* =============================================
+       SCROLL INDICATOR
+       ============================================= */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-indicator.hidden { opacity: 0; }
+    .scroll-indicator-text {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--smoke);
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+    .scroll-indicator-line {
+      width: 1px;
+      height: 48px;
+      background: var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+    .scroll-indicator-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: scrollLine 1.5s ease infinite;
+    }
+    @keyframes scrollLine {
+      0% { top: -100%; }
+      100% { top: 100%; }
+    }
+
+    /* =============================================
+       NAVBAR
+       ============================================= */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(24px, 5vw, 80px);
+      background: transparent;
+      transition: background 0.4s ease, border-bottom 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(15, 26, 16, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      letter-spacing: 0.12em;
+      color: var(--ivory);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .nav-links a {
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      font-weight: 400;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: all 0.3s ease;
+    }
+
+    /* =============================================
+       HERO — TYPE E: GRID/PATTERN CANVAS
+       ============================================= */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: calc(var(--nav-h) + 60px) clamp(24px, 5vw, 80px) 80px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 400;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(80px, 12vw, 160px);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      color: var(--ivory);
+      margin-bottom: 24px;
+    }
+    .hero-tagline {
+      font-size: clamp(16px, 2vw, 22px);
+      color: var(--smoke);
+      font-weight: 300;
+      margin-bottom: 48px;
+      max-width: 380px;
+      line-height: 1.5;
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      font-weight: 400;
+      font-family: var(--font-sans);
+      border-bottom: 1px solid var(--muted);
+      padding-bottom: 2px;
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      margin-top: 64px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+    .hero-stat-value {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 4px;
+      font-weight: 300;
+    }
+
+    /* Hero Grid Panels (right side) */
+    .hero-grid-panels {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 4px;
+      padding: var(--nav-h) 0 0 4px;
+      overflow: hidden;
+    }
+    .panel {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .panel:hover img { transform: scale(1.05); }
+    .panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(77,175,106,0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .panel-1 { grid-column: 1; grid-row: 1; }
+    .panel-2 { grid-column: 2; grid-row: 1; }
+    .panel-3 { grid-column: 3; grid-row: 1; }
+    .panel-4 { grid-column: 1; grid-row: 2; }
+    .panel-5 { grid-column: 2; grid-row: 2; }
+    .panel-6 { grid-column: 3; grid-row: 2; }
+
+    /* =============================================
+       MARQUEE TICKER
+       ============================================= */
+    .marquee-strip {
+      background: var(--accent);
+      padding: 14px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-flex;
+      animation: marquee 20s linear infinite;
+    }
+    .marquee-item {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      color: var(--bg);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .marquee-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* =============================================
+       SECTION SHARED
+       ============================================= */
+    section { padding: clamp(80px, 10vw, 140px) clamp(24px, 5vw, 80px); }
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 400;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 6vw, 80px);
+      line-height: 0.95;
+      letter-spacing: 0.03em;
+      color: var(--ivory);
+      margin-bottom: 24px;
+    }
+    .section-subtitle {
+      font-size: 16px;
+      color: var(--smoke);
+      font-weight: 300;
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* =============================================
+       SELECTED PROJECTS
+       ============================================= */
+    .projects { background: var(--bg); }
+    .projects-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 64px;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .project-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+    .project-card img {
+      transition: transform 0.7s ease;
+    }
+    .project-card:hover img { transform: scale(1.08); }
+    .project-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15,26,16,0.9) 0%, rgba(15,26,16,0.2) 50%, transparent 100%);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transition: background 0.4s ease;
+    }
+    .project-card:hover .project-card-overlay {
+      background: linear-gradient(to top, rgba(15,26,16,0.95) 0%, rgba(15,26,16,0.4) 60%, rgba(15,26,16,0.1) 100%);
+    }
+    .project-card-tag {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+    .project-card-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      letter-spacing: 0.05em;
+      color: var(--ivory);
+      margin-bottom: 8px;
+    }
+    .project-card-desc {
+      font-size: 13px;
+      color: var(--smoke);
+      font-weight: 300;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.4s ease;
+    }
+    .project-card:hover .project-card-desc {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .project-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(77,175,106,0.2);
+      border: 1px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.4s ease;
+      backdrop-filter: blur(8px);
+    }
+    .project-play-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--accent);
+      margin-left: 3px;
+    }
+    .project-card:hover .project-play-btn {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .projects-cta {
+      text-align: center;
+      margin-top: 56px;
+    }
+
+    /* =============================================
+       SERVICES
+       ============================================= */
+    .services { background: var(--surface); }
+    .services-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: end;
+      margin-bottom: 80px;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .service-card {
+      background: var(--bg);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s ease;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.5s ease;
+    }
+    .service-card:hover::before { height: 100%; }
+    .service-card:hover { background: var(--surface2); }
+    .service-number {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      letter-spacing: 0.04em;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 32px;
+      transition: color 0.4s ease;
+    }
+    .service-card:hover .service-number { color: var(--accent); }
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 24px;
+      color: var(--accent);
+    }
+    .service-name {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      letter-spacing: 0.05em;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .service-desc {
+      font-size: 14px;
+      color: var(--smoke);
+      font-weight: 300;
+      line-height: 1.7;
+    }
+    .service-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .service-tag {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      font-weight: 400;
+    }
+
+    /* =============================================
+       CLIENT LOGOS
+       ============================================= */
+    .clients { background: var(--bg); padding-top: 80px; padding-bottom: 80px; }
+    .clients-label { text-align: center; margin-bottom: 48px; }
+    .clients-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      border: 1px solid var(--border);
+    }
+    .client-cell {
+      padding: 28px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid var(--border);
+      font-family: var(--font-serif);
+      font-size: 18px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      transition: color 0.3s ease;
+    }
+    .client-cell:hover { color: var(--ivory); }
+    .client-cell:last-child { border-right: none; }
+
+    /* =============================================
+       PROCESS TEASER
+       ============================================= */
+    .process-teaser { background: var(--surface2); }
+    .process-teaser-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .process-visual {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+    }
+    .process-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .process-visual-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(77,175,106,0.1) 0%, transparent 60%);
+    }
+    .process-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .process-step {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 20px;
+      align-items: start;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .process-step:last-child { border-bottom: none; padding-bottom: 0; }
+    .step-num {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      letter-spacing: 0.05em;
+      color: var(--ivory);
+      margin-bottom: 6px;
+    }
+    .step-desc {
+      font-size: 14px;
+      color: var(--smoke);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* =============================================
+       TOOLS & TECHNOLOGY
+       ============================================= */
+    .tools { background: var(--bg); }
+    .tools-header { margin-bottom: 64px; }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .tool-card {
+      background: var(--surface);
+      padding: 36px 28px;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+    .tool-card:hover {
+      border-color: var(--accent);
+      background: var(--surface2);
+    }
+    .tool-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-family: var(--font-serif);
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      font-weight: 400;
+    }
+    .tool-name {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      color: var(--ivory);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .tool-category {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 300;
+    }
+    .tools-image-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 2px;
+    }
+    .tools-img-cell {
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      position: relative;
+    }
+    .tools-img-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .tools-img-cell:hover img { transform: scale(1.04); }
+
+    /* =============================================
+       CONTACT CTA
+       ============================================= */
+    .contact-cta {
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .contact-cta::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(77,175,106,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+    .cta-title {
+      font-family: var(--font-serif);
+      font-size: clamp(48px, 8vw, 100px);
+      letter-spacing: 0.04em;
+      color: var(--ivory);
+      line-height: 0.95;
+      margin-bottom: 24px;
+    }
+    .cta-subtitle {
+      font-size: 17px;
+      color: var(--smoke);
+      font-weight: 300;
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.6;
+    }
+    .cta-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    /* =============================================
+       FOOTER
+       ============================================= */
+    .footer {
+      background: var(--bg);
+      padding: 80px clamp(24px, 5vw, 80px) 48px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 64px;
+    }
+    .footer-brand-logo {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      letter-spacing: 0.12em;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+    .footer-brand-logo span { color: var(--accent); }
+    .footer-desc {
+      font-size: 14px;
+      color: var(--smoke);
+      font-weight: 300;
+      line-height: 1.7;
+      max-width: 280px;
+      margin-bottom: 32px;
+    }
+    .footer-socials {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-social {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--smoke);
+      font-weight: 400;
+      transition: all 0.3s ease;
+    }
+    .footer-social:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .footer-col-title {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-links a {
+      font-size: 14px;
+      color: var(--smoke);
+      font-weight: 300;
+      transition: color 0.3s ease;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-legal a {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 300;
+      transition: color 0.3s ease;
+    }
+    .footer-legal a:hover { color: var(--smoke); }
+
+    /* =============================================
+       RESPONSIVE
+       ============================================= */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-grid-panels {
+        display: none;
+      }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .services-header { grid-template-columns: 1fr; gap: 32px; }
+      .tools-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .clients-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+      .services-grid { grid-template-columns: 1fr; }
+      .tools-grid { grid-template-columns: repeat(2, 1fr); }
+      .process-teaser-inner { grid-template-columns: 1fr; gap: 48px; }
+      .footer-top { grid-template-columns: 1fr; }
+      .clients-grid { grid-template-columns: repeat(2, 1fr); }
+      .tools-image-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .projects-grid { grid-template-columns: 1fr; }
+      .hero-stats { flex-direction: column; gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo"><span>KINETIC</span></div>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar" id="preloaderBar"></div>
+    </div>
+    <div class="preloader-pct" id="preloaderPct">0%</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollIndicator">
+    <div class="scroll-indicator-text">Scroll</div>
+    <div class="scroll-indicator-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">KINET<span>IC</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="collection.html">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html" class="nav-cta">Start a Project</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO — TYPE E: GRID/PATTERN CANVAS -->
+  <section class="hero" id="hero">
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Motion Design & Animation</div>
+      <h1 class="hero-title" id="heroTitle">KINETIC</h1>
+      <p class="hero-tagline">Motion that moves culture. We craft animations that transform brands into living, breathing experiences.</p>
+      <div class="hero-ctas">
+        <a href="collection.html" class="btn-primary">
+          View Work
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="contact.html" class="btn-secondary">
+          Start a Project
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-value">8+</div>
+          <div class="hero-stat-label">Years Experience</div>
+        </div>
+        <div>
+          <div class="hero-stat-value">200+</div>
+          <div class="hero-stat-label">Projects Delivered</div>
+        </div>
+        <div>
+          <div class="hero-stat-value">45+</div>
+          <div class="hero-stat-label">Brand Clients</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-grid-panels">
+      <div class="panel panel-1"><img src="images/hero-1.webp" alt="Motion design work 1" loading="eager"></div>
+      <div class="panel panel-2"><img src="images/hero-2.webp" alt="Motion design work 2" loading="eager"></div>
+      <div class="panel panel-3"><img src="images/hero-3.webp" alt="Motion design work 3" loading="eager"></div>
+      <div class="panel panel-4"><img src="images/hero-4.webp" alt="Motion design work 4" loading="eager"></div>
+      <div class="panel panel-5"><img src="images/hero-5.webp" alt="Motion design work 5" loading="eager"></div>
+      <div class="panel panel-6"><img src="images/hero-6.webp" alt="Motion design work 6" loading="eager"></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE TICKER -->
+  <div class="marquee-strip" aria-hidden="true">
+    <div class="marquee-track">
+      <div class="marquee-item">Brand Motion<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Title Sequences<span class="marquee-dot"></span></div>
+      <div class="marquee-item">UI Animation<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Visual Effects<span class="marquee-dot"></span></div>
+      <div class="marquee-item">3D Motion<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Motion Identity<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Generative Art<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Brand Motion<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Title Sequences<span class="marquee-dot"></span></div>
+      <div class="marquee-item">UI Animation<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Visual Effects<span class="marquee-dot"></span></div>
+      <div class="marquee-item">3D Motion<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Motion Identity<span class="marquee-dot"></span></div>
+      <div class="marquee-item">Generative Art<span class="marquee-dot"></span></div>
+    </div>
+  </div>
+
+  <!-- SELECTED PROJECTS -->
+  <section class="projects" id="projects">
+    <div class="projects-header">
+      <div>
+        <div class="section-label">Selected Work</div>
+        <h2 class="section-title">PROJECTS<br>THAT MOVE</h2>
+      </div>
+      <p class="section-subtitle">From brand identity systems to cinematic title sequences — each project is a story told through motion.</p>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <img src="images/product-1.webp" alt="APEX Brand Motion" loading="lazy">
+        <div class="project-card-overlay">
+          <div class="project-card-tag">Brand Motion</div>
+          <div class="project-card-title">APEX BRAND IDENTITY</div>
+          <div class="project-card-desc">Full motion identity system with 3D logo animation and transition library</div>
+        </div>
+        <div class="project-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+      <div class="project-card">
+        <img src="images/product-2.webp" alt="Noir Title Sequence" loading="lazy">
+        <div class="project-card-overlay">
+          <div class="project-card-tag">Title Sequence</div>
+          <div class="project-card-title">NOIR FILM TITLES</div>
+          <div class="project-card-desc">Opening title sequence for award-winning short film festival</div>
+        </div>
+        <div class="project-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+      <div class="project-card">
+        <img src="images/product-3.webp" alt="Pulse UI Animation" loading="lazy">
+        <div class="project-card-overlay">
+          <div class="project-card-tag">UI Animation</div>
+          <div class="project-card-title">PULSE APP SYSTEM</div>
+          <div class="project-card-desc">Microinteraction library and transition design for fintech platform</div>
+        </div>
+        <div class="project-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+      <div class="project-card">
+        <img src="images/product-4.webp" alt="Stellar VFX" loading="lazy">
+        <div class="project-card-overlay">
+          <div class="project-card-tag">VFX</div>
+          <div class="project-card-title">STELLAR VISUAL EFFECTS</div>
+          <div class="project-card-desc">Particle simulation and compositing for global luxury brand campaign</div>
+        </div>
+        <div class="project-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+      <div class="project-card">
+        <img src="images/product-5.webp" alt="Geometric Motion" loading="lazy">
+        <div class="project-card-overlay">
+          <div class="project-card-tag">Brand Motion</div>
+          <div class="project-card-title">VECTOR REBRAND</div>
+          <div class="project-card-desc">Complete motion language refresh for tech startup Series B launch</div>
+        </div>
+        <div class="project-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+      <div class="project-card">
+        <img src="images/product-6.webp" alt="Prism Installation" loading="lazy">
+        <div class="project-card-overlay">
+          <div class="project-card-tag">Generative Art</div>
+          <div class="project-card-title">PRISM INSTALLATION</div>
+          <div class="project-card-desc">Real-time generative motion installation for gallery exhibition</div>
+        </div>
+        <div class="project-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="projects-cta">
+      <a href="collection.html" class="btn-primary">View All Projects</a>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="services-header">
+      <div>
+        <div class="section-label">What We Do</div>
+        <h2 class="section-title">MOTION<br>SERVICES</h2>
+      </div>
+      <p class="section-subtitle">Comprehensive motion design expertise spanning brand animation, cinematic sequences, and interactive experiences.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-number">01</div>
+        <div class="service-name">BRAND MOTION</div>
+        <p class="service-desc">Logo animations, motion identities, and dynamic brand systems that bring your visual language to life across every medium.</p>
+        <div class="service-tags">
+          <span class="service-tag">Logo Animation</span>
+          <span class="service-tag">Motion Identity</span>
+          <span class="service-tag">Brand Guidelines</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-number">02</div>
+        <div class="service-name">TITLE SEQUENCES</div>
+        <p class="service-desc">Cinematic opening titles and credit sequences for film, television, and digital content that set the tone for any story.</p>
+        <div class="service-tags">
+          <span class="service-tag">Film Titles</span>
+          <span class="service-tag">TV Sequences</span>
+          <span class="service-tag">Opening Credits</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-number">03</div>
+        <div class="service-name">UI ANIMATION</div>
+        <p class="service-desc">Microinteractions, transitions, and motion design systems for digital products that delight users and communicate intent.</p>
+        <div class="service-tags">
+          <span class="service-tag">Microinteractions</span>
+          <span class="service-tag">UX Motion</span>
+          <span class="service-tag">Lottie Files</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-number">04</div>
+        <div class="service-name">VFX & 3D</div>
+        <p class="service-desc">Visual effects compositing, 3D animation, and particle simulations for advertising, music videos, and commercial content.</p>
+        <div class="service-tags">
+          <span class="service-tag">Compositing</span>
+          <span class="service-tag">3D Animation</span>
+          <span class="service-tag">Particles</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENT LOGOS -->
+  <section class="clients">
+    <div class="clients-label">
+      <div class="section-label" style="justify-content: center;">Trusted By</div>
+    </div>
+    <div class="clients-grid">
+      <div class="client-cell">APEX STUDIO</div>
+      <div class="client-cell">NOVA FILMS</div>
+      <div class="client-cell">VECTOR INC</div>
+      <div class="client-cell">PRISM CO</div>
+      <div class="client-cell">FLUX MEDIA</div>
+      <div class="client-cell">ORBIT LAB</div>
+    </div>
+  </section>
+
+  <!-- PROCESS TEASER -->
+  <section class="process-teaser">
+    <div class="process-teaser-inner">
+      <div class="process-visual">
+        <img src="images/workspace-2.webp" alt="Motion design studio workspace" loading="lazy">
+        <div class="process-visual-overlay"></div>
+      </div>
+      <div>
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">OUR<br>PROCESS</h2>
+        <div class="process-steps">
+          <div class="process-step">
+            <div class="step-num">01</div>
+            <div>
+              <div class="step-title">BRIEF & DISCOVERY</div>
+              <div class="step-desc">Deep dive into your brand, goals, and motion language to establish creative direction.</div>
+            </div>
+          </div>
+          <div class="process-step">
+            <div class="step-num">02</div>
+            <div>
+              <div class="step-title">CONCEPTING</div>
+              <div class="step-desc">Moodboards, styleframes, and motion tests to align on visual approach.</div>
+            </div>
+          </div>
+          <div class="process-step">
+            <div class="step-num">03</div>
+            <div>
+              <div class="step-title">ANIMATION</div>
+              <div class="step-desc">Full production with milestone reviews and iterative refinement at every stage.</div>
+            </div>
+          </div>
+          <div class="process-step">
+            <div class="step-num">04</div>
+            <div>
+              <div class="step-title">DELIVERY</div>
+              <div class="step-desc">Final files in all required formats with motion documentation and guidelines.</div>
+            </div>
+          </div>
+        </div>
+        <a href="process.html" class="btn-secondary" style="display:inline-flex; margin-top:40px;">
+          Full Process Details
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS & TECHNOLOGY -->
+  <section class="tools">
+    <div class="tools-header">
+      <div class="section-label">Software Stack</div>
+      <h2 class="section-title">TOOLS &<br>TECHNOLOGY</h2>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-logo">AE</div>
+        <div class="tool-name">After Effects</div>
+        <div class="tool-category">2D Animation & Compositing</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-logo">C4D</div>
+        <div class="tool-name">Cinema 4D</div>
+        <div class="tool-category">3D Modelling & Animation</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-logo">OC</div>
+        <div class="tool-name">Octane Render</div>
+        <div class="tool-category">GPU Rendering</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-logo">PP</div>
+        <div class="tool-name">Premiere Pro</div>
+        <div class="tool-category">Editing & Post-Production</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-logo">RE</div>
+        <div class="tool-name">Red Giant</div>
+        <div class="tool-category">VFX Plugins</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-logo">TP</div>
+        <div class="tool-name">TrapCode Suite</div>
+        <div class="tool-category">Particles & 3D</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-logo">FG</div>
+        <div class="tool-name">Figma</div>
+        <div class="tool-category">Design & Prototyping</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-logo">DR</div>
+        <div class="tool-name">DaVinci Resolve</div>
+        <div class="tool-category">Color Grading</div>
+      </div>
+    </div>
+    <div class="tools-image-row">
+      <div class="tools-img-cell"><img src="images/tools-1.webp" alt="Motion design tools" loading="lazy"></div>
+      <div class="tools-img-cell"><img src="images/tools-2.webp" alt="Animation software" loading="lazy"></div>
+      <div class="tools-img-cell"><img src="images/tools-3.webp" alt="Creative workspace" loading="lazy"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT CTA -->
+  <section class="contact-cta">
+    <div class="cta-eyebrow">Ready to Move?</div>
+    <h2 class="cta-title">LET'S CREATE<br>SOMETHING</h2>
+    <p class="cta-subtitle">Have a project in mind? Let's discuss how motion can elevate your brand and captivate your audience.</p>
+    <div class="cta-actions">
+      <a href="contact.html" class="btn-primary">
+        Start a Conversation
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="mailto:hello@kinetic.studio" class="btn-secondary">hello@kinetic.studio</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">KINET<span>IC</span></div>
+        <p class="footer-desc">Motion Design & Animation studio crafting kinetic experiences that move brands forward.</p>
+        <div class="footer-socials">
+          <a href="#" class="footer-social">IG</a>
+          <a href="#" class="footer-social">BE</a>
+          <a href="#" class="footer-social">LI</a>
+          <a href="#" class="footer-social">YT</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigation</div>
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="collection.html">Work</a>
+          <a href="about.html">About</a>
+          <a href="process.html">Process</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Services</div>
+        <div class="footer-links">
+          <a href="#">Brand Motion</a>
+          <a href="#">Title Sequences</a>
+          <a href="#">UI Animation</a>
+          <a href="#">VFX & 3D</a>
+          <a href="#">Generative Art</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-links">
+          <a href="mailto:hello@kinetic.studio">hello@kinetic.studio</a>
+          <a href="#">+1 (555) 000-0000</a>
+          <a href="#">Los Angeles, CA</a>
+          <a href="#">Available Worldwide</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 KINETIC Studio. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Cookie Settings</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    /* =============================================
+       SPLIT TEXT POLYFILL (INLINE — NOT CDN)
+       ============================================= */
+    class SplitText {
+      constructor(el, { type = 'chars,words' } = {}) {
+        this.el = typeof el === 'string' ? document.querySelector(el) : el;
+        this.chars = [];
+        this.words = [];
+        if (!this.el) return;
+        const text = this.el.textContent;
+        this.el.innerHTML = '';
+        text.split(' ').forEach((word, wi, arr) => {
+          const wEl = document.createElement('span');
+          wEl.style.cssText = 'display:inline-block;overflow:hidden;';
+          word.split('').forEach(char => {
+            const cEl = document.createElement('span');
+            cEl.textContent = char;
+            cEl.style.display = 'inline-block';
+            wEl.appendChild(cEl);
+            this.chars.push(cEl);
+          });
+          this.words.push(wEl);
+          this.el.appendChild(wEl);
+          if (wi < arr.length - 1) this.el.appendChild(document.createTextNode('\u00A0'));
+        });
+      }
+    }
+
+    /* =============================================
+       HERO CANVAS — ANIMATED GRID
+       ============================================= */
+    const canvas = document.getElementById('heroCanvas');
+    const ctx = canvas.getContext('2d');
+    let animFrame;
+    let time = 0;
+
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function drawGrid() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const spacing = 60;
+      const cols = Math.ceil(canvas.width / spacing) + 1;
+      const rows = Math.ceil(canvas.height / spacing) + 1;
+
+      // Draw grid lines
+      ctx.strokeStyle = 'rgba(77, 175, 106, 0.06)';
+      ctx.lineWidth = 1;
+      for (let c = 0; c < cols; c++) {
+        ctx.beginPath();
+        ctx.moveTo(c * spacing, 0);
+        ctx.lineTo(c * spacing, canvas.height);
+        ctx.stroke();
+      }
+      for (let r = 0; r < rows; r++) {
+        ctx.beginPath();
+        ctx.moveTo(0, r * spacing);
+        ctx.lineTo(canvas.width, r * spacing);
+        ctx.stroke();
+      }
+
+      // Draw pulsing dots at intersections
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          const x = c * spacing;
+          const y = r * spacing;
+          const phase = (c * 0.3 + r * 0.2 + time * 0.02);
+          const pulse = (Math.sin(phase) + 1) / 2;
+          const size = 1.5 + pulse * 2;
+          const alpha = 0.1 + pulse * 0.3;
+
+          ctx.beginPath();
+          ctx.arc(x, y, size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(77, 175, 106, ${alpha})`;
+          ctx.fill();
+        }
+      }
+
+      // Draw flowing lines (diagonal streaks)
+      const streakCount = 8;
+      for (let i = 0; i < streakCount; i++) {
+        const progress = ((time * 0.3 + i * (canvas.width / streakCount)) % (canvas.width + canvas.height));
+        const startX = progress - canvas.height;
+        const startY = 0;
+        const endX = progress;
+        const endY = canvas.height;
+
+        const grad = ctx.createLinearGradient(startX, startY, endX, endY);
+        grad.addColorStop(0, 'rgba(77, 175, 106, 0)');
+        grad.addColorStop(0.5, 'rgba(77, 175, 106, 0.08)');
+        grad.addColorStop(1, 'rgba(77, 175, 106, 0)');
+
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      time++;
+      animFrame = requestAnimationFrame(drawGrid);
+    }
+    drawGrid();
+
+    /* =============================================
+       PRELOADER
+       ============================================= */
+    gsap.registerPlugin(ScrollTrigger);
+
+    const preloader = document.getElementById('preloader');
+    const preloaderBar = document.getElementById('preloaderBar');
+    const preloaderPct = document.getElementById('preloaderPct');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+
+    let loadProgress = 0;
+    const loadInterval = setInterval(() => {
+      loadProgress += Math.random() * 12 + 3;
+      if (loadProgress >= 100) {
+        loadProgress = 100;
+        clearInterval(loadInterval);
+      }
+      preloaderBar.style.width = loadProgress + '%';
+      preloaderPct.textContent = Math.floor(loadProgress) + '%';
+      if (loadProgress >= 100) {
+        setTimeout(completePreload, 200);
+      }
+    }, 80);
+
+    // Animate preloader logo letters
+    gsap.fromTo('.preloader-logo span',
+      { y: '100%' },
+      { y: '0%', duration: 0.8, ease: 'power3.out', delay: 0.2 }
+    );
+
+    function completePreload() {
+      gsap.to(preloader, {
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.out',
+        onComplete: () => {
+          preloader.style.display = 'none';
+          initAnimations();
+          // Show scroll indicator after preload
+          scrollIndicator.classList.add('visible');
+        }
+      });
+    }
+
+    // Fallback scroll indicator
+    setTimeout(() => {
+      if (scrollIndicator) scrollIndicator.classList.add('visible');
+    }, 4000);
+
+    /* =============================================
+       NAVBAR SCROLL BEHAVIOR
+       ============================================= */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      if (window.scrollY > window.innerHeight * 0.5) {
+        scrollIndicator.classList.add('hidden');
+      } else {
+        scrollIndicator.classList.remove('hidden');
+      }
+    }, { passive: true });
+
+    /* =============================================
+       GSAP ANIMATIONS — A3 PRECISE
+       ============================================= */
+    function initAnimations() {
+      // Hero content — staggered entrance
+      const heroTitleSplit = new SplitText('#heroTitle');
+      gsap.from(heroTitleSplit.chars, {
+        immediateRender: false,
+        y: 60,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.04,
+      });
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        x: -20,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        delay: 0.2,
+      });
+      gsap.from('.hero-tagline', {
+        immediateRender: false,
+        x: -20,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        delay: 0.35,
+      });
+      gsap.from('.hero-ctas', {
+        immediateRender: false,
+        x: -20,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        delay: 0.5,
+      });
+      gsap.from('.hero-stats > div', {
+        immediateRender: false,
+        y: 20,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        stagger: 0.1,
+        delay: 0.65,
+      });
+
+      // Hero panels stagger
+      gsap.from('.panel', {
+        immediateRender: false,
+        scale: 0.92,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.08,
+        delay: 0.1,
+      });
+
+      // Projects section
+      gsap.from('.project-card', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '.projects-grid',
+          start: 'top 85%',
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.08,
+      });
+
+      // Services section
+      gsap.from('.service-card', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '.services-grid',
+          start: 'top 85%',
+        },
+        x: -20,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        stagger: 0.1,
+      });
+
+      // Process steps
+      gsap.from('.process-step', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '.process-steps',
+          start: 'top 85%',
+        },
+        x: -20,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        stagger: 0.1,
+      });
+
+      // Tools grid
+      gsap.from('.tool-card', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '.tools-grid',
+          start: 'top 85%',
+        },
+        y: 24,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power3.out',
+        stagger: 0.06,
+      });
+
+      // Section titles
+      document.querySelectorAll('.section-title').forEach(title => {
+        gsap.from(title, {
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: title,
+            start: 'top 88%',
+          },
+          y: 32,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        });
+      });
+
+      // Clients
+      gsap.from('.client-cell', {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '.clients-grid',
+          start: 'top 85%',
+        },
+        y: 16,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power3.out',
+        stagger: 0.06,
+      });
+
+      // CTA title
+      const ctaTitleSplit = new SplitText('.cta-title');
+      gsap.from(ctaTitleSplit.chars, {
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: '.contact-cta',
+          start: 'top 75%',
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.04,
+      });
+    }
+
+    /* =============================================
+       NAV MOBILE TOGGLE
+       ============================================= */
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.querySelector('.nav-links');
+    navToggle.addEventListener('click', () => {
+      navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+      navLinks.style.flexDirection = 'column';
+      navLinks.style.position = 'fixed';
+      navLinks.style.top = '72px';
+      navLinks.style.left = '0';
+      navLinks.style.right = '0';
+      navLinks.style.background = 'rgba(15,26,16,0.98)';
+      navLinks.style.padding = '32px 24px';
+      navLinks.style.gap = '24px';
+    });
+  </script>
+</body>
+</html>

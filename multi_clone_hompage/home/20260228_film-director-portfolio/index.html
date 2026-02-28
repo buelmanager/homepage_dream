@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APERTURE NOIR — Frame by Frame.</title>
+<meta name="description" content="APERTURE NOIR. Film direction and cinematography. Dark cinematic aesthetic, festival credentials, industry-grade portfolio presentation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #101420;
+    --surface: #181E2A;
+    --surface2: #1E2438;
+    --accent: #4EE8FF;
+    --accent-light: #8AF3FF;
+    --accent-dark: #22B8CC;
+    --ivory: #DCE8F0;
+    --smoke: #8090A0;
+    --muted: #506070;
+    --border: #1A2234;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ivory);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+  button { cursor: pointer; font-family: inherit; }
+
+  /* ─── PRELOADER ─── */
+  #preloader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 20px;
+  }
+  #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.9s ease, visibility 0.9s ease; }
+  .preloader-countdown {
+    font-family: var(--font-serif);
+    font-size: clamp(5rem, 12vw, 10rem);
+    font-weight: 300;
+    color: var(--ivory);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    min-height: 1.2em;
+    display: flex; align-items: center; justify-content: center;
+    width: 200px; text-align: center;
+  }
+  .preloader-brand-name {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--smoke);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .preloader-bar {
+    width: 160px; height: 1px;
+    background: var(--border);
+    position: relative; overflow: hidden;
+    margin-top: 8px;
+  }
+  .preloader-bar-fill {
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--accent);
+    animation: barFill 2.4s ease forwards;
+  }
+  .preloader-frame-label {
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  @keyframes barFill { to { left: 0; } }
+
+  /* ─── SCROLL INDICATOR ─── */
+  #scroll-indicator {
+    position: fixed; bottom: 36px; right: 40px;
+    z-index: 200;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  #scroll-indicator.visible { opacity: 1; }
+  #scroll-indicator:not(.visible) { opacity: 0; }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.15); }
+  }
+
+  /* ─── NAVBAR ─── */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    padding: 0 60px;
+    height: 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: transparent;
+    transition: background 0.5s ease, border-bottom 0.5s ease;
+  }
+  #navbar.scrolled {
+    background: rgba(16,20,32,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ivory);
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links {
+    display: flex; align-items: center; gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    transition: color 0.25s;
+    font-weight: 400;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    display: inline-flex; align-items: center;
+    padding: 9px 22px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    font-weight: 400;
+  }
+  .nav-cta:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* ─── HERO TYPE G — TEXT-DRIVEN ─── */
+  .hero {
+    min-height: 200vh;
+    position: relative;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    z-index: 0;
+    height: 100vh;
+    position: sticky; top: 0;
+    overflow: hidden;
+  }
+  .hero-bg-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(0.35);
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, rgba(16,20,32,0.6) 0%, rgba(16,20,32,0.2) 50%, rgba(16,20,32,0.75) 100%);
+  }
+  .hero-text-wrap {
+    position: sticky; top: 0;
+    height: 100vh;
+    z-index: 2;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 0 80px;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    font-weight: 400;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block; width: 40px; height: 1px;
+    background: var(--accent);
+  }
+  .hero-title {
+    display: flex; flex-direction: column;
+    gap: 0;
+    margin-bottom: 32px;
+  }
+  .title-line {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: clamp(6rem, 14vw, 16rem);
+    line-height: 0.88;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--ivory);
+    will-change: transform, opacity;
+  }
+  .title-line.line-2 {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--ivory);
+    text-stroke: 1px var(--ivory);
+    padding-left: clamp(2rem, 6vw, 8rem);
+  }
+  .hero-tagline {
+    font-family: var(--font-serif);
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--smoke);
+    letter-spacing: 0.05em;
+    margin-top: 16px;
+    will-change: transform, opacity;
+  }
+  .hero-meta {
+    display: flex; align-items: center; gap: 32px;
+    margin-top: 48px;
+    will-change: transform, opacity;
+  }
+  .hero-meta-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .hero-meta-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .hero-meta-value {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--ivory);
+  }
+  .hero-meta-divider {
+    width: 1px; height: 40px;
+    background: var(--border);
+  }
+  .hero-scroll-hint {
+    position: absolute; bottom: 40px; left: 80px;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 12px;
+    font-weight: 400;
+  }
+  .hero-scroll-hint::after {
+    content: '';
+    display: block; width: 60px; height: 1px;
+    background: linear-gradient(to right, var(--accent), transparent);
+    animation: hintSlide 2s ease-in-out infinite;
+  }
+  @keyframes hintSlide {
+    0%, 100% { opacity: 0.4; transform: scaleX(1); }
+    50% { opacity: 1; transform: scaleX(1.3); transform-origin: left; }
+  }
+
+  /* Film strip decorative */
+  .hero-filmstrip {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 60px;
+    display: flex; align-items: center;
+    overflow: hidden;
+    z-index: 3;
+    opacity: 0.18;
+  }
+  .filmstrip-track {
+    display: flex; gap: 0;
+    animation: filmScroll 20s linear infinite;
+    white-space: nowrap;
+  }
+  .filmstrip-hole {
+    width: 32px; height: 24px;
+    border: 2px solid var(--smoke);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin: 0 6px;
+  }
+  @keyframes filmScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── SECTION BASE ─── */
+  .section-pad { padding: 120px 80px; }
+  .section-tag {
+    font-size: 0.62rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 400;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-tag::before {
+    content: '';
+    display: block; width: 32px; height: 1px;
+    background: var(--accent);
+  }
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 300;
+    color: var(--ivory);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .section-subtitle {
+    font-size: 0.95rem;
+    color: var(--smoke);
+    max-width: 540px;
+    line-height: 1.75;
+  }
+  .divider {
+    width: 100%; height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── SELECTED FILMS ─── */
+  .films-section { background: var(--bg); }
+  .films-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 60px;
+  }
+  .films-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+  .film-card {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    cursor: pointer;
+  }
+  .film-card:first-child {
+    grid-column: 1 / 3;
+    aspect-ratio: 21/9;
+  }
+  .film-card-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.6);
+    transition: transform 0.8s ease, filter 0.8s ease;
+  }
+  .film-card:hover .film-card-img {
+    transform: scale(1.04);
+    filter: brightness(0.45);
+  }
+  .film-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(16,20,32,0.9) 0%, transparent 50%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 36px 40px;
+  }
+  .film-card-category {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+  .film-card-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.4rem, 3vw, 2.4rem);
+    font-weight: 300;
+    color: var(--ivory);
+    line-height: 1.1;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .film-card-meta {
+    display: flex; gap: 20px; align-items: center;
+    font-size: 0.68rem;
+    color: var(--smoke);
+    letter-spacing: 0.1em;
+  }
+  .film-card-meta span + span::before {
+    content: '·';
+    margin-right: 20px;
+    color: var(--muted);
+  }
+  .film-card-hover {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .film-card:hover .film-card-hover { opacity: 1; }
+  .film-play-btn {
+    width: 64px; height: 64px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+    background: rgba(16,20,32,0.4);
+    transition: all 0.3s;
+  }
+  .film-play-btn:hover {
+    border-color: var(--accent);
+    background: rgba(78,232,255,0.1);
+  }
+  .film-play-btn svg { width: 20px; height: 20px; fill: var(--ivory); margin-left: 4px; }
+
+  /* ─── DIRECTOR'S STATEMENT ─── */
+  .statement-section {
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .statement-bg-text {
+    position: absolute;
+    font-family: var(--font-serif);
+    font-size: clamp(8rem, 20vw, 22rem);
+    font-weight: 600;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(78,232,255,0.06);
+    text-stroke: 1px rgba(78,232,255,0.06);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .statement-inner {
+    position: relative; z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .statement-quote {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--ivory);
+    letter-spacing: 0.01em;
+    margin-bottom: 40px;
+  }
+  .statement-quote em { color: var(--accent); font-style: normal; }
+  .statement-author {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    font-weight: 400;
+  }
+  .statement-philosophy {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 80px;
+  }
+  .philosophy-item {
+    background: var(--surface2);
+    padding: 40px 32px;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+  .philosophy-item::before {
+    content: attr(data-number);
+    position: absolute; top: -20px; left: 32px;
+    font-family: var(--font-serif);
+    font-size: 4rem;
+    font-weight: 300;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--accent);
+    line-height: 1;
+    opacity: 0.3;
+  }
+  .philosophy-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: var(--ivory);
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .philosophy-text {
+    font-size: 0.85rem;
+    color: var(--smoke);
+    line-height: 1.75;
+  }
+
+  /* ─── FILMOGRAPHY ─── */
+  .filmography-section { background: var(--bg); }
+  .filmography-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 48px;
+    flex-wrap: wrap; gap: 24px;
+  }
+  .filter-tabs {
+    display: flex; gap: 4px;
+  }
+  .filter-tab {
+    padding: 8px 20px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--smoke);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: var(--font-sans);
+    font-weight: 400;
+  }
+  .filter-tab:hover,
+  .filter-tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(78,232,255,0.06);
+  }
+  .filmography-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .filmography-table th {
+    font-size: 0.58rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    text-align: left;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .filmography-table td {
+    padding: 20px 20px;
+    border-bottom: 1px solid rgba(26,34,52,0.6);
+    font-size: 0.9rem;
+    color: var(--ivory);
+    vertical-align: middle;
+  }
+  .filmography-table tr {
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .filmography-table tr:hover td {
+    background: rgba(78,232,255,0.04);
+  }
+  .film-row-title {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 300;
+  }
+  .film-row-year { color: var(--smoke); font-size: 0.85rem; }
+  .film-row-type {
+    display: inline-block;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .film-row-type.feature { border-color: var(--accent); color: var(--accent); }
+  .film-row-award {
+    font-size: 0.75rem;
+    color: var(--accent-dark);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .film-row-award::before {
+    content: '◆';
+    font-size: 0.5rem;
+  }
+
+  /* ─── AWARDS & FESTIVALS ─── */
+  .awards-section { background: var(--surface); }
+  .awards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .award-card {
+    background: var(--surface2);
+    padding: 40px 32px;
+    border-top: 2px solid transparent;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .award-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .award-card:hover { border-top-color: var(--accent); }
+  .award-festival {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--ivory);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .award-year {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .award-name {
+    font-size: 0.82rem;
+    color: var(--smoke);
+    line-height: 1.5;
+  }
+  .award-film {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 12px;
+    font-style: italic;
+    font-family: var(--font-serif);
+  }
+
+  /* ─── COLLABORATORS ─── */
+  .collaborators-section { background: var(--bg); }
+  .collab-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+  .collab-list {
+    display: flex; flex-direction: column;
+    gap: 0;
+  }
+  .collab-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: padding-left 0.3s;
+  }
+  .collab-item:hover { padding-left: 12px; }
+  .collab-name {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--ivory);
+  }
+  .collab-role {
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    font-weight: 400;
+  }
+  .collab-arrow {
+    color: var(--accent);
+    font-size: 1rem;
+    transition: transform 0.3s;
+  }
+  .collab-item:hover .collab-arrow { transform: translateX(6px); }
+
+  /* ─── BEHIND THE FRAME ─── */
+  .behind-section {
+    background: var(--surface);
+    position: relative; overflow: hidden;
+  }
+  .behind-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .behind-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .behind-card-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    filter: brightness(0.55);
+    transition: transform 0.8s ease, filter 0.8s ease;
+  }
+  .behind-card:hover .behind-card-img {
+    transform: scale(1.04);
+    filter: brightness(0.4);
+  }
+  .behind-card-content {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 36px 40px;
+    background: linear-gradient(to top, rgba(16,20,32,0.95) 0%, transparent 55%);
+  }
+  .behind-card-number {
+    font-family: var(--font-serif);
+    font-size: 5rem;
+    font-weight: 300;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(78,232,255,0.3);
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.03em;
+  }
+  .behind-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--ivory);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .behind-card-text {
+    font-size: 0.82rem;
+    color: var(--smoke);
+    line-height: 1.65;
+    max-width: 360px;
+  }
+
+  /* ─── CTA SECTION ─── */
+  .cta-section {
+    background: var(--bg);
+    text-align: center;
+    padding: 160px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-bg-line {
+    position: absolute;
+    font-family: var(--font-serif);
+    font-size: clamp(6rem, 16vw, 18rem);
+    font-weight: 300;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(78,232,255,0.04);
+    white-space: nowrap;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.03em;
+  }
+  .cta-inner { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
+  .cta-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+    font-weight: 300;
+    color: var(--ivory);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .cta-subtitle {
+    font-size: 0.95rem;
+    color: var(--smoke);
+    line-height: 1.75;
+    margin-bottom: 48px;
+  }
+  .cta-buttons {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 40px;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  .btn-primary:hover { background: var(--accent-light); }
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 40px;
+    border: 1px solid var(--smoke);
+    color: var(--smoke);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 400;
+    transition: all 0.3s;
+  }
+  .btn-outline:hover {
+    border-color: var(--ivory);
+    color: var(--ivory);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 60px 80px 40px;
+  }
+  .footer-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 48px;
+    flex-wrap: wrap; gap: 40px;
+  }
+  .footer-brand {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ivory);
+    margin-bottom: 12px;
+  }
+  .footer-tagline-text {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--smoke);
+  }
+  .footer-nav {
+    display: flex; gap: 60px; flex-wrap: wrap;
+  }
+  .footer-nav-col h4 {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .footer-nav-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-nav-col a {
+    font-size: 0.85rem;
+    color: var(--smoke);
+    transition: color 0.25s;
+    font-weight: 300;
+  }
+  .footer-nav-col a:hover { color: var(--accent); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap; gap: 16px;
+  }
+  .footer-copy {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    font-weight: 300;
+  }
+  .footer-copy span { color: var(--accent); }
+  .footer-credits {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .section-pad { padding: 80px 40px; }
+    #navbar { padding: 0 40px; }
+    .hero-text-wrap { padding: 0 40px; }
+    .awards-grid { grid-template-columns: repeat(2, 1fr); }
+    .statement-philosophy { grid-template-columns: 1fr; }
+    .collab-intro { grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 48px 40px 32px; }
+  }
+  @media (max-width: 768px) {
+    .films-grid { grid-template-columns: 1fr; }
+    .films-grid .film-card:first-child { grid-column: 1; aspect-ratio: 16/9; }
+    .behind-grid { grid-template-columns: 1fr; }
+    .awards-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero-meta { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .hero-meta-divider { display: none; }
+    .cta-section { padding: 100px 40px; }
+    .footer-top { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── PRELOADER ─── -->
+<div id="preloader">
+  <div class="preloader-countdown" id="countdown-display">3</div>
+  <div class="preloader-brand-name">APERTURE NOIR</div>
+  <div class="preloader-bar"><div class="preloader-bar-fill"></div></div>
+  <div class="preloader-frame-label">Loading frames...</div>
+</div>
+
+<!-- ─── SCROLL INDICATOR ─── -->
+<div id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <span>Scroll</span>
+</div>
+
+<!-- ─── NAVBAR ─── -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Aperture<span>.</span>Noir</a>
+  <ul class="nav-links">
+    <li><a href="collection.html">Filmography</a></li>
+    <li><a href="about.html">Director</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html" class="nav-cta">New Project</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO TYPE G ─── -->
+<section class="hero hero-g" id="hero">
+  <div class="hero-bg">
+    <img src="images/hero-1.webp" alt="Cinematic film production" class="hero-bg-img">
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="hero-text-wrap">
+    <div class="hero-eyebrow">Film Direction &amp; Cinematography</div>
+    <h1 class="hero-title">
+      <span class="title-line line-1" data-text="APERTURE">APERTURE</span>
+      <span class="title-line line-2" data-text="NOIR">NOIR</span>
+    </h1>
+    <p class="hero-tagline">Frame by Frame.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Based in</span>
+        <span class="hero-meta-value">Los Angeles</span>
+      </div>
+      <div class="hero-meta-divider"></div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Films</span>
+        <span class="hero-meta-value">47</span>
+      </div>
+      <div class="hero-meta-divider"></div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Festivals</span>
+        <span class="hero-meta-value">Cannes · Sundance · Venice</span>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">Scroll to explore</div>
+  </div>
+
+  <!-- Decorative film strip -->
+  <div class="hero-filmstrip" aria-hidden="true">
+    <div class="filmstrip-track" id="filmstrip-inner"></div>
+  </div>
+</section>
+
+<!-- ─── SELECTED FILMS ─── -->
+<section class="films-section section-pad" id="films">
+  <div class="films-header">
+    <div>
+      <div class="section-tag">Selected Works</div>
+      <h2 class="section-title">Featured Films</h2>
+    </div>
+    <a href="collection.html" class="btn-outline">View All Films</a>
+  </div>
+
+  <div class="films-grid">
+    <!-- Featured / First film — full width -->
+    <div class="film-card">
+      <img src="images/film-2.webp" alt="Into the Silence" class="film-card-img">
+      <div class="film-card-overlay">
+        <div class="film-card-category">Feature Film · 2024</div>
+        <h3 class="film-card-title">Into the Silence</h3>
+        <div class="film-card-meta">
+          <span>Director</span>
+          <span>Cinematographer</span>
+          <span>Cannes Official Selection</span>
+        </div>
+      </div>
+      <div class="film-card-hover">
+        <div class="film-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="film-card">
+      <img src="images/cinema-2.webp" alt="Meridian" class="film-card-img">
+      <div class="film-card-overlay">
+        <div class="film-card-category">Short Film · 2023</div>
+        <h3 class="film-card-title">Meridian</h3>
+        <div class="film-card-meta">
+          <span>Director</span>
+          <span>Sundance Selection</span>
+        </div>
+      </div>
+      <div class="film-card-hover">
+        <div class="film-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="film-card">
+      <img src="images/production-1.webp" alt="Obsidian Hours" class="film-card-img">
+      <div class="film-card-overlay">
+        <div class="film-card-category">Commercial · 2023</div>
+        <h3 class="film-card-title">Obsidian Hours</h3>
+        <div class="film-card-meta">
+          <span>Cinematographer</span>
+          <span>Dir. of Photography</span>
+        </div>
+      </div>
+      <div class="film-card-hover">
+        <div class="film-play-btn">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── DIRECTOR'S STATEMENT ─── -->
+<section class="statement-section section-pad" id="statement">
+  <div class="statement-bg-text" aria-hidden="true">NOIR</div>
+  <div class="statement-inner">
+    <div class="section-tag" style="justify-content:center">Director's Statement</div>
+    <blockquote class="statement-quote">
+      "Cinema is not what you show — it is what you <em>withhold</em>. The shadows tell the story the light refuses to tell."
+    </blockquote>
+    <div class="statement-author">— Marcus V. Reyes, Director · Cinematographer</div>
+  </div>
+
+  <div class="statement-philosophy">
+    <div class="philosophy-item" data-number="01">
+      <h3 class="philosophy-title">The Architecture of Light</h3>
+      <p class="philosophy-text">Every frame is a deliberate composition. Light is not simply illumination — it is narrative structure, emotional temperature, and time itself made visible.</p>
+    </div>
+    <div class="philosophy-item" data-number="02">
+      <h3 class="philosophy-title">Silence as Language</h3>
+      <p class="philosophy-text">The most powerful cinematic moments breathe in the spaces between dialogue. I build films where what is left unsaid becomes the central character.</p>
+    </div>
+    <div class="philosophy-item" data-number="03">
+      <h3 class="philosophy-title">The Analog Soul</h3>
+      <p class="philosophy-text">Grain is memory. Film stock carries a warmth that no digital sensor can replicate — a tactile truth that audiences feel before they consciously perceive it.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── FILMOGRAPHY ─── -->
+<section class="filmography-section section-pad" id="filmography">
+  <div class="filmography-header">
+    <div>
+      <div class="section-tag">Complete Works</div>
+      <h2 class="section-title">Filmography</h2>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="feature">Feature</button>
+      <button class="filter-tab" data-filter="short">Short</button>
+      <button class="filter-tab" data-filter="commercial">Commercial</button>
+      <button class="filter-tab" data-filter="documentary">Documentary</button>
+    </div>
+  </div>
+
+  <table class="filmography-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Type</th>
+        <th>Role</th>
+        <th>Recognition</th>
+      </tr>
+    </thead>
+    <tbody id="filmography-tbody">
+      <tr data-type="feature">
+        <td><span class="film-row-title">Into the Silence</span></td>
+        <td class="film-row-year">2024</td>
+        <td><span class="film-row-type feature">Feature</span></td>
+        <td>Director / DP</td>
+        <td><span class="film-row-award">Cannes Official Selection</span></td>
+      </tr>
+      <tr data-type="short">
+        <td><span class="film-row-title">Meridian</span></td>
+        <td class="film-row-year">2023</td>
+        <td><span class="film-row-type">Short</span></td>
+        <td>Director</td>
+        <td><span class="film-row-award">Sundance Spotlight</span></td>
+      </tr>
+      <tr data-type="commercial">
+        <td><span class="film-row-title">Obsidian Hours</span></td>
+        <td class="film-row-year">2023</td>
+        <td><span class="film-row-type">Commercial</span></td>
+        <td>Cinematographer</td>
+        <td>—</td>
+      </tr>
+      <tr data-type="documentary">
+        <td><span class="film-row-title">The Weight of Salt</span></td>
+        <td class="film-row-year">2022</td>
+        <td><span class="film-row-type">Documentary</span></td>
+        <td>Director / DP</td>
+        <td><span class="film-row-award">Venice Horizons</span></td>
+      </tr>
+      <tr data-type="feature">
+        <td><span class="film-row-title">Lantern Coast</span></td>
+        <td class="film-row-year">2022</td>
+        <td><span class="film-row-type feature">Feature</span></td>
+        <td>Director</td>
+        <td><span class="film-row-award">BAFTA Nominee</span></td>
+      </tr>
+      <tr data-type="short">
+        <td><span class="film-row-title">Ferrous</span></td>
+        <td class="film-row-year">2021</td>
+        <td><span class="film-row-type">Short</span></td>
+        <td>Director / DP</td>
+        <td><span class="film-row-award">Tribeca Selection</span></td>
+      </tr>
+      <tr data-type="commercial">
+        <td><span class="film-row-title">Void Campaign — Maison Celeste</span></td>
+        <td class="film-row-year">2021</td>
+        <td><span class="film-row-type">Commercial</span></td>
+        <td>Cinematographer</td>
+        <td>—</td>
+      </tr>
+      <tr data-type="documentary">
+        <td><span class="film-row-title">Carbon Dreamers</span></td>
+        <td class="film-row-year">2020</td>
+        <td><span class="film-row-type">Documentary</span></td>
+        <td>Director</td>
+        <td><span class="film-row-award">Hot Docs Grand Prize</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── AWARDS & FESTIVALS ─── -->
+<section class="awards-section section-pad" id="awards">
+  <div class="section-tag">Recognition</div>
+  <h2 class="section-title">Awards &amp; Festivals</h2>
+  <p class="section-subtitle">A body of work recognized across the world's most prestigious film festivals and industry organizations.</p>
+
+  <div class="awards-grid">
+    <div class="award-card">
+      <div class="award-year">2024</div>
+      <div class="award-festival">Cannes Film Festival</div>
+      <div class="award-name">Official Selection — Competition</div>
+      <div class="award-film">Into the Silence</div>
+    </div>
+    <div class="award-card">
+      <div class="award-year">2023</div>
+      <div class="award-festival">Sundance Film Festival</div>
+      <div class="award-name">Spotlight Premiere · Special Jury Recognition</div>
+      <div class="award-film">Meridian</div>
+    </div>
+    <div class="award-card">
+      <div class="award-year">2022</div>
+      <div class="award-festival">Venice Film Festival</div>
+      <div class="award-name">Horizons Award — Best Documentary</div>
+      <div class="award-film">The Weight of Salt</div>
+    </div>
+    <div class="award-card">
+      <div class="award-year">2022</div>
+      <div class="award-festival">BAFTA</div>
+      <div class="award-name">Outstanding British Film — Nominated</div>
+      <div class="award-film">Lantern Coast</div>
+    </div>
+    <div class="award-card">
+      <div class="award-year">2021</div>
+      <div class="award-festival">Tribeca Film Festival</div>
+      <div class="award-name">Jury Mention — Short Film Competition</div>
+      <div class="award-film">Ferrous</div>
+    </div>
+    <div class="award-card">
+      <div class="award-year">2020</div>
+      <div class="award-festival">Hot Docs</div>
+      <div class="award-name">Grand Jury Prize — Documentary</div>
+      <div class="award-film">Carbon Dreamers</div>
+    </div>
+    <div class="award-card">
+      <div class="award-year">2019</div>
+      <div class="award-festival">AFI Fest</div>
+      <div class="award-name">Grand Jury Award — Narrative Feature</div>
+      <div class="award-film">Hollow Mountain</div>
+    </div>
+    <div class="award-card">
+      <div class="award-year">2018</div>
+      <div class="award-festival">SXSW</div>
+      <div class="award-name">Audience Award — Narrative Feature</div>
+      <div class="award-film">Glass Meridian</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── COLLABORATORS ─── -->
+<section class="collaborators-section section-pad" id="collaborators">
+  <div class="collab-intro">
+    <div>
+      <div class="section-tag">Inner Circle</div>
+      <h2 class="section-title">Key Collaborators</h2>
+      <p class="section-subtitle">Great films are never made alone. These are the artists and craftspeople whose vision has shaped mine — and mine, theirs.</p>
+    </div>
+    <div>
+      <p style="color:var(--smoke);font-size:0.9rem;line-height:1.8;">Cinema is the most collaborative of all art forms. Every frame bears the invisible fingerprints of sound designers, editors, composers, and production designers who transform raw footage into emotional truth.</p>
+      <a href="about.html" class="btn-outline" style="display:inline-flex;margin-top:32px;">Meet the Team</a>
+    </div>
+  </div>
+
+  <div class="collab-list">
+    <div class="collab-item">
+      <div>
+        <div class="collab-name">Elara Voss</div>
+        <div class="collab-role">Editor — 8 features</div>
+      </div>
+      <span class="collab-arrow">→</span>
+    </div>
+    <div class="collab-item">
+      <div>
+        <div class="collab-name">Thomas Hargrove</div>
+        <div class="collab-role">Composer — 12 projects</div>
+      </div>
+      <span class="collab-arrow">→</span>
+    </div>
+    <div class="collab-item">
+      <div>
+        <div class="collab-name">Ingrid Sollis</div>
+        <div class="collab-role">Production Designer — 6 features</div>
+      </div>
+      <span class="collab-arrow">→</span>
+    </div>
+    <div class="collab-item">
+      <div>
+        <div class="collab-name">Denis Palau</div>
+        <div class="collab-role">Sound Designer — 10 projects</div>
+      </div>
+      <span class="collab-arrow">→</span>
+    </div>
+    <div class="collab-item">
+      <div>
+        <div class="collab-name">Mara Lindqvist</div>
+        <div class="collab-role">Costume Designer — 5 features</div>
+      </div>
+      <span class="collab-arrow">→</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── BEHIND THE FRAME ─── -->
+<section class="behind-section section-pad" id="process">
+  <div class="section-tag">Craft &amp; Method</div>
+  <h2 class="section-title">Behind the Frame</h2>
+  <p class="section-subtitle">The invisible architecture of a film — the choices made before a single frame is shot.</p>
+
+  <div class="behind-grid">
+    <div class="behind-card">
+      <img src="images/set-1.webp" alt="Pre-production planning" class="behind-card-img">
+      <div class="behind-card-content">
+        <div class="behind-card-number">01</div>
+        <h3 class="behind-card-title">The Concept</h3>
+        <p class="behind-card-text">Every project begins with weeks of visual research — paintings, photographs, architecture, light studies. The look of a film is not decided on set.</p>
+      </div>
+    </div>
+    <div class="behind-card">
+      <img src="images/light-1.webp" alt="Lighting setup on production" class="behind-card-img">
+      <div class="behind-card-content">
+        <div class="behind-card-number">02</div>
+        <h3 class="behind-card-title">The Light</h3>
+        <p class="behind-card-text">Lighting is the first language of cinema. I shoot predominantly with practical sources and natural light — augmented only when the story demands it.</p>
+      </div>
+    </div>
+    <div class="behind-card">
+      <img src="images/reel-1.webp" alt="Film editing process" class="behind-card-img">
+      <div class="behind-card-content">
+        <div class="behind-card-number">03</div>
+        <h3 class="behind-card-title">The Edit</h3>
+        <p class="behind-card-text">Editing is the second writing of the film. I work closely with my editors through a minimum of eight assembly cuts before touching color grade.</p>
+      </div>
+    </div>
+    <div class="behind-card">
+      <img src="images/cinema-1.webp" alt="Cinema screening room" class="behind-card-img">
+      <div class="behind-card-content">
+        <div class="behind-card-number">04</div>
+        <h3 class="behind-card-title">The Screen</h3>
+        <p class="behind-card-text">A film lives in the darkness of a cinema. Every decision in production — from aspect ratio to color science — is calibrated for the theatrical experience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── CTA ─── -->
+<section class="cta-section" id="contact">
+  <div class="cta-bg-line" aria-hidden="true">FRAME</div>
+  <div class="cta-inner">
+    <div class="section-tag" style="justify-content:center">New Project</div>
+    <h2 class="cta-title">Let's Make Something<br>Unforgettable</h2>
+    <p class="cta-subtitle">Available for feature films, documentaries, brand films, and commercial cinematography. Currently booking 2026 projects.</p>
+    <div class="cta-buttons">
+      <a href="contact.html" class="btn-primary">Start a Conversation</a>
+      <a href="collection.html" class="btn-outline">View Full Filmography</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">APERTURE NOIR</div>
+      <div class="footer-tagline-text">Frame by Frame.</div>
+    </div>
+    <nav class="footer-nav">
+      <div class="footer-nav-col">
+        <h4>Portfolio</h4>
+        <ul>
+          <li><a href="collection.html">All Films</a></li>
+          <li><a href="collection.html">Features</a></li>
+          <li><a href="collection.html">Documentaries</a></li>
+          <li><a href="collection.html">Commercial</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="about.html">Director Bio</a></li>
+          <li><a href="process.html">Process</a></li>
+          <li><a href="process.html">Equipment</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">New Project</a></li>
+          <li><a href="contact.html">Press Kit</a></li>
+          <li><a href="contact.html">Representation</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 <span>APERTURE NOIR</span>. All rights reserved.</div>
+    <div class="footer-credits">Film Direction · Cinematography · Los Angeles</div>
+  </div>
+</footer>
+
+<!-- ─── GSAP ─── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* ─── SplitText polyfill ─── */
+class SplitText {
+  constructor(el, opts = {}) {
+    this.el = typeof el === 'string' ? document.querySelectorAll(el) : (el.length ? el : [el]);
+    this.chars = []; this.words = [];
+    this.el.forEach(e => {
+      const words = e.textContent.split(' ');
+      e.innerHTML = words.map(w =>
+        `<span class="word" style="display:inline-block;overflow:hidden"><span class="char" style="display:inline-block">${w}</span></span>`
+      ).join(' ');
+      this.words.push(...e.querySelectorAll('.word'));
+      this.chars.push(...e.querySelectorAll('.char'));
+    });
+  }
+}
+
+/* ─── PRELOADER — Film countdown ─── */
+const countdownEl = document.getElementById('countdown-display');
+const preloader = document.getElementById('preloader');
+let count = 3;
+
+function runCountdown() {
+  countdownEl.textContent = count;
+  if (count > 0) {
+    count--;
+    setTimeout(runCountdown, 650);
+  } else {
+    countdownEl.textContent = '▶';
+    setTimeout(hidePreloader, 350);
+  }
+}
+
+function hidePreloader() {
+  preloader.classList.add('hidden');
+  // Show scroll indicator (trigger 1)
+  document.getElementById('scroll-indicator').classList.add('visible');
+  initAnimations();
+}
+
+runCountdown();
+
+// Show scroll indicator (trigger 2 — fallback)
+setTimeout(() => {
+  document.getElementById('scroll-indicator').classList.add('visible');
+}, 4000);
+
+/* ─── Filmstrip decoration ─── */
+const filmstripInner = document.getElementById('filmstrip-inner');
+let filmstripHTML = '';
+for (let i = 0; i < 60; i++) {
+  filmstripHTML += '<div class="filmstrip-hole"></div>';
+}
+filmstripHTML += filmstripHTML; // duplicate for seamless loop
+filmstripInner.innerHTML = filmstripHTML;
+
+/* ─── Navbar scroll ─── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ─── Hide scroll indicator on first scroll ─── */
+let scrollHidden = false;
+window.addEventListener('scroll', () => {
+  if (!scrollHidden && window.scrollY > 200) {
+    document.getElementById('scroll-indicator').style.opacity = '0';
+    scrollHidden = true;
+  }
+}, { passive: true });
+
+/* ─── GSAP Animations ─── */
+function initAnimations() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ── Hero Type G: Title animation on load ── */
+  const line1 = document.querySelector('.title-line.line-1');
+  const line2 = document.querySelector('.title-line.line-2');
+
+  // Initial reveal animation (load)
+  gsap.from(line1, {
+    immediateRender: false,
+    x: -60,
+    duration: 1.1,
+    ease: 'power3.out',
+    delay: 0.1
+  });
+  gsap.from(line2, {
+    immediateRender: false,
+    x: 60,
+    duration: 1.1,
+    ease: 'power3.out',
+    delay: 0.2
+  });
+  gsap.from('.hero-eyebrow', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    ease: 'power3.out',
+    delay: 0.3
+  });
+  gsap.from('.hero-tagline', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    ease: 'power3.out',
+    delay: 0.45
+  });
+  gsap.from('.hero-meta', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    ease: 'power3.out',
+    delay: 0.6
+  });
+
+  /* ── Hero Type G: Scroll-driven text transform ── */
+  gsap.to(line1, {
+    immediateRender: false,
+    x: '-28vw',
+    scale: 0.35,
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: '60% top',
+      scrub: 1.2
+    }
+  });
+  gsap.to(line2, {
+    immediateRender: false,
+    x: '28vw',
+    scale: 0.35,
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: '60% top',
+      scrub: 1.2
+    }
+  });
+  gsap.to('.hero-tagline', {
+    immediateRender: false,
+    y: 40,
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: '40% top',
+      scrub: 1
+    }
+  });
+  gsap.to('.hero-meta', {
+    immediateRender: false,
+    y: 60,
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: '50% top',
+      scrub: 1
+    }
+  });
+
+  /* ── Films section ── */
+  gsap.from('.films-header', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.films-section', start: 'top 80%', once: true }
+  });
+  gsap.from('.film-card', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    stagger: 0.04,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.films-grid', start: 'top 80%', once: true }
+  });
+
+  /* ── Statement ── */
+  gsap.from('.statement-quote', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.statement-section', start: 'top 75%', once: true }
+  });
+  gsap.from('.philosophy-item', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    stagger: 0.04,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.statement-philosophy', start: 'top 80%', once: true }
+  });
+
+  /* ── Filmography ── */
+  gsap.from('.filmography-header', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.filmography-section', start: 'top 80%', once: true }
+  });
+  gsap.from('.filmography-table tr', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    stagger: 0.04,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.filmography-table', start: 'top 80%', once: true }
+  });
+
+  /* ── Awards ── */
+  gsap.from('.award-card', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    stagger: 0.04,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.awards-grid', start: 'top 80%', once: true }
+  });
+
+  /* ── Collaborators ── */
+  gsap.from('.collab-item', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    stagger: 0.04,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.collab-list', start: 'top 80%', once: true }
+  });
+
+  /* ── Behind the Frame ── */
+  gsap.from('.behind-card', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    stagger: 0.04,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.behind-grid', start: 'top 80%', once: true }
+  });
+
+  /* ── CTA ── */
+  gsap.from('.cta-inner', {
+    immediateRender: false,
+    x: -20,
+    duration: 0.75,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.cta-section', start: 'top 75%', once: true }
+  });
+}
+
+/* ─── Filmography filter ─── */
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', function () {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    const filter = this.dataset.filter;
+    document.querySelectorAll('#filmography-tbody tr').forEach(row => {
+      row.style.display = (filter === 'all' || row.dataset.type === filter) ? '' : 'none';
+    });
+  });
+});
+</script>
+</body>
+</html>

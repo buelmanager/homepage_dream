@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Process — ELARA LENS</title>
+  <meta name="description" content="The creative process of ELARA LENS — from concept to final image. Equipment, technology, and collaboration philosophy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1A0A0E; --surface: #241016; --surface2: #2C1420;
+      --accent: #C96A8A; --accent-light: #E090A8; --accent-dark: #8A3A5C;
+      --ivory: #F0DCE4; --smoke: #A08088; --muted: #604A52; --border: #200C12;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Lato', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 4rem;
+      background: rgba(26, 10, 14, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.3rem; letter-spacing: 0.2em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; list-style: none; gap: 2.5rem; align-items: center; }
+    .nav-links a { font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--smoke); text-decoration: none; transition: color 0.3s ease; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-links a.active { color: var(--accent); }
+    .nav-cta { color: var(--bg) !important; background: var(--accent); padding: 0.65rem 1.5rem; transition: background 0.3s ease !important; }
+    .nav-cta:hover { background: var(--accent-light) !important; }
+    .container { max-width: 1320px; margin: 0 auto; padding: 0 4rem; }
+
+    .banner-hero { height: 60vh; min-height: 480px; position: relative; overflow: hidden; }
+    .banner-hero img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; filter: brightness(0.4) saturate(0.6); }
+    .banner-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-top: 5rem; }
+    .banner-eyebrow { font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .banner-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; color: var(--ivory); }
+    .banner-line { width: 60px; height: 1px; background: var(--accent); margin: 2rem auto 0; }
+
+    .section-eyebrow { font-family: var(--font-sans); font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: var(--ivory); line-height: 1.15; margin-bottom: 1rem; }
+    .section-subtitle { font-family: var(--font-sans); font-size: 0.95rem; color: var(--smoke); line-height: 1.8; max-width: 540px; }
+
+    /* STEPS */
+    .steps-section { padding: 8rem 0; background: var(--bg); }
+    .steps-list { margin-top: 5rem; }
+    .step-item {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .step-item:last-child { border-bottom: none; }
+    .step-num {
+      font-family: var(--font-serif); font-size: 5rem; font-weight: 700;
+      color: var(--border); line-height: 1; min-width: 80px;
+      transition: color 0.4s ease;
+    }
+    .step-item:hover .step-num { color: var(--accent-dark); }
+    .step-text {}
+    .step-name { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); margin-bottom: 1rem; }
+    .step-desc { font-family: var(--font-sans); font-size: 0.9rem; color: var(--smoke); line-height: 1.8; }
+    .step-detail {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+    .step-detail-title { font-family: var(--font-sans); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .step-detail-list { list-style: none; }
+    .step-detail-list li {
+      font-family: var(--font-sans); font-size: 0.85rem; color: var(--smoke);
+      padding: 0.4rem 0; border-bottom: 1px solid var(--border);
+      padding-left: 1rem; position: relative;
+    }
+    .step-detail-list li:last-child { border-bottom: none; }
+    .step-detail-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent-dark); }
+
+    /* EQUIPMENT */
+    .equipment { padding: 8rem 0; background: var(--surface); }
+    .equipment-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+    .equip-card {
+      background: var(--bg); border: 1px solid var(--border); padding: 2.5rem;
+      transition: border-color 0.3s ease;
+    }
+    .equip-card:hover { border-color: var(--accent); }
+    .equip-category { font-family: var(--font-sans); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .equip-name { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 1rem; }
+    .equip-list { list-style: none; }
+    .equip-list li { font-family: var(--font-sans); font-size: 0.85rem; color: var(--smoke); padding: 0.35rem 0; border-bottom: 1px solid var(--border); }
+    .equip-list li:last-child { border-bottom: none; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 8rem 0; background: var(--bg); }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      margin-top: 4rem;
+    }
+    .philosophy-img img {
+      width: 100%; aspect-ratio: 4/5; object-fit: cover;
+      filter: brightness(0.8) saturate(0.7);
+    }
+    .philosophy-content {}
+    .philosophy-quote {
+      font-family: var(--font-serif); font-style: italic; font-size: 1.4rem;
+      color: var(--accent-light); line-height: 1.6;
+      border-left: 2px solid var(--accent); padding-left: 2rem; margin-bottom: 2rem;
+    }
+    .philosophy-para { font-family: var(--font-sans); font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 1.2rem; }
+    .values-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;
+    }
+    .value-item {
+      background: var(--surface); border: 1px solid var(--border); padding: 1.5rem;
+      transition: border-color 0.3s ease;
+    }
+    .value-item:hover { border-color: var(--accent); }
+    .value-name { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 0.3rem; }
+    .value-desc { font-family: var(--font-sans); font-size: 0.75rem; color: var(--smoke); line-height: 1.6; }
+
+    /* CTA */
+    .cta-section { padding: 8rem 0; background: var(--surface); text-align: center; }
+    .cta-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--ivory); margin-bottom: 1.5rem; }
+    .cta-sub { font-family: var(--font-serif); font-style: italic; font-size: 1.1rem; color: var(--smoke); margin-bottom: 3rem; }
+    .btn-primary { display: inline-block; font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 1rem 2.5rem; text-decoration: none; transition: background 0.3s ease; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-outline { display: inline-block; font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ivory); border: 1px solid var(--muted); padding: 1rem 2.5rem; text-decoration: none; margin-left: 1rem; transition: border-color 0.3s ease, color 0.3s ease; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 3rem 0; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-family: var(--font-sans); font-size: 0.75rem; color: var(--muted); }
+    .footer-tagline { font-family: var(--font-serif); font-style: italic; font-size: 0.85rem; color: var(--muted); }
+    .footer-nav { display: flex; gap: 2rem; list-style: none; }
+    .footer-nav a { font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.3s ease; }
+    .footer-nav a:hover { color: var(--smoke); }
+
+    @media (max-width: 1024px) {
+      .step-item { grid-template-columns: auto 1fr; }
+      .step-detail { grid-column: span 2; margin-left: calc(80px + 4rem); }
+      .equipment-grid { grid-template-columns: 1fr 1fr; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .container { padding: 0 1.5rem; }
+      .step-item { grid-template-columns: 1fr; gap: 1.5rem; }
+      .step-num { font-size: 3.5rem; }
+      .step-detail { margin-left: 0; }
+      .equipment-grid { grid-template-columns: 1fr; }
+      .values-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">ELARA LENS</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="collection.html">Portfolio</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="process.html" class="active">Process</a></li>
+      <li><a href="contact.html" class="nav-cta">Book a Shoot</a></li>
+    </ul>
+  </nav>
+
+  <div class="banner-hero" style="padding-top:5rem;">
+    <img src="images/workspace-1.webp" alt="Process — Elara Lens" loading="lazy">
+    <div class="banner-content">
+      <div class="banner-eyebrow">Behind the Image</div>
+      <h1 class="banner-title">The Process</h1>
+      <div class="banner-line"></div>
+    </div>
+  </div>
+
+  <!-- 5-STEP PROCESS -->
+  <section class="steps-section">
+    <div class="container">
+      <div class="section-eyebrow">How It Works</div>
+      <h2 class="section-title">From Concept to<br>Iconic Image</h2>
+      <p class="section-subtitle">Every great image is the result of meticulous preparation, creative courage, and flawless execution. Here is how we build something unforgettable together.</p>
+      <div class="steps-list" id="stepsList">
+        <div class="step-item">
+          <div class="step-num">01</div>
+          <div class="step-text">
+            <div class="step-name">Concept & Vision</div>
+            <div class="step-desc">The first step is the most important: understanding your vision. We meet — in person or virtually — to explore your brand identity, the story you want to tell, the emotion you want to evoke, and the world you want to create. I come to every brief with a mood board, reference images, and initial ideas ready to share.</div>
+          </div>
+          <div class="step-detail">
+            <div class="step-detail-title">This Stage Includes</div>
+            <ul class="step-detail-list">
+              <li>Brand and creative brief review</li>
+              <li>Concept mood board development</li>
+              <li>Visual reference library</li>
+              <li>Colour palette and tone alignment</li>
+              <li>Initial budget and timeline scoping</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">02</div>
+          <div class="step-text">
+            <div class="step-name">Casting & Styling</div>
+            <div class="step-desc">The right team transforms a shoot from good to extraordinary. I work with an exclusive network of the world's best talent — models, fashion stylists, hair and makeup artists, and set designers — all selected specifically for each project's unique requirements and aesthetic.</div>
+          </div>
+          <div class="step-detail">
+            <div class="step-detail-title">Team Assembly</div>
+            <ul class="step-detail-list">
+              <li>Model casting and agency negotiation</li>
+              <li>Fashion stylist and wardrobe sourcing</li>
+              <li>Hair and makeup artist selection</li>
+              <li>Set designer and prop coordination</li>
+              <li>Production manager appointment</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">03</div>
+          <div class="step-text">
+            <div class="step-name">Location Scouting</div>
+            <div class="step-desc">Location is character. I work with specialist location agencies in London, Paris, Milan, New York, and beyond to find spaces that elevate the creative concept — whether that is a brutalist warehouse in East London, a Haussmann apartment in Paris, or a rooftop overlooking Manhattan.</div>
+          </div>
+          <div class="step-detail">
+            <div class="step-detail-title">Location Services</div>
+            <ul class="step-detail-list">
+              <li>Global location library access</li>
+              <li>In-person recce and scout</li>
+              <li>Permit and licensing coordination</li>
+              <li>Studio hire alternatives</li>
+              <li>Weather and logistics planning</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">04</div>
+          <div class="step-text">
+            <div class="step-name">The Shoot</div>
+            <div class="step-desc">On set, I create an environment where creativity flows freely and every moment is captured with intention. My directing style is bold but collaborative — I know what I want, and I know how to bring the best out of every person in front of my lens. Shoots typically run 8–12 hours with a full production crew.</div>
+          </div>
+          <div class="step-detail">
+            <div class="step-detail-title">On Set</div>
+            <ul class="step-detail-list">
+              <li>Precision lighting design and setup</li>
+              <li>Art direction throughout the day</li>
+              <li>Polaroid and digital proofing</li>
+              <li>Client live review via tethered monitor</li>
+              <li>BTS content capture for social media</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">05</div>
+          <div class="step-text">
+            <div class="step-name">Post-Production</div>
+            <div class="step-desc">The final images are where the magic is completed. My post-production team works with Capture One and Photoshop to produce world-class retouching and colour grading. We deliver a first edit within 5 business days, with final retouched selects within 14 days. Every image is delivered print-ready.</div>
+          </div>
+          <div class="step-detail">
+            <div class="step-detail-title">Delivery</div>
+            <ul class="step-detail-list">
+              <li>Capture One colour grading</li>
+              <li>High-end Photoshop retouching</li>
+              <li>Print-ready TIF and web JPEG delivery</li>
+              <li>Private client gallery (90-day access)</li>
+              <li>Clear licensing and usage rights documentation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EQUIPMENT -->
+  <section class="equipment">
+    <div class="container">
+      <div class="section-eyebrow">Tools of the Trade</div>
+      <h2 class="section-title">Equipment &<br>Technology</h2>
+      <div class="equipment-grid" id="equipGrid">
+        <div class="equip-card">
+          <div class="equip-category">Primary System</div>
+          <div class="equip-name">Phase One IQ4 150MP</div>
+          <ul class="equip-list">
+            <li>Phase One XT Camera Body</li>
+            <li>Schneider Kreuznach Lenses</li>
+            <li>35mm / 80mm / 150mm</li>
+            <li>Capture One Pro 23</li>
+          </ul>
+        </div>
+        <div class="equip-card">
+          <div class="equip-category">Secondary System</div>
+          <div class="equip-name">Sony A9 III + A1</div>
+          <ul class="equip-list">
+            <li>G Master Prime Lens Series</li>
+            <li>24mm / 50mm / 85mm / 135mm</li>
+            <li>Global Shutter (runway)</li>
+            <li>30fps burst for movement</li>
+          </ul>
+        </div>
+        <div class="equip-card">
+          <div class="equip-category">Lighting</div>
+          <div class="equip-name">Broncolor Siros L</div>
+          <ul class="equip-list">
+            <li>Siros L 800Ws (x4)</li>
+            <li>Pulso G 3200J head</li>
+            <li>Octa 150cm and 240cm</li>
+            <li>Scrim and bounce systems</li>
+          </ul>
+        </div>
+        <div class="equip-card">
+          <div class="equip-category">Post-Production</div>
+          <div class="equip-name">Apple Mac Pro Studio</div>
+          <ul class="equip-list">
+            <li>M2 Ultra / 192GB RAM</li>
+            <li>Apple Pro Display XDR (x2)</li>
+            <li>Capture One 23 + Photoshop</li>
+            <li>Colorchecker for calibration</li>
+          </ul>
+        </div>
+        <div class="equip-card">
+          <div class="equip-category">Tethering & Proofing</div>
+          <div class="equip-name">Studio Setup</div>
+          <ul class="equip-list">
+            <li>Tether Tools ProCore system</li>
+            <li>32" on-set client monitor</li>
+            <li>Instax Wide for Polaroid proofing</li>
+            <li>Cintiq 27" for live retouching</li>
+          </ul>
+        </div>
+        <div class="equip-card">
+          <div class="equip-category">Delivery</div>
+          <div class="equip-name">File Standards</div>
+          <ul class="equip-list">
+            <li>16-bit TIFF (print delivery)</li>
+            <li>sRGB JPEG (digital delivery)</li>
+            <li>Private Pixieset gallery</li>
+            <li>Archival NAS backup (5 years)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="container">
+      <div class="philosophy-grid" id="philosophyGrid">
+        <div class="philosophy-img">
+          <img src="images/ambient-6.webp" alt="Collaboration Philosophy — Elara Lens" loading="lazy">
+        </div>
+        <div class="philosophy-content">
+          <div class="section-eyebrow">Collaboration Philosophy</div>
+          <h2 class="section-title">Every Project is<br>a Partnership</h2>
+          <blockquote class="philosophy-quote">
+            "The best images are made when trust exists between photographer and subject. My job is to create that trust instantly."
+          </blockquote>
+          <p class="philosophy-para">I believe great photography begins with listening. Before I pick up a camera, I spend time truly understanding my collaborators — what drives them, what scares them, what they want the world to see when they look at the image.</p>
+          <p class="philosophy-para">My studio operates as a safe, creative space. I work with a small, permanent core team who are extensions of my creative vision — not hired day players. This continuity produces better work and a better experience for everyone involved.</p>
+          <div class="values-grid">
+            <div class="value-item">
+              <div class="value-name">Transparency</div>
+              <div class="value-desc">Clear communication at every stage — no surprises on brief, budget, or delivery.</div>
+            </div>
+            <div class="value-item">
+              <div class="value-name">Integrity</div>
+              <div class="value-desc">I only take projects I believe in and can do justice to.</div>
+            </div>
+            <div class="value-item">
+              <div class="value-name">Precision</div>
+              <div class="value-desc">Every frame, every light placement, every post-production decision is intentional.</div>
+            </div>
+            <div class="value-item">
+              <div class="value-name">Boldness</div>
+              <div class="value-desc">I push creative boundaries — that is where the iconic images live.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="section-eyebrow">Start the Process</div>
+      <h2 class="cta-title">Let's Build Something<br><em>Together</em></h2>
+      <p class="cta-sub">Reach out to discuss your project and I'll respond within 48 hours.</p>
+      <a href="contact.html" class="btn-primary">Begin Enquiry</a>
+      <a href="collection.html" class="btn-outline">View Portfolio</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2026 Elara Lens. All rights reserved.</div>
+        <ul class="footer-nav">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="collection.html">Portfolio</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="footer-tagline">Bold. Fearless. Iconic.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('.banner-content > *', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.2, stagger: 0.15, ease: 'power2.inOut', delay: 0.3
+    });
+
+    gsap.from('#stepsList .step-item', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.2, stagger: 0.2, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '#stepsList', start: 'top 85%' }
+    });
+
+    gsap.from('#equipGrid .equip-card', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.1, stagger: 0.12, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '#equipGrid', start: 'top 85%' }
+    });
+
+    gsap.from('#philosophyGrid > *', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.3, stagger: 0.2, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '#philosophyGrid', start: 'top 85%' }
+    });
+
+    gsap.from('.value-item', {
+      immediateRender: false, opacity: 0, y: 30, duration: 1.0, stagger: 0.12, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '.values-grid', start: 'top 85%' }
+    });
+
+    document.querySelectorAll('.section-title, .cta-title').forEach(el => {
+      gsap.from(el, {
+        immediateRender: false, opacity: 0, y: 40, duration: 1.3, ease: 'power2.inOut',
+        scrollTrigger: { trigger: el, start: 'top 85%' }
+      });
+    });
+  </script>
+</body>
+</html>

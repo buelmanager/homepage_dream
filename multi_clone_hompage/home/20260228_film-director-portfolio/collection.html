@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filmography — APERTURE NOIR</title>
+<meta name="description" content="Complete filmography of APERTURE NOIR. Feature films, short films, documentaries, and commercial work by director Marcus V. Reyes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #101420;
+    --surface: #181E2A;
+    --surface2: #1E2438;
+    --accent: #4EE8FF;
+    --accent-light: #8AF3FF;
+    --accent-dark: #22B8CC;
+    --ivory: #DCE8F0;
+    --smoke: #8090A0;
+    --muted: #506070;
+    --border: #1A2234;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+
+  /* NAVBAR */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    padding: 0 60px; height: 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(16,20,32,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ivory); }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+  .nav-links a { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); transition: color 0.25s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+  .nav-cta { display: inline-flex; align-items: center; padding: 9px 22px; border: 1px solid var(--accent); color: var(--accent); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.3s; }
+  .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 160px 80px 80px;
+    background: var(--bg);
+    position: relative; overflow: hidden;
+  }
+  .page-header-bg {
+    position: absolute; inset: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(8rem, 18vw, 20rem);
+    font-weight: 300;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(78,232,255,0.04);
+    display: flex; align-items: center;
+    padding-left: 60px;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.04em;
+  }
+  .page-header-inner { position: relative; z-index: 2; }
+  .page-tag { font-size: 0.62rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); font-weight: 400; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+  .page-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
+  .page-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 5rem); font-weight: 300; color: var(--ivory); letter-spacing: -0.02em; line-height: 1.0; margin-bottom: 20px; }
+  .page-subtitle { font-size: 0.95rem; color: var(--smoke); max-width: 480px; line-height: 1.8; }
+
+  /* FILTER */
+  .filter-bar {
+    padding: 0 80px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto;
+    position: sticky; top: 72px; z-index: 100;
+  }
+  .filter-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 20px 28px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--smoke);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+    font-weight: 400;
+  }
+  .filter-btn:hover { color: var(--ivory); }
+  .filter-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .filter-count { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--border); font-size: 0.6rem; color: var(--muted); }
+  .filter-btn.active .filter-count { background: rgba(78,232,255,0.15); color: var(--accent); }
+
+  /* FEATURED FILM */
+  .featured-film {
+    position: relative;
+    height: 60vh;
+    overflow: hidden;
+    display: none;
+  }
+  .featured-film.visible { display: block; }
+  .featured-film img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.45);
+    transition: transform 0.8s ease;
+  }
+  .featured-film:hover img { transform: scale(1.03); }
+  .featured-film-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(16,20,32,0.95) 0%, transparent 50%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 60px 80px;
+  }
+  .featured-label { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .featured-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; color: var(--ivory); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 16px; }
+  .featured-meta { display: flex; gap: 24px; font-size: 0.75rem; color: var(--smoke); }
+  .featured-meta span + span::before { content: '·'; margin-right: 24px; color: var(--muted); }
+
+  /* FILM GRID */
+  .film-grid-section { padding: 60px 80px 100px; }
+  .film-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .film-poster {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    cursor: pointer;
+  }
+  .film-poster-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.55);
+    transition: transform 0.7s ease, filter 0.7s ease;
+  }
+  .film-poster:hover .film-poster-img { transform: scale(1.05); filter: brightness(0.35); }
+  .film-poster-info {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 28px;
+    background: linear-gradient(to top, rgba(16,20,32,0.92) 0%, transparent 55%);
+    transition: background 0.4s;
+  }
+  .film-poster:hover .film-poster-info { background: linear-gradient(to top, rgba(16,20,32,0.97) 0%, rgba(16,20,32,0.3) 60%); }
+  .film-poster-type { font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .film-poster-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 300; color: var(--ivory); line-height: 1.2; margin-bottom: 8px; }
+  .film-poster-year { font-size: 0.72rem; color: var(--smoke); margin-bottom: 12px; }
+  .film-poster-hover {
+    font-size: 0.78rem;
+    color: var(--smoke);
+    line-height: 1.6;
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .film-poster:hover .film-poster-hover { max-height: 120px; }
+  .film-poster-award { display: flex; align-items: center; gap: 6px; font-size: 0.65rem; color: var(--accent-dark); margin-top: 10px; }
+  .film-poster-award::before { content: '◆'; font-size: 0.45rem; }
+
+  /* SECTION */
+  .section-pad { padding: 100px 80px; }
+  .divider { width: 100%; height: 1px; background: var(--border); }
+  .section-tag { font-size: 0.62rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); font-weight: 400; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+  .section-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
+  .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; color: var(--ivory); letter-spacing: -0.01em; line-height: 1.1; margin-bottom: 20px; }
+
+  /* COMMERCIAL */
+  .commercial-section { background: var(--surface); }
+  .commercial-list { margin-top: 60px; }
+  .commercial-item { display: grid; grid-template-columns: 1fr 120px 160px; gap: 40px; align-items: center; padding: 24px 0; border-bottom: 1px solid var(--border); }
+  .commercial-name { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 300; color: var(--ivory); }
+  .commercial-client { font-size: 0.78rem; color: var(--smoke); margin-top: 4px; }
+  .commercial-year { font-size: 0.78rem; color: var(--muted); }
+  .commercial-role { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-align: right; }
+
+  /* FOOTER */
+  footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 80px 40px; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 16px; }
+  .footer-copy { font-size: 0.72rem; color: var(--muted); }
+  .footer-copy span { color: var(--accent); }
+  .footer-nav-row { display: flex; gap: 32px; }
+  .footer-nav-row a { font-size: 0.72rem; color: var(--muted); transition: color 0.25s; }
+  .footer-nav-row a:hover { color: var(--accent); }
+
+  .btn-primary { display: inline-flex; align-items: center; gap: 12px; padding: 16px 40px; background: var(--accent); color: var(--bg); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; transition: all 0.3s; }
+  .btn-primary:hover { background: var(--accent-light); }
+
+  @media (max-width: 1024px) {
+    .page-header { padding: 140px 40px 60px; }
+    .filter-bar { padding: 0 40px; }
+    .film-grid-section { padding: 40px 40px 80px; }
+    .film-grid { grid-template-columns: repeat(2, 1fr); }
+    .section-pad { padding: 80px 40px; }
+    #navbar { padding: 0 40px; }
+    footer { padding: 48px 40px 32px; }
+  }
+  @media (max-width: 640px) {
+    .film-grid { grid-template-columns: 1fr; }
+    .commercial-item { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Aperture<span>.</span>Noir</a>
+  <ul class="nav-links">
+    <li><a href="collection.html" class="active">Filmography</a></li>
+    <li><a href="about.html">Director</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html" class="nav-cta">New Project</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-bg" aria-hidden="true">FILMS</div>
+  <div class="page-header-inner">
+    <div class="page-tag">Complete Works</div>
+    <h1 class="page-title">Filmography</h1>
+    <p class="page-subtitle">Forty-seven films across feature, short, documentary, and commercial formats. Each a different question asked of the same darkness.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All <span class="filter-count">47</span></button>
+  <button class="filter-btn" data-filter="feature">Feature <span class="filter-count">12</span></button>
+  <button class="filter-btn" data-filter="short">Short <span class="filter-count">18</span></button>
+  <button class="filter-btn" data-filter="documentary">Documentary <span class="filter-count">9</span></button>
+  <button class="filter-btn" data-filter="commercial">Commercial <span class="filter-count">8</span></button>
+</div>
+
+<!-- FEATURED -->
+<div class="featured-film visible" id="featured-into-silence">
+  <img src="images/film-2.webp" alt="Into the Silence">
+  <div class="featured-film-overlay">
+    <div class="featured-label">Latest Feature</div>
+    <h2 class="featured-title">Into the Silence</h2>
+    <div class="featured-meta">
+      <span>2024</span>
+      <span>Feature Film</span>
+      <span>Director / Cinematographer</span>
+      <span>Cannes Official Selection 2024</span>
+    </div>
+  </div>
+</div>
+
+<!-- FILM GRID -->
+<div class="film-grid-section">
+  <div class="film-grid" id="film-grid">
+
+    <!-- FEATURES -->
+    <div class="film-poster" data-type="feature">
+      <img src="images/film-2.webp" alt="Into the Silence" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Feature</div>
+        <div class="film-poster-title">Into the Silence</div>
+        <div class="film-poster-year">2024 · 118 min · 35mm</div>
+        <div class="film-poster-hover">A reclusive composer confronts the source of her silence during a residency in the Faroe Islands. Shot entirely on Kodak Vision3. Premiered in Competition at Cannes 2024.</div>
+        <div class="film-poster-award">Cannes Official Selection</div>
+      </div>
+    </div>
+
+    <div class="film-poster" data-type="feature">
+      <img src="images/cinema-2.webp" alt="Lantern Coast" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Feature</div>
+        <div class="film-poster-title">Lantern Coast</div>
+        <div class="film-poster-year">2022 · 104 min</div>
+        <div class="film-poster-hover">A Portuguese fishing family navigates inheritance and memory across three generations. Nominated for the BAFTA Outstanding British Film award.</div>
+        <div class="film-poster-award">BAFTA Nominee</div>
+      </div>
+    </div>
+
+    <div class="film-poster" data-type="feature">
+      <img src="images/film-1.webp" alt="Hollow Mountain" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Feature</div>
+        <div class="film-poster-title">Hollow Mountain</div>
+        <div class="film-poster-year">2018 · 126 min · 35mm</div>
+        <div class="film-poster-hover">Debut feature. A mining geologist discovers a geological anomaly that mirrors the breakdown of his marriage. Contains the celebrated seventeen-minute unbroken take.</div>
+        <div class="film-poster-award">AFI Fest Grand Jury Prize</div>
+      </div>
+    </div>
+
+    <!-- SHORTS -->
+    <div class="film-poster" data-type="short">
+      <img src="images/shoot-1.webp" alt="Meridian" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Short Film</div>
+        <div class="film-poster-title">Meridian</div>
+        <div class="film-poster-year">2023 · 24 min</div>
+        <div class="film-poster-hover">A night security guard at a natural history museum develops a relationship with the museum's lone overnight janitor. Premiered at Sundance 2023 Spotlight section.</div>
+        <div class="film-poster-award">Sundance Spotlight</div>
+      </div>
+    </div>
+
+    <div class="film-poster" data-type="short">
+      <img src="images/abstract-1.webp" alt="Ferrous" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Short Film</div>
+        <div class="film-poster-title">Ferrous</div>
+        <div class="film-poster-year">2021 · 18 min · 16mm</div>
+        <div class="film-poster-hover">A blacksmith in rural Wales attempts to forge a replica of a sword his grandfather made before the war. Shot on 16mm with available firelight as primary source.</div>
+        <div class="film-poster-award">Tribeca Jury Mention</div>
+      </div>
+    </div>
+
+    <div class="film-poster" data-type="short">
+      <img src="images/reel-2.webp" alt="Glass Meridian" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Short Film</div>
+        <div class="film-poster-title">Glass Meridian</div>
+        <div class="film-poster-year">2018 · 31 min</div>
+        <div class="film-poster-hover">A glassblower teaches her estranged daughter the trade during a single overnight session. Winner of SXSW Audience Award for narrative short.</div>
+        <div class="film-poster-award">SXSW Audience Award</div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTARIES -->
+    <div class="film-poster" data-type="documentary">
+      <img src="images/festival-1.webp" alt="The Weight of Salt" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Documentary</div>
+        <div class="film-poster-title">The Weight of Salt</div>
+        <div class="film-poster-year">2022 · 88 min</div>
+        <div class="film-poster-hover">Three years following salt flat workers in the Atacama Desert who maintain one of the last hand-harvested salt operations in South America. Venice Horizons Award winner.</div>
+        <div class="film-poster-award">Venice Horizons Award</div>
+      </div>
+    </div>
+
+    <div class="film-poster" data-type="documentary">
+      <img src="images/production-1.webp" alt="Carbon Dreamers" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Documentary</div>
+        <div class="film-poster-title">Carbon Dreamers</div>
+        <div class="film-poster-year">2020 · 76 min</div>
+        <div class="film-poster-hover">Portrait of four engineers attempting to build a carbon capture machine from salvaged industrial parts. Grand Jury Prize winner at Hot Docs 2020.</div>
+        <div class="film-poster-award">Hot Docs Grand Jury Prize</div>
+      </div>
+    </div>
+
+    <!-- COMMERCIAL -->
+    <div class="film-poster" data-type="commercial">
+      <img src="images/set-2.webp" alt="Obsidian Hours" class="film-poster-img">
+      <div class="film-poster-info">
+        <div class="film-poster-type">Commercial</div>
+        <div class="film-poster-title">Obsidian Hours</div>
+        <div class="film-poster-year">2023 · Maison Celeste</div>
+        <div class="film-poster-hover">Fragrance campaign for Maison Celeste. Six individual short films exploring different facets of nocturnal luxury. Shot on ARRI Alexa 35 with vintage Cooke anamorphics.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COMMERCIAL LIST -->
+<section class="commercial-section section-pad" id="commercial">
+  <div class="section-tag">Brand Work</div>
+  <h2 class="section-title">Commercial Projects</h2>
+  <div class="commercial-list">
+    <div class="commercial-item">
+      <div>
+        <div class="commercial-name">Obsidian Hours Campaign</div>
+        <div class="commercial-client">Maison Celeste — Fragrance</div>
+      </div>
+      <div class="commercial-year">2023</div>
+      <div class="commercial-role">Director / DP</div>
+    </div>
+    <div class="commercial-item">
+      <div>
+        <div class="commercial-name">Noir Collective — Brand Identity Film</div>
+        <div class="commercial-client">Noir Collective — Fashion</div>
+      </div>
+      <div class="commercial-year">2022</div>
+      <div class="commercial-role">Director</div>
+    </div>
+    <div class="commercial-item">
+      <div>
+        <div class="commercial-name">The Silence Between Notes</div>
+        <div class="commercial-client">Zenith Watches — Timepieces</div>
+      </div>
+      <div class="commercial-year">2022</div>
+      <div class="commercial-role">Cinematographer</div>
+    </div>
+    <div class="commercial-item">
+      <div>
+        <div class="commercial-name">Lacuna — Automotive Launch</div>
+        <div class="commercial-client">Velaro Motors</div>
+      </div>
+      <div class="commercial-year">2021</div>
+      <div class="commercial-role">Director / DP</div>
+    </div>
+    <div class="commercial-item">
+      <div>
+        <div class="commercial-name">Midnight Architecture</div>
+        <div class="commercial-client">Loewe — Leather Goods</div>
+      </div>
+      <div class="commercial-year">2020</div>
+      <div class="commercial-role">Cinematographer</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<div style="padding: 80px; text-align: center; background: var(--bg);">
+  <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--ivory);margin-bottom:24px;letter-spacing:-0.01em;">Commission a New Work</h2>
+  <p style="color:var(--smoke);font-size:0.95rem;max-width:520px;margin:0 auto 40px;line-height:1.8;">Currently booking feature and commercial projects for 2026. Available for consultation in Los Angeles and internationally.</p>
+  <a href="contact.html" class="btn-primary">Enquire Now</a>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 <span>APERTURE NOIR</span>. All rights reserved.</div>
+    <nav class="footer-nav-row">
+      <a href="index.html">Home</a>
+      <a href="about.html">Director</a>
+      <a href="process.html">Process</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Page load animation
+gsap.from('.page-header-inner > *', {
+  immediateRender: false,
+  x: -20,
+  duration: 0.75,
+  stagger: 0.04,
+  ease: 'power3.out',
+  delay: 0.1
+});
+
+gsap.from('.film-poster', {
+  immediateRender: false,
+  x: -20,
+  duration: 0.75,
+  stagger: 0.04,
+  ease: 'power3.out',
+  scrollTrigger: { trigger: '#film-grid', start: 'top 80%', once: true }
+});
+
+gsap.from('.commercial-item', {
+  immediateRender: false,
+  x: -20,
+  duration: 0.75,
+  stagger: 0.04,
+  ease: 'power3.out',
+  scrollTrigger: { trigger: '.commercial-list', start: 'top 80%', once: true }
+});
+
+// Filter functionality
+const filterBtns = document.querySelectorAll('.filter-btn');
+const filmPosters = document.querySelectorAll('.film-poster');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', function () {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const filter = this.dataset.filter;
+
+    filmPosters.forEach(poster => {
+      if (filter === 'all' || poster.dataset.type === filter) {
+        poster.style.display = '';
+      } else {
+        poster.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>

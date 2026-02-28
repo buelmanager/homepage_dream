@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Process — RESONANCE Sound Design</title>
+  <meta name="description" content="The composition process: from creative brief to final master. Studio walkthrough and software used." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0A1818;
+      --surface: #0F2020;
+      --surface2: #142828;
+      --accent: #4DCFB0;
+      --accent-light: #7ADFC8;
+      --accent-dark: #2A9A80;
+      --ivory: #DCEFEC;
+      --smoke: #809890;
+      --muted: #4A6860;
+      --border: #0C1E1E;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 1.25rem 3rem;
+      background: rgba(10,24,24,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.25rem; letter-spacing: 0.15em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.6rem 1.6rem; border: 1px solid var(--accent); color: var(--accent); transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    .banner {
+      padding: 14rem 3rem 8rem;
+      background: var(--surface); position: relative; overflow: hidden;
+    }
+    .banner-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 40%, rgba(77,207,176,0.05) 0%, transparent 65%); }
+    .banner-content { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .banner-label { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .banner-title { font-family: var(--font-serif); font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.95; color: var(--ivory); }
+    .banner-title em { color: transparent; -webkit-text-stroke: 1px var(--accent); font-style: italic; }
+
+    /* PROCESS PHASES */
+    .phases { padding: 8rem 3rem; background: var(--bg); }
+    .phases-inner { max-width: 1200px; margin: 0 auto; }
+    .phases-header { margin-bottom: 6rem; }
+    .section-label { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); color: var(--ivory); line-height: 1.1; }
+
+    .phase-item {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 4rem;
+      padding: 4rem 0;
+      border-top: 1px solid var(--border);
+      align-items: start;
+    }
+    .phase-item:last-child { border-bottom: 1px solid var(--border); }
+    .phase-num {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      color: var(--muted);
+      line-height: 1;
+    }
+    .phase-left { }
+    .phase-title { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 0.5rem; }
+    .phase-tag { display: inline-block; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.25rem 0.75rem; border: 1px solid var(--accent); color: var(--accent); margin-top: 0.5rem; }
+    .phase-duration { font-size: 0.8rem; color: var(--smoke); margin-top: 1rem; }
+    .phase-right { font-size: 0.9rem; color: var(--smoke); line-height: 1.85; }
+    .phase-right p + p { margin-top: 1rem; }
+    .phase-tools { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+    .phase-tool { font-size: 0.7rem; letter-spacing: 0.1em; padding: 0.25rem 0.65rem; border: 1px solid var(--border); color: var(--smoke); }
+
+    /* STUDIO WALKTHROUGH */
+    .studio-walk { padding: 8rem 3rem; background: var(--surface); }
+    .studio-walk-inner { max-width: 1200px; margin: 0 auto; }
+    .studio-walk-header { margin-bottom: 5rem; }
+    .studio-walk-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+    }
+    .studio-walk-item { position: relative; overflow: hidden; }
+    .studio-walk-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+    .studio-walk-label {
+      position: absolute; bottom: 1.5rem; left: 1.5rem;
+      background: rgba(10,24,24,0.85);
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* SOFTWARE & INSTRUMENTS */
+    .tech { padding: 8rem 3rem; background: var(--bg); }
+    .tech-inner { max-width: 1200px; margin: 0 auto; }
+    .tech-header { margin-bottom: 5rem; }
+    .tech-categories { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem; }
+    .tech-cat-title { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .tech-list { list-style: none; }
+    .tech-list li { font-size: 0.9rem; color: var(--smoke); padding: 0.6rem 0; border-bottom: 1px solid rgba(12,30,30,0.5); display: flex; align-items: center; gap: 0.75rem; }
+    .tech-list li::before { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    /* TESTIMONIAL */
+    .testimonial-sec { padding: 8rem 3rem; background: var(--surface2); text-align: center; }
+    .testimonial-inner { max-width: 800px; margin: 0 auto; }
+    .testimonial-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.5;
+      margin-bottom: 2rem;
+    }
+    .testimonial-attr { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); }
+    .testimonial-attr strong { color: var(--accent); font-weight: 400; }
+
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 3rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .footer-logo { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.15em; color: var(--muted); }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); transition: color 0.3s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+
+    @media (max-width: 900px) {
+      .nav { padding: 1rem 1.5rem; } .nav-links { display: none; }
+      .banner { padding: 10rem 1.5rem 5rem; }
+      .phases { padding: 5rem 1.5rem; }
+      .phase-item { grid-template-columns: 50px 1fr; gap: 2rem; }
+      .phase-right { grid-column: 1 / -1; }
+      .studio-walk { padding: 5rem 1.5rem; }
+      .studio-walk-grid { grid-template-columns: 1fr; }
+      .tech { padding: 5rem 1.5rem; }
+      .tech-categories { grid-template-columns: 1fr; gap: 3rem; }
+      .testimonial-sec { padding: 5rem 1.5rem; }
+      .footer-inner { flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">RESO<span>NANCE</span></a>
+    <ul class="nav-links">
+      <li><a href="collection.html">Works</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="process.html" class="active">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Collaborate</a>
+  </nav>
+
+  <section class="banner">
+    <div class="banner-bg"></div>
+    <div class="banner-content">
+      <p class="banner-label">How I Work</p>
+      <h1 class="banner-title">
+        The Creative<br>
+        <em>Process</em>
+      </h1>
+    </div>
+  </section>
+
+  <section class="phases">
+    <div class="phases-inner">
+      <div class="phases-header">
+        <p class="section-label">Five Phases</p>
+        <h2 class="section-title">From Brief to<br>Final Master</h2>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">01</div>
+        <div class="phase-left">
+          <div class="phase-title">Brief</div>
+          <span class="phase-tag">Discovery</span>
+          <div class="phase-duration">Week 1</div>
+        </div>
+        <div class="phase-right">
+          <p>Every project begins with listening — not to music, but to the story. An in-depth conversation to understand the project's emotional landscape, target audience, cultural references, and the feelings you want to evoke.</p>
+          <p>I review reference materials, study the visual direction, and ask the questions most people forget: What should the music make people feel? What should they do differently after hearing it?</p>
+          <div class="phase-tools">
+            <span class="phase-tool">Discovery Call</span>
+            <span class="phase-tool">Moodboard Review</span>
+            <span class="phase-tool">Reference Analysis</span>
+            <span class="phase-tool">Creative Brief</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">02</div>
+        <div class="phase-left">
+          <div class="phase-title">Concept</div>
+          <span class="phase-tag">Development</span>
+          <div class="phase-duration">Week 1–2</div>
+        </div>
+        <div class="phase-right">
+          <p>A sonic concept is defined: the instrumentation palette, tonal approach, harmonic language, and rhythmic character. Three distinct sonic worlds are proposed, each as a written description and short audio swatch.</p>
+          <p>This phase ensures we're aligned on direction before a single note of the final score is written — saving time and preserving creative energy for what matters.</p>
+          <div class="phase-tools">
+            <span class="phase-tool">Sonic Mood Boards</span>
+            <span class="phase-tool">Audio Swatches</span>
+            <span class="phase-tool">Instrumentation Brief</span>
+            <span class="phase-tool">Direction Approval</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">03</div>
+        <div class="phase-left">
+          <div class="phase-title">Sketch</div>
+          <span class="phase-tag">Composition</span>
+          <div class="phase-duration">Week 2–4</div>
+        </div>
+        <div class="phase-right">
+          <p>Thematic material is developed, cues are spotted and sketched, and key musical moments are shaped to picture (or to narrative beat). A rough mix is shared for feedback after each major cue.</p>
+          <p>The sketching phase is collaborative and iterative — I share work early and often, so no major revision surprises arise at the finish line.</p>
+          <div class="phase-tools">
+            <span class="phase-tool">Logic Pro X</span>
+            <span class="phase-tool">Ableton Live</span>
+            <span class="phase-tool">Spitfire Audio</span>
+            <span class="phase-tool">Native Instruments</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">04</div>
+        <div class="phase-left">
+          <div class="phase-title">Record</div>
+          <span class="phase-tag">Production</span>
+          <div class="phase-duration">Week 3–5</div>
+        </div>
+        <div class="phase-right">
+          <p>Live elements are recorded: solo instruments, ensembles, field recordings, or Foley depending on the project. The studio's Neve console and high-end microphone collection ensure warmth and presence.</p>
+          <p>Remote sessions with musicians worldwide are facilitated through Source Connect Pro. Live performances in Brooklyn can be arranged for local artists and small ensembles.</p>
+          <div class="phase-tools">
+            <span class="phase-tool">Pro Tools HDX</span>
+            <span class="phase-tool">Neve 8078</span>
+            <span class="phase-tool">Neumann U87</span>
+            <span class="phase-tool">Source Connect</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-num">05</div>
+        <div class="phase-left">
+          <div class="phase-title">Master</div>
+          <span class="phase-tag">Delivery</span>
+          <div class="phase-duration">Week 5–6</div>
+        </div>
+        <div class="phase-right">
+          <p>Final mix and mastering for the intended format — theatrical surround, stereo streaming, game engine stems, or broadcast spec. All deliverables are provided in the required formats with metadata and licensing documentation.</p>
+          <p>A detailed stem package is included with all scores, allowing for future re-edits, trailer versions, or regional variations without returning to session.</p>
+          <div class="phase-tools">
+            <span class="phase-tool">Prism ADA-8XR</span>
+            <span class="phase-tool">Dolby Atmos</span>
+            <span class="phase-tool">iZotope Ozone</span>
+            <span class="phase-tool">Stem Delivery</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="studio-walk">
+    <div class="studio-walk-inner">
+      <div class="studio-walk-header">
+        <p class="section-label">The Environment</p>
+        <h2 class="section-title">Studio Walkthrough</h2>
+      </div>
+      <div class="studio-walk-grid">
+        <div class="studio-walk-item">
+          <img class="studio-walk-img" src="images/workspace-2.webp" alt="Main composition room" loading="lazy" />
+          <div class="studio-walk-label">Main Composition Room</div>
+        </div>
+        <div class="studio-walk-item">
+          <img class="studio-walk-img" src="images/workspace-1.webp" alt="Live recording booth" loading="lazy" />
+          <div class="studio-walk-label">Live Recording Booth</div>
+        </div>
+        <div class="studio-walk-item">
+          <img class="studio-walk-img" src="images/ambient-1.webp" alt="Modular synthesis room" loading="lazy" />
+          <div class="studio-walk-label">Modular Synthesis Room</div>
+        </div>
+        <div class="studio-walk-item">
+          <img class="studio-walk-img" src="images/workspace-3.webp" alt="Mastering suite" loading="lazy" />
+          <div class="studio-walk-label">Mastering Suite</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tech">
+    <div class="tech-inner">
+      <div class="tech-header">
+        <p class="section-label">The Toolkit</p>
+        <h2 class="section-title">Software &<br>Instruments</h2>
+      </div>
+      <div class="tech-categories">
+        <div>
+          <div class="tech-cat-title">DAWs & Software</div>
+          <ul class="tech-list">
+            <li>Ableton Live 12 Suite</li>
+            <li>Pro Tools HDX</li>
+            <li>Logic Pro X</li>
+            <li>Wwise (Audiokinetic)</li>
+            <li>FMOD Studio</li>
+            <li>Max/MSP</li>
+            <li>iZotope RX 11</li>
+          </ul>
+        </div>
+        <div>
+          <div class="tech-cat-title">Hardware</div>
+          <ul class="tech-list">
+            <li>Moog Minimoog Model D</li>
+            <li>Roland JD-800</li>
+            <li>Buchla 200e System</li>
+            <li>Neve 8078 Console</li>
+            <li>Genelec 8351B Monitors</li>
+            <li>Prism ADA-8XR</li>
+            <li>Neumann U87 Ai</li>
+          </ul>
+        </div>
+        <div>
+          <div class="tech-cat-title">Sample Libraries</div>
+          <ul class="tech-list">
+            <li>Spitfire BBCSO Pro</li>
+            <li>Spitfire Hans Zimmer Piano</li>
+            <li>Native Instruments Komplete</li>
+            <li>Heavyocity Mosaic</li>
+            <li>8Dio Taiko</li>
+            <li>Soundiron Olympus Choir</li>
+            <li>Embertone Strings</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonial-sec">
+    <div class="testimonial-inner">
+      <p class="testimonial-quote">"The score didn't just accompany our film — it breathed with it. Every silence felt intentional. Every swell felt earned. Working with RESONANCE changed how I think about sound in cinema."</p>
+      <p class="testimonial-attr"><strong>Mira Valdez</strong> — Director, Liminal Spaces</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">RESONANCE</div>
+      <ul class="footer-links">
+        <li><a href="collection.html">Works</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="process.html">Process</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="footer-copy">&copy; 2026 Resonance Studio. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('.banner-label, .banner-title', {
+      immediateRender: false,
+      opacity: 0, y: 14, duration: 1.5, stagger: 0.06, ease: 'power1.out', delay: 0.3
+    });
+
+    gsap.from('.phase-item', {
+      immediateRender: false,
+      opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out',
+      scrollTrigger: { trigger: '.phases-inner', start: 'top 85%' }
+    });
+
+    gsap.from('.studio-walk-item', {
+      immediateRender: false,
+      opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out',
+      scrollTrigger: { trigger: '.studio-walk-grid', start: 'top 85%' }
+    });
+
+    gsap.from('.tech-cat-title, .tech-list li', {
+      immediateRender: false,
+      opacity: 0, y: 14, duration: 1.4, stagger: 0.04, ease: 'power1.out',
+      scrollTrigger: { trigger: '.tech-categories', start: 'top 85%' }
+    });
+
+    gsap.from('.testimonial-quote, .testimonial-attr', {
+      immediateRender: false,
+      opacity: 0, y: 14, duration: 1.5, stagger: 0.06, ease: 'power1.out',
+      scrollTrigger: { trigger: '.testimonial-inner', start: 'top 85%' }
+    });
+  </script>
+</body>
+</html>

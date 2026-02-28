@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RESONANCE — Sound Design & Musical Composition</title>
+  <meta name="description" content="Award-winning sound designer and composer. Film scoring, game audio, album production, and sonic branding." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── CSS VARIABLES ─── */
+    :root {
+      --bg: #0A1818;
+      --surface: #0F2020;
+      --surface2: #142828;
+      --accent: #4DCFB0;
+      --accent-light: #7ADFC8;
+      --accent-dark: #2A9A80;
+      --ivory: #DCEFEC;
+      --smoke: #809890;
+      --muted: #4A6860;
+      --border: #0C1E1E;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── PRELOADER ─── */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 2rem;
+    }
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+    }
+    .preloader-bar {
+      width: 200px; height: 1px;
+      background: var(--muted);
+      position: relative; overflow: hidden;
+    }
+    .preloader-bar-fill {
+      position: absolute; top: 0; left: 0;
+      width: 0; height: 100%;
+      background: var(--accent);
+      transition: width 1.8s var(--ease-out);
+    }
+    .preloader-text {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    /* ─── SCROLL INDICATOR ─── */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 2.5rem; right: 2.5rem;
+      z-index: 100;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    }
+    .scroll-indicator span {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      writing-mode: vertical-lr;
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(0.6); }
+    }
+
+    /* ─── NAVBAR ─── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 1.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+    .nav.scrolled {
+      background: rgba(10, 24, 24, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      letter-spacing: 0.15em;
+      color: var(--ivory);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex; gap: 2.5rem; list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.6rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      transition: all 0.3s ease;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ─── HERO TYPE G ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg-minimal {
+      position: absolute; inset: 0;
+      background: var(--bg);
+    }
+    .hero-bg-overlay {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 60% 50%, rgba(77, 207, 176, 0.04) 0%, transparent 70%);
+    }
+    /* Waveform SVG background */
+    .hero-waveform {
+      position: absolute; inset: 0;
+      display: flex; align-items: center;
+      pointer-events: none;
+    }
+    .hero-waveform svg {
+      width: 100%; height: 100%;
+      opacity: 0.06;
+    }
+    .hero-content {
+      position: relative; z-index: 10;
+      text-align: center;
+      padding: 0 2rem;
+    }
+    .hero-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(8rem, 18vw, 22rem);
+      line-height: 0.85;
+      color: var(--ivory);
+      display: flex; flex-direction: column;
+      letter-spacing: -0.02em;
+    }
+    .title-line {
+      display: block;
+      overflow: hidden;
+    }
+    .title-line.line-2 {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--accent);
+    }
+    .hero-tagline {
+      font-size: clamp(0.9rem, 2vw, 1.25rem);
+      color: var(--smoke);
+      letter-spacing: 0.08em;
+      margin-top: 2.5rem;
+      font-weight: 300;
+      font-style: italic;
+    }
+    .hero-ctas {
+      display: flex; gap: 1.5rem; justify-content: center;
+      margin-top: 3rem;
+    }
+    .btn-primary {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: all 0.35s ease;
+    }
+    .btn-primary:hover {
+      background: var(--accent-light);
+    }
+    .btn-outline {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      border: 1px solid var(--smoke);
+      color: var(--smoke);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: all 0.35s ease;
+    }
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .hero-scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+      z-index: 10;
+    }
+    .hero-scroll-indicator span {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .hero-scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+
+    /* ─── SECTION BASE ─── */
+    section { padding: 8rem 3rem; }
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1.1;
+      color: var(--ivory);
+    }
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--smoke);
+      max-width: 55ch;
+      line-height: 1.75;
+      margin-top: 1.25rem;
+    }
+    .divider {
+      width: 100%; height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── PORTFOLIO SECTION ─── */
+    .portfolio { background: var(--bg); }
+    .portfolio-header {
+      max-width: 1200px; margin: 0 auto 5rem;
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .portfolio-grid {
+      max-width: 1200px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+    .portfolio-item {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .portfolio-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s var(--ease-out);
+    }
+    .portfolio-item:hover img { transform: scale(1.06); }
+    .portfolio-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,24,24,0.9) 0%, transparent 55%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1.75rem;
+      transition: background 0.4s ease;
+    }
+    .portfolio-item:hover .portfolio-overlay {
+      background: linear-gradient(to top, rgba(10,24,24,0.95) 0%, rgba(10,24,24,0.3) 55%);
+    }
+    .portfolio-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+    .portfolio-name {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      color: var(--ivory);
+      line-height: 1.2;
+    }
+    .portfolio-meta {
+      font-size: 0.75rem;
+      color: var(--smoke);
+      margin-top: 0.4rem;
+    }
+    .portfolio-play {
+      position: absolute;
+      top: 1.25rem; right: 1.25rem;
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease, border-color 0.3s ease;
+    }
+    .portfolio-item:hover .portfolio-play {
+      opacity: 1;
+      border-color: var(--accent);
+    }
+    .portfolio-play svg { fill: var(--accent); margin-left: 2px; }
+
+    /* ─── SERVICES SECTION ─── */
+    .services { background: var(--surface); }
+    .services-inner { max-width: 1200px; margin: 0 auto; }
+    .services-header { margin-bottom: 5rem; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .service-item {
+      background: var(--surface);
+      padding: 3rem;
+      transition: background 0.35s ease;
+    }
+    .service-item:hover { background: var(--surface2); }
+    .service-number {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .service-name {
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      color: var(--ivory);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .service-desc {
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.75;
+      margin-bottom: 2rem;
+    }
+    .service-tags {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .service-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid var(--muted);
+      color: var(--smoke);
+    }
+
+    /* ─── CLIENTS SECTION ─── */
+    .clients { background: var(--bg); }
+    .clients-inner { max-width: 1200px; margin: 0 auto; }
+    .clients-header { margin-bottom: 4rem; }
+    .clients-logos {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .client-logo {
+      background: var(--surface);
+      padding: 2.5rem 2rem;
+      display: flex; align-items: center; justify-content: center;
+      border: none;
+    }
+    .client-logo-text {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-align: center;
+      transition: color 0.3s ease;
+    }
+    .client-logo:hover .client-logo-text { color: var(--accent-light); }
+
+    /* ─── PHILOSOPHY SECTION ─── */
+    .philosophy { background: var(--surface); }
+    .philosophy-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: center;
+    }
+    .philosophy-image {
+      position: relative;
+    }
+    .philosophy-img-main {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+    }
+    .philosophy-img-accent {
+      position: absolute;
+      bottom: -3rem; right: -3rem;
+      width: 55%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border: 4px solid var(--bg);
+    }
+    .philosophy-content { }
+    .philosophy-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.4;
+      margin-bottom: 2rem;
+      padding-left: 2rem;
+      border-left: 2px solid var(--accent);
+    }
+    .philosophy-body {
+      font-size: 0.95rem;
+      color: var(--smoke);
+      line-height: 1.9;
+    }
+    .philosophy-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .stat-value {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 0.25rem;
+    }
+
+    /* ─── STUDIO SECTION ─── */
+    .studio { background: var(--bg); }
+    .studio-inner { max-width: 1200px; margin: 0 auto; }
+    .studio-header { margin-bottom: 4rem; }
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 1.5px;
+    }
+    .studio-img {
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      object-fit: cover;
+      display: block;
+    }
+    .studio-info {
+      margin-top: 4rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3rem;
+    }
+    .studio-item-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .studio-item-value {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--ivory);
+      line-height: 1.5;
+    }
+
+    /* ─── CONTACT CTA SECTION ─── */
+    .contact-cta {
+      background: var(--surface);
+      text-align: center;
+    }
+    .contact-cta-inner {
+      max-width: 800px; margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 7vw, 6rem);
+      color: var(--ivory);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+    .cta-title em { color: var(--accent); font-style: italic; }
+    .cta-sub {
+      font-size: 1rem;
+      color: var(--smoke);
+      max-width: 50ch;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+    }
+    .cta-email {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      color: var(--accent);
+      display: block;
+      margin-top: 2rem;
+      letter-spacing: 0.05em;
+      transition: color 0.3s ease;
+    }
+    .cta-email:hover { color: var(--accent-light); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 3rem;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+    .footer-links {
+      display: flex; gap: 2rem; list-style: none;
+    }
+    .footer-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.3s ease;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .nav { padding: 1.25rem 1.5rem; }
+      .nav.scrolled { padding: 0.85rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 6rem 1.5rem; }
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+      .services-grid { grid-template-columns: 1fr; }
+      .clients-logos { grid-template-columns: repeat(2, 1fr); }
+      .philosophy-inner { grid-template-columns: 1fr; gap: 4rem; }
+      .philosophy-img-accent { display: none; }
+      .studio-grid { grid-template-columns: 1fr 1fr; }
+      .studio-info { grid-template-columns: repeat(2, 1fr); }
+      .footer-inner { flex-direction: column; gap: 1.5rem; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+      .scroll-indicator { display: none; }
+    }
+    @media (max-width: 600px) {
+      .hero-title { font-size: clamp(5rem, 22vw, 8rem); }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .studio-grid { grid-template-columns: 1fr; }
+      .portfolio-header { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">RESONANCE</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="preloaderFill"></div></div>
+    <div class="preloader-text">Loading sonic landscape</div>
+  </div>
+
+  <!-- SCROLL INDICATOR (fixed) -->
+  <div class="scroll-indicator" id="scrollIndicator" style="opacity:0;">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="nav" id="mainNav">
+    <a href="index.html" class="nav-logo">RESO<span>NANCE</span></a>
+    <ul class="nav-links">
+      <li><a href="collection.html">Works</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Collaborate</a>
+  </nav>
+
+  <!-- HERO TYPE G — Text-Driven Typography -->
+  <section class="hero" id="hero">
+    <div class="hero-bg-minimal">
+      <div class="hero-bg-overlay"></div>
+    </div>
+
+    <!-- Subtle waveform SVG -->
+    <div class="hero-waveform">
+      <svg viewBox="0 0 1440 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,200 Q60,150 120,200 Q180,250 240,200 Q300,150 360,180 Q420,210 480,160 Q540,110 600,200 Q660,290 720,200 Q780,110 840,180 Q900,250 960,200 Q1020,150 1080,210 Q1140,270 1200,200 Q1260,130 1320,180 Q1380,230 1440,200" fill="none" stroke="#4DCFB0" stroke-width="1.5"/>
+        <path d="M0,200 Q80,120 160,200 Q240,280 320,180 Q400,80 480,200 Q560,320 640,200 Q720,80 800,200 Q880,320 960,180 Q1040,40 1120,200 Q1200,360 1280,200 Q1360,40 1440,200" fill="none" stroke="#4DCFB0" stroke-width="0.8" opacity="0.5"/>
+        <path d="M0,200 Q40,190 80,200 Q120,210 160,195 Q200,180 240,200 Q280,220 320,200 Q360,180 400,200 Q440,220 480,200 Q520,180 560,200 Q600,220 640,200 Q680,180 720,200 Q760,220 800,200 Q840,180 880,200 Q920,220 960,195 Q1000,170 1040,200 Q1080,230 1120,200 Q1160,170 1200,200 Q1240,230 1280,200 Q1360,180 1440,200" fill="none" stroke="#4DCFB0" stroke-width="0.5" opacity="0.3"/>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-label" id="heroLabel">Sound Design & Composition</div>
+      <h1 class="hero-title" id="heroTitle">
+        <span class="title-line line-1">RESO</span>
+        <span class="title-line line-2">NANCE</span>
+      </h1>
+      <p class="hero-tagline" id="heroTagline">Sound as architecture. Music as space.</p>
+      <div class="hero-ctas" id="heroCtas">
+        <a href="collection.html" class="btn-primary">Explore Works</a>
+        <a href="contact.html" class="btn-outline">Start a Project</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-indicator" id="heroScroll" style="opacity:0;">
+      <span>Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO / SOUND WORKS -->
+  <section class="portfolio" id="portfolio">
+    <div class="portfolio-header">
+      <div>
+        <p class="section-label">Selected Works</p>
+        <h2 class="section-title">Sonic<br>Compositions</h2>
+      </div>
+      <a href="collection.html" class="btn-outline">View All Works</a>
+    </div>
+    <div class="portfolio-grid">
+
+      <div class="portfolio-item">
+        <img src="images/product-1.webp" alt="Liminal Spaces — Film Score" loading="lazy" />
+        <div class="portfolio-overlay">
+          <span class="portfolio-tag">Film Score</span>
+          <div class="portfolio-name">Liminal Spaces</div>
+          <div class="portfolio-meta">2025 · Arthouse Cinema</div>
+        </div>
+        <div class="portfolio-play">
+          <svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+        </div>
+      </div>
+
+      <div class="portfolio-item">
+        <img src="images/product-2.webp" alt="Obsidian Throne — Game Audio" loading="lazy" />
+        <div class="portfolio-overlay">
+          <span class="portfolio-tag">Game Audio</span>
+          <div class="portfolio-name">Obsidian Throne</div>
+          <div class="portfolio-meta">2025 · AAA Title</div>
+        </div>
+        <div class="portfolio-play">
+          <svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+        </div>
+      </div>
+
+      <div class="portfolio-item">
+        <img src="images/product-3.webp" alt="Tidal Memory — Album" loading="lazy" />
+        <div class="portfolio-overlay">
+          <span class="portfolio-tag">Album Production</span>
+          <div class="portfolio-name">Tidal Memory</div>
+          <div class="portfolio-meta">2024 · Independent Label</div>
+        </div>
+        <div class="portfolio-play">
+          <svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+        </div>
+      </div>
+
+      <div class="portfolio-item">
+        <img src="images/product-4.webp" alt="Frequency of Silence — Brand Identity" loading="lazy" />
+        <div class="portfolio-overlay">
+          <span class="portfolio-tag">Sound Branding</span>
+          <div class="portfolio-name">Frequency of Silence</div>
+          <div class="portfolio-meta">2024 · Luxury Brand</div>
+        </div>
+        <div class="portfolio-play">
+          <svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+        </div>
+      </div>
+
+      <div class="portfolio-item">
+        <img src="images/product-5.webp" alt="Deep Strata — Documentary" loading="lazy" />
+        <div class="portfolio-overlay">
+          <span class="portfolio-tag">Documentary</span>
+          <div class="portfolio-name">Deep Strata</div>
+          <div class="portfolio-meta">2024 · Festival Circuit</div>
+        </div>
+        <div class="portfolio-play">
+          <svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+        </div>
+      </div>
+
+      <div class="portfolio-item">
+        <img src="images/product-6.webp" alt="Emergence — Immersive Installation" loading="lazy" />
+        <div class="portfolio-overlay">
+          <span class="portfolio-tag">Installation</span>
+          <div class="portfolio-name">Emergence</div>
+          <div class="portfolio-meta">2023 · Art Museum</div>
+        </div>
+        <div class="portfolio-play">
+          <svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="services-inner">
+      <div class="services-header">
+        <p class="section-label">What I Offer</p>
+        <h2 class="section-title">Services</h2>
+        <p class="section-subtitle">From cinematic scores to ambient installations, every project is approached with the same devotion to sonic truth.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-item">
+          <div class="service-number">01</div>
+          <div class="service-name">Film Scoring</div>
+          <p class="service-desc">Original music that breathes with your narrative. Orchestral, electronic, or hybrid — crafted to elevate emotion and deepen the visual experience.</p>
+          <div class="service-tags">
+            <span class="service-tag">Orchestral</span>
+            <span class="service-tag">Electronic</span>
+            <span class="service-tag">Hybrid</span>
+            <span class="service-tag">Thematic</span>
+          </div>
+        </div>
+        <div class="service-item">
+          <div class="service-number">02</div>
+          <div class="service-name">Game Audio</div>
+          <p class="service-desc">Adaptive soundscapes and dynamic music systems designed for interactive worlds. From intimate indie titles to expansive AAA productions.</p>
+          <div class="service-tags">
+            <span class="service-tag">Adaptive Music</span>
+            <span class="service-tag">SFX Design</span>
+            <span class="service-tag">Wwise</span>
+            <span class="service-tag">FMOD</span>
+          </div>
+        </div>
+        <div class="service-item">
+          <div class="service-number">03</div>
+          <div class="service-name">Album Production</div>
+          <p class="service-desc">Full creative production for artists seeking a distinctive sound identity. Arrangement, recording, mixing, and mastering in a single creative vision.</p>
+          <div class="service-tags">
+            <span class="service-tag">Production</span>
+            <span class="service-tag">Arrangement</span>
+            <span class="service-tag">Mixing</span>
+            <span class="service-tag">Mastering</span>
+          </div>
+        </div>
+        <div class="service-item">
+          <div class="service-number">04</div>
+          <div class="service-name">Sound Branding</div>
+          <p class="service-desc">Sonic identity systems for brands — logo sounds, brand anthems, UI/UX audio, and full brand soundscapes that resonate with your audience.</p>
+          <div class="service-tags">
+            <span class="service-tag">Logo Sound</span>
+            <span class="service-tag">Brand Anthem</span>
+            <span class="service-tag">UI Audio</span>
+            <span class="service-tag">Identity</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS -->
+  <section class="clients" id="clients">
+    <div class="clients-inner">
+      <div class="clients-header">
+        <p class="section-label">Trusted By</p>
+        <h2 class="section-title">Selected Clients</h2>
+      </div>
+      <div class="clients-logos">
+        <div class="client-logo"><span class="client-logo-text">LUMINARY<br>FILMS</span></div>
+        <div class="client-logo"><span class="client-logo-text">AXIOM<br>STUDIOS</span></div>
+        <div class="client-logo"><span class="client-logo-text">EMBER<br>RECORDS</span></div>
+        <div class="client-logo"><span class="client-logo-text">VANTA<br>GAMES</span></div>
+        <div class="client-logo"><span class="client-logo-text">MERIDIAN<br>ARTS</span></div>
+        <div class="client-logo"><span class="client-logo-text">SOLSTICE<br>MEDIA</span></div>
+        <div class="client-logo"><span class="client-logo-text">NOIR<br>COLLECTIVE</span></div>
+        <div class="client-logo"><span class="client-logo-text">PRISM<br>ENTERTAINMENT</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="philosophy-inner">
+      <div class="philosophy-image">
+        <img class="philosophy-img-main" src="images/workspace-2.webp" alt="Studio workspace" />
+        <img class="philosophy-img-accent" src="images/ambient-3.webp" alt="Recording equipment" />
+      </div>
+      <div class="philosophy-content">
+        <p class="section-label">Creative Vision</p>
+        <blockquote class="philosophy-quote">
+          "I compose not for the ear alone, but for the space between sounds — where meaning lives."
+        </blockquote>
+        <p class="philosophy-body">
+          Sound is the invisible architecture of experience. It shapes how we feel before we think, guiding emotion through texture, rhythm, and silence. My practice lives at the intersection of classical composition and electronic exploration — where orchestral depth meets sonic innovation.
+          <br><br>
+          Every project begins with listening. Listening to the story, to the space, to what wants to emerge. The result is always music that feels inevitable — as if it could have been no other way.
+        </p>
+        <div class="philosophy-stats">
+          <div>
+            <div class="stat-value">12+</div>
+            <div class="stat-label">Years of Practice</div>
+          </div>
+          <div>
+            <div class="stat-value">80+</div>
+            <div class="stat-label">Projects Scored</div>
+          </div>
+          <div>
+            <div class="stat-value">24</div>
+            <div class="stat-label">Awards Won</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STUDIO -->
+  <section class="studio" id="studio">
+    <div class="studio-inner">
+      <div class="studio-header">
+        <p class="section-label">The Space</p>
+        <h2 class="section-title">Studio & Equipment</h2>
+        <p class="section-subtitle">A dedicated acoustic environment built for precision — where analogue warmth meets digital possibility.</p>
+      </div>
+      <div class="studio-grid">
+        <img class="studio-img" src="images/workspace-1.webp" alt="Main studio" />
+        <img class="studio-img" src="images/ambient-1.webp" alt="Recording booth" />
+        <img class="studio-img" src="images/workspace-3.webp" alt="Equipment rack" />
+      </div>
+      <div class="studio-info">
+        <div>
+          <div class="studio-item-label">DAW</div>
+          <div class="studio-item-value">Ableton Live 12<br>Pro Tools HDX<br>Logic Pro X</div>
+        </div>
+        <div>
+          <div class="studio-item-label">Synthesis</div>
+          <div class="studio-item-value">Moog Minimoog<br>Roland JD-800<br>Buchla 200e</div>
+        </div>
+        <div>
+          <div class="studio-item-label">Monitoring</div>
+          <div class="studio-item-value">Genelec 8351B<br>Neve 8078 Console<br>Prism ADA-8XR</div>
+        </div>
+        <div>
+          <div class="studio-item-label">Location</div>
+          <div class="studio-item-value">Brooklyn, New York<br>Available Worldwide<br>Remote Sessions</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT CTA -->
+  <section class="contact-cta" id="contactCta">
+    <div class="contact-cta-inner">
+      <p class="section-label">Let's Create Together</p>
+      <h2 class="cta-title">Start a <em>Conversation</em></h2>
+      <p class="cta-sub">
+        Whether you have a clear vision or just the beginning of an idea, I'd love to hear what you're working on. Every great score begins with a single conversation.
+      </p>
+      <a href="contact.html" class="btn-primary">Begin Your Project</a>
+      <a href="mailto:studio@resonance-sound.com" class="cta-email">studio@resonance-sound.com</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">RESONANCE</div>
+      <ul class="footer-links">
+        <li><a href="collection.html">Works</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="process.html">Process</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="footer-copy">&copy; 2026 Resonance Studio. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    // ─── SPLITTEXT POLYFILL (Club GSAP premium — not on CDN) ───
+    class SplitText {
+      constructor(el, { type = 'chars,words' } = {}) {
+        this.el = typeof el === 'string' ? document.querySelector(el) : el;
+        this.chars = []; this.words = [];
+        const text = this.el.textContent;
+        this.el.innerHTML = '';
+        text.split(' ').forEach((word, wi) => {
+          const wEl = document.createElement('span');
+          wEl.style.cssText = 'display:inline-block;overflow:hidden;';
+          word.split('').forEach(char => {
+            const cEl = document.createElement('span');
+            cEl.textContent = char;
+            cEl.style.display = 'inline-block';
+            wEl.appendChild(cEl);
+            this.chars.push(cEl);
+          });
+          this.words.push(wEl);
+          this.el.appendChild(wEl);
+          if (wi < text.split(' ').length - 1) {
+            this.el.appendChild(document.createTextNode(' '));
+          }
+        });
+      }
+    }
+
+    // ─── GSAP SETUP ───
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ─── PRELOADER ───
+    const fill = document.getElementById('preloaderFill');
+    const preloader = document.getElementById('preloader');
+    const scrollInd = document.getElementById('scrollIndicator');
+    const heroScroll = document.getElementById('heroScroll');
+
+    // Start bar fill
+    requestAnimationFrame(() => {
+      fill.style.width = '100%';
+    });
+
+    function showScrollIndicator() {
+      gsap.to([scrollInd, heroScroll], {
+        opacity: 1, duration: 0.8, ease: 'power1.out'
+      });
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        gsap.to(preloader, {
+          opacity: 0, duration: 0.8, ease: 'power1.out',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            showScrollIndicator();
+            initAnimations();
+          }
+        });
+      }, 2000);
+    });
+
+    // Fallback scroll indicator
+    setTimeout(() => {
+      showScrollIndicator();
+    }, 4000);
+
+    // ─── NAVBAR SCROLL ───
+    const nav = document.getElementById('mainNav');
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: '80px top',
+      onUpdate: (self) => {
+        if (self.scroller.scrollY > 80) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      }
+    });
+
+    // ─── MAIN ANIMATIONS ───
+    function initAnimations() {
+
+      // Hero animations (A2 Whisper)
+      gsap.from('#heroLabel', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.4,
+        ease: 'power1.out',
+        delay: 0.2
+      });
+
+      gsap.from('.title-line', {
+        immediateRender: false,
+        opacity: 0, y: 40,
+        duration: 1.6,
+        stagger: 0.12,
+        ease: 'power1.out',
+        delay: 0.5
+      });
+
+      gsap.from('#heroTagline', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.4,
+        ease: 'power1.out',
+        delay: 1.0
+      });
+
+      gsap.from('#heroCtas > *', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.4,
+        stagger: 0.06,
+        ease: 'power1.out',
+        delay: 1.2
+      });
+
+      // Hero waveform subtle animation
+      gsap.to('.hero-waveform svg path', {
+        immediateRender: false,
+        attr: { d: 'M0,200 Q60,170 120,200 Q180,230 240,190 Q300,150 360,190 Q420,230 480,170 Q540,110 600,190 Q660,270 720,200 Q780,130 840,170 Q900,210 960,190 Q1020,170 1080,220 Q1140,270 1200,200 Q1260,130 1320,175 Q1380,220 1440,200' },
+        duration: 6, ease: 'sine.inOut',
+        repeat: -1, yoyo: true
+      });
+
+      // Portfolio items
+      gsap.from('.portfolio-item', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.4,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.portfolio-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // Portfolio header
+      gsap.from('.portfolio-header > *', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.5,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.portfolio-header',
+          start: 'top 85%'
+        }
+      });
+
+      // Services header
+      gsap.from('.services-header > *', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.5,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.services-header',
+          start: 'top 85%'
+        }
+      });
+
+      // Service items
+      gsap.from('.service-item', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.4,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.services-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // Client logos
+      gsap.from('.client-logo', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.4,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.clients-logos',
+          start: 'top 85%'
+        }
+      });
+
+      // Philosophy section
+      gsap.from('.philosophy-image', {
+        immediateRender: false,
+        opacity: 0, x: -20,
+        duration: 1.5,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.philosophy-inner',
+          start: 'top 85%'
+        }
+      });
+
+      gsap.from('.philosophy-content > *', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.4,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.philosophy-content',
+          start: 'top 85%'
+        }
+      });
+
+      // Stats count-up
+      const stats = document.querySelectorAll('.stat-value');
+      stats.forEach(stat => {
+        const target = parseInt(stat.textContent);
+        const suffix = stat.textContent.replace(/[0-9]/g, '');
+        gsap.from({ val: 0 }, {
+          immediateRender: false,
+          val: target,
+          duration: 1.8,
+          ease: 'power1.out',
+          scrollTrigger: {
+            trigger: stat,
+            start: 'top 90%'
+          },
+          onUpdate: function() {
+            stat.textContent = Math.round(this.targets()[0].val) + suffix;
+          }
+        });
+      });
+
+      // Studio images
+      gsap.from('.studio-img', {
+        immediateRender: false,
+        opacity: 0, scale: 0.98,
+        duration: 1.4,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.studio-grid',
+          start: 'top 85%'
+        }
+      });
+
+      gsap.from('.studio-item-value, .studio-item-label', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.4,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.studio-info',
+          start: 'top 85%'
+        }
+      });
+
+      // CTA section
+      gsap.from('.cta-title, .cta-sub, .contact-cta .btn-primary, .cta-email', {
+        immediateRender: false,
+        opacity: 0, y: 14,
+        duration: 1.5,
+        stagger: 0.06,
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: '.contact-cta-inner',
+          start: 'top 85%'
+        }
+      });
+
+      // Scroll-driven hero title parallax
+      gsap.to('.hero-title', {
+        immediateRender: false,
+        y: -60,
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.5
+        }
+      });
+
+      gsap.to('.hero-tagline', {
+        immediateRender: false,
+        y: -30, opacity: 0,
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'center top',
+          end: 'bottom top',
+          scrub: 1
+        }
+      });
+
+    }
+  </script>
+</body>
+</html>

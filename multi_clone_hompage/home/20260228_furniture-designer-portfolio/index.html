@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARBORIS STUDIO — Handcrafted Furniture & Woodworking Design</title>
+  <meta name="description" content="Arboris Studio creates bespoke handcrafted furniture and woodworking pieces. Made slow. Made to last.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141810;
+      --surface: #1C2018;
+      --surface2: #222A1E;
+      --accent: #8AB56A;
+      --accent-light: #AACE8A;
+      --accent-dark: #5A8040;
+      --ivory: #E4EEE0;
+      --smoke: #889880;
+      --muted: #4E5E48;
+      --border: #181E14;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .preloader-brand {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+    .preloader-bar-wrap {
+      width: 200px;
+      height: 1px;
+      background: var(--muted);
+    }
+    .preloader-bar {
+      height: 1px;
+      width: 0%;
+      background: var(--accent);
+      transition: width 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .preloader-pct {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+    }
+
+    /* ===== SCROLL INDICATOR ===== */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-indicator.hidden { opacity: 0; }
+    .scroll-indicator-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    .scroll-indicator-label {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      padding: 24px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(20, 24, 16, 0.96);
+      backdrop-filter: blur(12px);
+      padding: 16px 60px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      color: var(--smoke);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent-light); }
+    .nav-links a.active { color: var(--ivory); }
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-decoration: none;
+      text-transform: uppercase;
+      border: 1px solid var(--accent-dark);
+      padding: 10px 24px;
+      transition: all 0.3s ease;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ===== HERO TYPE C — DIAGONAL SPLIT ===== */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+    .hero-split--left {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0 80px;
+      background: var(--bg);
+      clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+      z-index: 2;
+    }
+    .hero-split--right {
+      position: relative;
+      clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+      margin-left: -15%;
+    }
+    .hero-img-wrap {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .hero-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .hero-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(20,24,16,0.3) 0%, transparent 60%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      padding-right: 40px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.0;
+      color: var(--ivory);
+      letter-spacing: 0.05em;
+      margin-bottom: 24px;
+    }
+    .hero-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+      color: var(--smoke);
+      margin-bottom: 48px;
+      line-height: 1.5;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 14px 32px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      border: 1px solid var(--muted);
+      padding: 14px 32px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+    .hero-meta {
+      position: absolute;
+      bottom: 48px;
+      left: 80px;
+      display: flex;
+      gap: 48px;
+      z-index: 3;
+    }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hero-stat-num {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      color: var(--ivory);
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    /* ===== SECTION COMMONS ===== */
+    section {
+      position: relative;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+    .section-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .section-eyebrow::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      color: var(--ivory);
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .section-body {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      color: var(--smoke);
+      line-height: 1.8;
+      max-width: 560px;
+    }
+
+    /* ===== PHILOSOPHY ===== */
+    .philosophy {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+    .philosophy-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+    }
+    .philosophy-text {}
+    .philosophy-text .section-body {
+      margin-bottom: 32px;
+    }
+    .philosophy-text .section-body + .section-body {
+      color: var(--muted);
+    }
+    .philosophy-manifesto {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      color: var(--ivory);
+      line-height: 1.4;
+      border-left: 2px solid var(--accent);
+      padding-left: 32px;
+      margin: 40px 0;
+    }
+    .philosophy-pillars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .pillar {
+      background: var(--surface2);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pillar-icon {
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+    .pillar-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--ivory);
+    }
+    .pillar-body {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.6;
+    }
+
+    /* ===== SELECTED WORKS ===== */
+    .works {
+      padding: 120px 0;
+      background: var(--bg);
+    }
+    .works-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 60px;
+    }
+    .works-header-left {}
+    .works-link {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent-dark);
+      padding-bottom: 4px;
+      transition: color 0.3s ease;
+    }
+    .works-link:hover { color: var(--accent-light); }
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .work-item {
+      position: relative;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .work-item:nth-child(1) { grid-column: span 2; }
+    .work-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .work-item:nth-child(1) .work-img { aspect-ratio: 16/9; }
+    .work-item:hover .work-img { transform: scale(1.04); }
+    .work-info {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .work-category {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .work-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--ivory);
+      margin-bottom: 6px;
+    }
+    .work-meta {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      color: var(--smoke);
+      display: flex;
+      gap: 16px;
+    }
+    .work-material { color: var(--muted); }
+
+    /* ===== SECOND ROW WORKS ===== */
+    .works-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 2px;
+    }
+
+    /* ===== MADE TO ORDER ===== */
+    .made-to-order {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+    .mto-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .mto-image {
+      position: relative;
+    }
+    .mto-image img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+    }
+    .mto-image-tag {
+      position: absolute;
+      bottom: 32px;
+      right: -20px;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 12px 20px;
+    }
+    .mto-services {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin: 40px 0;
+    }
+    .mto-service {
+      background: var(--surface2);
+      padding: 24px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .mto-service:hover { background: rgba(138, 181, 106, 0.08); }
+    .mto-service-num {
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      color: var(--accent-dark);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .mto-service-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--ivory);
+      margin-bottom: 6px;
+    }
+    .mto-service-body {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.6;
+    }
+
+    /* ===== MATERIALS ===== */
+    .materials {
+      padding: 120px 0;
+      background: var(--bg);
+    }
+    .materials-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 80px;
+    }
+    .materials-header .section-eyebrow {
+      justify-content: center;
+    }
+    .materials-header .section-eyebrow::before { display: none; }
+    .materials-header .section-body { margin: 0 auto; }
+    .materials-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .material-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .material-card img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s ease;
+      filter: grayscale(20%) brightness(0.85);
+    }
+    .material-card:hover img {
+      transform: scale(1.06);
+      filter: grayscale(0%) brightness(0.95);
+    }
+    .material-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px;
+      background: linear-gradient(to top, rgba(14,18,10,0.95) 0%, transparent 100%);
+    }
+    .material-name {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+    .material-origin {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .material-badge {
+      display: inline-block;
+      margin-top: 8px;
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--muted);
+      padding: 3px 8px;
+    }
+
+    /* ===== PROCESS ===== */
+    .process {
+      padding: 120px 0;
+      background: var(--surface);
+    }
+    .process-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+      margin-bottom: 80px;
+    }
+    .process-intro {}
+    .process-intro .section-body { max-width: none; }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .process-step {
+      background: var(--surface2);
+      padding: 40px 32px;
+    }
+    .step-num {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+    .step-body {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+    .step-accent {
+      width: 24px;
+      height: 2px;
+      background: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    /* ===== PRESS ===== */
+    .press {
+      padding: 80px 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .press-inner {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+    }
+    .press-label {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .press-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .press-quotes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    .press-quote {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .press-quote-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.5;
+    }
+    .press-quote-source {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    /* ===== CONTACT CTA ===== */
+    .contact-cta {
+      padding: 140px 0;
+      background: var(--surface);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-cta::before {
+      content: 'ARBORIS';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-serif);
+      font-size: clamp(6rem, 15vw, 14rem);
+      color: var(--border);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+    .contact-cta-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .contact-cta .section-eyebrow { justify-content: center; }
+    .contact-cta .section-eyebrow::before { display: none; }
+    .contact-cta .section-title {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      margin-bottom: 24px;
+    }
+    .contact-cta .section-body {
+      margin: 0 auto 48px;
+      text-align: center;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 60px 0 40px;
+    }
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {}
+    .footer-logo {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .footer-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--smoke);
+      margin-bottom: 24px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-social a {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .footer-social a:hover { color: var(--accent); }
+    .footer-col-title {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-links a {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .footer-copy span { color: var(--accent-dark); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      nav { padding: 20px 30px; }
+      nav.scrolled { padding: 14px 30px; }
+      .container { padding: 0 30px; }
+      .hero-split--left { padding: 0 40px; }
+      .hero-meta { left: 40px; }
+      .philosophy-inner,
+      .mto-inner,
+      .process-header { grid-template-columns: 1fr; gap: 48px; }
+      .works-grid,
+      .works-grid-2 { grid-template-columns: 1fr 1fr; }
+      .work-item:nth-child(1) { grid-column: span 2; }
+      .materials-strip { grid-template-columns: 1fr 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .press-quotes { grid-template-columns: 1fr; gap: 24px; }
+    }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
+      .hero-split--left {
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        padding: 120px 30px 80px;
+        min-height: 65vh;
+      }
+      .hero-split--right {
+        clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+        margin-left: 0;
+        margin-top: -15%;
+        height: 50vh;
+      }
+      .hero-meta { display: none; }
+      .process-steps { grid-template-columns: 1fr; }
+      .materials-strip { grid-template-columns: 1fr; }
+      .works-grid,
+      .works-grid-2 { grid-template-columns: 1fr; }
+      .work-item:nth-child(1) { grid-column: span 1; }
+      .philosophy-pillars { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .press-inner { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-brand">Arboris Studio</div>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar" id="preloaderBar"></div>
+    </div>
+    <div class="preloader-pct" id="preloaderPct">0%</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollIndicator">
+    <div class="scroll-indicator-label">Scroll</div>
+    <div class="scroll-indicator-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a class="nav-logo" href="index.html">Arboris Studio</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">Studio</a></li>
+      <li><a href="collection.html">Works</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Commission</a></li>
+    </ul>
+    <a class="nav-cta" href="contact.html">Begin a Piece</a>
+  </nav>
+
+  <!-- HERO TYPE C — DIAGONAL SPLIT -->
+  <section class="hero" id="hero">
+    <div class="hero-split hero-split--left">
+      <div class="hero-content">
+        <div class="hero-eyebrow">Handcrafted Furniture &amp; Woodworking</div>
+        <h1 class="hero-title">ARBORIS<br>STUDIO</h1>
+        <p class="hero-tagline">Made slow.<br>Made to last.</p>
+        <div class="hero-ctas">
+          <a href="collection.html" class="btn-primary">View Works</a>
+          <a href="contact.html" class="btn-secondary">Commission a Piece</a>
+        </div>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-stat">
+          <span class="hero-stat-num">18</span>
+          <span class="hero-stat-label">Years of craft</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">340+</span>
+          <span class="hero-stat-label">Pieces made</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">100%</span>
+          <span class="hero-stat-label">Sustainable timber</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-split hero-split--right">
+      <div class="hero-img-wrap">
+        <img src="images/hero-1.webp" alt="ARBORIS STUDIO — Handcrafted Furniture">
+        <div class="hero-img-overlay"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="container">
+      <div class="philosophy-inner">
+        <div class="philosophy-text">
+          <div class="section-eyebrow">Our Philosophy</div>
+          <h2 class="section-title">Rooted in wood.<br>Guided by craft.</h2>
+          <div class="philosophy-manifesto">
+            "We do not race against time.<br>We work <em>with</em> it."
+          </div>
+          <p class="section-body">
+            Every piece that leaves our countryside workshop carries the memory of the forest it came from. We work with sustainably sourced hardwoods, chosen for character over convenience, shaped by hand tools and quiet patience.
+          </p>
+          <br>
+          <p class="section-body" style="color: var(--muted);">
+            Arboris — from the Latin <em>arbor</em>, tree — reflects our commitment to a living relationship between maker, material, and home.
+          </p>
+        </div>
+        <div class="philosophy-pillars">
+          <div class="pillar">
+            <div class="pillar-icon">◈</div>
+            <div class="pillar-title">Slow Making</div>
+            <div class="pillar-body">No production lines. Each piece receives weeks of individual attention from a single craftsperson.</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">◇</div>
+            <div class="pillar-title">Living Wood</div>
+            <div class="pillar-body">We source from certified forests and reclaimed estates. The grain tells a story — we preserve it.</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">◉</div>
+            <div class="pillar-title">Joinery Mastery</div>
+            <div class="pillar-body">Traditional mortise-and-tenon, dovetail, and wedge joints. No hidden screws, no shortcuts.</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">◎</div>
+            <div class="pillar-title">Heirloom Finish</div>
+            <div class="pillar-body">Hand-rubbed oils and waxes that deepen over time. A piece for generations, not seasons.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SELECTED WORKS -->
+  <section class="works" id="works">
+    <div class="container">
+      <div class="works-header">
+        <div class="works-header-left">
+          <div class="section-eyebrow">Selected Works</div>
+          <h2 class="section-title">Pieces from the studio</h2>
+        </div>
+        <a href="collection.html" class="works-link">View full collection →</a>
+      </div>
+      <!-- Row 1 -->
+      <div class="works-grid">
+        <div class="work-item">
+          <img src="images/product-1.webp" alt="The Millbrook Dining Table" class="work-img">
+          <div class="work-info">
+            <div class="work-category">Tables</div>
+            <div class="work-title">The Millbrook Dining Table</div>
+            <div class="work-meta">
+              <span class="work-material">White Oak · Live Edge</span>
+              <span>240 × 90 cm</span>
+            </div>
+          </div>
+        </div>
+        <div class="work-item">
+          <img src="images/product-2.webp" alt="Slatted Reading Chair" class="work-img">
+          <div class="work-info">
+            <div class="work-category">Seating</div>
+            <div class="work-title">Slatted Reading Chair</div>
+            <div class="work-meta">
+              <span class="work-material">American Walnut</span>
+              <span>Commission</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Row 2 -->
+      <div class="works-grid-2">
+        <div class="work-item">
+          <img src="images/product-3.webp" alt="Fenland Cabinet" class="work-img">
+          <div class="work-info">
+            <div class="work-category">Storage</div>
+            <div class="work-title">Fenland Cabinet</div>
+            <div class="work-meta">
+              <span class="work-material">Reclaimed Elm</span>
+              <span>H 180 cm</span>
+            </div>
+          </div>
+        </div>
+        <div class="work-item">
+          <img src="images/product-4.webp" alt="Low Profile Coffee Table" class="work-img">
+          <div class="work-info">
+            <div class="work-category">Tables</div>
+            <div class="work-title">Low Profile Coffee Table</div>
+            <div class="work-meta">
+              <span class="work-material">Cherry · Stone Insert</span>
+              <span>120 × 60 cm</span>
+            </div>
+          </div>
+        </div>
+        <div class="work-item">
+          <img src="images/product-5.webp" alt="Joiner's Bed Frame" class="work-img">
+          <div class="work-info">
+            <div class="work-category">Bedroom</div>
+            <div class="work-title">Joiner's Bed Frame</div>
+            <div class="work-meta">
+              <span class="work-material">Douglas Fir · Visible Joinery</span>
+              <span>King</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MADE-TO-ORDER -->
+  <section class="made-to-order" id="mto">
+    <div class="container">
+      <div class="mto-inner">
+        <div class="mto-image">
+          <img src="images/workspace-1.webp" alt="Workshop at Arboris Studio">
+          <div class="mto-image-tag">Bespoke Only</div>
+        </div>
+        <div class="mto-content">
+          <div class="section-eyebrow">Made-to-Order</div>
+          <h2 class="section-title">Every piece begins<br>with a conversation.</h2>
+          <p class="section-body">We take on a limited number of commissions each year. Each starts with listening — your space, your daily rituals, the wood species you're drawn to.</p>
+          <div class="mto-services">
+            <div class="mto-service">
+              <div class="mto-service-num">01</div>
+              <div>
+                <div class="mto-service-title">Custom Dining & Tables</div>
+                <div class="mto-service-body">From intimate round tables to grand banquet slabs. Live edge, bookmatched, or classic plank.</div>
+              </div>
+            </div>
+            <div class="mto-service">
+              <div class="mto-service-num">02</div>
+              <div>
+                <div class="mto-service-title">Seating & Lounging</div>
+                <div class="mto-service-body">Chairs, benches, daybeds — ergonomics informed by traditional proportions and personal preference.</div>
+              </div>
+            </div>
+            <div class="mto-service">
+              <div class="mto-service-num">03</div>
+              <div>
+                <div class="mto-service-title">Storage & Shelving</div>
+                <div class="mto-service-body">Wardrobes, sideboards, library units. Joinery-forward construction built to be passed down.</div>
+              </div>
+            </div>
+            <div class="mto-service">
+              <div class="mto-service-num">04</div>
+              <div>
+                <div class="mto-service-title">Architectural Millwork</div>
+                <div class="mto-service-body">Panelling, staircases, bespoke kitchens. Collaboration with architects welcome.</div>
+              </div>
+            </div>
+          </div>
+          <a href="contact.html" class="btn-primary">Start a Commission</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="materials" id="materials">
+    <div class="container">
+      <div class="materials-header">
+        <div class="section-eyebrow">Materials &amp; Sourcing</div>
+        <h2 class="section-title">The wood we choose.</h2>
+        <p class="section-body">We source exclusively from certified sustainable forests and reclaimed estate timber. Each species is selected for its structural integrity, working qualities, and natural beauty.</p>
+      </div>
+      <div class="materials-strip">
+        <div class="material-card">
+          <img src="images/detail-1.webp" alt="White Oak grain">
+          <div class="material-info">
+            <div class="material-name">White Oak</div>
+            <div class="material-origin">American & European</div>
+            <div class="material-badge">FSC Certified</div>
+          </div>
+        </div>
+        <div class="material-card">
+          <img src="images/detail-2.webp" alt="American Walnut">
+          <div class="material-info">
+            <div class="material-name">American Walnut</div>
+            <div class="material-origin">Appalachian Region</div>
+            <div class="material-badge">Sustainably Harvested</div>
+          </div>
+        </div>
+        <div class="material-card">
+          <img src="images/detail-3.webp" alt="Reclaimed Elm">
+          <div class="material-info">
+            <div class="material-name">Reclaimed Elm</div>
+            <div class="material-origin">English Estate Timber</div>
+            <div class="material-badge">Reclaimed</div>
+          </div>
+        </div>
+        <div class="material-card">
+          <img src="images/detail-4.webp" alt="Wild Cherry">
+          <div class="material-info">
+            <div class="material-name">Wild Cherry</div>
+            <div class="material-origin">French &amp; German Forests</div>
+            <div class="material-badge">FSC Certified</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="process-header">
+        <div>
+          <div class="section-eyebrow">Workshop Process</div>
+          <h2 class="section-title">From tree to room.</h2>
+        </div>
+        <div class="process-intro">
+          <p class="section-body" style="max-width: none;">Our process honours the material at every stage. We do not rush the wood — we follow it. The timeline for a single piece ranges from 8 to 24 weeks depending on complexity and curing requirements.</p>
+        </div>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="step-num">01</div>
+          <div class="step-accent"></div>
+          <div class="step-title">Design Consultation</div>
+          <div class="step-body">We begin with conversation — your space, your needs, your aesthetic sensibility. Sketches, samples, and material references follow.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">02</div>
+          <div class="step-accent"></div>
+          <div class="step-title">Timber Selection</div>
+          <div class="step-body">You are invited to our yard to select the exact boards that will become your piece. Every knot, ray, and figure chosen together.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">03</div>
+          <div class="step-accent"></div>
+          <div class="step-title">Drying &amp; Preparation</div>
+          <div class="step-body">Freshly milled timber must acclimatise. We air-dry in our seasoning store, then kiln-finish for dimensional stability.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">04</div>
+          <div class="step-accent"></div>
+          <div class="step-title">Joinery &amp; Assembly</div>
+          <div class="step-body">Hand-cut mortise-and-tenon, wedged through-tenons, dovetails. Glue-up and test-fit before any finish is applied.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">05</div>
+          <div class="step-accent"></div>
+          <div class="step-title">Finishing</div>
+          <div class="step-body">Multiple coats of natural Danish oil, hand-rubbed carnauba wax, or bespoke lacquer — matched to your environment and lifestyle.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">06</div>
+          <div class="step-accent"></div>
+          <div class="step-title">White-Glove Delivery</div>
+          <div class="step-body">We deliver and install every piece ourselves. Final placement, levelling, and care guidance given in person at your home.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press" id="press">
+    <div class="container">
+      <div class="press-inner">
+        <div class="press-label">As seen in</div>
+        <div class="press-divider"></div>
+        <div class="press-quotes">
+          <div class="press-quote">
+            <div class="press-quote-text">"The finest example of the new British craft revival — furniture that earns its price through sheer quality."</div>
+            <div class="press-quote-source">Wallpaper* Magazine</div>
+          </div>
+          <div class="press-quote">
+            <div class="press-quote-text">"Arboris pieces do not simply furnish a room; they anchor it, define it, give it purpose."</div>
+            <div class="press-quote-source">The World of Interiors</div>
+          </div>
+          <div class="press-quote">
+            <div class="press-quote-text">"A return to furniture that means something — built without compromise, designed for eternity."</div>
+            <div class="press-quote-source">Dezeen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT CTA -->
+  <section class="contact-cta" id="cta">
+    <div class="container">
+      <div class="contact-cta-inner">
+        <div class="section-eyebrow">Begin the Process</div>
+        <h2 class="section-title">Ready to commission<br>your piece?</h2>
+        <p class="section-body">We take on 12–14 commissions per year. Enquiries are reviewed in the order received. Lead times currently 16–24 weeks.</p>
+        <div class="cta-buttons">
+          <a href="contact.html" class="btn-primary">Send an Enquiry</a>
+          <a href="process.html" class="btn-secondary">Learn Our Process</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo">Arboris Studio</div>
+          <div class="footer-tagline">Made slow. Made to last.</div>
+          <div class="footer-social">
+            <a href="#">Instagram</a>
+            <a href="#">Pinterest</a>
+            <a href="#">LinkedIn</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Studio</div>
+          <ul class="footer-links">
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="about.html#craftsman">The Craftsman</a></li>
+            <li><a href="process.html">Workshop</a></li>
+            <li><a href="about.html#materials">Sustainability</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Works</div>
+          <ul class="footer-links">
+            <li><a href="collection.html">All Pieces</a></li>
+            <li><a href="collection.html#seating">Seating</a></li>
+            <li><a href="collection.html#tables">Tables</a></li>
+            <li><a href="collection.html#storage">Storage</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Commission</div>
+          <ul class="footer-links">
+            <li><a href="contact.html">Start a Project</a></li>
+            <li><a href="contact.html#process">How It Works</a></li>
+            <li><a href="contact.html#care">Care Guide</a></li>
+            <li><a href="contact.html#faq">FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2026 Arboris Studio. All rights reserved. <span>Crafted with intention.</span></div>
+        <div class="footer-copy">Countryside Workshop, England</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // SplitText polyfill
+    class SplitText {
+      constructor(el, { type = 'chars,words' } = {}) {
+        this.el = typeof el === 'string' ? document.querySelector(el) : el;
+        this.chars = []; this.words = [];
+        if (!this.el) return;
+        const text = this.el.textContent;
+        this.el.innerHTML = '';
+        text.split(' ').forEach((word, wi) => {
+          const wEl = document.createElement('span');
+          wEl.style.cssText = 'display:inline-block;overflow:hidden;';
+          word.split('').forEach(char => {
+            const cEl = document.createElement('span');
+            cEl.textContent = char;
+            cEl.style.display = 'inline-block';
+            wEl.appendChild(cEl);
+            this.chars.push(cEl);
+          });
+          this.words.push(wEl);
+          this.el.appendChild(wEl);
+          if (wi < text.split(' ').length - 1) this.el.appendChild(document.createTextNode(' '));
+        });
+      }
+    }
+
+    // Organic random helpers (A5)
+    function rDur() { return 1.0 + Math.random() * 0.4; } // 1.0–1.4
+    function rY()   { return 20 + Math.random() * 8; }    // 20–28
+
+    // ===== PRELOADER =====
+    const bar = document.getElementById('preloaderBar');
+    const pct = document.getElementById('preloaderPct');
+    const preloader = document.getElementById('preloader');
+    const scrollInd = document.getElementById('scrollIndicator');
+
+    let progress = 0;
+    const tickInterval = setInterval(() => {
+      progress = Math.min(progress + Math.random() * 12, 95);
+      bar.style.width = progress + '%';
+      pct.textContent = Math.round(progress) + '%';
+    }, 120);
+
+    function completePreloader() {
+      clearInterval(tickInterval);
+      progress = 100;
+      bar.style.width = '100%';
+      pct.textContent = '100%';
+      setTimeout(() => {
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            // Show scroll indicator after preloader
+            scrollInd.classList.add('visible');
+            initAnimations();
+          }
+        });
+      }, 400);
+    }
+
+    window.addEventListener('load', () => setTimeout(completePreloader, 800));
+    setTimeout(completePreloader, 3000);
+
+    // Scroll indicator: also show via timeout fallback
+    setTimeout(() => { scrollInd.classList.add('visible'); }, 4000);
+
+    // Hide scroll indicator on scroll
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 80) {
+        scrollInd.classList.add('hidden');
+      }
+    }, { passive: true });
+
+    // ===== NAVBAR =====
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // ===== ANIMATIONS =====
+    function initAnimations() {
+      // Hero content
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        delay: 0.2
+      });
+
+      const heroTitle = new SplitText('.hero-title', { type: 'chars' });
+      gsap.from(heroTitle.chars, {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.04,
+        delay: 0.4
+      });
+
+      gsap.from('.hero-tagline', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        delay: 0.8
+      });
+
+      gsap.from('.hero-ctas .btn-primary, .hero-ctas .btn-secondary', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        delay: 1.0
+      });
+
+      gsap.from('.hero-split--right', {
+        immediateRender: false,
+        opacity: 0,
+        x: 40,
+        duration: 1.4,
+        ease: 'power2.out',
+        delay: 0.3
+      });
+
+      gsap.from('.hero-stat', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        delay: 1.2
+      });
+
+      // Philosophy section
+      gsap.from('.philosophy .section-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.philosophy', start: 'top 80%' }
+      });
+
+      gsap.from('.philosophy .section-title', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.philosophy', start: 'top 75%' },
+        delay: 0.1
+      });
+
+      gsap.from('.philosophy-manifesto', {
+        immediateRender: false,
+        opacity: 0,
+        x: -30,
+        duration: rDur(),
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.philosophy-manifesto', start: 'top 80%' }
+      });
+
+      gsap.from('.philosophy .section-body', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.philosophy .section-body', start: 'top 80%' }
+      });
+
+      gsap.from('.pillar', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.philosophy-pillars', start: 'top 80%' }
+      });
+
+      // Works
+      gsap.from('.works .section-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.works', start: 'top 80%' }
+      });
+
+      gsap.from('.works .section-title', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.works', start: 'top 75%' }
+      });
+
+      gsap.from('.work-item', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.works-grid', start: 'top 85%' }
+      });
+
+      gsap.from('.works-grid-2 .work-item', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.works-grid-2', start: 'top 85%' }
+      });
+
+      // Made-to-order
+      gsap.from('.mto-image', {
+        immediateRender: false,
+        opacity: 0,
+        x: -30,
+        duration: rDur(),
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.made-to-order', start: 'top 75%' }
+      });
+
+      gsap.from('.mto-content .section-eyebrow', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.made-to-order', start: 'top 75%' }
+      });
+
+      gsap.from('.mto-content .section-title', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '.mto-content', start: 'top 80%' },
+        delay: 0.1
+      });
+
+      gsap.from('.mto-service', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.mto-services', start: 'top 85%' }
+      });
+
+      // Materials
+      gsap.from('.materials .section-eyebrow, .materials .section-title, .materials .section-body', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.materials', start: 'top 80%' }
+      });
+
+      gsap.from('.material-card', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.materials-strip', start: 'top 85%' }
+      });
+
+      // Process
+      gsap.from('.process .section-eyebrow, .process .section-title', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.process', start: 'top 80%' }
+      });
+
+      gsap.from('.process-step', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.process-steps', start: 'top 85%' }
+      });
+
+      // Press
+      gsap.from('.press-quote', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.press', start: 'top 85%' }
+      });
+
+      // CTA
+      gsap.from('.contact-cta .section-eyebrow, .contact-cta .section-title, .contact-cta .section-body', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.contact-cta', start: 'top 80%' }
+      });
+
+      gsap.from('.cta-buttons .btn-primary, .cta-buttons .btn-secondary', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: '.cta-buttons', start: 'top 85%' }
+      });
+
+      // Footer
+      gsap.from('.footer-brand, .footer-col-title', {
+        immediateRender: false,
+        opacity: 0,
+        y: rY(),
+        duration: rDur(),
+        ease: 'power2.out',
+        stagger: 0.09,
+        scrollTrigger: { trigger: 'footer', start: 'top 85%' }
+      });
+    }
+  </script>
+</body>
+</html>

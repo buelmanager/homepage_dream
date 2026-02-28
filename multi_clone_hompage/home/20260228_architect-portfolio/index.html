@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FORMA ATELIER — Space as Statement.</title>
+  <meta name="description" content="FORMA ATELIER. Architecture and spatial design studio. Brutalist precision meets Scandinavian minimalism. Commission-based residential, commercial, and cultural projects." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #141820;
+      --surface: #1C2030;
+      --surface2: #222838;
+      --accent: #A0C4D8;
+      --accent-light: #C4DCE8;
+      --accent-dark: #6090B0;
+      --ivory: #DCE8F0;
+      --smoke: #809098;
+      --muted: #505860;
+      --border: #181C28;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .preloader-mark {
+      width: 64px; height: 64px;
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .mark-inner {
+      width: 100%; height: 100%;
+      border: 2px solid var(--accent);
+      transform: rotate(45deg);
+      animation: markRotate 2s ease-in-out infinite;
+    }
+    .mark-dot {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      transform: translate(-50%, -50%);
+    }
+    @keyframes markRotate {
+      0% { transform: rotate(45deg) scale(1); opacity: 0.6; }
+      50% { transform: rotate(90deg) scale(1.1); opacity: 1; }
+      100% { transform: rotate(135deg) scale(1); opacity: 0.6; }
+    }
+
+    .preloader-brand {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+    .preloader-sub {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+    .preloader-line {
+      width: 120px; height: 1px;
+      background: var(--border);
+      margin-top: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .preloader-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: var(--accent);
+      animation: lineProgress 2s ease-in-out forwards;
+    }
+    @keyframes lineProgress {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-indicator.hidden-scroll { opacity: 0; }
+
+    .scroll-text {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: -100%; left: 0;
+      width: 100%; height: 100%;
+      background: var(--accent);
+      animation: scrollDrop 1.5s ease-in-out infinite;
+    }
+    @keyframes scrollDrop {
+      0% { top: -100%; }
+      100% { top: 100%; }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 60px;
+      background: linear-gradient(to bottom, rgba(20,24,32,0.9) 0%, transparent 100%);
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(20,24,32,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 60px;
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      color: var(--ivory);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex; gap: 48px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 10px 24px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* ── HERO TYPE E — Grid/Pattern Canvas ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      display: flex; align-items: center;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    /* Canvas grid background */
+    .hero-grid-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    /* Image panel grid overlay - right 55% */
+    .hero-image-grid {
+      position: absolute;
+      top: 0; right: 0;
+      width: 55%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 3px;
+    }
+    .grid-cell {
+      overflow: hidden;
+      position: relative;
+    }
+    .grid-cell img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(0.65) saturate(0.7);
+      transition: transform 0.8s ease, filter 0.8s ease;
+    }
+    .grid-cell:hover img {
+      transform: scale(1.05);
+      filter: brightness(0.8) saturate(0.85);
+    }
+    /* Featured large cell */
+    .grid-cell.large {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+
+    /* Left gradient fade so text is readable */
+    .hero-image-fade {
+      position: absolute;
+      top: 0; right: 0;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(to right, var(--bg) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Dark overlay on right panels */
+    .hero-image-overlay {
+      position: absolute;
+      top: 0; right: 0;
+      width: 55%;
+      height: 100%;
+      background: rgba(20,24,32,0.4);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Hero content */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      padding: 0 80px;
+      max-width: 700px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 40px; height: 1px;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(72px, 9vw, 130px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero-sub {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+    .hero-ctas {
+      display: flex; gap: 20px; align-items: center;
+    }
+    .btn-primary {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 14px 36px;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.3s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent-light); transform: translateX(4px); }
+
+    .btn-outline {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      border: 1px solid var(--muted);
+      padding: 14px 36px;
+      text-decoration: none;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Corner accents */
+    .hero-corners .corner {
+      position: absolute;
+      width: 60px; height: 60px;
+      border-color: var(--accent);
+      border-style: solid;
+      opacity: 0.4;
+    }
+    .corner.tl { top: 30px; left: 30px; border-width: 2px 0 0 2px; }
+    .corner.tr { top: 30px; right: 30px; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: 30px; left: 30px; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: 30px; right: 30px; border-width: 0 2px 2px 0; }
+
+    /* Coordinates marker */
+    .hero-coords {
+      position: absolute;
+      bottom: 80px; right: 60px;
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      z-index: 10;
+    }
+
+    /* ── SECTION DEFAULTS ── */
+    section { padding: 120px 0; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 60px; }
+
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 20px;
+    }
+    .section-label::before {
+      content: '';
+      display: block; width: 30px; height: 1px;
+      background: var(--accent);
+    }
+
+    /* ── PHILOSOPHY ── */
+    .philosophy { background: var(--bg); }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .philosophy-left h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(42px, 5vw, 72px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 32px;
+    }
+    .philosophy-right {
+      padding-top: 12px;
+    }
+    .philosophy-right p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.9;
+      margin-bottom: 24px;
+    }
+    .philosophy-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 48px;
+      padding-top: 48px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item {}
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      display: block;
+    }
+    .stat-label {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* ── SELECTED WORKS ── */
+    .works { background: var(--surface); }
+    .works-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 60px;
+    }
+    .works-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 5vw, 68px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--ivory);
+    }
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+    }
+    .work-card {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+    .work-card.tall { aspect-ratio: 3/4; }
+    .work-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(0.6) saturate(0.7);
+      transition: transform 0.9s ease, filter 0.9s ease;
+    }
+    .work-card:hover .work-img {
+      transform: scale(1.06);
+      filter: brightness(0.75) saturate(0.85);
+    }
+    .work-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 32px;
+      background: linear-gradient(to top, rgba(20,24,32,0.92) 0%, transparent 100%);
+      transform: translateY(0);
+    }
+    .work-cat {
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .work-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+    .work-meta {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--smoke);
+    }
+    .work-arrow {
+      position: absolute;
+      top: 28px; right: 28px;
+      width: 40px; height: 40px;
+      border: 1px solid rgba(160,196,216,0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      font-size: 14px;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .work-card:hover .work-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Works grid layout: 2x2 with first card tall */
+    .works-grid-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 4px;
+    }
+    .work-card:first-child {
+      grid-row: span 2;
+    }
+
+    /* ── SERVICES ── */
+    .services { background: var(--bg); }
+    .services-header {
+      margin-bottom: 64px;
+    }
+    .services-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 5vw, 68px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-top: 12px;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    .service-card {
+      padding: 40px;
+      border: 1px solid var(--border);
+      position: relative;
+      transition: border-color 0.4s;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 40px; height: 1px;
+      background: var(--accent);
+      transition: width 0.4s;
+    }
+    .service-card:hover { border-color: var(--muted); }
+    .service-card:hover::before { width: 80px; }
+
+    .service-num {
+      font-family: var(--font-serif);
+      font-size: 40px;
+      color: var(--border);
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .service-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+    .service-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.9;
+      margin-bottom: 24px;
+    }
+    .service-tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .tag {
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+    }
+
+    /* ── AWARDS ── */
+    .awards { background: var(--surface); }
+    .awards-header {
+      margin-bottom: 60px;
+    }
+    .awards-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 5vw, 68px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-top: 12px;
+    }
+    .awards-list { list-style: none; }
+    .award-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 40px;
+    }
+    .award-item:first-child { border-top: 1px solid var(--border); }
+    .award-left {}
+    .award-org {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .award-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ivory);
+    }
+    .award-year {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    /* ── COLLABORATORS ── */
+    .collaborators { background: var(--bg); }
+    .collab-header {
+      margin-bottom: 60px;
+    }
+    .collab-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 5vw, 68px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-top: 12px;
+    }
+    .collab-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .collab-item {
+      padding: 32px;
+      border: 1px solid var(--border);
+      margin: -1px -1px 0 0;
+      transition: background 0.3s;
+    }
+    .collab-item:hover { background: var(--surface); }
+    .collab-type {
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .collab-name {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 6px;
+    }
+    .collab-loc {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--smoke);
+    }
+
+    /* ── COMMISSION CTA ── */
+    .commission {
+      background: var(--surface);
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .commission-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 600px;
+    }
+    .commission-content {
+      padding: 120px 80px;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      position: relative; z-index: 2;
+    }
+    .commission-content h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(50px, 6vw, 90px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 24px;
+    }
+    .commission-content p {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.9;
+      max-width: 360px;
+      margin-bottom: 40px;
+    }
+    .commission-img {
+      position: relative;
+      overflow: hidden;
+    }
+    .commission-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(0.55) saturate(0.65);
+    }
+    .commission-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, var(--surface) 0%, transparent 30%);
+      z-index: 1;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      padding: 80px 0 40px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-brand .logo {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .footer-brand p {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.8;
+      max-width: 240px;
+    }
+    .footer-col h4 {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-col ul li a:hover { color: var(--ivory); }
+    .footer-bottom {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-copy {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--muted);
+    }
+    .footer-coords {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── UTILITIES ── */
+    .reveal { will-change: transform, opacity; }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-mark">
+      <div class="mark-inner"></div>
+      <div class="mark-dot"></div>
+    </div>
+    <div class="preloader-brand">FORMA ATELIER</div>
+    <div class="preloader-sub">Architecture &amp; Spatial Design</div>
+    <div class="preloader-line"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollIndicator">
+    <span class="scroll-text">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">FORMA<span> </span>ATELIER</a>
+    <ul class="nav-links">
+      <li><a href="about.html">Studio</a></li>
+      <li><a href="collection.html">Projects</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">New Commission</a>
+  </nav>
+
+  <!-- HERO — TYPE E: Grid/Pattern Canvas -->
+  <section class="hero" id="hero">
+    <!-- Animated architectural grid canvas -->
+    <canvas class="hero-grid-canvas" id="heroCanvas"></canvas>
+
+    <!-- Right side image grid panels -->
+    <div class="hero-image-grid" id="heroImageGrid">
+      <div class="grid-cell large">
+        <img src="images/hero-1.webp" alt="Modern architectural facade" />
+      </div>
+      <div class="grid-cell">
+        <img src="images/hero-2.webp" alt="Minimalist interior space" />
+      </div>
+      <div class="grid-cell">
+        <img src="images/hero-3.webp" alt="Architectural model" />
+      </div>
+      <div class="grid-cell">
+        <img src="images/hero-4.webp" alt="Glass and steel building" />
+      </div>
+      <div class="grid-cell">
+        <img src="images/hero-5.webp" alt="Concrete minimal architecture" />
+      </div>
+      <div class="grid-cell">
+        <img src="images/hero-6.webp" alt="Geometric building detail" />
+      </div>
+    </div>
+
+    <!-- Fades / overlays for readability -->
+    <div class="hero-image-fade"></div>
+    <div class="hero-image-overlay"></div>
+
+    <!-- Hero content — left -->
+    <div class="hero-content" id="heroContent">
+      <div class="hero-eyebrow">Oslo · Copenhagen · Tokyo</div>
+      <h1 class="hero-title" id="heroTitle">FORMA<br><em>ATELIER</em></h1>
+      <p class="hero-sub" id="heroSub">Space as Statement.</p>
+      <div class="hero-ctas" id="heroCtas">
+        <a href="collection.html" class="btn-primary">View Projects</a>
+        <a href="contact.html" class="btn-outline">Commission a Space</a>
+      </div>
+    </div>
+
+    <!-- Corner accents -->
+    <div class="hero-corners">
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+    </div>
+
+    <!-- Geo coords -->
+    <div class="hero-coords">59.9139° N, 10.7522° E — Oslo</div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="container">
+      <div class="philosophy-grid">
+        <div class="philosophy-left">
+          <div class="section-label reveal">Philosophy</div>
+          <h2 class="reveal">We Design Spaces That Transcend Function</h2>
+        </div>
+        <div class="philosophy-right">
+          <p class="reveal">Architecture is not decoration applied to structure. It is the discipline of making space speak — of giving silence a form, of rendering the invisible tangible. At FORMA ATELIER, we interrogate the boundary between the built and the unbuilt.</p>
+          <p class="reveal">Our practice moves between Oslo, Copenhagen, and Tokyo, drawing from the precision of Scandinavian modernism and the spatial philosophy of Japanese ma — the meaningful interval, the productive void.</p>
+          <div class="philosophy-stats">
+            <div class="stat-item">
+              <span class="stat-num reveal" data-target="18">0</span>
+              <span class="stat-label">Years Active</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-num reveal" data-target="64">0</span>
+              <span class="stat-label">Projects Built</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-num reveal" data-target="12">0</span>
+              <span class="stat-label">International Awards</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SELECTED WORKS -->
+  <section class="works" id="works">
+    <div class="container">
+      <div class="works-header">
+        <div>
+          <div class="section-label reveal">Selected Works</div>
+          <h2 class="reveal">Projects</h2>
+        </div>
+        <a href="collection.html" class="btn-outline reveal">All Projects</a>
+      </div>
+      <div class="works-grid-inner">
+        <div class="work-card tall reveal">
+          <img class="work-img" src="images/project-1.webp" alt="Vantage Residence — Bergen" />
+          <div class="work-info">
+            <div class="work-cat">Residential</div>
+            <div class="work-title">Vantage Residence</div>
+            <div class="work-meta">Bergen, Norway · 2023</div>
+          </div>
+          <div class="work-arrow">→</div>
+        </div>
+        <div class="work-card reveal">
+          <img class="work-img" src="images/project-2.webp" alt="Meridian Cultural Center — Copenhagen" />
+          <div class="work-info">
+            <div class="work-cat">Cultural</div>
+            <div class="work-title">Meridian Center</div>
+            <div class="work-meta">Copenhagen · 2022</div>
+          </div>
+          <div class="work-arrow">→</div>
+        </div>
+        <div class="work-card reveal">
+          <img class="work-img" src="images/project-3.webp" alt="Axiom Tower — Oslo" />
+          <div class="work-info">
+            <div class="work-cat">Commercial</div>
+            <div class="work-title">Axiom Tower</div>
+            <div class="work-meta">Oslo · 2021</div>
+          </div>
+          <div class="work-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="services-header">
+        <div class="section-label reveal">What We Do</div>
+        <h2 class="reveal">Disciplines</h2>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <span class="service-num">01</span>
+          <div class="service-title">Residential</div>
+          <p class="service-desc">Private residences and estates designed to exacting specifications. We work only with clients who understand that a home is not a commodity but a singular act of spatial reasoning.</p>
+          <div class="service-tags">
+            <span class="tag">Private Villas</span>
+            <span class="tag">Urban Apartments</span>
+            <span class="tag">Country Estates</span>
+          </div>
+        </div>
+        <div class="service-card reveal">
+          <span class="service-num">02</span>
+          <div class="service-title">Commercial</div>
+          <p class="service-desc">Corporate headquarters, mixed-use developments, and workplace environments where spatial intelligence drives performance, culture, and brand. Structure meets strategy.</p>
+          <div class="service-tags">
+            <span class="tag">HQ Buildings</span>
+            <span class="tag">Workplace Design</span>
+            <span class="tag">Mixed-Use</span>
+          </div>
+        </div>
+        <div class="service-card reveal">
+          <span class="service-num">03</span>
+          <div class="service-title">Cultural</div>
+          <p class="service-desc">Museums, galleries, performance spaces, and civic architecture. Public buildings that become instruments of civic life — forms that hold community, memory, and aspiration.</p>
+          <div class="service-tags">
+            <span class="tag">Museums</span>
+            <span class="tag">Galleries</span>
+            <span class="tag">Civic Buildings</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS & RECOGNITION -->
+  <section class="awards" id="awards">
+    <div class="container">
+      <div class="awards-header">
+        <div class="section-label reveal">Recognition</div>
+        <h2 class="reveal">Awards</h2>
+      </div>
+      <ul class="awards-list">
+        <li class="award-item reveal">
+          <div class="award-left">
+            <div class="award-org">Pritzker Architecture Prize</div>
+            <div class="award-title">Finalist — Distinguished Practice</div>
+          </div>
+          <div class="award-year">2024</div>
+        </li>
+        <li class="award-item reveal">
+          <div class="award-left">
+            <div class="award-org">Royal Institute of British Architects</div>
+            <div class="award-title">RIBA International Award — Meridian Cultural Center</div>
+          </div>
+          <div class="award-year">2023</div>
+        </li>
+        <li class="award-item reveal">
+          <div class="award-left">
+            <div class="award-org">Architectural Review</div>
+            <div class="award-title">AR Future Projects — Cultural Category Winner</div>
+          </div>
+          <div class="award-year">2022</div>
+        </li>
+        <li class="award-item reveal">
+          <div class="award-left">
+            <div class="award-org">World Architecture Festival</div>
+            <div class="award-title">Best Residential Building — Vantage Residence</div>
+          </div>
+          <div class="award-year">2022</div>
+        </li>
+        <li class="award-item reveal">
+          <div class="award-left">
+            <div class="award-org">Japan Institute of Architects</div>
+            <div class="award-title">JIA International Architecture Award</div>
+          </div>
+          <div class="award-year">2020</div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- COLLABORATORS -->
+  <section class="collaborators" id="collaborators">
+    <div class="container">
+      <div class="collab-header">
+        <div class="section-label reveal">Partners &amp; Engineers</div>
+        <h2 class="reveal">Collaborators</h2>
+      </div>
+      <div class="collab-grid">
+        <div class="collab-item reveal">
+          <div class="collab-type">Structural Engineering</div>
+          <div class="collab-name">Arup Group</div>
+          <div class="collab-loc">London · Global</div>
+        </div>
+        <div class="collab-item reveal">
+          <div class="collab-type">Landscape Architecture</div>
+          <div class="collab-name">Snøhetta</div>
+          <div class="collab-loc">Oslo · New York</div>
+        </div>
+        <div class="collab-item reveal">
+          <div class="collab-type">MEP Engineering</div>
+          <div class="collab-name">Buro Happold</div>
+          <div class="collab-loc">London · Middle East</div>
+        </div>
+        <div class="collab-item reveal">
+          <div class="collab-type">Lighting Design</div>
+          <div class="collab-name">L'Observatoire</div>
+          <div class="collab-loc">Paris · New York</div>
+        </div>
+        <div class="collab-item reveal">
+          <div class="collab-type">Facade Engineering</div>
+          <div class="collab-name">Thornton Tomasetti</div>
+          <div class="collab-loc">New York · Global</div>
+        </div>
+        <div class="collab-item reveal">
+          <div class="collab-type">Interior Architecture</div>
+          <div class="collab-name">Kengo Kuma Associates</div>
+          <div class="collab-loc">Tokyo · Paris</div>
+        </div>
+        <div class="collab-item reveal">
+          <div class="collab-type">Acoustic Engineering</div>
+          <div class="collab-name">Müller-BBM</div>
+          <div class="collab-loc">Munich · Berlin</div>
+        </div>
+        <div class="collab-item reveal">
+          <div class="collab-type">Sustainability</div>
+          <div class="collab-name">Transsolar</div>
+          <div class="collab-loc">Stuttgart · New York</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW COMMISSION CTA -->
+  <section class="commission" id="commission">
+    <div class="commission-inner">
+      <div class="commission-content">
+        <div class="section-label reveal">New Commission</div>
+        <h2 class="reveal">Begin a Conversation</h2>
+        <p class="reveal">We accept a limited number of new commissions each year. If you are considering a project that demands the highest level of spatial intelligence, we would like to hear from you.</p>
+        <a href="contact.html" class="btn-primary reveal">Submit an Inquiry</a>
+      </div>
+      <div class="commission-img">
+        <img src="images/interior-1.webp" alt="Architectural interior space" />
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">FORMA ATELIER</a>
+          <p>Architecture and spatial design studio. Oslo · Copenhagen · Tokyo. Commission-based practice since 2006.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Studio</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="about.html#team">Team</a></li>
+            <li><a href="about.html#manifesto">Manifesto</a></li>
+            <li><a href="about.html#accolades">Accolades</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Work</h4>
+          <ul>
+            <li><a href="collection.html">All Projects</a></li>
+            <li><a href="collection.html#residential">Residential</a></li>
+            <li><a href="collection.html#commercial">Commercial</a></li>
+            <li><a href="collection.html#cultural">Cultural</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="contact.html">New Commission</a></li>
+            <li><a href="contact.html#press">Press</a></li>
+            <li><a href="process.html">Our Process</a></li>
+            <li><a href="mailto:studio@formaatelier.no">studio@formaatelier.no</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 FORMA ATELIER. All Rights Reserved.</div>
+        <div class="footer-coords">59.9139° N, 10.7522° E — Oslo HQ</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    // ── SplitText Polyfill ──
+    class SplitText {
+      constructor(el, opts = {}) {
+        this.el = typeof el === 'string' ? document.querySelectorAll(el) : (el.length ? el : [el]);
+        this.chars = []; this.words = [];
+        this.el.forEach(e => {
+          const words = e.textContent.split(' ');
+          e.innerHTML = words.map(w => `<span class="word" style="display:inline-block;overflow:hidden"><span class="char" style="display:inline-block">${w}</span></span>`).join(' ');
+          this.words.push(...e.querySelectorAll('.word'));
+          this.chars.push(...e.querySelectorAll('.char'));
+        });
+      }
+    }
+
+    // ── Init ──
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── Preloader ──
+    const preloader = document.getElementById('preloader');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+
+    window.addEventListener('load', () => {
+      gsap.delayedCall(2.2, () => {
+        gsap.to(preloader, {
+          opacity: 0, duration: 0.8, ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.classList.add('hidden');
+            initHeroAnimations();
+            // Show scroll indicator after preloader
+            scrollIndicator.classList.add('visible');
+          }
+        });
+      });
+    });
+
+    // Also show scroll indicator after 4 seconds as fallback
+    setTimeout(() => {
+      scrollIndicator.classList.add('visible');
+    }, 4000);
+
+    // Hide scroll indicator on scroll
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        scrollIndicator.classList.add('hidden-scroll');
+      } else {
+        scrollIndicator.classList.remove('hidden-scroll');
+      }
+    });
+
+    // ── Canvas Grid ──
+    function initCanvas() {
+      const canvas = document.getElementById('heroCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        drawGrid();
+      }
+
+      function drawGrid() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const size = 70;
+        ctx.strokeStyle = 'rgba(160,196,216,0.2)';
+        ctx.lineWidth = 0.5;
+
+        for (let x = 0; x <= canvas.width; x += size) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+        for (let y = 0; y <= canvas.height; y += size) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+
+        // Dot intersections
+        ctx.fillStyle = 'rgba(160,196,216,0.25)';
+        for (let x = 0; x <= canvas.width; x += size) {
+          for (let y = 0; y <= canvas.height; y += size) {
+            ctx.beginPath();
+            ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // Architectural measurement lines (horizontal accents)
+        ctx.strokeStyle = 'rgba(160,196,216,0.08)';
+        ctx.lineWidth = 1;
+        const tickPositions = [0.2, 0.45, 0.7];
+        tickPositions.forEach(p => {
+          const y = canvas.height * p;
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width * 0.45, y);
+          ctx.stroke();
+        });
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+    }
+
+    // ── Hero Animations ──
+    function initHeroAnimations() {
+      initCanvas();
+
+      // Animate hero image grid cells in sequence
+      const cells = document.querySelectorAll('.grid-cell');
+      gsap.from(cells, {
+        immediateRender: false,
+        opacity: 0,
+        scale: 1.08,
+        duration: 1.2,
+        stagger: 0.12,
+        ease: 'power3.out'
+      });
+
+      // Hero content — A3 Precise: x:-20px slide
+      gsap.from('#heroContent .hero-eyebrow', {
+        immediateRender: false,
+        x: -20, opacity: 0,
+        duration: 0.75, delay: 0.2,
+        ease: 'power3.out'
+      });
+
+      // SplitText hero title
+      const splitTitle = new SplitText('#heroTitle');
+      gsap.from(splitTitle.chars, {
+        immediateRender: false,
+        x: -20, opacity: 0,
+        duration: 0.75,
+        stagger: 0.04,
+        delay: 0.35,
+        ease: 'power3.out'
+      });
+
+      gsap.from('#heroSub', {
+        immediateRender: false,
+        x: -20, opacity: 0,
+        duration: 0.75, delay: 0.55,
+        ease: 'power3.out'
+      });
+
+      gsap.from('#heroCtas > *', {
+        immediateRender: false,
+        x: -20, opacity: 0,
+        duration: 0.75,
+        stagger: 0.04,
+        delay: 0.7,
+        ease: 'power3.out'
+      });
+
+      // Corner accents
+      gsap.from('.corner', {
+        immediateRender: false,
+        scale: 0, opacity: 0,
+        duration: 0.75, delay: 0.9,
+        stagger: 0.04,
+        ease: 'power3.out'
+      });
+    }
+
+    // ── Navbar scroll behavior ──
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── Scroll Reveals — A3 Precise ──
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.from(el, {
+        immediateRender: false,
+        x: -20, opacity: 0,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          once: true
+        }
+      });
+    });
+
+    // ── Counter animation for stats ──
+    document.querySelectorAll('.stat-num[data-target]').forEach(el => {
+      const target = +el.dataset.target;
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          gsap.to(el, {
+            textContent: target,
+            duration: 1.8,
+            ease: 'power2.out',
+            snap: { textContent: 1 },
+            onUpdate: function() {
+              el.textContent = Math.round(+el.textContent);
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

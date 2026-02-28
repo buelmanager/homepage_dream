@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLYPH — Typography, Lettering & Type Design</title>
+  <meta name="description" content="GLYPH is a bespoke type design studio crafting custom typefaces, hand lettering, and typographic identities for discerning brands and cultural institutions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #181818;
+      --surface: #222222;
+      --surface2: #2A2A2A;
+      --accent: #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark: #808090;
+      --ivory: #EEEEF2;
+      --smoke: #909090;
+      --muted: #606060;
+      --border: #1E1E1E;
+      --font-serif: 'Cinzel', 'Times New Roman', serif;
+      --font-sans: 'Crimson Pro', Georgia, serif;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── PRELOADER ─────────────────────────────────────── */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .preloader-glyph {
+      font-family: var(--font-serif);
+      font-size: clamp(4rem, 10vw, 8rem);
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .preloader-line {
+      width: 60px; height: 1px;
+      background: var(--accent);
+      transform-origin: left center;
+      transform: scaleX(0);
+    }
+    .preloader-label {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ─── SCROLL INDICATOR ──────────────────────────────── */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .scroll-indicator span {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .scroll-arrow {
+      width: 20px; height: 30px;
+      border: 1px solid var(--muted);
+      border-radius: 10px;
+      position: relative;
+    }
+    .scroll-arrow::after {
+      content: '';
+      position: absolute;
+      top: 5px; left: 50%;
+      transform: translateX(-50%);
+      width: 2px; height: 6px;
+      background: var(--accent);
+      border-radius: 1px;
+      animation: scrollDot 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollDot {
+      0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      80% { opacity: 0; transform: translateX(-50%) translateY(12px); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ─── NAVBAR ────────────────────────────────────────── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 1.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(24, 24, 24, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta {
+      font-family: var(--font-serif);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.5rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      transition: all 0.3s;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column; gap: 5px;
+      cursor: pointer;
+    }
+    .nav-hamburger span {
+      display: block; width: 28px; height: 1px;
+      background: var(--ivory);
+      transition: all 0.3s;
+    }
+
+    /* ─── HERO — TYPE G ─────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .hero-bg-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.12;
+      filter: grayscale(100%);
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg,
+        rgba(24,24,24,0.3) 0%,
+        rgba(24,24,24,0.0) 40%,
+        rgba(24,24,24,0.6) 100%
+      );
+    }
+    .hero-content {
+      position: relative; z-index: 10;
+      text-align: center;
+      padding: 0 2rem;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(10rem, 22vw, 28rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ivory);
+      line-height: 0.9;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .hero-title::before {
+      content: 'GLYPH';
+      position: absolute;
+      inset: 0;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(176, 176, 192, 0.15);
+      transform: translate(4px, 4px);
+      z-index: -1;
+    }
+    .hero-subtitle {
+      font-family: var(--font-sans);
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .hero-meta {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1rem;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+    .hero-ctas {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .cta-primary {
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      transition: all 0.3s;
+    }
+    .cta-primary:hover {
+      background: var(--accent-light);
+    }
+    .cta-secondary {
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      border: 1px solid var(--accent-dark);
+      color: var(--accent);
+      transition: all 0.3s;
+    }
+    .cta-secondary:hover {
+      border-color: var(--accent);
+      color: var(--ivory);
+    }
+    /* Floating alphabet letters */
+    .hero-alphabet {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .hero-alphabet span {
+      position: absolute;
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 7vw, 8rem);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(176, 176, 192, 0.07);
+      user-select: none;
+      line-height: 1;
+    }
+    .hero-alphabet span:nth-child(1)  { top: 8%;  left: 3%; }
+    .hero-alphabet span:nth-child(2)  { top: 12%; left: 12%; }
+    .hero-alphabet span:nth-child(3)  { top: 5%;  right: 8%; }
+    .hero-alphabet span:nth-child(4)  { top: 20%; right: 3%; }
+    .hero-alphabet span:nth-child(5)  { bottom: 15%; left: 2%; }
+    .hero-alphabet span:nth-child(6)  { bottom: 8%; left: 15%; }
+    .hero-alphabet span:nth-child(7)  { bottom: 20%; right: 5%; }
+    .hero-alphabet span:nth-child(8)  { bottom: 5%; right: 15%; }
+    .hero-alphabet span:nth-child(9)  { top: 45%; left: 1%; }
+    .hero-alphabet span:nth-child(10) { top: 40%; right: 1%; }
+
+    /* ─── SECTION BASE ──────────────────────────────────── */
+    section { padding: 7rem 0; }
+    .section-header { text-align: center; margin-bottom: 5rem; }
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      color: var(--ivory);
+      line-height: 1.15;
+    }
+    .section-desc {
+      font-family: var(--font-sans);
+      font-size: 1.05rem;
+      color: var(--smoke);
+      max-width: 540px;
+      margin: 1.5rem auto 0;
+      font-weight: 300;
+    }
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 3rem;
+    }
+
+    /* ─── TYPE RULE DIVIDER ─────────────────────────────── */
+    .type-rule {
+      display: flex; align-items: center; gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .type-rule-line {
+      flex: 1; height: 1px;
+      background: var(--border);
+    }
+    .type-rule-char {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--accent-dark);
+    }
+
+    /* ─── TYPE SPECIMENS ────────────────────────────────── */
+    .specimens { background: var(--bg); }
+    .specimens-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .specimen-card {
+      background: var(--surface);
+      padding: 3rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .specimen-card:hover { background: var(--surface2); }
+    .specimen-number {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .specimen-name {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .specimen-category {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+    .specimen-display {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 400;
+      color: var(--ivory);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+    }
+    .specimen-alphabet {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      margin-bottom: 1rem;
+      line-height: 1.8;
+    }
+    .specimen-pangram {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .specimen-img {
+      position: absolute; top: 0; right: 0;
+      width: 40%; height: 100%;
+      opacity: 0.08;
+    }
+    .specimen-weight-tags {
+      display: flex; gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .weight-tag {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ─── LETTERING PORTFOLIO ───────────────────────────── */
+    .lettering { background: var(--surface); }
+    .lettering-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .lettering-item {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .lettering-item img {
+      transition: transform 0.6s ease;
+    }
+    .lettering-item:hover img { transform: scale(1.04); }
+    .lettering-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(24,24,24,0.95) 100%);
+      display: flex; align-items: flex-end;
+      padding: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .lettering-item:hover .lettering-overlay { opacity: 1; }
+    .lettering-label {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--ivory);
+    }
+    .lettering-meta {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-top: 0.25rem;
+    }
+
+    /* ─── SERVICES ──────────────────────────────────────── */
+    .services { background: var(--bg); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .service-card {
+      background: var(--bg);
+      padding: 3rem 2rem;
+      transition: background 0.3s;
+    }
+    .service-card:hover { background: var(--surface); }
+    .service-number {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+    .service-icon {
+      width: 36px; height: 1px;
+      background: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .service-name {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .service-desc {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--smoke);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .service-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      border-bottom: 1px solid var(--accent-dark);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .service-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ─── CLIENTS ───────────────────────────────────────── */
+    .clients { background: var(--surface); }
+    .clients-intro {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .clients-quote {
+      font-family: var(--font-sans);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--accent);
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+    .clients-attribution {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .clients-logos {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .client-logo-cell {
+      background: var(--surface);
+      padding: 2.5rem 2rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .client-name {
+      font-family: var(--font-serif);
+      font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      transition: color 0.3s;
+    }
+    .client-logo-cell:hover .client-name { color: var(--accent); }
+
+    /* ─── PHILOSOPHY ────────────────────────────────────── */
+    .philosophy { background: var(--bg); }
+    .philosophy-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .philosophy-text {}
+    .philosophy-label {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .philosophy-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 400;
+      color: var(--ivory);
+      line-height: 1.2;
+      margin-bottom: 2rem;
+    }
+    .philosophy-body {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      color: var(--smoke);
+      line-height: 1.9;
+      font-weight: 300;
+    }
+    .philosophy-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      margin-top: 2.5rem;
+    }
+    .phil-stat {
+      background: var(--bg);
+      padding: 2rem;
+    }
+    .phil-stat-number {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .phil-stat-label {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .philosophy-visual {
+      position: relative;
+      height: 600px;
+    }
+    .philosophy-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .philosophy-type-overlay {
+      position: absolute;
+      bottom: 3rem; left: -3rem;
+      background: var(--surface);
+      padding: 2rem 2.5rem;
+      border-left: 3px solid var(--accent);
+    }
+    .pto-quote {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--ivory);
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+    }
+    .pto-attr {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+
+    /* ─── CONTACT CTA ───────────────────────────────────── */
+    .contact-cta {
+      background: var(--surface);
+      text-align: center;
+      padding: 8rem 0;
+    }
+    .cta-overline {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      margin-bottom: 2rem;
+      display: block;
+    }
+    .cta-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      font-weight: 400;
+      color: var(--ivory);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .cta-sub {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      color: var(--smoke);
+      max-width: 480px;
+      margin: 0 auto 3rem;
+      font-style: italic;
+    }
+    .cta-buttons {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ────────────────────────────────────────── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 4rem 0 2rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    .footer-brand {}
+    .footer-logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+      margin-bottom: 1rem;
+    }
+    .footer-tagline {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-style: italic;
+      max-width: 260px;
+    }
+    .footer-col-title {
+      font-family: var(--font-serif);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      margin-bottom: 1.5rem;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .footer-links a {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-copy {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .footer-mark {
+      font-family: var(--font-serif);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--accent-dark);
+    }
+
+    /* ─── MOBILE ────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .clients-logos { grid-template-columns: repeat(3, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .navbar { padding: 1.25rem 1.5rem; }
+      .navbar.scrolled { padding: 0.875rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .container { padding: 0 1.5rem; }
+      section { padding: 5rem 0; }
+      .specimens-grid { grid-template-columns: 1fr; }
+      .lettering-grid { grid-template-columns: repeat(2, 1fr); }
+      .services-grid { grid-template-columns: 1fr; }
+      .clients-logos { grid-template-columns: repeat(2, 1fr); }
+      .philosophy-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .philosophy-visual { height: 400px; }
+      .philosophy-type-overlay { left: 0; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-glyph">G</div>
+    <div class="preloader-line" id="preloaderLine"></div>
+    <div class="preloader-label">Loading</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollIndicator" style="display:none;">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">GLYPH</a>
+    <ul class="nav-links">
+      <li><a href="about.html">Studio</a></li>
+      <li><a href="collection.html">Specimens</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Commission</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Get in Touch</a>
+    <div class="nav-hamburger" id="navHamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO — TYPE G -->
+  <section class="hero">
+    <img src="images/hero-1.webp" class="hero-bg-img" alt="Typography texture">
+    <div class="hero-overlay"></div>
+
+    <!-- Floating alphabet -->
+    <div class="hero-alphabet">
+      <span>A</span><span>B</span><span>C</span><span>D</span>
+      <span>E</span><span>f</span><span>G</span><span>h</span>
+      <span>Ω</span><span>Æ</span>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Typography · Lettering · Type Design</div>
+      <h1 class="hero-title">
+        <span class="hero-word word-1">GLYPH</span>
+      </h1>
+      <p class="hero-subtitle">Where letterforms become language.</p>
+      <div class="hero-meta">
+        <span>Est. 2019</span>
+        <span>·</span>
+        <span>London & Berlin</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="collection.html" class="cta-primary">View Specimens</a>
+        <a href="contact.html" class="cta-secondary">Commission Typeface</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPE SPECIMENS -->
+  <section class="specimens" id="specimens">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Type Specimens</span>
+        <h2 class="section-title">Typeface Library</h2>
+        <p class="section-desc">Each typeface is crafted with meticulous attention to form, rhythm, and legibility across all media and scales.</p>
+      </div>
+      <div class="specimens-grid">
+
+        <!-- Specimen 1 -->
+        <div class="specimen-card">
+          <img src="images/product-1.webp" alt="" class="specimen-img">
+          <div class="specimen-number">01 — Typeface</div>
+          <div class="specimen-name">Aldgate</div>
+          <div class="specimen-category">High Contrast Display Serif</div>
+          <div class="specimen-display">Aa</div>
+          <div class="specimen-alphabet">A B C D E F G H I J K L M<br>N O P Q R S T U V W X Y Z<br>a b c d e f g h i j k l m n o p q r s t u v w x y z</div>
+          <div class="specimen-pangram">The quick brown fox jumps over the lazy dog — 0123456789</div>
+          <div class="specimen-weight-tags">
+            <span class="weight-tag">Light</span>
+            <span class="weight-tag">Regular</span>
+            <span class="weight-tag">Medium</span>
+            <span class="weight-tag">Bold</span>
+          </div>
+        </div>
+
+        <!-- Specimen 2 -->
+        <div class="specimen-card">
+          <img src="images/product-2.webp" alt="" class="specimen-img">
+          <div class="specimen-number">02 — Typeface</div>
+          <div class="specimen-name">Mitte</div>
+          <div class="specimen-category">Geometric Sans-Serif</div>
+          <div class="specimen-display" style="font-family: 'Crimson Pro', serif; font-style: italic;">Mm</div>
+          <div class="specimen-alphabet">A B C D E F G H I J K L M<br>N O P Q R S T U V W X Y Z<br>a b c d e f g h i j k l m n o p q r s t u v w x y z</div>
+          <div class="specimen-pangram">Pack my box with five dozen liquor jugs — 0123456789</div>
+          <div class="specimen-weight-tags">
+            <span class="weight-tag">Thin</span>
+            <span class="weight-tag">Regular</span>
+            <span class="weight-tag">Semibold</span>
+            <span class="weight-tag">Black</span>
+          </div>
+        </div>
+
+        <!-- Specimen 3 -->
+        <div class="specimen-card">
+          <img src="images/product-3.webp" alt="" class="specimen-img">
+          <div class="specimen-number">03 — Typeface</div>
+          <div class="specimen-name">Folio Script</div>
+          <div class="specimen-category">Calligraphic Script</div>
+          <div class="specimen-display" style="font-family: 'Crimson Pro', serif; font-style: italic; font-size: clamp(2.5rem, 5vw, 4.5rem);">Fs</div>
+          <div class="specimen-alphabet">A B C D E F G H I J K L M<br>N O P Q R S T U V W X Y Z<br>a b c d e f g h i j k l m n o p q r s t u v w x y z</div>
+          <div class="specimen-pangram">Sphinx of black quartz, judge my vow — 0123456789</div>
+          <div class="specimen-weight-tags">
+            <span class="weight-tag">Regular</span>
+            <span class="weight-tag">Bold</span>
+          </div>
+        </div>
+
+        <!-- Specimen 4 -->
+        <div class="specimen-card">
+          <img src="images/product-4.webp" alt="" class="specimen-img">
+          <div class="specimen-number">04 — Typeface</div>
+          <div class="specimen-name">Pressmark</div>
+          <div class="specimen-category">Letterpress Revival Slab</div>
+          <div class="specimen-display">Pp</div>
+          <div class="specimen-alphabet">A B C D E F G H I J K L M<br>N O P Q R S T U V W X Y Z<br>a b c d e f g h i j k l m n o p q r s t u v w x y z</div>
+          <div class="specimen-pangram">How vexingly quick daft zebras jump — 0123456789</div>
+          <div class="specimen-weight-tags">
+            <span class="weight-tag">Regular</span>
+            <span class="weight-tag">Bold</span>
+            <span class="weight-tag">Italic</span>
+          </div>
+        </div>
+
+        <!-- Specimen 5 -->
+        <div class="specimen-card">
+          <img src="images/product-5.webp" alt="" class="specimen-img">
+          <div class="specimen-number">05 — Typeface</div>
+          <div class="specimen-name">Kremlin</div>
+          <div class="specimen-category">Neo-Classical Display</div>
+          <div class="specimen-display">Kk</div>
+          <div class="specimen-alphabet">A B C D E F G H I J K L M<br>N O P Q R S T U V W X Y Z<br>a b c d e f g h i j k l m n o p q r s t u v w x y z</div>
+          <div class="specimen-pangram">Waltz, bad nymph, for quick jigs vex — 0123456789</div>
+          <div class="specimen-weight-tags">
+            <span class="weight-tag">Light</span>
+            <span class="weight-tag">Regular</span>
+            <span class="weight-tag">Bold</span>
+          </div>
+        </div>
+
+        <!-- Specimen 6 -->
+        <div class="specimen-card">
+          <img src="images/product-6.webp" alt="" class="specimen-img">
+          <div class="specimen-number">06 — Custom</div>
+          <div class="specimen-name">Bespoke Commission</div>
+          <div class="specimen-category">Client-Exclusive Variable Font</div>
+          <div class="specimen-display" style="color: var(--accent-dark);">Bc</div>
+          <div class="specimen-alphabet">A B C D E F G H I J K L M<br>N O P Q R S T U V W X Y Z<br>a b c d e f g h i j k l m n o p q r s t u v w x y z</div>
+          <div class="specimen-pangram">Exclusively crafted for brand identity systems — custom glyphs</div>
+          <div class="specimen-weight-tags">
+            <span class="weight-tag">Variable</span>
+            <span class="weight-tag">Custom Glyphs</span>
+            <span class="weight-tag">Full Charset</span>
+          </div>
+        </div>
+
+      </div>
+      <div style="text-align:center; margin-top:3rem;">
+        <a href="collection.html" class="cta-secondary">View Full Specimen Library</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LETTERING PORTFOLIO -->
+  <section class="lettering" id="lettering">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Hand Lettering</span>
+        <h2 class="section-title">Lettering Portfolio</h2>
+        <p class="section-desc">Original hand-lettered works for editorial, brand, and cultural commissions — each piece a singular expression of craft.</p>
+      </div>
+      <div class="lettering-grid">
+        <div class="lettering-item">
+          <img src="images/workspace-1.webp" alt="Editorial lettering">
+          <div class="lettering-overlay">
+            <div>
+              <div class="lettering-label">Editorial Title</div>
+              <div class="lettering-meta">Print · The Folio Review</div>
+            </div>
+          </div>
+        </div>
+        <div class="lettering-item">
+          <img src="images/workspace-2.webp" alt="Brand lettering">
+          <div class="lettering-overlay">
+            <div>
+              <div class="lettering-label">Brand Identity</div>
+              <div class="lettering-meta">Identity · Maison Pellerin</div>
+            </div>
+          </div>
+        </div>
+        <div class="lettering-item">
+          <img src="images/workspace-3.webp" alt="Poster lettering">
+          <div class="lettering-overlay">
+            <div>
+              <div class="lettering-label">Exhibition Poster</div>
+              <div class="lettering-meta">Print · Tate Modern</div>
+            </div>
+          </div>
+        </div>
+        <div class="lettering-item">
+          <img src="images/ambient-1.webp" alt="Book lettering">
+          <div class="lettering-overlay">
+            <div>
+              <div class="lettering-label">Book Title</div>
+              <div class="lettering-meta">Publishing · Faber & Faber</div>
+            </div>
+          </div>
+        </div>
+        <div class="lettering-item">
+          <img src="images/ambient-2.webp" alt="Logotype lettering">
+          <div class="lettering-overlay">
+            <div>
+              <div class="lettering-label">Logotype</div>
+              <div class="lettering-meta">Brand · Atelier Noir</div>
+            </div>
+          </div>
+        </div>
+        <div class="lettering-item">
+          <img src="images/ambient-3.webp" alt="Packaging lettering">
+          <div class="lettering-overlay">
+            <div>
+              <div class="lettering-label">Packaging Script</div>
+              <div class="lettering-meta">FMCG · Sloane & Co.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Expertise</span>
+        <h2 class="section-title">Services</h2>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-number">01</div>
+          <div class="service-icon"></div>
+          <div class="service-name">Custom Typeface Design</div>
+          <p class="service-desc">Bespoke font families designed from first principles — from initial concept and sketching through to production-ready OpenType files with full character sets.</p>
+          <a href="contact.html" class="service-link">Commission ›</a>
+        </div>
+        <div class="service-card">
+          <div class="service-number">02</div>
+          <div class="service-icon"></div>
+          <div class="service-name">Hand Lettering</div>
+          <p class="service-desc">Original hand-lettered artwork for editorial, packaging, environmental, and brand applications — crafted with ink, brush, and decades of practice.</p>
+          <a href="contact.html" class="service-link">Commission ›</a>
+        </div>
+        <div class="service-card">
+          <div class="service-number">03</div>
+          <div class="service-icon"></div>
+          <div class="service-name">Typography Consulting</div>
+          <p class="service-desc">Strategic guidance on typographic systems, brand voice through letterform, and editorial hierarchy for publishing houses, agencies, and cultural institutions.</p>
+          <a href="contact.html" class="service-link">Enquire ›</a>
+        </div>
+        <div class="service-card">
+          <div class="service-number">04</div>
+          <div class="service-icon"></div>
+          <div class="service-name">Art Direction</div>
+          <p class="service-desc">Full typographic art direction for print, digital, and environmental projects — ensuring every letterform serves the larger narrative with precision and intention.</p>
+          <a href="contact.html" class="service-link">Enquire ›</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS -->
+  <section class="clients" id="clients">
+    <div class="container">
+      <div class="clients-intro">
+        <span class="section-label">Selected Clients</span>
+        <div class="clients-quote">"GLYPH transformed our brand voice into something that could be seen as well as read — type that truly speaks."</div>
+        <div class="clients-attribution">— Creative Director, Maison Pellerin</div>
+      </div>
+      <div class="clients-logos">
+        <div class="client-logo-cell"><div class="client-name">The Folio Society</div></div>
+        <div class="client-logo-cell"><div class="client-name">Tate Modern</div></div>
+        <div class="client-logo-cell"><div class="client-name">Faber & Faber</div></div>
+        <div class="client-logo-cell"><div class="client-name">Wallpaper*</div></div>
+        <div class="client-logo-cell"><div class="client-name">Penguin Books</div></div>
+        <div class="client-logo-cell"><div class="client-name">Condé Nast</div></div>
+        <div class="client-logo-cell"><div class="client-name">Barbican Centre</div></div>
+        <div class="client-logo-cell"><div class="client-name">Royal Academy</div></div>
+        <div class="client-logo-cell"><div class="client-name">Monocle Magazine</div></div>
+        <div class="client-logo-cell"><div class="client-name">Liberty London</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="container">
+      <div class="philosophy-layout">
+        <div class="philosophy-text">
+          <span class="philosophy-label">Design Philosophy</span>
+          <h2 class="philosophy-heading">Type is the voice of thought made visible</h2>
+          <p class="philosophy-body">
+            Every typeface begins not on screen but in the hand — in pencil sketches, in the study of historical models, in the tension between tradition and the demands of contemporary use. We believe that great typography is invisible in its service and unmistakable in its character.
+          </p>
+          <p class="philosophy-body" style="margin-top: 1.5rem;">
+            The letterpress revival is not nostalgia. It is a return to the material truth of type: ink on paper, pressure and texture, the trace of the human hand translated through metal into language. Every digital typeface we create carries this inheritance.
+          </p>
+          <div class="philosophy-stats">
+            <div class="phil-stat">
+              <div class="phil-stat-number">47+</div>
+              <div class="phil-stat-label">Typefaces Released</div>
+            </div>
+            <div class="phil-stat">
+              <div class="phil-stat-number">200k</div>
+              <div class="phil-stat-label">Licences Issued</div>
+            </div>
+            <div class="phil-stat">
+              <div class="phil-stat-number">18</div>
+              <div class="phil-stat-label">Type Awards</div>
+            </div>
+            <div class="phil-stat">
+              <div class="phil-stat-number">7yrs</div>
+              <div class="phil-stat-label">In Practice</div>
+            </div>
+          </div>
+        </div>
+        <div class="philosophy-visual">
+          <img src="images/detail-1.webp" alt="Letterpress printing detail" class="philosophy-img">
+          <div class="philosophy-type-overlay">
+            <div class="pto-quote">"The best typeface is the one you never notice — until it is gone."</div>
+            <div class="pto-attr">— GLYPH Studio, London</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT CTA -->
+  <section class="contact-cta">
+    <div class="container">
+      <span class="cta-overline">Begin a Collaboration</span>
+      <h2 class="cta-headline">Commission a<br>Bespoke Typeface</h2>
+      <p class="cta-sub">Every great brand has a voice. Let yours be written in type designed for it alone.</p>
+      <div class="cta-buttons">
+        <a href="contact.html" class="cta-primary">Start a Project</a>
+        <a href="collection.html" class="cta-secondary">Browse Specimens</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">GLYPH</div>
+          <p class="footer-tagline">Typography, Lettering & Type Design<br>London · Berlin · Est. 2019</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Studio</div>
+          <ul class="footer-links">
+            <li><a href="about.html">About</a></li>
+            <li><a href="process.html">Process</a></li>
+            <li><a href="about.html#awards">Awards</a></li>
+            <li><a href="about.html#philosophy">Philosophy</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Work</div>
+          <ul class="footer-links">
+            <li><a href="collection.html">Type Specimens</a></li>
+            <li><a href="collection.html#lettering">Lettering</a></li>
+            <li><a href="collection.html#custom">Custom Type</a></li>
+            <li><a href="collection.html#editorial">Editorial</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="contact.html">Commission</a></li>
+            <li><a href="contact.html#licensing">Licensing</a></li>
+            <li><a href="mailto:studio@glyph.design">studio@glyph.design</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 GLYPH Studio. All rights reserved.</div>
+        <div class="footer-mark">GLYPH — Type & Lettering</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    // SplitText inline polyfill (Club GSAP premium — NOT on CDN)
+    class SplitText {
+      constructor(el, { type = 'chars,words' } = {}) {
+        this.el = typeof el === 'string' ? document.querySelector(el) : el;
+        if (!this.el) { this.chars = []; this.words = []; return; }
+        this.chars = []; this.words = [];
+        const text = this.el.textContent;
+        this.el.innerHTML = '';
+        text.split(' ').forEach((word, wi, arr) => {
+          const wEl = document.createElement('span');
+          wEl.style.cssText = 'display:inline-block;overflow:hidden;';
+          word.split('').forEach(char => {
+            const cEl = document.createElement('span');
+            cEl.textContent = char;
+            cEl.style.display = 'inline-block';
+            wEl.appendChild(cEl);
+            this.chars.push(cEl);
+          });
+          this.words.push(wEl);
+          this.el.appendChild(wEl);
+          if (wi < arr.length - 1) this.el.appendChild(document.createTextNode(' '));
+        });
+      }
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ─── PRELOADER ───────────────────────────────────────────
+    const preloader = document.getElementById('preloader');
+    const preloaderLine = document.getElementById('preloaderLine');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+
+    gsap.to(preloaderLine, {
+      scaleX: 1,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            // Show scroll indicator after preloader
+            scrollIndicator.style.display = 'flex';
+            gsap.from(scrollIndicator, {
+              immediateRender: false,
+              opacity: 0,
+              y: 10,
+              duration: 1.0
+            });
+            initAnimations();
+          }
+        });
+      }
+    });
+
+    // Fallback: show scroll indicator after 4000ms
+    setTimeout(() => {
+      if (scrollIndicator.style.display === 'none' || !scrollIndicator.style.display) {
+        scrollIndicator.style.display = 'flex';
+      }
+    }, 4000);
+
+    // ─── NAVBAR SCROLL ───────────────────────────────────────
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 80) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      // Hide scroll indicator after scrolling
+      if (window.scrollY > 200) {
+        gsap.to(scrollIndicator, { opacity: 0, duration: 0.4 });
+      } else {
+        gsap.to(scrollIndicator, { opacity: 1, duration: 0.4 });
+      }
+    });
+
+    // ─── MAIN ANIMATIONS ─────────────────────────────────────
+    function initAnimations() {
+      // Hero alphabet letters drift animation
+      const alphaLetters = document.querySelectorAll('.hero-alphabet span');
+      alphaLetters.forEach((letter, i) => {
+        gsap.to(letter, {
+          y: (i % 2 === 0) ? -30 : 30,
+          x: (i % 3 === 0) ? -15 : 15,
+          duration: 4 + (i * 0.7),
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1,
+          delay: i * 0.3
+        });
+      });
+
+      // Hero entrance
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        opacity: 0, y: 24,
+        duration: 1.0, ease: 'power2.out', delay: 0.2
+      });
+      gsap.from('.hero-title', {
+        immediateRender: false,
+        opacity: 0, y: 40,
+        duration: 1.2, ease: 'power2.out', delay: 0.5
+      });
+      gsap.from('.hero-subtitle', {
+        immediateRender: false,
+        opacity: 0, y: 24,
+        duration: 1.0, ease: 'power2.out', delay: 0.8
+      });
+      gsap.from('.hero-meta', {
+        immediateRender: false,
+        opacity: 0, y: 24,
+        duration: 1.0, ease: 'power2.out', delay: 1.0
+      });
+      gsap.from('.hero-ctas', {
+        immediateRender: false,
+        opacity: 0, y: 24,
+        duration: 1.0, ease: 'power2.out', delay: 1.2
+      });
+
+      // Specimens section
+      const specimenCards = document.querySelectorAll('.specimen-card');
+      specimenCards.forEach((card, i) => {
+        gsap.from(card, {
+          immediateRender: false,
+          opacity: 0, y: 24,
+          duration: 1.0, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 85%',
+            once: true
+          },
+          delay: (i % 2) * 0.10
+        });
+      });
+
+      // Lettering items
+      const letteringItems = document.querySelectorAll('.lettering-item');
+      letteringItems.forEach((item, i) => {
+        gsap.from(item, {
+          immediateRender: false,
+          opacity: 0, y: 24,
+          duration: 1.0, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: item,
+            start: 'top 85%',
+            once: true
+          },
+          delay: (i % 3) * 0.10
+        });
+      });
+
+      // Service cards
+      const serviceCards = document.querySelectorAll('.service-card');
+      serviceCards.forEach((card, i) => {
+        gsap.from(card, {
+          immediateRender: false,
+          opacity: 0, y: 24,
+          duration: 1.0, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 85%',
+            once: true
+          },
+          delay: i * 0.10
+        });
+      });
+
+      // Section headers
+      document.querySelectorAll('.section-header').forEach(header => {
+        gsap.from(header, {
+          immediateRender: false,
+          opacity: 0, y: 24,
+          duration: 1.0, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: header,
+            start: 'top 85%',
+            once: true
+          }
+        });
+      });
+
+      // Philosophy layout
+      gsap.from('.philosophy-text', {
+        immediateRender: false,
+        opacity: 0, x: -24,
+        duration: 1.2, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.philosophy-layout',
+          start: 'top 80%',
+          once: true
+        }
+      });
+      gsap.from('.philosophy-visual', {
+        immediateRender: false,
+        opacity: 0, x: 24,
+        duration: 1.2, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.philosophy-layout',
+          start: 'top 80%',
+          once: true
+        }
+      });
+
+      // Stats
+      const stats = document.querySelectorAll('.phil-stat');
+      stats.forEach((stat, i) => {
+        gsap.from(stat, {
+          immediateRender: false,
+          opacity: 0, y: 24,
+          duration: 1.0, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.philosophy-stats',
+            start: 'top 85%',
+            once: true
+          },
+          delay: i * 0.10
+        });
+      });
+
+      // Contact CTA
+      gsap.from('.cta-headline', {
+        immediateRender: false,
+        opacity: 0, y: 24,
+        duration: 1.2, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.contact-cta',
+          start: 'top 80%',
+          once: true
+        }
+      });
+
+      // Client logos
+      const clientCells = document.querySelectorAll('.client-logo-cell');
+      clientCells.forEach((cell, i) => {
+        gsap.from(cell, {
+          immediateRender: false,
+          opacity: 0,
+          duration: 1.0, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.clients-logos',
+            start: 'top 85%',
+            once: true
+          },
+          delay: i * 0.05
+        });
+      });
+
+      // Parallax on hero bg
+      gsap.to('.hero-bg-img', {
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    }
+  </script>
+</body>
+</html>

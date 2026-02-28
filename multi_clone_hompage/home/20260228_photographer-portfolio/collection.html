@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — LUMIÈRE STUDIO</title>
+<meta name="description" content="Fine art photography portfolio — LUMIÈRE STUDIO. Landscape, documentary, and abstract series.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #181818; --surface: #222222; --surface2: #2A2A2A;
+    --accent: #B0B0C0; --accent-light: #D0D0E0; --accent-dark: #808090;
+    --ivory: #EEEEF2; --smoke: #909090; --muted: #606060; --border: #1E1E1E;
+    --font-serif: 'Bodoni Moda', 'Didot', serif;
+    --font-sans: 'Work Sans', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+
+  /* NAVBAR */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 60px;
+    background: rgba(24,24,24,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.2em; color: var(--ivory); }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 40px; }
+  .nav-links a { font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase; transition: color 0.3s ease; }
+  .nav-links a:hover, .nav-links a.active { color: var(--ivory); }
+  .nav-cta { font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 10px 24px; border: 1px solid var(--accent); color: var(--accent); transition: all 0.3s ease; }
+  .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+  /* PAGE BANNER */
+  .page-banner {
+    position: relative; height: 60vh; min-height: 400px;
+    display: flex; align-items: flex-end; overflow: hidden;
+  }
+  .banner-bg {
+    position: absolute; inset: -5%;
+    background-image: url('images/collection-2.webp');
+    background-size: cover; background-position: center; filter: brightness(0.4);
+  }
+  .banner-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(24,24,24,0.9) 0%, rgba(24,24,24,0.15) 60%);
+  }
+  .banner-content {
+    position: relative; z-index: 1;
+    padding: 0 60px 60px;
+    max-width: 1200px; margin: 0 auto; width: 100%;
+  }
+  .page-eyebrow { font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  .page-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 400; line-height: 1.0; color: var(--ivory); }
+  .page-title em { font-style: italic; color: var(--accent-light); }
+
+  /* SECTION */
+  .section-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; }
+  .section-tag { font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .section-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
+  .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; line-height: 1.1; color: var(--ivory); }
+  .section-title em { font-style: italic; color: var(--accent-light); }
+  .section-divider { width: 60px; height: 1px; background: var(--accent-dark); margin: 24px 0; }
+
+  /* FILTER TABS */
+  .filter-section { padding: 80px 0 40px; }
+  .filter-tabs {
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+    margin-top: 40px;
+    overflow-x: auto;
+  }
+  .filter-tab {
+    font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted); padding: 12px 28px;
+    border-bottom: 2px solid transparent; cursor: pointer;
+    transition: all 0.3s ease; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .filter-tab:hover { color: var(--ivory); }
+  .filter-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* PHOTO GRID */
+  .grid-section { padding: 40px 0 120px; }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    overflow: visible;
+  }
+  .grid-item {
+    position: relative; overflow: hidden; cursor: pointer;
+    aspect-ratio: 1;
+  }
+  .grid-item.tall { aspect-ratio: auto; grid-row: span 2; }
+  .grid-item.wide { grid-column: span 2; aspect-ratio: 2; }
+  .grid-item img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.5s ease;
+    filter: brightness(0.82) grayscale(15%);
+  }
+  .grid-item:hover img {
+    transform: scale(1.06);
+    filter: brightness(0.95) grayscale(0%);
+  }
+  .grid-overlay {
+    position: absolute; inset: 0;
+    background: rgba(24,24,24,0);
+    transition: background 0.4s ease;
+    display: flex; align-items: flex-end;
+    padding: 20px;
+  }
+  .grid-item:hover .grid-overlay { background: rgba(24,24,24,0.4); }
+  .grid-meta {
+    font-family: var(--font-sans); font-size: 0.62rem; letter-spacing: 0.15em;
+    color: var(--ivory); text-transform: uppercase;
+    transform: translateY(10px); transition: transform 0.4s ease;
+  }
+  .grid-item:hover .grid-meta { transform: translateY(0); }
+
+  /* LIGHTBOX CTA */
+  .lightbox-cta { padding: 120px 0; background: var(--surface); }
+  .lightbox-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .lightbox-image img {
+    width: 100%; aspect-ratio: 4/3; object-fit: cover; filter: brightness(0.85);
+  }
+  .lightbox-text { }
+  .lightbox-body { font-family: var(--font-sans); font-size: 0.92rem; color: var(--smoke); line-height: 1.9; margin-bottom: 20px; }
+  .btn-primary { display: inline-block; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 14px 40px; background: var(--accent); color: var(--bg); transition: all 0.3s ease; }
+  .btn-primary:hover { background: var(--ivory); }
+  .btn-outline { display: inline-block; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 14px 40px; border: 1px solid var(--accent-dark); color: var(--smoke); transition: all 0.3s ease; margin-left: 12px; }
+  .btn-outline:hover { border-color: var(--accent); color: var(--ivory); }
+
+  /* FOOTER */
+  footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 0 32px; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid var(--border); font-family: var(--font-sans); font-size: 0.72rem; color: var(--muted); flex-wrap: wrap; gap: 12px; }
+  .footer-nav { display: flex; gap: 32px; }
+  .footer-nav a { font-family: var(--font-sans); font-size: 0.72rem; color: var(--muted); transition: color 0.3s ease; text-transform: uppercase; letter-spacing: 0.1em; }
+  .footer-nav a:hover { color: var(--ivory); }
+
+  @media (max-width: 1024px) {
+    .photo-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-item.wide { grid-column: span 1; aspect-ratio: 1; }
+  }
+  @media (max-width: 768px) {
+    .navbar { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .section-inner { padding: 0 24px; }
+    .banner-content { padding: 0 24px 40px; }
+    .photo-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-item.tall { grid-row: span 1; aspect-ratio: 1; }
+    .lightbox-inner { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">LUMIÈRE <span>STUDIO</span></a>
+  <div class="nav-links">
+    <a href="about.html">About</a>
+    <a href="collection.html" class="active">Portfolio</a>
+    <a href="process.html">Process</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="contact.html" class="nav-cta">Commission</a>
+</nav>
+
+<div class="page-banner">
+  <div class="banner-bg"></div>
+  <div class="banner-overlay"></div>
+  <div class="banner-content">
+    <div class="page-eyebrow">Portfolio</div>
+    <h1 class="page-title">The Work — <em>Complete</em></h1>
+  </div>
+</div>
+
+<!-- FILTER + GRID -->
+<section class="filter-section">
+  <div class="section-inner">
+    <div class="section-tag">Browse by Series</div>
+    <h2 class="section-title">Selected <em>Photographs</em></h2>
+    <div class="section-divider"></div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All Work</button>
+      <button class="filter-tab" data-filter="landscape">Landscapes</button>
+      <button class="filter-tab" data-filter="documentary">Documentary</button>
+      <button class="filter-tab" data-filter="abstract">Abstract</button>
+      <button class="filter-tab" data-filter="studio">Studio</button>
+    </div>
+  </div>
+</section>
+
+<section class="grid-section">
+  <div class="section-inner">
+    <div class="photo-grid">
+      <div class="grid-item tall" data-cat="landscape">
+        <img src="images/collection-1.webp" alt="Landscape series 1" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Landscape · Silence Series · 2023</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="documentary">
+        <img src="images/collection-2.webp" alt="Documentary 1" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Documentary · Urban · 2024</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="abstract">
+        <img src="images/ambient-1.webp" alt="Abstract 1" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Abstract · Light Studies · 2023</div>
+        </div>
+      </div>
+      <div class="grid-item wide" data-cat="landscape">
+        <img src="images/hero-4.webp" alt="Landscape wide" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Landscape · Horizon · 2024</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="studio">
+        <img src="images/collection-3.webp" alt="Studio 1" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Studio · Still Life · 2022</div>
+        </div>
+      </div>
+      <div class="grid-item tall" data-cat="documentary">
+        <img src="images/collection-4.webp" alt="Documentary 2" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Documentary · Portraits · 2024</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="abstract">
+        <img src="images/ambient-2.webp" alt="Abstract 2" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Abstract · Grain · 2023</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="landscape">
+        <img src="images/collection-5.webp" alt="Landscape 2" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Landscape · Solitude · 2022</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="studio">
+        <img src="images/detail-1.webp" alt="Studio detail 1" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Studio · Equipment · 2023</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="landscape">
+        <img src="images/collection-6.webp" alt="Landscape 3" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Landscape · Forest · 2023</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="abstract">
+        <img src="images/ambient-3.webp" alt="Abstract 3" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Abstract · Texture · 2024</div>
+        </div>
+      </div>
+      <div class="grid-item" data-cat="documentary">
+        <img src="images/collection-7.webp" alt="Documentary 3" loading="lazy">
+        <div class="grid-overlay">
+          <div class="grid-meta">Documentary · Street · 2023</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX CTA -->
+<section class="lightbox-cta">
+  <div class="section-inner">
+    <div class="lightbox-inner">
+      <div class="lightbox-image">
+        <img src="images/collection-8.webp" alt="Fine art print" loading="lazy">
+      </div>
+      <div class="lightbox-text">
+        <div class="section-tag">Acquire</div>
+        <h2 class="section-title">Fine Art <em>Prints</em></h2>
+        <div class="section-divider"></div>
+        <p class="lightbox-body">
+          All works in the LUMIÈRE portfolio are available as limited edition archival prints — each
+          hand-signed and numbered, printed on museum-grade fibre paper with a 200-year archival rating.
+        </p>
+        <p class="lightbox-body">
+          Edition sizes range from 5 to 25. Certificate of authenticity included with every purchase.
+          Worldwide shipping in climate-controlled packaging.
+        </p>
+        <div style="margin-top: 32px;">
+          <a href="contact.html" class="btn-primary">Enquire About Prints</a>
+          <a href="contact.html" class="btn-outline">Commission New Work</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="section-inner">
+    <div class="footer-bottom">
+      <span>&copy; 2026 LUMIÈRE STUDIO. All rights reserved.</span>
+      <nav class="footer-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="process.html">Process</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+class SplitText {
+  constructor(el, opts = {}) {
+    this.el = typeof el === 'string' ? document.querySelectorAll(el) : (el.length ? el : [el]);
+    this.chars = []; this.words = []; this.lines = [];
+    this.el.forEach(e => {
+      const words = e.textContent.split(' ');
+      e.innerHTML = words.map(w => `<span class="word" style="display:inline-block;overflow:hidden"><span class="char" style="display:inline-block">${w}</span></span>`).join(' ');
+      this.words.push(...e.querySelectorAll('.word'));
+      this.chars.push(...e.querySelectorAll('.char'));
+    });
+  }
+}
+
+;(function preHideBelowFold() {
+  const VH = window.innerHeight;
+  const selectors = ['.grid-item', '.lightbox-image', '.lightbox-text'];
+  document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+    if (el.getBoundingClientRect().top > VH * 0.95) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.willChange = 'opacity, transform';
+    }
+  });
+})();
+
+gsap.registerPlugin(ScrollTrigger);
+
+// Banner
+const st = new SplitText('.page-title', { type: 'chars' });
+gsap.from(st.chars, { opacity: 0, y: 30, duration: 1.0, stagger: 0.04, ease: 'power2.inOut', delay: 0.3 });
+
+// Grid items
+gsap.from('.grid-item', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.1, stagger: 0.08, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.photo-grid', start: 'top 85%', once: true }
+});
+
+// Lightbox CTA
+gsap.from('.lightbox-image', {
+  immediateRender: false,
+  opacity: 0, x: -40, duration: 1.3, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.lightbox-cta', start: 'top 85%', once: true }
+});
+gsap.from('.lightbox-text > *', {
+  immediateRender: false,
+  opacity: 0, y: 30, duration: 1.1, stagger: 0.12, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.lightbox-text', start: 'top 85%', once: true }
+});
+
+// Filter tabs
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const filter = tab.dataset.filter;
+    document.querySelectorAll('.grid-item').forEach(item => {
+      const cat = item.dataset.cat;
+      if (filter === 'all' || cat === filter) {
+        gsap.to(item, { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
+        item.style.display = '';
+      } else {
+        gsap.to(item, { opacity: 0.15, scale: 0.97, duration: 0.4, ease: 'power2.out' });
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>

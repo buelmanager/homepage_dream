@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Works — RESONANCE Sound Design</title>
+  <meta name="description" content="Portfolio of compositions, film scores, game audio, and sound design projects." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0A1818;
+      --surface: #0F2020;
+      --surface2: #142828;
+      --accent: #4DCFB0;
+      --accent-light: #7ADFC8;
+      --accent-dark: #2A9A80;
+      --ivory: #DCEFEC;
+      --smoke: #809890;
+      --muted: #4A6860;
+      --border: #0C1E1E;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 1.25rem 3rem;
+      background: rgba(10,24,24,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.25rem; letter-spacing: 0.15em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.6rem 1.6rem; border: 1px solid var(--accent); color: var(--accent); transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    .banner {
+      padding: 14rem 3rem 8rem;
+      background: var(--surface);
+      position: relative; overflow: hidden;
+    }
+    .banner-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 60%, rgba(77,207,176,0.05) 0%, transparent 65%); }
+    .banner-content { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .banner-label { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .banner-title { font-family: var(--font-serif); font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.95; color: var(--ivory); }
+    .banner-title em { color: transparent; -webkit-text-stroke: 1px var(--accent); font-style: italic; }
+
+    /* FILTER */
+    .filter-bar {
+      padding: 3rem 3rem 0;
+      background: var(--bg);
+      position: sticky; top: 64px; z-index: 100;
+    }
+    .filter-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; gap: 0.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-btn {
+      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      color: var(--smoke);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--accent); color: var(--accent);
+    }
+    .filter-btn.active { background: rgba(77,207,176,0.06); }
+
+    /* WORKS GRID */
+    .works { padding: 5rem 3rem 8rem; background: var(--bg); }
+    .works-inner { max-width: 1200px; margin: 0 auto; }
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+    .work-item { position: relative; overflow: hidden; cursor: pointer; }
+    .work-item[data-cat="featured"] { grid-column: span 2; }
+    .work-cover { width: 100%; height: 100%; min-height: 340px; object-fit: cover; transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); display: block; }
+    .work-item:hover .work-cover { transform: scale(1.05); }
+    .work-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,24,24,0.95) 0%, transparent 50%);
+      padding: 2rem;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      transition: background 0.4s;
+    }
+    .work-item:hover .work-overlay { background: linear-gradient(to top, rgba(10,24,24,0.97) 0%, rgba(10,24,24,0.3) 50%); }
+    .work-cat { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.35rem; }
+    .work-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); line-height: 1.2; }
+    .work-meta { font-size: 0.75rem; color: var(--smoke); margin-top: 0.35rem; }
+    .work-play {
+      position: absolute; top: 1.25rem; right: 1.25rem;
+      width: 42px; height: 42px;
+      border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.3s, border-color 0.3s;
+    }
+    .work-item:hover .work-play { opacity: 1; border-color: var(--accent); }
+    .work-play svg { fill: var(--accent); margin-left: 2px; }
+
+    /* FEATURED CASE STUDY */
+    .case-study { padding: 8rem 3rem; background: var(--surface); }
+    .case-inner { max-width: 1200px; margin: 0 auto; }
+    .case-header { margin-bottom: 5rem; }
+    .case-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    .case-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+    .case-content { }
+    .case-label { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .case-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.5rem); color: var(--ivory); line-height: 1.15; margin-bottom: 1.5rem; }
+    .case-body { font-size: 0.9rem; color: var(--smoke); line-height: 1.85; }
+    .case-body p + p { margin-top: 1.2rem; }
+    .case-specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+    .case-spec-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem; }
+    .case-spec-val { font-size: 0.9rem; color: var(--ivory); }
+    .case-link { display: inline-block; margin-top: 2.5rem; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 2px; transition: color 0.3s; }
+
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 3rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .footer-logo { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.15em; color: var(--muted); }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); transition: color 0.3s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+
+    @media (max-width: 900px) {
+      .nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .banner { padding: 10rem 1.5rem 5rem; }
+      .filter-bar { padding: 2rem 1.5rem 0; }
+      .works { padding: 3rem 1.5rem 6rem; }
+      .works-grid { grid-template-columns: 1fr 1fr; }
+      .work-item[data-cat="featured"] { grid-column: span 2; }
+      .case-study { padding: 5rem 1.5rem; }
+      .case-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-inner { flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+    @media (max-width: 600px) {
+      .works-grid { grid-template-columns: 1fr; }
+      .work-item[data-cat="featured"] { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">RESO<span>NANCE</span></a>
+    <ul class="nav-links">
+      <li><a href="collection.html" class="active">Works</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Collaborate</a>
+  </nav>
+
+  <section class="banner">
+    <div class="banner-bg"></div>
+    <div class="banner-content">
+      <p class="banner-label">Portfolio</p>
+      <h1 class="banner-title">
+        Selected<br>
+        <em>Works</em>
+      </h1>
+    </div>
+  </section>
+
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <button class="filter-btn active" data-filter="all">All Works</button>
+      <button class="filter-btn" data-filter="film">Film</button>
+      <button class="filter-btn" data-filter="game">Game</button>
+      <button class="filter-btn" data-filter="album">Album</button>
+      <button class="filter-btn" data-filter="ambient">Ambient</button>
+    </div>
+  </div>
+
+  <section class="works">
+    <div class="works-inner">
+      <div class="works-grid" id="worksGrid">
+
+        <div class="work-item" data-cat="featured film">
+          <img class="work-cover" src="images/ambient-2.webp" alt="Liminal Spaces" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Film Score</span>
+            <div class="work-title">Liminal Spaces</div>
+            <div class="work-meta">2025 · 47 min · Arthouse Cinema</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="game">
+          <img class="work-cover" src="images/product-2.webp" alt="Obsidian Throne" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Game Audio</span>
+            <div class="work-title">Obsidian Throne</div>
+            <div class="work-meta">2025 · Adaptive Score · AAA</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="album">
+          <img class="work-cover" src="images/product-3.webp" alt="Tidal Memory" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Album</span>
+            <div class="work-title">Tidal Memory</div>
+            <div class="work-meta">2024 · LP · Independent</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="ambient">
+          <img class="work-cover" src="images/ambient-1.webp" alt="Frequency of Silence" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Brand Audio</span>
+            <div class="work-title">Frequency of Silence</div>
+            <div class="work-meta">2024 · Sonic Identity · Luxury</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="film">
+          <img class="work-cover" src="images/product-5.webp" alt="Deep Strata" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Documentary</span>
+            <div class="work-title">Deep Strata</div>
+            <div class="work-meta">2024 · 82 min · Festival Circuit</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="ambient">
+          <img class="work-cover" src="images/product-6.webp" alt="Emergence" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Installation</span>
+            <div class="work-title">Emergence</div>
+            <div class="work-meta">2023 · 8-channel · Art Museum</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="game ambient" style="grid-column: span 2;">
+          <img class="work-cover" src="images/ambient-4.webp" alt="Hollow Archive" loading="lazy" style="min-height:400px;" />
+          <div class="work-overlay">
+            <span class="work-cat">Game Audio · Ambient</span>
+            <div class="work-title">Hollow Archive</div>
+            <div class="work-meta">2023 · Procedural Score · Indie</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="album">
+          <img class="work-cover" src="images/product-1.webp" alt="Thermal Lines" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Album Production</span>
+            <div class="work-title">Thermal Lines</div>
+            <div class="work-meta">2023 · EP · Electronic Label</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="film ambient">
+          <img class="work-cover" src="images/ambient-3.webp" alt="Vertigo Blue" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Film Score</span>
+            <div class="work-title">Vertigo Blue</div>
+            <div class="work-meta">2022 · Short Film · Award Winner</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="game">
+          <img class="work-cover" src="images/product-4.webp" alt="Solace Protocol" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Game Audio</span>
+            <div class="work-title">Solace Protocol</div>
+            <div class="work-meta">2022 · Wwise · VR Title</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="ambient">
+          <img class="work-cover" src="images/workspace-1.webp" alt="Still Water" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Ambient</span>
+            <div class="work-title">Still Water</div>
+            <div class="work-meta">2021 · Live Performance · Tour</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+        <div class="work-item" data-cat="album film">
+          <img class="work-cover" src="images/workspace-3.webp" alt="Meridian" loading="lazy" />
+          <div class="work-overlay">
+            <span class="work-cat">Album · Film</span>
+            <div class="work-title">Meridian</div>
+            <div class="work-meta">2021 · LP + Documentary Score</div>
+          </div>
+          <div class="work-play"><svg width="10" height="12" viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED CASE STUDY -->
+  <section class="case-study">
+    <div class="case-inner">
+      <div class="case-header">
+        <p class="section-label" style="font-size:0.7rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;">Featured Project</p>
+        <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3rem);color:var(--ivory);">Case Study</h2>
+      </div>
+      <div class="case-layout">
+        <img class="case-img" src="images/ambient-2.webp" alt="Liminal Spaces case study" />
+        <div class="case-content">
+          <p class="case-label">Film Score · 2025</p>
+          <h3 class="case-title">Liminal Spaces — Scoring the Unknowable</h3>
+          <div class="case-body">
+            <p>
+              Director Mira Valdez approached me with a challenge: score a film where sound itself is the primary language. The narrative is told almost entirely through sonic texture — no dialogue for the first 22 minutes.
+            </p>
+            <p>
+              The score combines live string quartet with processed field recordings from liminal spaces: airports at 3am, hospital waiting rooms, underground car parks. The goal was to make silence feel inhabited.
+            </p>
+          </div>
+          <div class="case-specs">
+            <div>
+              <div class="case-spec-label">Format</div>
+              <div class="case-spec-val">47 min. Feature Short</div>
+            </div>
+            <div>
+              <div class="case-spec-label">Ensemble</div>
+              <div class="case-spec-val">String Quartet + Electronics</div>
+            </div>
+            <div>
+              <div class="case-spec-label">Premiered</div>
+              <div class="case-spec-val">Sundance 2025</div>
+            </div>
+            <div>
+              <div class="case-spec-label">Award</div>
+              <div class="case-spec-val">Best Score — Short Film</div>
+            </div>
+          </div>
+          <a href="contact.html" class="case-link">Discuss a Similar Project</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">RESONANCE</div>
+      <ul class="footer-links">
+        <li><a href="collection.html">Works</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="process.html">Process</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="footer-copy">&copy; 2026 Resonance Studio. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('.banner-label, .banner-title', {
+      immediateRender: false,
+      opacity: 0, y: 14, duration: 1.5, stagger: 0.06, ease: 'power1.out', delay: 0.3
+    });
+
+    gsap.from('.work-item', {
+      immediateRender: false,
+      opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out',
+      scrollTrigger: { trigger: '.works-grid', start: 'top 85%' }
+    });
+
+    gsap.from('.case-img', {
+      immediateRender: false,
+      opacity: 0, x: -20, duration: 1.5, ease: 'power1.out',
+      scrollTrigger: { trigger: '.case-layout', start: 'top 85%' }
+    });
+
+    gsap.from('.case-content > *', {
+      immediateRender: false,
+      opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out',
+      scrollTrigger: { trigger: '.case-content', start: 'top 85%' }
+    });
+
+    // Filter
+    const btns = document.querySelectorAll('.filter-btn');
+    const items = document.querySelectorAll('.work-item');
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        items.forEach(item => {
+          const cats = item.dataset.cat || '';
+          const show = f === 'all' || cats.includes(f);
+          gsap.to(item, {
+            opacity: show ? 1 : 0.15,
+            duration: 0.4,
+            ease: 'power1.out'
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
