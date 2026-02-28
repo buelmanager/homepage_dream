@@ -192,13 +192,10 @@ meta.json 규칙:
 썸네일 생성 규칙 (CRITICAL):
 - thumbnail.jpg는 .gitignore 대상 — 절대 사용 금지
 - 반드시 thumbnail.webp로 생성해야 서비스에 노출됨
-- 생성 방법:
-  1. fullpage.png로부터 thumbnail.jpg 먼저 생성:
-     sips -s format jpeg -s formatOptions 75 -Z 600 images/fullpage.png --out images/thumbnail.jpg
-  2. thumbnail.jpg를 thumbnail.webp로 변환:
-     cwebp -q 80 -resize 600 0 images/thumbnail.jpg -o images/thumbnail.webp
-  3. thumbnail.jpg 삭제 (gitignore 대상이므로 불필요):
-     rm images/thumbnail.jpg
+- **히어로 섹션만 캡쳐** (전체 페이지 X) → 썸네일로 사용
+- 생성 방법 (capture-hero.py 사용):
+     python3 scripts/capture-hero.py <slug>
+  → 자동으로 히어로 뷰포트(1440×900) 캡쳐 후 cwebp -q 82 -resize 600 0 으로 thumbnail.webp 생성
 - cwebp 없으면 설치: brew install webp
 
 최종 품질 게이트(전부 통과):
