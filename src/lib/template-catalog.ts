@@ -93,8 +93,10 @@ export async function getCatalogTemplates(options?: { publishedOnly?: boolean })
       : m;
   });
 
-  if (!publishedOnly) return merged;
-  return merged.filter((t) => t.status === "PUBLISHED");
+  const result = publishedOnly ? merged.filter((t) => t.status === "PUBLISHED") : merged;
+  return result.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 }
 
 export async function getCatalogTemplateBySlug(

@@ -123,6 +123,16 @@ function toTitleFromSlug(slug) {
     .join(" ");
 }
 
+function getCreatedAt(folder) {
+  // Parse date prefix like "20260228_" → 2026-02-28T00:00:00.000Z
+  const match = folder.match(/^(\d{4})(\d{2})(\d{2})_/);
+  if (match) {
+    return new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00.000Z`).toISOString();
+  }
+  // Legacy templates without date prefix — sort to the end
+  return new Date("2025-01-01T00:00:00.000Z").toISOString();
+}
+
 function normalizeTier(value) {
   return typeof value === "string" && value.toUpperCase() === "FREE" ? "FREE" : "PRO";
 }
@@ -224,7 +234,7 @@ function scanTemplatesDirectory(baseDir, sourcePrefix = "/templates", sourceMeta
       viewCount: 0,
       likeCount: 0,
       saveCount: 0,
-      createdAt: new Date().toISOString(),
+      createdAt: getCreatedAt(folder),
       updatedAt: new Date().toISOString(),
       sections: [],
     });
@@ -294,7 +304,10 @@ async function generateManifest() {
   console.log("🔍 Scanning public/templates ...");
 
   const publicTemplates = scanTemplatesDirectory(TEMPLATES_DIR, "/templates", sourceMetaBySlug);
-  const allTemplates = [...publicTemplates];
+  // Sort by createdAt descending (newest first)
+  const allTemplates = [...publicTemplates].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 
   const dataDir = path.dirname(OUTPUT_FILE);
   if (!fs.existsSync(dataDir)) {
