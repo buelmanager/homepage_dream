@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APEX — We Back the Builders Who Change Industries</title>
+  <meta name="description" content="Boutique venture capital firm specializing in deep-tech, climate, and AI startups. $2.4B AUM, 127 portfolio companies, 23 IPOs, 18 unicorns." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Swiper 11 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <!-- GSAP 3.12.2 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* =============================================
+       CSS RESET & CUSTOM PROPERTIES
+    ============================================= */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #101420;
+      --surface: #181E2A;
+      --surface2: #1F2535;
+      --accent: #4EE8FF;
+      --accent-light: #7FF0FF;
+      --accent-dark: #2BC5E0;
+      --ivory: #E8F4F8;
+      --smoke: #A0B8C0;
+      --muted: #607880;
+      --border: #1C2535;
+      --font-serif: 'Bebas Neue', sans-serif;
+      --font-sans: 'DM Sans', sans-serif;
+      --max-w: 1400px;
+      --nav-h: 80px;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* =============================================
+       PRELOADER
+    ============================================= */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+    }
+
+    .preloader-logo span {
+      color: var(--accent);
+    }
+
+    .preloader-bar-wrap {
+      width: 200px;
+      height: 1px;
+      background: var(--border);
+      overflow: hidden;
+    }
+
+    .preloader-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 1.4s ease;
+    }
+
+    .preloader-count {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* =============================================
+       SCROLL INDICATOR
+    ============================================= */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: opacity 0.4s ease;
+    }
+
+    .scroll-indicator.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .scroll-indicator span {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    .scroll-mouse {
+      width: 22px;
+      height: 34px;
+      border: 1px solid var(--muted);
+      border-radius: 11px;
+      display: flex;
+      justify-content: center;
+      padding-top: 6px;
+    }
+
+    .scroll-mouse-dot {
+      width: 3px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: scrollDot 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scrollDot {
+      0% { transform: translateY(0); opacity: 1; }
+      80% { transform: translateY(10px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 0; }
+    }
+
+    /* =============================================
+       NAVIGATION
+    ============================================= */
+    #nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      padding: 0 48px;
+      transition: background 0.4s ease, border-bottom 0.4s ease;
+    }
+
+    #nav.scrolled {
+      background: rgba(16, 20, 32, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      letter-spacing: 0.15em;
+      color: var(--ivory);
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      transition: color 0.25s ease;
+    }
+
+    .nav-links a:hover { color: var(--ivory); }
+
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent) !important;
+      border: 1px solid var(--accent);
+      padding: 10px 24px;
+      transition: background 0.25s ease, color 0.25s ease !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent) !important;
+      color: var(--bg) !important;
+    }
+
+    /* =============================================
+       HERO — TYPE F: Interactive/Depth-Layer
+    ============================================= */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg img {
+      filter: brightness(0.45);
+      transform-origin: center center;
+      transition: transform 0.1s linear;
+      will-change: transform;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        to right,
+        rgba(16, 20, 32, 0.75) 0%,
+        rgba(16, 20, 32, 0.3) 60%,
+        transparent 100%
+      );
+    }
+
+    .hero-overlay-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      z-index: 2;
+      background: linear-gradient(to top, var(--bg), transparent);
+    }
+
+    /* Depth layer particles */
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .hero-particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+      will-change: transform;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .hero-left {}
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .hero-eyebrow-line {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-eyebrow-text {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .hero-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(72px, 9vw, 130px);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--ivory);
+      margin-bottom: 32px;
+    }
+
+    .hero-headline .accent-word {
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.7;
+      max-width: 480px;
+      margin-bottom: 48px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 16px 36px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.2s ease;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      background: transparent;
+      padding: 16px 36px;
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      transition: border-color 0.25s ease, color 0.25s ease;
+      display: inline-block;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* =============================================
+       HERO RIGHT — "We Back" Interactive Widget
+    ============================================= */
+    .hero-widget {
+      background: rgba(24, 30, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      padding: 40px 36px;
+    }
+
+    .widget-header {
+      margin-bottom: 32px;
+    }
+
+    .widget-label {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .widget-title {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      letter-spacing: 0.06em;
+      color: var(--ivory);
+      line-height: 1.1;
+    }
+
+    .widget-title span {
+      color: var(--accent);
+    }
+
+    /* Animated category chips */
+    .we-back-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color 0.3s ease, background 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chip::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+
+    .chip:hover,
+    .chip.active {
+      border-color: var(--accent);
+      background: rgba(78, 232, 255, 0.05);
+    }
+
+    .chip:hover::before,
+    .chip.active::before {
+      transform: scaleY(1);
+    }
+
+    .chip-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chip-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .chip-info { flex: 1; }
+
+    .chip-name {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ivory);
+      letter-spacing: 0.05em;
+    }
+
+    .chip-count {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .chip-glow {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.3;
+      transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chip:hover .chip-glow,
+    .chip.active .chip-glow {
+      opacity: 1;
+      box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent);
+    }
+
+    .widget-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .wstat-num {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .wstat-label {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* =============================================
+       STATS TICKER
+    ============================================= */
+    #stats-ticker {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      overflow: hidden;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 80px;
+      width: max-content;
+      animation: tickerMove 28s linear infinite;
+    }
+
+    @keyframes tickerMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      white-space: nowrap;
+    }
+
+    .ticker-num {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+    }
+
+    .ticker-label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .ticker-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+
+    /* =============================================
+       SECTION BASE
+    ============================================= */
+    section {
+      padding: 120px 48px;
+    }
+
+    .section-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-eyebrow-line {
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-eyebrow-text {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(48px, 5vw, 80px);
+      letter-spacing: 0.03em;
+      line-height: 1;
+      color: var(--ivory);
+    }
+
+    .section-sub {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.8;
+      max-width: 540px;
+      margin-top: 20px;
+    }
+
+    /* =============================================
+       PHILOSOPHY / MANIFESTO
+    ============================================= */
+    #philosophy {
+      background: var(--surface);
+    }
+
+    .philosophy-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+      margin-bottom: 80px;
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .philosophy-card {
+      background: var(--surface);
+      padding: 48px 36px;
+      transition: background 0.3s ease;
+    }
+
+    .philosophy-card:hover {
+      background: var(--surface2);
+    }
+
+    .philosophy-num {
+      font-family: var(--font-serif);
+      font-size: 56px;
+      letter-spacing: 0.02em;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+
+    .philosophy-card-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+
+    .philosophy-card-text {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.75;
+    }
+
+    /* =============================================
+       PORTFOLIO PREVIEW
+    ============================================= */
+    #portfolio-preview {
+      background: var(--bg);
+    }
+
+    .portfolio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 60px;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      overflow: visible;
+    }
+
+    .portfolio-card {
+      position: relative;
+      height: 400px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .portfolio-card img {
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .portfolio-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .portfolio-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(16,20,32,0.95) 0%, rgba(16,20,32,0.2) 60%, transparent 100%);
+      z-index: 2;
+    }
+
+    .portfolio-card-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 28px;
+      z-index: 3;
+    }
+
+    .portfolio-card-tag {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 4px 10px;
+      margin-bottom: 10px;
+    }
+
+    .portfolio-card-name {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      letter-spacing: 0.04em;
+      color: var(--ivory);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .portfolio-card-desc {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--smoke);
+    }
+
+    .view-all-link {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.25s ease;
+    }
+
+    .view-all-link:hover { gap: 14px; }
+
+    .view-all-link svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    /* =============================================
+       PROCESS PREVIEW
+    ============================================= */
+    #process-preview {
+      background: var(--surface);
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+      margin-top: 64px;
+    }
+
+    .process-step {
+      position: relative;
+    }
+
+    .process-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      right: -24px;
+      width: 48px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .step-num {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      opacity: 0.3;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      color: var(--ivory);
+      margin-bottom: 12px;
+    }
+
+    .step-desc {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+
+    /* =============================================
+       TESTIMONIALS — Swiper
+    ============================================= */
+    #testimonials {
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .testimonials-header {
+      margin-bottom: 60px;
+    }
+
+    .swiper-testimonials {
+      overflow: visible;
+    }
+
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 48px 44px;
+    }
+
+    .testimonial-quote-icon {
+      font-family: var(--font-serif);
+      font-size: 72px;
+      color: var(--accent);
+      opacity: 0.25;
+      line-height: 0.7;
+      margin-bottom: 28px;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .testimonial-name {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ivory);
+    }
+
+    .testimonial-role {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .swiper-nav {
+      display: flex;
+      gap: 12px;
+      margin-top: 40px;
+    }
+
+    .swiper-btn {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .swiper-btn:hover {
+      border-color: var(--accent);
+      background: rgba(78, 232, 255, 0.08);
+    }
+
+    .swiper-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--smoke);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .swiper-btn:hover svg { stroke: var(--accent); }
+
+    /* =============================================
+       AMBIENT GALLERY
+    ============================================= */
+    #gallery {
+      background: var(--bg);
+      padding: 0;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 360px 360px;
+      gap: 2px;
+    }
+
+    .gallery-item {
+      overflow: hidden;
+    }
+
+    .gallery-item:first-child {
+      grid-row: 1 / 3;
+    }
+
+    .gallery-item img {
+      transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.04);
+    }
+
+    /* =============================================
+       TEAM / NUMBERS SECTION
+    ============================================= */
+    #numbers {
+      background: var(--surface);
+      padding: 100px 48px;
+    }
+
+    .numbers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+      margin-top: 64px;
+    }
+
+    .number-item {
+      text-align: center;
+      padding: 48px 24px;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s ease;
+    }
+
+    .number-item:hover {
+      border-color: var(--accent);
+    }
+
+    .number-val {
+      font-family: var(--font-serif);
+      font-size: 64px;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .number-suffix {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      color: var(--accent-dark);
+    }
+
+    .number-label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    /* =============================================
+       CTA STRIP
+    ============================================= */
+    #cta-strip {
+      background: var(--accent);
+      padding: 80px 48px;
+      text-align: center;
+    }
+
+    .cta-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 5vw, 72px);
+      letter-spacing: 0.04em;
+      color: var(--bg);
+      margin-bottom: 24px;
+    }
+
+    .cta-sub {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 300;
+      color: rgba(16, 20, 32, 0.7);
+      margin-bottom: 40px;
+    }
+
+    .btn-dark {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      background: var(--bg);
+      padding: 18px 48px;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-dark:hover { transform: translateY(-2px); }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 48px 40px;
+    }
+
+    .footer-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand-logo {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      letter-spacing: 0.1em;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+
+    .footer-brand-logo span { color: var(--accent); }
+
+    .footer-brand-desc {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-bottom: 24px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--muted);
+      transition: color 0.25s ease;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-copy {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-legal a {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--muted);
+      transition: color 0.25s ease;
+    }
+
+    .footer-legal a:hover { color: var(--accent); }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 1024px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .hero-widget { display: none; }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr 1fr; }
+      .portfolio-card:nth-child(3) { display: none; }
+      .process-steps { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .process-step:not(:last-child)::after { display: none; }
+      .numbers-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 80px 24px; }
+      #nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero-content { padding: 0 24px; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .portfolio-card:nth-child(3) { display: block; }
+      .gallery-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .gallery-item:first-child { grid-row: auto; }
+      .numbers-grid { grid-template-columns: 1fr 1fr; }
+      .process-steps { grid-template-columns: 1fr; gap: 32px; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">APE<span>X</span></div>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar" id="preloaderBar"></div>
+    </div>
+    <div class="preloader-count" id="preloaderCount">0%</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator hidden" id="scrollIndicator">
+    <span>Scroll</span>
+    <div class="scroll-mouse">
+      <div class="scroll-mouse-dot"></div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">APE<span>X</span></a>
+      <ul class="nav-links">
+        <li><a href="about.html">About</a></li>
+        <li><a href="collection.html">Portfolio</a></li>
+        <li><a href="process.html">Process</a></li>
+        <li><a href="contact.html" class="nav-cta">Submit Deal</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg">
+      <img src="images/hero-1.webp" alt="APEX Ventures headquarters" id="heroBgImg" />
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-overlay-bottom"></div>
+
+    <!-- Depth particles -->
+    <div class="hero-particles" id="heroParticles"></div>
+
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-line"></div>
+          <span class="hero-eyebrow-text">Apex Ventures — Est. 2008</span>
+        </div>
+        <h1 class="hero-headline" id="heroHeadline">
+          WE BACK<br />
+          THE <span class="accent-word">BUILDERS</span><br />
+          WHO CHANGE<br />
+          INDUSTRIES
+        </h1>
+        <p class="hero-sub">
+          A boutique venture firm investing at the frontier of deep technology, climate solutions, and artificial intelligence. We partner with founders who see what others cannot.
+        </p>
+        <div class="hero-actions">
+          <a href="collection.html" class="btn-primary">View Portfolio</a>
+          <a href="contact.html" class="btn-ghost">Submit a Deal</a>
+        </div>
+      </div>
+
+      <!-- "We Back" Interactive Widget -->
+      <div class="hero-widget" id="heroWidget">
+        <div class="widget-header">
+          <div class="widget-label">We Invest In</div>
+          <div class="widget-title">WE <span>BACK</span><br />WHAT MATTERS</div>
+        </div>
+
+        <div class="we-back-chips">
+          <!-- Deep Tech -->
+          <div class="chip active" data-category="deeptech">
+            <div class="chip-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+            </div>
+            <div class="chip-info">
+              <div class="chip-name">Deep Tech</div>
+              <div class="chip-count">47 portfolio companies</div>
+            </div>
+            <div class="chip-glow"></div>
+          </div>
+
+          <!-- Climate -->
+          <div class="chip" data-category="climate">
+            <div class="chip-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="chip-info">
+              <div class="chip-name">Climate</div>
+              <div class="chip-count">38 portfolio companies</div>
+            </div>
+            <div class="chip-glow"></div>
+          </div>
+
+          <!-- AI -->
+          <div class="chip" data-category="ai">
+            <div class="chip-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h10M7 11h7"/></svg>
+            </div>
+            <div class="chip-info">
+              <div class="chip-name">Artificial Intelligence</div>
+              <div class="chip-count">42 portfolio companies</div>
+            </div>
+            <div class="chip-glow"></div>
+          </div>
+        </div>
+
+        <div class="widget-stats">
+          <div>
+            <div class="wstat-num">$2.4B</div>
+            <div class="wstat-label">Assets Under Mgmt</div>
+          </div>
+          <div>
+            <div class="wstat-num">18</div>
+            <div class="wstat-label">Unicorns Created</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS TICKER -->
+  <div id="stats-ticker">
+    <div class="ticker-track">
+      <div class="ticker-item">
+        <span class="ticker-num">$2.4B</span>
+        <span class="ticker-label">Assets Under Management</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-num">127</span>
+        <span class="ticker-label">Portfolio Companies</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-num">23</span>
+        <span class="ticker-label">Successful IPOs</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-num">18</span>
+        <span class="ticker-label">Unicorn Exits</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-num">16</span>
+        <span class="ticker-label">Years of Performance</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <!-- Duplicate for seamless loop -->
+      <div class="ticker-item">
+        <span class="ticker-num">$2.4B</span>
+        <span class="ticker-label">Assets Under Management</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-num">127</span>
+        <span class="ticker-label">Portfolio Companies</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-num">23</span>
+        <span class="ticker-label">Successful IPOs</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-num">18</span>
+        <span class="ticker-label">Unicorn Exits</span>
+        <span class="ticker-dot"></span>
+      </div>
+      <div class="ticker-item">
+        <span class="ticker-num">16</span>
+        <span class="ticker-label">Years of Performance</span>
+        <span class="ticker-dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <section id="philosophy">
+    <div class="section-inner">
+      <div class="philosophy-header">
+        <div>
+          <div class="section-eyebrow">
+            <div class="section-eyebrow-line"></div>
+            <span class="section-eyebrow-text">Our Philosophy</span>
+          </div>
+          <h2 class="section-heading">CONVICTION<br />OVER CONSENSUS</h2>
+        </div>
+        <div>
+          <p class="section-sub">
+            We do not follow market cycles. We identify founders with rare insight, align deeply with their vision, and provide the resources — capital, networks, and operational expertise — to help them build category-defining companies.
+          </p>
+        </div>
+      </div>
+
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <div class="philosophy-num">01</div>
+          <h3 class="philosophy-card-title">FOUNDER FIRST</h3>
+          <p class="philosophy-card-text">We back people before products. The strongest companies are built by extraordinary individuals with obsessive domain expertise and the resilience to weather uncertainty.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-num">02</div>
+          <h3 class="philosophy-card-title">DEEP DILIGENCE</h3>
+          <p class="philosophy-card-text">Our technical partners spend months inside the science before we write a check. We understand the technology at the molecular level — and the market at the system level.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-num">03</div>
+          <h3 class="philosophy-card-title">PATIENT CAPITAL</h3>
+          <p class="philosophy-card-text">Transformative innovation requires long time horizons. We manage patient, permanent-style capital that allows our companies to focus on building rather than managing short-term investor pressure.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO PREVIEW -->
+  <section id="portfolio-preview">
+    <div class="section-inner">
+      <div class="portfolio-header">
+        <div>
+          <div class="section-eyebrow">
+            <div class="section-eyebrow-line"></div>
+            <span class="section-eyebrow-text">Selected Portfolio</span>
+          </div>
+          <h2 class="section-heading">127 COMPANIES.<br />INFINITE POTENTIAL.</h2>
+        </div>
+        <a href="collection.html" class="view-all-link">
+          View All
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="portfolio-grid">
+        <div class="portfolio-card">
+          <img src="images/product-1.webp" alt="Deep tech portfolio company" />
+          <div class="portfolio-card-overlay"></div>
+          <div class="portfolio-card-info">
+            <span class="portfolio-card-tag">Deep Tech</span>
+            <span class="portfolio-card-name">AXIOM FUSION</span>
+            <div class="portfolio-card-desc">Next-generation nuclear fusion — Series C, $340M raised</div>
+          </div>
+        </div>
+        <div class="portfolio-card">
+          <img src="images/product-2.webp" alt="Climate tech portfolio company" />
+          <div class="portfolio-card-overlay"></div>
+          <div class="portfolio-card-info">
+            <span class="portfolio-card-tag">Climate</span>
+            <span class="portfolio-card-name">CARBYNE MATERIALS</span>
+            <div class="portfolio-card-desc">Carbon capture & storage — IPO 2024, $2.1B valuation</div>
+          </div>
+        </div>
+        <div class="portfolio-card">
+          <img src="images/product-3.webp" alt="AI portfolio company" />
+          <div class="portfolio-card-overlay"></div>
+          <div class="portfolio-card-info">
+            <span class="portfolio-card-tag">AI</span>
+            <span class="portfolio-card-name">NEURAL FOUNDRY</span>
+            <div class="portfolio-card-desc">Enterprise AI infrastructure — Unicorn, $1.8B valuation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS PREVIEW -->
+  <section id="process-preview">
+    <div class="section-inner">
+      <div class="section-eyebrow">
+        <div class="section-eyebrow-line"></div>
+        <span class="section-eyebrow-text">How We Invest</span>
+      </div>
+      <h2 class="section-heading" style="margin-bottom: 0;">FROM DEAL TO<br />DECADE-LONG PARTNER</h2>
+
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="step-num">01</div>
+          <h3 class="step-title">DISCOVERY</h3>
+          <p class="step-desc">We source opportunities through our founder networks, academic institutions, and proprietary signal monitoring across 40+ technology verticals.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">02</div>
+          <h3 class="step-title">DILIGENCE</h3>
+          <p class="step-desc">Deep technical and commercial assessment — typically 60–90 days. Our domain experts evaluate the science, the market, and the team's unique advantage.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">03</div>
+          <h3 class="step-title">PARTNERSHIP</h3>
+          <p class="step-desc">We take board seats and provide hands-on support: talent acquisition, go-to-market strategy, follow-on fundraising, and regulatory navigation.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">04</div>
+          <h3 class="step-title">SCALE & EXIT</h3>
+          <p class="step-desc">We help companies achieve meaningful exits — whether IPO, strategic acquisition, or long-term compound growth. We stay in the relationship beyond the exit.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 48px;">
+        <a href="process.html" class="view-all-link">
+          Learn our full process
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NUMBERS -->
+  <section id="numbers">
+    <div class="section-inner">
+      <div class="section-eyebrow">
+        <div class="section-eyebrow-line"></div>
+        <span class="section-eyebrow-text">Track Record</span>
+      </div>
+      <h2 class="section-heading" style="margin-bottom: 0;">THE NUMBERS<br />DON'T LIE</h2>
+
+      <div class="numbers-grid">
+        <div class="number-item">
+          <div class="number-val">$2.4<span class="number-suffix">B</span></div>
+          <div class="number-label">Assets Under Management</div>
+        </div>
+        <div class="number-item">
+          <div class="number-val">127</div>
+          <div class="number-label">Portfolio Companies</div>
+        </div>
+        <div class="number-item">
+          <div class="number-val">23</div>
+          <div class="number-label">Successful IPOs</div>
+        </div>
+        <div class="number-item">
+          <div class="number-val">18</div>
+          <div class="number-label">Unicorn Exits</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="section-inner">
+      <div class="testimonials-header">
+        <div class="section-eyebrow">
+          <div class="section-eyebrow-line"></div>
+          <span class="section-eyebrow-text">Founder Voices</span>
+        </div>
+        <h2 class="section-heading">WHAT FOUNDERS<br />SAY ABOUT US</h2>
+      </div>
+
+      <div class="swiper swiper-testimonials" id="testimonialSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <div class="testimonial-quote-icon">"</div>
+              <p class="testimonial-text">APEX didn't just write a check — they embedded a technical partner for six months to help us navigate our Series A. That level of engagement is what separates them from every other fund we spoke to.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">
+                  <img src="images/ambient-1.webp" alt="Founder" />
+                </div>
+                <div>
+                  <div class="testimonial-name">Dr. Sarah Chen</div>
+                  <div class="testimonial-role">CEO, Axiom Fusion — Deep Tech Unicorn</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <div class="testimonial-quote-icon">"</div>
+              <p class="testimonial-text">When regulators pushed back on our carbon methodology, APEX's policy team was in Washington within 48 hours. They are the most operationally capable investors I've ever worked with in 20 years of building companies.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">
+                  <img src="images/ambient-2.webp" alt="Founder" />
+                </div>
+                <div>
+                  <div class="testimonial-name">Marcus Williams</div>
+                  <div class="testimonial-role">Co-Founder, Carbyne Materials — IPO 2024</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <div class="testimonial-quote-icon">"</div>
+              <p class="testimonial-text">We had term sheets from Sequoia and Andreessen. We chose APEX because they understood our technology at a depth no other investor did. That technical credibility becomes your credibility in enterprise sales conversations.</p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">
+                  <img src="images/ambient-3.webp" alt="Founder" />
+                </div>
+                <div>
+                  <div class="testimonial-name">Priya Nair</div>
+                  <div class="testimonial-role">Founder & CTO, Neural Foundry — $1.8B Valuation</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="swiper-nav">
+        <button class="swiper-btn" id="tPrev">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="swiper-btn" id="tNext">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="images/hero-2.webp" alt="APEX office" style="height:100%;" />
+      </div>
+      <div class="gallery-item">
+        <img src="images/product-4.webp" alt="Portfolio company" style="height:100%;" />
+      </div>
+      <div class="gallery-item">
+        <img src="images/hero-3.webp" alt="Team meeting" style="height:100%;" />
+      </div>
+      <div class="gallery-item">
+        <img src="images/hero-4.webp" alt="Innovation space" style="height:100%;" />
+      </div>
+      <div class="gallery-item">
+        <img src="images/ambient-1.webp" alt="Workspace" style="height:100%;" />
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA STRIP -->
+  <section id="cta-strip">
+    <div class="section-inner" style="padding: 0;">
+      <h2 class="cta-heading">READY TO BUILD<br />THE FUTURE?</h2>
+      <p class="cta-sub">We invest in pre-seed through Series B. If you're building something that matters, we want to hear from you.</p>
+      <a href="contact.html" class="btn-dark">Submit Your Deal</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand-logo">APE<span>X</span></div>
+          <p class="footer-brand-desc">Boutique venture capital firm backing the builders who change industries. Deep-tech, climate, and AI investments at the frontier.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Navigation</div>
+          <ul class="footer-links">
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="collection.html">Portfolio</a></li>
+            <li><a href="process.html">Investment Process</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Focus Areas</div>
+          <ul class="footer-links">
+            <li><a href="collection.html">Deep Technology</a></li>
+            <li><a href="collection.html">Climate Tech</a></li>
+            <li><a href="collection.html">Artificial Intelligence</a></li>
+            <li><a href="collection.html">Frontier Science</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="contact.html">Submit a Deal</a></li>
+            <li><a href="contact.html">LP Inquiries</a></li>
+            <li><a href="about.html">Press</a></li>
+            <li><a href="contact.html">Careers</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2026 Apex Ventures. All rights reserved.</span>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Disclosures</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SplitText Polyfill (inline, before Swiper) -->
+  <script>
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return; this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('chars')) {
+          el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(el.querySelectorAll('.char'));
+        } else if (type.includes('words')) {
+          el.innerHTML = original.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+    }
+  </script>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    // =============================================
+    // REGISTER SCROLLTRIGGER
+    // =============================================
+    gsap.registerPlugin(ScrollTrigger);
+
+    // =============================================
+    // PRELOADER
+    // =============================================
+    const preloaderBar = document.getElementById('preloaderBar');
+    const preloaderCount = document.getElementById('preloaderCount');
+    let progress = 0;
+
+    const preloaderInterval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(preloaderInterval);
+        preloaderBar.style.width = '100%';
+        preloaderCount.textContent = '100%';
+
+        setTimeout(() => {
+          gsap.to('#preloader', {
+            duration: 0.75,
+            autoAlpha: 0,
+            ease: 'power3.out',
+            onComplete: () => {
+              document.getElementById('preloader').style.display = 'none';
+              // Show scroll indicator on preloader complete
+              const si = document.getElementById('scrollIndicator');
+              si.classList.remove('hidden');
+              initAnimations();
+            }
+          });
+        }, 400);
+      } else {
+        preloaderBar.style.width = progress + '%';
+        preloaderCount.textContent = Math.floor(progress) + '%';
+      }
+    }, 80);
+
+    // Fallback scroll indicator
+    setTimeout(() => {
+      const si = document.getElementById('scrollIndicator');
+      if (si) si.classList.remove('hidden');
+    }, 4000);
+
+    // =============================================
+    // HERO DEPTH-LAYER PARALLAX (mousemove)
+    // =============================================
+    const heroBgImg = document.getElementById('heroBgImg');
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      mouseX = (e.clientX - cx) / cx;
+      mouseY = (e.clientY - cy) / cy;
+    });
+
+    function updateParallax() {
+      targetX += (mouseX - targetX) * 0.05;
+      targetY += (mouseY - targetY) * 0.05;
+      const moveX = targetX * 20;
+      const moveY = targetY * 12;
+      if (heroBgImg) {
+        heroBgImg.style.transform = `scale(1.08) translate(${moveX}px, ${moveY}px)`;
+      }
+      requestAnimationFrame(updateParallax);
+    }
+    updateParallax();
+
+    // =============================================
+    // HERO PARTICLES
+    // =============================================
+    const particlesContainer = document.getElementById('heroParticles');
+    const particleData = [];
+
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.className = 'hero-particle';
+      const size = Math.random() * 3 + 1;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.top = Math.random() * 100 + '%';
+      particlesContainer.appendChild(p);
+
+      gsap.to(p, {
+        opacity: Math.random() * 0.6 + 0.1,
+        duration: Math.random() * 2 + 1,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut',
+        delay: Math.random() * 3
+      });
+
+      particleData.push({
+        el: p,
+        speed: Math.random() * 0.4 + 0.1
+      });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const rx = (e.clientX - cx) / cx;
+      const ry = (e.clientY - cy) / cy;
+
+      particleData.forEach(({ el, speed }) => {
+        gsap.to(el, {
+          x: rx * 30 * speed,
+          y: ry * 20 * speed,
+          duration: 1.2,
+          ease: 'power2.out'
+        });
+      });
+    });
+
+    // =============================================
+    // CHIP INTERACTIONS
+    // =============================================
+    const chips = document.querySelectorAll('.chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+
+    // Rotate active chip
+    let chipIndex = 0;
+    setInterval(() => {
+      chips.forEach(c => c.classList.remove('active'));
+      chipIndex = (chipIndex + 1) % chips.length;
+      chips[chipIndex].classList.add('active');
+    }, 3000);
+
+    // =============================================
+    // NAV SCROLL
+    // =============================================
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+
+      // Hide scroll indicator after scrolling
+      if (window.scrollY > 200) {
+        document.getElementById('scrollIndicator').classList.add('hidden');
+      }
+    });
+
+    // =============================================
+    // SCROLL INDICATOR CLICK
+    // =============================================
+    document.getElementById('scrollIndicator').addEventListener('click', () => {
+      window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    });
+
+    // =============================================
+    // ANIMATIONS (A3 Precise)
+    // A3: y:0, x:-20, duration:0.75, stagger:0.04, ease:'power3.out'
+    // =============================================
+    function initAnimations() {
+
+      // Hero eyebrow
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: 0.2
+      });
+
+      // Hero headline chars
+      const heroSplit = new SplitText('#heroHeadline', { type: 'chars' });
+      gsap.from(heroSplit.chars, {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        delay: 0.35
+      });
+
+      // Hero sub
+      gsap.from('.hero-sub', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: 0.6
+      });
+
+      // Hero actions
+      gsap.from('.hero-actions', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: 0.75
+      });
+
+      // Widget
+      gsap.from('#heroWidget', {
+        immediateRender: false,
+        x: 20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: 0.5
+      });
+
+      // Philosophy cards
+      gsap.from('.philosophy-card', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.philosophy-grid',
+          start: 'top 80%'
+        }
+      });
+
+      // Philosophy header
+      gsap.from('.philosophy-header > *', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.philosophy-header',
+          start: 'top 80%'
+        }
+      });
+
+      // Portfolio cards
+      gsap.from('.portfolio-card', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.portfolio-grid',
+          start: 'top 80%'
+        }
+      });
+
+      // Portfolio header
+      gsap.from('.portfolio-header > *', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.portfolio-header',
+          start: 'top 80%'
+        }
+      });
+
+      // Process steps
+      gsap.from('.process-step', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.process-steps',
+          start: 'top 80%'
+        }
+      });
+
+      // Number items
+      gsap.from('.number-item', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.numbers-grid',
+          start: 'top 80%'
+        }
+      });
+
+      // Testimonials
+      gsap.from('.testimonials-header', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#testimonials',
+          start: 'top 80%'
+        }
+      });
+
+      // CTA section
+      gsap.from('.cta-heading, .cta-sub, .btn-dark', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#cta-strip',
+          start: 'top 80%'
+        }
+      });
+
+      // Gallery items
+      gsap.from('.gallery-item', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.gallery-grid',
+          start: 'top 80%'
+        }
+      });
+    }
+
+    // =============================================
+    // SWIPER TESTIMONIALS
+    // =============================================
+    const testimonialSwiper = new Swiper('#testimonialSwiper', {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      speed: 600,
+      breakpoints: {
+        768: { slidesPerView: 1.5 },
+        1024: { slidesPerView: 2 }
+      }
+    });
+
+    document.getElementById('tPrev').addEventListener('click', () => testimonialSwiper.slidePrev());
+    document.getElementById('tNext').addEventListener('click', () => testimonialSwiper.slideNext());
+
+  </script>
+</body>
+</html>

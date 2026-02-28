@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — LUMINARY EVENTS</title>
+  <meta name="description" content="Begin your event journey with Luminary. Speak with a senior producer about your next corporate experience." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- GSAP 3.12.2 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0A1818;
+      --surface: #0F2020;
+      --surface2: #142828;
+      --accent: #4DCFB0;
+      --accent-light: #7EEFD0;
+      --accent-dark: #2BAF90;
+      --ivory: #E8F5F2;
+      --smoke: #A0C8C0;
+      --muted: #607870;
+      --border: #102222;
+      --font-serif: 'Fraunces', serif;
+      --font-sans: 'Inter', sans-serif;
+      --max-w: 1400px;
+      --nav-h: 80px;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 24px; font-weight: 300; letter-spacing: 0.25em; color: var(--ivory); text-transform: uppercase; }
+    .preloader-logo span { color: var(--accent); }
+    .preloader-bar-wrap { width: 160px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-bar { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--accent); transition: width 1.4s cubic-bezier(0.4,0,0.2,1); }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 56px; background: rgba(10,24,24,0.97); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 20px; font-weight: 600; letter-spacing: 0.18em; color: var(--ivory); text-transform: uppercase; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s ease; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 12px 28px; transition: background 0.3s ease; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* CONTACT HERO */
+    .contact-hero {
+      padding-top: calc(var(--nav-h) + 80px);
+      padding-bottom: 0;
+      background: var(--surface);
+    }
+    .contact-hero-inner {
+      max-width: var(--max-w); margin: 0 auto;
+      padding: 0 56px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
+    }
+    .contact-hero-left { padding-bottom: 80px; }
+    .page-eyebrow { display: flex; align-items: center; gap: 12px; font-family: var(--font-sans); font-size: 10px; font-weight: 400; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+    .page-eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--accent); }
+    .contact-hero h1 { font-family: var(--font-serif); font-size: clamp(40px, 5vw, 72px); font-weight: 300; line-height: 1.0; color: var(--ivory); margin-bottom: 28px; }
+    .contact-hero h1 em { font-style: italic; color: var(--accent-light); }
+    .contact-hero-desc { font-family: var(--font-sans); font-size: 15px; font-weight: 300; color: var(--smoke); line-height: 1.8; margin-bottom: 48px; }
+
+    /* Contact Info Blocks */
+    .contact-info-blocks { display: flex; flex-direction: column; gap: 32px; }
+    .contact-info-block {}
+    .cib-label { font-family: var(--font-sans); font-size: 10px; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .cib-value { font-family: var(--font-serif); font-size: 18px; font-weight: 300; color: var(--ivory); }
+    .cib-value a { transition: color 0.3s ease; }
+    .cib-value a:hover { color: var(--accent); }
+
+    /* FORM SIDE */
+    .contact-form-wrap {
+      background: var(--bg);
+      border-left: 1px solid var(--border);
+      padding: 72px 56px;
+      min-height: 700px;
+    }
+    .form-title { font-family: var(--font-serif); font-size: 24px; font-weight: 600; color: var(--ivory); margin-bottom: 8px; }
+    .form-subtitle { font-family: var(--font-sans); font-size: 13px; font-weight: 300; color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
+
+    .contact-form { display: flex; flex-direction: column; gap: 20px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-family: var(--font-sans); font-size: 10px; font-weight: 400; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      font-family: var(--font-sans); font-size: 14px; font-weight: 300;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      appearance: none;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--muted); }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--accent); }
+    .form-group select { cursor: pointer; }
+    .form-group select option { background: var(--surface); color: var(--ivory); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+
+    /* Event type pills */
+    .form-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill-label-text { font-family: var(--font-sans); font-size: 10px; font-weight: 400; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: block; }
+    .form-pill {
+      font-family: var(--font-sans); font-size: 11px; font-weight: 300;
+      letter-spacing: 0.08em; color: var(--smoke);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 8px 16px; cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .form-pill:hover { border-color: rgba(77,207,176,0.4); color: var(--ivory); }
+    .form-pill.selected { border-color: var(--accent); color: var(--accent); background: rgba(77,207,176,0.06); }
+
+    .form-submit {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--bg); background: var(--accent);
+      border: none; cursor: pointer;
+      padding: 18px 40px;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+    .form-submit:hover { background: var(--accent-light); }
+    .form-submit svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+    .form-disclaimer { font-family: var(--font-sans); font-size: 11px; font-weight: 300; color: var(--muted); line-height: 1.6; text-align: center; }
+
+    /* OFFICES SECTION */
+    .offices-section {
+      padding: 100px 56px;
+      background: var(--bg);
+    }
+    .offices-inner { max-width: var(--max-w); margin: 0 auto; }
+    .offices-header { margin-bottom: 64px; }
+    .section-eyebrow { display: flex; align-items: center; gap: 12px; font-family: var(--font-sans); font-size: 10px; font-weight: 400; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--accent); }
+    .offices-header h2 { font-family: var(--font-serif); font-size: clamp(32px, 4vw, 52px); font-weight: 300; color: var(--ivory); line-height: 1.1; }
+    .offices-header h2 em { font-style: italic; color: var(--accent-light); }
+    .offices-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+    .office-card {
+      background: var(--surface); padding: 40px 32px;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s ease;
+    }
+    .office-card:hover { border-color: rgba(77,207,176,0.3); }
+    .office-flag { font-size: 24px; margin-bottom: 16px; }
+    .office-city { font-family: var(--font-serif); font-size: 22px; font-weight: 600; color: var(--ivory); margin-bottom: 6px; }
+    .office-role { font-family: var(--font-sans); font-size: 10px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .office-address { font-family: var(--font-sans); font-size: 13px; font-weight: 300; color: var(--smoke); line-height: 1.7; margin-bottom: 20px; }
+    .office-contact { font-family: var(--font-sans); font-size: 13px; font-weight: 300; color: var(--muted); }
+    .office-contact a { color: var(--accent); transition: color 0.3s ease; }
+    .office-contact a:hover { color: var(--accent-light); }
+
+    /* PROMISE SECTION */
+    .promise-section {
+      padding: 80px 56px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .promise-inner { max-width: var(--max-w); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+    .promise-item { background: var(--surface); padding: 40px 36px; text-align: center; }
+    .promise-icon { font-family: var(--font-serif); font-size: 36px; font-weight: 300; color: var(--accent); margin-bottom: 12px; }
+    .promise-title { font-family: var(--font-serif); font-size: 18px; font-weight: 600; color: var(--ivory); margin-bottom: 8px; }
+    .promise-text { font-family: var(--font-sans); font-size: 13px; font-weight: 300; color: var(--smoke); line-height: 1.6; }
+
+    /* SUCCESS STATE */
+    .form-success {
+      display: none;
+      text-align: center; padding: 60px 40px;
+      flex-direction: column; align-items: center; gap: 24px;
+    }
+    .form-success.visible { display: flex; }
+    .success-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(77,207,176,0.1); border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; }
+    .success-icon svg { width: 28px; height: 28px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+    .success-title { font-family: var(--font-serif); font-size: 28px; font-weight: 300; color: var(--ivory); }
+    .success-title em { font-style: italic; color: var(--accent-light); }
+    .success-text { font-family: var(--font-sans); font-size: 14px; font-weight: 300; color: var(--smoke); line-height: 1.7; max-width: 360px; }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 56px; }
+    .footer-inner { max-width: var(--max-w); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+    .footer-logo { font-family: var(--font-serif); font-size: 18px; font-weight: 600; letter-spacing: 0.18em; color: var(--ivory); text-transform: uppercase; }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy { font-family: var(--font-sans); font-size: 11px; font-weight: 300; color: var(--muted); }
+    .footer-links { display: flex; gap: 28px; }
+    .footer-links a { font-family: var(--font-sans); font-size: 11px; font-weight: 300; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); transition: color 0.3s ease; }
+    .footer-links a:hover { color: var(--accent); }
+
+    @media (max-width: 1100px) {
+      nav { padding: 0 32px; }
+      .contact-hero-inner { grid-template-columns: 1fr; gap: 0; padding: 0 32px; }
+      .contact-form-wrap { padding: 48px 32px; border-left: none; border-top: 1px solid var(--border); }
+      .offices-section, .promise-section, footer { padding-left: 32px; padding-right: 32px; }
+      .offices-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .offices-grid { grid-template-columns: 1fr; }
+      .promise-inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+    <div class="preloader-logo">LUMINARY<span>.</span></div>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar" id="preloaderBar"></div>
+    </div>
+  </div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">LUMINARY<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Experiences</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Begin Your Event</a>
+  </nav>
+
+  <!-- CONTACT HERO + FORM -->
+  <section class="contact-hero">
+    <div class="contact-hero-inner">
+      <div class="contact-hero-left">
+        <div class="page-eyebrow">Get In Touch</div>
+        <h1 id="pageHeroTitle">Every Great<br>Event Begins<br>With a<br><em>Conversation</em></h1>
+        <p class="contact-hero-desc">Tell us about your vision. A senior Luminary producer will respond within four business hours — not an automated sequence, not a sales representative. A person who has produced events like yours before.</p>
+        <div class="contact-info-blocks">
+          <div class="contact-info-block">
+            <div class="cib-label">Global Headquarters</div>
+            <div class="cib-value">14 Savile Row, London W1S 3PH, United Kingdom</div>
+          </div>
+          <div class="contact-info-block">
+            <div class="cib-label">General Enquiries</div>
+            <div class="cib-value"><a href="mailto:hello@luminaryevents.com">hello@luminaryevents.com</a></div>
+          </div>
+          <div class="contact-info-block">
+            <div class="cib-label">Direct Line</div>
+            <div class="cib-value"><a href="tel:+442071234567">+44 20 7123 4567</a></div>
+          </div>
+          <div class="contact-info-block">
+            <div class="cib-label">New Business</div>
+            <div class="cib-value"><a href="mailto:newbusiness@luminaryevents.com">newbusiness@luminaryevents.com</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap">
+        <div class="form-title">Begin Your Enquiry</div>
+        <p class="form-subtitle">Complete the brief below and a senior producer will be in touch within 4 business hours. All information shared is treated in the strictest confidence.</p>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Alastair" required />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Pemberton-Hale" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Corporate Email</label>
+            <input type="email" id="email" name="email" placeholder="you@company.com" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="company">Organisation</label>
+              <input type="text" id="company" name="company" placeholder="Company Name" />
+            </div>
+            <div class="form-group">
+              <label for="role">Your Role</label>
+              <input type="text" id="role" name="role" placeholder="Chief Executive Officer" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <span class="pill-label-text">Event Type</span>
+            <div class="form-pills">
+              <div class="form-pill selected" data-value="gala">Annual Gala</div>
+              <div class="form-pill" data-value="launch">Product Launch</div>
+              <div class="form-pill" data-value="summit">Leadership Summit</div>
+              <div class="form-pill" data-value="brand">Brand Experience</div>
+              <div class="form-pill" data-value="conference">Conference</div>
+              <div class="form-pill" data-value="other">Other</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="guests">Expected Guests</label>
+              <select id="guests" name="guests">
+                <option value="">Select Range</option>
+                <option>Under 50</option>
+                <option>50–200</option>
+                <option>200–500</option>
+                <option>500–2,000</option>
+                <option>2,000–5,000</option>
+                <option>5,000+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="timeline">Approximate Date</label>
+              <input type="text" id="timeline" name="timeline" placeholder="e.g. Q3 2025" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="budget">Indicative Budget</label>
+            <select id="budget" name="budget">
+              <option value="">Prefer not to say</option>
+              <option>£150,000 – £300,000</option>
+              <option>£300,000 – £500,000</option>
+              <option>£500,000 – £1M</option>
+              <option>£1M – £5M</option>
+              <option>£5M+</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vision">Your Vision</label>
+            <textarea id="vision" name="vision" placeholder="Describe the event you have in mind. There are no wrong answers at this stage — the more you tell us, the better the conversation we can have."></textarea>
+          </div>
+
+          <button type="submit" class="form-submit">
+            Send Enquiry
+            <svg viewBox="0 0 24 24"><path d="M5 12H19M13 6L19 12L13 18"/></svg>
+          </button>
+          <p class="form-disclaimer">Your information is treated with complete confidentiality and will never be shared with third parties.</p>
+        </form>
+
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 12L11 14L15 10"/><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <div class="success-title">Thank You,<br><em>We Will Be In Touch</em></div>
+          <p class="success-text">A senior Luminary producer will respond to your enquiry within four business hours. We look forward to learning about your vision.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOBAL OFFICES -->
+  <section class="offices-section">
+    <div class="offices-inner">
+      <div class="offices-header">
+        <div class="section-eyebrow">Our Studios</div>
+        <h2>Seven Cities,<br><em>One Standard</em></h2>
+      </div>
+      <div class="offices-grid">
+        <div class="office-card">
+          <div class="office-flag">GB</div>
+          <div class="office-city">London</div>
+          <div class="office-role">Global Headquarters</div>
+          <p class="office-address">14 Savile Row<br>London W1S 3PH<br>United Kingdom</p>
+          <div class="office-contact">
+            <a href="tel:+442071234567">+44 20 7123 4567</a><br>
+            <a href="mailto:london@luminaryevents.com">london@luminaryevents.com</a>
+          </div>
+        </div>
+        <div class="office-card">
+          <div class="office-flag">US</div>
+          <div class="office-city">New York</div>
+          <div class="office-role">Americas Studio</div>
+          <p class="office-address">432 Park Avenue<br>New York, NY 10022<br>United States</p>
+          <div class="office-contact">
+            <a href="tel:+12125550100">+1 212 555 0100</a><br>
+            <a href="mailto:newyork@luminaryevents.com">newyork@luminaryevents.com</a>
+          </div>
+        </div>
+        <div class="office-card">
+          <div class="office-flag">AE</div>
+          <div class="office-city">Dubai</div>
+          <div class="office-role">MENA Studio</div>
+          <p class="office-address">DIFC Gate Building<br>Dubai International<br>Financial Centre, UAE</p>
+          <div class="office-contact">
+            <a href="tel:+97144567890">+971 4 456 7890</a><br>
+            <a href="mailto:dubai@luminaryevents.com">dubai@luminaryevents.com</a>
+          </div>
+        </div>
+        <div class="office-card">
+          <div class="office-flag">SG</div>
+          <div class="office-city">Singapore</div>
+          <div class="office-role">Asia-Pacific Studio</div>
+          <p class="office-address">1 Raffles Place<br>Singapore 048616<br>Republic of Singapore</p>
+          <div class="office-contact">
+            <a href="tel:+6561234567">+65 6123 4567</a><br>
+            <a href="mailto:singapore@luminaryevents.com">singapore@luminaryevents.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISE STRIP -->
+  <section class="promise-section">
+    <div class="promise-inner">
+      <div class="promise-item">
+        <div class="promise-icon">4h</div>
+        <div class="promise-title">Response Guarantee</div>
+        <p class="promise-text">A senior producer will respond to every enquiry within four business hours. Not an autoresponder — a person.</p>
+      </div>
+      <div class="promise-item">
+        <div class="promise-icon">NDA</div>
+        <div class="promise-title">Complete Discretion</div>
+        <p class="promise-text">Every engagement is covered by a mutual NDA as standard. Your plans, your brand, and your conversations are completely confidential.</p>
+      </div>
+      <div class="promise-item">
+        <div class="promise-icon">0£</div>
+        <div class="promise-title">No Obligation</div>
+        <p class="promise-text">The initial discovery conversation is complimentary. We invest in understanding your vision before we propose anything.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <a href="index.html" class="footer-logo">LUMINARY<span>.</span></a>
+      <div class="footer-copy">&copy; 2025 Luminary Corporate Events &amp; Experiences</div>
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="collection.html">Experiences</a>
+        <a href="process.html">Process</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return; this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('chars')) {
+          el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(el.querySelectorAll('.char'));
+        } else if (type.includes('words')) {
+          el.innerHTML = original.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const preloader = document.getElementById('preloader');
+    const preloaderBar = document.getElementById('preloaderBar');
+
+    window.addEventListener('load', () => {
+      setTimeout(() => { preloaderBar.style.width = '100%'; }, 100);
+      setTimeout(() => {
+        gsap.to(preloader, {
+          duration: 0.8, opacity: 0, ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            const titleSplit = new SplitText('#pageHeroTitle', { type: 'words' });
+            gsap.from(titleSplit.words, {
+              immediateRender: false, opacity: 0,
+              y: gsap.utils.random(20, 28), duration: 1.1,
+              stagger: 0.09, ease: 'power2.out'
+            });
+            gsap.from('.contact-hero-desc', {
+              immediateRender: false, opacity: 0, y: 20, duration: 1.0, delay: 0.4, ease: 'power2.out'
+            });
+            gsap.from('.contact-info-block', {
+              immediateRender: false, opacity: 0, y: 20, duration: 1.0, delay: 0.6, stagger: 0.09, ease: 'power2.out'
+            });
+          }
+        });
+      }, 1800);
+    });
+
+    setTimeout(() => {
+      const prl = document.getElementById('preloader');
+      if (prl && getComputedStyle(prl).opacity !== '0') prl.style.display = 'none';
+    }, 4000);
+
+    // Form animations
+    gsap.from('.contact-form-wrap > *', {
+      immediateRender: false, opacity: 0, y: 24, duration: 1.1, stagger: 0.09, ease: 'power2.out',
+      scrollTrigger: { trigger: '.contact-form-wrap', start: 'top 82%', once: true }
+    });
+
+    // Pill selection
+    document.querySelectorAll('.form-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        pill.classList.toggle('selected');
+      });
+    });
+
+    // Form submission
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const form = document.getElementById('contactForm');
+      const success = document.getElementById('formSuccess');
+      gsap.to(form, { opacity: 0, y: -20, duration: 0.4, ease: 'power2.in', onComplete: () => {
+        form.style.display = 'none';
+        success.classList.add('visible');
+        gsap.from(success.children, {
+          immediateRender: false, opacity: 0, y: 20, duration: 0.7, stagger: 0.1, ease: 'power2.out'
+        });
+      }});
+    });
+
+    // Offices
+    gsap.from('.office-card', {
+      immediateRender: false, opacity: 0, y: 24, duration: 1.1, stagger: 0.09, ease: 'power2.out',
+      scrollTrigger: { trigger: '.offices-grid', start: 'top 82%', once: true }
+    });
+
+    // Promise strip
+    gsap.from('.promise-item', {
+      immediateRender: false, opacity: 0, y: 20, duration: 1.0, stagger: 0.09, ease: 'power2.out',
+      scrollTrigger: { trigger: '.promise-inner', start: 'top 82%', once: true }
+    });
+  </script>
+</body>
+</html>

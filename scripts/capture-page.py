@@ -90,8 +90,8 @@ var siAll = document.querySelectorAll('.scroll-indicator, .scroll-progress, [dat
 siAll.forEach(function(el) { el.classList.add('visible'); el.style.opacity = '1'; });
 
 // 4. navbar 스크롤 상태 적용
-var nav = document.querySelector('nav, header, .navbar, .nav, #navbar, #header');
-if (nav) nav.classList.add('scrolled', 'solid', 'opaque');
+var __captureNav = document.querySelector('nav, header, .navbar, .nav, #navbar, #header');
+if (__captureNav) __captureNav.classList.add('scrolled', 'solid', 'opaque');
 """
 
 # once 애니메이션만 강제 완료 — scrub 애니메이션은 건드리지 않음

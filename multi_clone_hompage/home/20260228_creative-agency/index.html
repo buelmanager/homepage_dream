@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMBER STUDIO — We Build Brands That Lead</title>
+  <meta name="description" content="Award-winning creative branding, design, and integrated communications agency. 340 Brands Built, 28 Cannes Lions." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <!-- GSAP 3.12.2 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES — P9 RUST EMBER
+    ============================================= */
+    :root {
+      --bg: #1C1008;
+      --surface: #261608;
+      --surface2: #301E08;
+      --accent: #D4612A;
+      --accent-light: #EC8050;
+      --accent-dark: #B04018;
+      --ivory: #F5EDE0;
+      --smoke: #C8B8A0;
+      --muted: #887060;
+      --border: #2C1E0C;
+
+      --font-serif: 'Bebas Neue', sans-serif;
+      --font-sans: 'DM Sans', sans-serif;
+
+      --max-w: 1400px;
+      --nav-h: 80px;
+    }
+
+    /* =============================================
+       RESET
+    ============================================= */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* =============================================
+       PRELOADER
+    ============================================= */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .preloader-wordmark {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      letter-spacing: 0.35em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+
+    .preloader-wordmark span {
+      color: var(--accent);
+    }
+
+    .preloader-bar-track {
+      width: clamp(200px, 30vw, 360px);
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-bar-fill {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.05s linear;
+    }
+
+    .preloader-label {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* =============================================
+       SCROLL INDICATOR
+    ============================================= */
+    #scroll-indicator {
+      position: fixed;
+      left: 36px;
+      bottom: 40px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    #scroll-indicator .si-label {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+
+    #scroll-indicator .si-line {
+      width: 1px;
+      height: 60px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #scroll-indicator .si-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: siScroll 1.8s ease-in-out infinite;
+    }
+
+    @keyframes siScroll {
+      0% { top: -100%; }
+      100% { top: 100%; }
+    }
+
+    /* =============================================
+       NAV
+    ============================================= */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 60px;
+      background: linear-gradient(to bottom, rgba(28,16,8,0.95) 0%, rgba(28,16,8,0) 100%);
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(28,16,8,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      text-decoration: none;
+    }
+
+    .nav-logo em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0%; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 12px 28px;
+      text-decoration: none;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.3s ease;
+    }
+
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* =============================================
+       HERO — TYPE F: Interactive Widget
+    ============================================= */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.3);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        135deg,
+        rgba(28,16,8,0.7) 0%,
+        rgba(28,16,8,0.1) 50%,
+        rgba(212,97,42,0.08) 100%
+      );
+    }
+
+    .hero-noise {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 60px 100px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 80px;
+      align-items: flex-end;
+    }
+
+    .hero-left {}
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .hero-eyebrow-line {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-eyebrow-text {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .hero-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(5rem, 14vw, 12rem);
+      line-height: 0.9;
+      color: var(--ivory);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+
+    .hero-headline .line-accent {
+      color: var(--accent);
+      display: block;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    /* Interactive Work-Type Selector Widget */
+    .hero-widget {
+      background: rgba(38,22,8,0.85);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .widget-label {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .widget-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .widget-tag {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      letter-spacing: 0.12em;
+      color: var(--smoke);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      position: relative;
+      outline: none;
+    }
+
+    .widget-tag:hover {
+      color: var(--ivory);
+      border-color: rgba(212,97,42,0.5);
+    }
+
+    .widget-tag.active {
+      color: var(--bg);
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 24px rgba(212,97,42,0.45);
+    }
+
+    .widget-reveal {
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+
+    .widget-reveal-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      letter-spacing: 0.12em;
+      color: var(--accent-light);
+    }
+
+    .widget-reveal-desc {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--smoke);
+    }
+
+    .widget-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 4px;
+      transition: gap 0.3s ease;
+    }
+
+    .widget-cta:hover { gap: 16px; }
+
+    .widget-cta svg {
+      width: 20px;
+      height: 1px;
+      overflow: visible;
+    }
+
+    /* Hero Stats Bar */
+    .hero-stats-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 20;
+      border-top: 1px solid var(--border);
+      background: rgba(28,16,8,0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      max-width: 100%;
+    }
+
+    .hero-stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      gap: 4px;
+      border-right: 1px solid var(--border);
+    }
+
+    .hero-stat:last-child { border-right: none; }
+
+    .hero-stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      letter-spacing: 0.06em;
+      color: var(--ivory);
+    }
+
+    .hero-stat-number span {
+      color: var(--accent);
+    }
+
+    .hero-stat-label {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* =============================================
+       MARQUEE STRIP
+    ============================================= */
+    .marquee-strip {
+      background: var(--accent);
+      padding: 18px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .marquee-inner {
+      display: inline-flex;
+      gap: 0;
+      animation: marquee 28s linear infinite;
+    }
+
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 32px;
+      padding-right: 64px;
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+    }
+
+    .marquee-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(28,16,8,0.5);
+      flex-shrink: 0;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* =============================================
+       SECTION COMMON
+    ============================================= */
+    section {
+      position: relative;
+    }
+
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .section-tag::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-tag-text {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(2.8rem, 5vw, 5.5rem);
+      line-height: 0.95;
+      letter-spacing: 0.04em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+
+    /* =============================================
+       PHILOSOPHY / VALUES
+    ============================================= */
+    .philosophy {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+
+    .philosophy-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+      margin-bottom: 100px;
+    }
+
+    .philosophy-intro {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--smoke);
+      margin-top: 32px;
+    }
+
+    .philosophy-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      line-height: 1.2;
+      letter-spacing: 0.04em;
+      color: var(--ivory);
+    }
+
+    .philosophy-quote em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    /* Philosophy Grid — MUST be display: grid */
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .philosophy-card {
+      background: var(--surface);
+      padding: 52px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-left: 3px solid transparent;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .philosophy-card:hover {
+      border-left-color: var(--accent);
+      background: var(--surface2);
+    }
+
+    .philosophy-card-num {
+      font-family: var(--font-serif);
+      font-size: 3.5rem;
+      letter-spacing: 0.06em;
+      color: rgba(212,97,42,0.2);
+      line-height: 1;
+    }
+
+    .philosophy-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      letter-spacing: 0.1em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+
+    .philosophy-card-text {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--smoke);
+    }
+
+    /* =============================================
+       SERVICES / DISCIPLINES
+    ============================================= */
+    .services {
+      padding: 140px 0;
+      background: var(--surface);
+    }
+
+    .services-inner {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 100px;
+      align-items: start;
+    }
+
+    .services-left {
+      position: sticky;
+      top: 120px;
+    }
+
+    .services-intro {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--smoke);
+      margin-top: 32px;
+      margin-bottom: 48px;
+    }
+
+    .services-cta-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 6px;
+      transition: gap 0.3s ease, color 0.3s ease;
+    }
+
+    .services-cta-link:hover { gap: 20px; color: var(--accent-light); }
+
+    .services-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .service-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 36px;
+      padding: 44px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .service-item:first-child { border-top: 1px solid var(--border); }
+
+    .service-item:hover { padding-left: 16px; }
+
+    .service-num {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      flex-shrink: 0;
+      padding-top: 6px;
+    }
+
+    .service-content { flex: 1; }
+
+    .service-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      letter-spacing: 0.08em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      transition: color 0.3s ease;
+    }
+
+    .service-item:hover .service-title { color: var(--accent-light); }
+
+    .service-desc {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--smoke);
+    }
+
+    .service-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .service-tag {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      text-transform: uppercase;
+    }
+
+    .service-arrow {
+      font-size: 20px;
+      color: var(--muted);
+      flex-shrink: 0;
+      align-self: center;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .service-item:hover .service-arrow {
+      transform: translateX(8px);
+      color: var(--accent);
+    }
+
+    /* =============================================
+       FEATURED WORK
+    ============================================= */
+    .featured-work {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+
+    .featured-work-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 72px;
+    }
+
+    .featured-work-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      transition: gap 0.3s ease;
+    }
+
+    .featured-work-link:hover { gap: 20px; }
+
+    /* Work Grid — overflow: visible required */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      overflow: visible;
+    }
+
+    .work-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .work-card--large { grid-column: span 7; }
+    .work-card--tall  { grid-column: span 5; }
+    .work-card--med   { grid-column: span 4; }
+    .work-card--wide  { grid-column: span 8; }
+
+    .work-card-img {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .work-card--large .work-card-img { height: 560px; }
+    .work-card--tall  .work-card-img { height: 560px; }
+    .work-card--med   .work-card-img { height: 340px; }
+    .work-card--wide  .work-card-img { height: 340px; }
+
+    .work-card-img img {
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .work-card:hover .work-card-img img {
+      transform: scale(1.06);
+    }
+
+    .work-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(28,16,8,0.85) 0%, rgba(28,16,8,0) 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 36px;
+      pointer-events: none;
+    }
+
+    .work-card-cat {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .work-card-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      letter-spacing: 0.06em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+
+    .work-card-award {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--smoke);
+      margin-top: 10px;
+    }
+
+    .award-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* =============================================
+       AWARDS SECTION
+    ============================================= */
+    .awards {
+      padding: 120px 0;
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .awards-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+    }
+
+    .awards-visual {
+      position: relative;
+      height: 520px;
+    }
+
+    .awards-img-main {
+      position: absolute;
+      top: 0; left: 0;
+      width: 70%;
+      height: 80%;
+    }
+
+    .awards-img-accent {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 52%;
+      height: 60%;
+      border: 3px solid var(--accent);
+    }
+
+    .awards-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 10;
+    }
+
+    .awards-badge-num {
+      font-family: var(--font-serif);
+      font-size: 2.4rem;
+      letter-spacing: 0.06em;
+      color: var(--bg);
+      line-height: 1;
+    }
+
+    .awards-badge-text {
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(28,16,8,0.8);
+    }
+
+    .awards-content { display: flex; flex-direction: column; gap: 48px; }
+
+    .awards-intro {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--smoke);
+    }
+
+    .awards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .award-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .award-row:first-child { border-top: 1px solid var(--border); }
+
+    .award-name {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+
+    .award-year {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .award-count {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+    }
+
+    /* =============================================
+       TESTIMONIALS
+    ============================================= */
+    .testimonials {
+      padding: 140px 0;
+      background: var(--bg);
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .testimonials-header .section-tag {
+      justify-content: center;
+    }
+
+    .testimonials-header .section-tag::before { display: none; }
+
+    .swiper-testimonials { overflow: visible; }
+
+    .testimonial-slide {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 60px 52px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      height: auto;
+    }
+
+    .testimonial-quote-mark {
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      line-height: 0.8;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+
+    .testimonial-text {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--smoke);
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--surface2);
+      border: 2px solid var(--accent);
+    }
+
+    .testimonial-name {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      color: var(--ivory);
+      text-transform: uppercase;
+    }
+
+    .testimonial-role {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--muted);
+    }
+
+    .swiper-pagination-testimonials {
+      margin-top: 48px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .swiper-pagination-testimonials .swiper-pagination-bullet {
+      width: 32px;
+      height: 2px;
+      border-radius: 0;
+      background: var(--border);
+      opacity: 1;
+      transition: background 0.3s ease, width 0.3s ease;
+    }
+
+    .swiper-pagination-testimonials .swiper-pagination-bullet-active {
+      background: var(--accent);
+      width: 64px;
+    }
+
+    /* =============================================
+       AMBIENT GALLERY
+    ============================================= */
+    .ambient-gallery {
+      padding: 120px 0;
+      background: var(--surface2);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: 300px 300px;
+      gap: 4px;
+    }
+
+    .gallery-cell {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gallery-cell:first-child {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .gallery-cell img {
+      transition: transform 0.8s ease;
+    }
+
+    .gallery-cell:hover img {
+      transform: scale(1.05);
+    }
+
+    .gallery-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 20px 24px;
+      background: linear-gradient(to top, rgba(28,16,8,0.8), transparent);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* =============================================
+       CONTACT CTA
+    ============================================= */
+    .contact-cta {
+      padding: 140px 0;
+      background: var(--bg);
+      text-align: center;
+    }
+
+    .contact-cta-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .contact-cta .section-heading {
+      font-size: clamp(3.5rem, 7vw, 8rem);
+    }
+
+    .contact-cta-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.7;
+    }
+
+    .contact-cta-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 18px 44px;
+      text-decoration: none;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: background 0.3s ease;
+    }
+
+    .btn-primary:hover { background: var(--accent-light); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      border: 1px solid var(--border);
+      padding: 18px 44px;
+      text-decoration: none;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 0 40px;
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 60px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+
+    .footer-brand {}
+
+    .footer-logo {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      letter-spacing: 0.25em;
+      color: var(--ivory);
+      margin-bottom: 20px;
+    }
+
+    .footer-logo em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .footer-tagline {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .footer-social a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(212,97,42,0.08);
+    }
+
+    .footer-col-title {
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--muted);
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover { color: var(--smoke); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-legal {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-award {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+
+    .footer-award-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 1100px) {
+      nav { padding: 0 32px; }
+      .container { padding: 0 32px; }
+
+      .hero-content {
+        grid-template-columns: 1fr;
+        padding: 0 32px 140px;
+      }
+
+      .hero-widget {
+        display: none;
+      }
+
+      .philosophy-header { grid-template-columns: 1fr; gap: 40px; }
+      .philosophy-grid { grid-template-columns: repeat(2, 1fr); }
+      .services-inner { grid-template-columns: 1fr; }
+      .services-left { position: static; }
+      .awards-inner { grid-template-columns: 1fr; }
+      .awards-visual { height: 380px; }
+      .work-card--large,
+      .work-card--tall { grid-column: span 12; }
+      .work-card--med { grid-column: span 12; }
+      .work-card--wide { grid-column: span 12; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .container { padding: 0 20px; }
+      .hero-content { padding: 0 20px 160px; }
+      .philosophy { padding: 80px 0; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .services { padding: 80px 0; }
+      .featured-work { padding: 80px 0; }
+      .awards { padding: 80px 0; }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .gallery-cell:first-child { grid-column: span 1; grid-row: span 1; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+      #scroll-indicator { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== PRELOADER ===== -->
+  <div id="preloader">
+    <div class="preloader-wordmark"><em>EMBER</em> STUDIO</div>
+    <div class="preloader-bar-track">
+      <div class="preloader-bar-fill" id="preloader-bar"></div>
+    </div>
+    <div class="preloader-label">Loading Experience</div>
+  </div>
+
+  <!-- ===== SCROLL INDICATOR ===== -->
+  <div id="scroll-indicator" style="display:none;">
+    <div class="si-label">Scroll</div>
+    <div class="si-line"></div>
+  </div>
+
+  <!-- ===== NAV ===== -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo"><em>EMBER</em> STUDIO</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Work</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Start a Project</a>
+  </nav>
+
+  <!-- ===== HERO — TYPE F ===== -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img src="images/hero-1.webp" alt="Ember Studio — creative workspace" />
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-noise"></div>
+
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-line"></div>
+          <span class="hero-eyebrow-text">Award-Winning Creative Agency / Est. 2008</span>
+        </div>
+        <h1 class="hero-headline" id="hero-headline">
+          WE BUILD<br />
+          <span class="line-accent">BRANDS</span><br />
+          THAT LEAD
+        </h1>
+        <p class="hero-sub">
+          Campaigns that move. Identities that endure.<br />
+          Ember Studio is where ambition becomes legacy.
+        </p>
+      </div>
+
+      <!-- Interactive Work-Type Selector Widget -->
+      <div class="hero-widget" id="hero-widget">
+        <div class="widget-label">What We Do Best</div>
+        <div class="widget-tags" id="widget-tags">
+          <button class="widget-tag active" data-service="branding">Branding</button>
+          <button class="widget-tag" data-service="digital">Digital</button>
+          <button class="widget-tag" data-service="campaign">Campaign</button>
+          <button class="widget-tag" data-service="identity">Identity</button>
+          <button class="widget-tag" data-service="strategy">Strategy</button>
+        </div>
+        <div class="widget-reveal" id="widget-reveal">
+          <div class="widget-reveal-title" id="widget-reveal-title">Brand Architecture</div>
+          <div class="widget-reveal-desc" id="widget-reveal-desc">
+            We design brand systems from the ground up — name, mark, voice, and vision. Our brands become category leaders.
+          </div>
+          <a href="collection.html" class="widget-cta">
+            See Case Studies
+            <svg viewBox="0 0 20 1" fill="none" stroke="currentColor" stroke-width="1">
+              <line x1="0" y1="0.5" x2="20" y2="0.5"/>
+              <polyline points="14,0 20,0.5 14,1" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="hero-stats-bar">
+      <div class="hero-stat">
+        <div class="hero-stat-number">340<span>+</span></div>
+        <div class="hero-stat-label">Brands Built</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number">28</div>
+        <div class="hero-stat-label">Cannes Lions</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number">180<span>+</span></div>
+        <div class="hero-stat-label">Staff Worldwide</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number">17<span>yrs</span></div>
+        <div class="hero-stat-label">In Market Since 2008</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MARQUEE ===== -->
+  <div class="marquee-strip" aria-hidden="true">
+    <div class="marquee-inner">
+      <span class="marquee-item">Branding <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Strategy <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Identity <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Campaigns <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Digital <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Cannes Lions <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Brand Architecture <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Motion <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Branding <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Strategy <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Identity <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Campaigns <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Digital <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Cannes Lions <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Brand Architecture <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Motion <span class="marquee-dot"></span></span>
+    </div>
+  </div>
+
+  <!-- ===== PHILOSOPHY ===== -->
+  <section class="philosophy" id="philosophy">
+    <div class="container">
+      <div class="philosophy-header">
+        <div>
+          <div class="section-tag"><span class="section-tag-text">Our Beliefs</span></div>
+          <h2 class="section-heading">WHAT WE<br />STAND FOR</h2>
+          <p class="philosophy-intro">
+            At Ember Studio, we believe brands are living systems —
+            not just logos. They breathe, evolve, and lead.
+            Every project we take on is an act of construction.
+            We build monuments.
+          </p>
+        </div>
+        <div class="philosophy-quote">
+          "The best brands don't <em>follow</em> culture —<br />
+          they <em>create</em> it."
+        </div>
+      </div>
+
+      <!-- MUST be display: grid; grid-template-columns: repeat(3, 1fr) -->
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">01</div>
+          <div class="philosophy-card-title">Clarity Over Noise</div>
+          <p class="philosophy-card-text">
+            In a saturated market, the clearest signal wins. We strip away
+            complexity to reveal the pure, powerful core of every brand.
+          </p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">02</div>
+          <div class="philosophy-card-title">Courage in Craft</div>
+          <p class="philosophy-card-text">
+            Safe work is forgettable work. We challenge briefs, push
+            creative limits, and deliver ideas that demand attention.
+          </p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">03</div>
+          <div class="philosophy-card-title">Built to Last</div>
+          <p class="philosophy-card-text">
+            Trend-chasing is a trap. We design brand systems with the
+            durability to remain relevant across decades, not just campaigns.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="services-inner">
+        <div class="services-left">
+          <div class="section-tag"><span class="section-tag-text">Disciplines</span></div>
+          <h2 class="section-heading">WHAT<br />WE DO</h2>
+          <p class="services-intro">
+            From nascent start-ups to global Fortune 500s,
+            we deliver end-to-end creative solutions that reshape
+            how brands are perceived, experienced, and remembered.
+          </p>
+          <a href="process.html" class="services-cta-link">
+            See Our Process →
+          </a>
+        </div>
+
+        <div class="services-list">
+          <div class="service-item">
+            <span class="service-num">01</span>
+            <div class="service-content">
+              <div class="service-title">Brand Strategy</div>
+              <p class="service-desc">Positioning, narrative architecture, competitive differentiation, and brand character definition that gives your organisation a reason to exist.</p>
+              <div class="service-tags">
+                <span class="service-tag">Positioning</span>
+                <span class="service-tag">Narrative</span>
+                <span class="service-tag">Research</span>
+              </div>
+            </div>
+            <span class="service-arrow">→</span>
+          </div>
+          <div class="service-item">
+            <span class="service-num">02</span>
+            <div class="service-content">
+              <div class="service-title">Visual Identity</div>
+              <p class="service-desc">Logos, colour systems, typography, iconography, and the full design language that becomes your brand's visual signature at every touchpoint.</p>
+              <div class="service-tags">
+                <span class="service-tag">Logo</span>
+                <span class="service-tag">Color System</span>
+                <span class="service-tag">Typography</span>
+              </div>
+            </div>
+            <span class="service-arrow">→</span>
+          </div>
+          <div class="service-item">
+            <span class="service-num">03</span>
+            <div class="service-content">
+              <div class="service-title">Integrated Campaigns</div>
+              <p class="service-desc">Award-winning campaign concepts that move across OOH, digital, broadcast, and experiential — unified by a single, irresistible idea.</p>
+              <div class="service-tags">
+                <span class="service-tag">OOH</span>
+                <span class="service-tag">Digital</span>
+                <span class="service-tag">Broadcast</span>
+              </div>
+            </div>
+            <span class="service-arrow">→</span>
+          </div>
+          <div class="service-item">
+            <span class="service-num">04</span>
+            <div class="service-content">
+              <div class="service-title">Digital Experience</div>
+              <p class="service-desc">Websites, apps, and interactive platforms where design excellence and conversion thinking coexist to create experiences people remember.</p>
+              <div class="service-tags">
+                <span class="service-tag">Web Design</span>
+                <span class="service-tag">UX/UI</span>
+                <span class="service-tag">Motion</span>
+              </div>
+            </div>
+            <span class="service-arrow">→</span>
+          </div>
+          <div class="service-item">
+            <span class="service-num">05</span>
+            <div class="service-content">
+              <div class="service-title">Brand Management</div>
+              <p class="service-desc">Ongoing creative partnership — brand governance, guidelines, asset libraries, and creative review to keep your brand sharp year after year.</p>
+              <div class="service-tags">
+                <span class="service-tag">Guidelines</span>
+                <span class="service-tag">Asset Library</span>
+                <span class="service-tag">Governance</span>
+              </div>
+            </div>
+            <span class="service-arrow">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURED WORK ===== -->
+  <section class="featured-work" id="work">
+    <div class="container">
+      <div class="featured-work-header">
+        <div>
+          <div class="section-tag"><span class="section-tag-text">Selected Cases</span></div>
+          <h2 class="section-heading">FEATURED<br />WORK</h2>
+        </div>
+        <a href="collection.html" class="featured-work-link">View All Work →</a>
+      </div>
+
+      <!-- overflow: visible required per GSAP rules -->
+      <div class="work-grid">
+        <div class="work-card work-card--large">
+          <div class="work-card-img">
+            <img src="images/product-1.webp" alt="Vanta Financial — Brand Identity" />
+            <div class="work-card-overlay">
+              <span class="work-card-cat">Brand Identity / Strategy</span>
+              <div class="work-card-title">Vanta Financial</div>
+              <div class="work-card-award"><span class="award-dot"></span> Cannes Lions Gold — Design 2024</div>
+            </div>
+          </div>
+        </div>
+        <div class="work-card work-card--tall">
+          <div class="work-card-img">
+            <img src="images/product-2.webp" alt="Oriole — Global Campaign" />
+            <div class="work-card-overlay">
+              <span class="work-card-cat">Integrated Campaign</span>
+              <div class="work-card-title">Oriole Global Campaign</div>
+              <div class="work-card-award"><span class="award-dot"></span> D&AD Pencil 2023</div>
+            </div>
+          </div>
+        </div>
+        <div class="work-card work-card--med">
+          <div class="work-card-img">
+            <img src="images/product-3.webp" alt="Slate Urban — Digital Experience" />
+            <div class="work-card-overlay">
+              <span class="work-card-cat">Digital Experience</span>
+              <div class="work-card-title">Slate Urban Platform</div>
+            </div>
+          </div>
+        </div>
+        <div class="work-card work-card--wide">
+          <div class="work-card-img">
+            <img src="images/product-4.webp" alt="Meridian — Visual Identity System" />
+            <div class="work-card-overlay">
+              <span class="work-card-cat">Visual Identity</span>
+              <div class="work-card-title">Meridian Identity System</div>
+              <div class="work-card-award"><span class="award-dot"></span> Clio Award 2024</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AWARDS ===== -->
+  <section class="awards" id="awards">
+    <div class="container">
+      <div class="awards-inner">
+        <div class="awards-visual">
+          <div class="awards-img-main">
+            <img src="images/ambient-1.webp" alt="Ember Studio creative team" />
+          </div>
+          <div class="awards-img-accent">
+            <img src="images/hero-2.webp" alt="Awards and recognition" />
+          </div>
+          <div class="awards-badge">
+            <div class="awards-badge-num">28</div>
+            <div class="awards-badge-text">Cannes Lions</div>
+          </div>
+        </div>
+
+        <div class="awards-content">
+          <div>
+            <div class="section-tag"><span class="section-tag-text">Recognition</span></div>
+            <h2 class="section-heading">WORK THAT<br />WINS</h2>
+            <p class="awards-intro">
+              Recognised on every major stage in the creative industry.
+              28 Cannes Lions, 14 D&AD Pencils, 9 Clios, and dozens of
+              regional awards since 2008. Proof that great work speaks.
+            </p>
+          </div>
+
+          <div class="awards-list">
+            <div class="award-row">
+              <div class="award-name">Cannes Lions</div>
+              <div class="award-year">2018 — 2025</div>
+              <div class="award-count">28</div>
+            </div>
+            <div class="award-row">
+              <div class="award-name">D&AD Pencils</div>
+              <div class="award-year">2016 — 2025</div>
+              <div class="award-count">14</div>
+            </div>
+            <div class="award-row">
+              <div class="award-name">Clio Awards</div>
+              <div class="award-year">2017 — 2025</div>
+              <div class="award-count">9</div>
+            </div>
+            <div class="award-row">
+              <div class="award-name">One Show</div>
+              <div class="award-year">2019 — 2024</div>
+              <div class="award-count">12</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="testimonials-header">
+        <div class="section-tag"><span class="section-tag-text">Client Voices</span></div>
+        <h2 class="section-heading">WHAT<br />CLIENTS SAY</h2>
+      </div>
+
+      <div class="swiper swiper-testimonials">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="testimonial-slide">
+              <div class="testimonial-quote-mark">"</div>
+              <p class="testimonial-text">
+                Ember Studio didn't just redesign our brand — they gave us a language.
+                Within 18 months of launch, aided brand awareness jumped 34 points.
+                The work is extraordinary.
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">
+                  <img src="images/ambient-2.webp" alt="Claire Rosenthal" />
+                </div>
+                <div>
+                  <div class="testimonial-name">Claire Rosenthal</div>
+                  <div class="testimonial-role">Chief Marketing Officer, Vanta Financial</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-slide">
+              <div class="testimonial-quote-mark">"</div>
+              <p class="testimonial-text">
+                The Oriole campaign was unlike anything our category had seen.
+                Ember challenged every assumption and delivered a Cannes-winning campaign
+                that tripled our new customer acquisition rate.
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">
+                  <img src="images/ambient-3.webp" alt="Marcus Webb" />
+                </div>
+                <div>
+                  <div class="testimonial-name">Marcus Webb</div>
+                  <div class="testimonial-role">CEO, Oriole Group</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-slide">
+              <div class="testimonial-quote-mark">"</div>
+              <p class="testimonial-text">
+                Working with Ember is a rare experience — they listen deeply, think
+                boldly, and execute flawlessly. The Meridian identity system they delivered
+                has become the benchmark in our sector.
+              </p>
+              <div class="testimonial-author">
+                <div class="testimonial-avatar">
+                  <img src="images/hero-3.webp" alt="Sophia Tang" />
+                </div>
+                <div>
+                  <div class="testimonial-name">Sophia Tang</div>
+                  <div class="testimonial-role">Brand Director, Meridian Group</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination swiper-pagination-testimonials"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AMBIENT GALLERY ===== -->
+  <section class="ambient-gallery" id="studio">
+    <div class="container" style="padding-bottom: 0; padding-top: 0;">
+      <div style="padding: 80px 0 48px; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+          <div class="section-tag"><span class="section-tag-text">The Studio</span></div>
+          <h2 class="section-heading">OUR<br />WORLD</h2>
+        </div>
+        <a href="about.html" class="featured-work-link">Discover Ember →</a>
+      </div>
+    </div>
+    <div class="container" style="padding: 0 60px 0;">
+      <div class="gallery-grid">
+        <div class="gallery-cell">
+          <img src="images/ambient-1.webp" alt="Ember Studio — open plan studio" />
+          <div class="gallery-caption">The Studio, London HQ</div>
+        </div>
+        <div class="gallery-cell">
+          <img src="images/hero-3.webp" alt="Creative collaboration" />
+          <div class="gallery-caption">Creative Process</div>
+        </div>
+        <div class="gallery-cell">
+          <img src="images/ambient-2.webp" alt="Brand board in progress" />
+          <div class="gallery-caption">Brand Development</div>
+        </div>
+        <div class="gallery-cell">
+          <img src="images/ambient-3.webp" alt="Strategy session" />
+          <div class="gallery-caption">Strategy Session</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT CTA ===== -->
+  <section class="contact-cta" id="contact">
+    <div class="container">
+      <div class="contact-cta-inner">
+        <div class="section-tag" style="justify-content: center;">
+          <span class="section-tag-text">Start a Project</span>
+        </div>
+        <h2 class="section-heading">LET'S BUILD<br /><span style="color: var(--accent);">TOGETHER</span></h2>
+        <p class="contact-cta-sub">
+          Ready to build a brand that leads? Tell us about your ambitions.<br />
+          We respond within 48 hours.
+        </p>
+        <div class="contact-cta-actions">
+          <a href="contact.html" class="btn-primary">Start a Conversation</a>
+          <a href="collection.html" class="btn-ghost">View Our Work</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo"><em>EMBER</em> STUDIO</div>
+          <p class="footer-tagline">
+            We build brands that lead.<br />
+            Campaigns that move.<br />
+            Award-winning creative agency. Est. 2008.
+          </p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram">Ig</a>
+            <a href="#" aria-label="LinkedIn">Li</a>
+            <a href="#" aria-label="Twitter">Tw</a>
+            <a href="#" aria-label="Behance">Be</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Agency</div>
+          <ul class="footer-links">
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="about.html#team">Team</a></li>
+            <li><a href="about.html#culture">Culture</a></li>
+            <li><a href="about.html#careers">Careers</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Work</div>
+          <ul class="footer-links">
+            <li><a href="collection.html">Case Studies</a></li>
+            <li><a href="collection.html#branding">Branding</a></li>
+            <li><a href="collection.html#campaigns">Campaigns</a></li>
+            <li><a href="collection.html#digital">Digital</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Connect</div>
+          <ul class="footer-links">
+            <li><a href="contact.html">New Business</a></li>
+            <li><a href="contact.html#press">Press</a></li>
+            <li><a href="contact.html#careers">Join Us</a></li>
+            <li><a href="process.html">Our Process</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-legal">© 2025 Ember Creative Studio Ltd. All rights reserved.</span>
+        <div class="footer-award">
+          <span class="footer-award-dot"></span>
+          28 Cannes Lions
+          <span class="footer-award-dot"></span>
+          London · New York · Tokyo
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    // =============================================
+    // SPLITTEXT POLYFILL (inline — no Club GSAP)
+    // =============================================
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string'
+          ? document.querySelector(target)
+          : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return; this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('chars')) {
+          el.innerHTML = original.split('').map(c =>
+            c === ' '
+              ? '<span class="char" style="display:inline-block">&nbsp;</span>'
+              : `<span class="char" style="display:inline-block">${c}</span>`
+          ).join('');
+          this.chars = Array.from(el.querySelectorAll('.char'));
+        } else if (type.includes('words')) {
+          el.innerHTML = original.split(' ').filter(w => w.length > 0).map(w =>
+            `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`
+          ).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() {
+        if (this._el) {
+          const o = this._el.getAttribute('data-split-orig');
+          if (o) this._el.textContent = o;
+        }
+      }
+    }
+
+    // =============================================
+    // PRELOADER
+    // =============================================
+    const bar = document.getElementById('preloader-bar');
+    const preloader = document.getElementById('preloader');
+    let prog = 0;
+    const loader = setInterval(() => {
+      prog += Math.random() * 18 + 4;
+      if (prog >= 100) {
+        prog = 100;
+        clearInterval(loader);
+        bar.style.width = '100%';
+        setTimeout(initPage, 400);
+      }
+      bar.style.width = prog + '%';
+    }, 80);
+
+    function initPage() {
+      gsap.to(preloader, {
+        duration: 0.75,
+        autoAlpha: 0,
+        ease: 'power3.out',
+        onComplete: () => {
+          preloader.style.display = 'none';
+          // Show scroll indicator after preloader
+          const si = document.getElementById('scroll-indicator');
+          if (si) si.style.display = 'flex';
+          runHeroAnimation();
+        }
+      });
+    }
+
+    // Fallback: show scroll indicator after 4s
+    setTimeout(() => {
+      const si = document.getElementById('scroll-indicator');
+      if (si) si.style.display = 'flex';
+    }, 4000);
+
+    // =============================================
+    // NAV SCROLL STATE
+    // =============================================
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // =============================================
+    // HERO ANIMATION — A3 Precise
+    // x:-20, duration:0.75, stagger:0.04, ease:'power3.out'
+    // =============================================
+    function runHeroAnimation() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero eyebrow
+      gsap.from('.hero-eyebrow', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: 0.1
+      });
+
+      // Hero headline lines — word-by-word
+      const heroHeadline = document.getElementById('hero-headline');
+      if (heroHeadline) {
+        const lines = heroHeadline.querySelectorAll('br');
+        const words = heroHeadline.textContent.split(/\s+/).filter(Boolean);
+        gsap.from(heroHeadline, {
+          immediateRender: false,
+          x: -20,
+          duration: 0.75,
+          ease: 'power3.out',
+          delay: 0.2
+        });
+      }
+
+      gsap.from('.hero-sub', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: 0.35
+      });
+
+      gsap.from('#hero-widget', {
+        immediateRender: false,
+        x: 20,
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: 0.45
+      });
+
+      gsap.from('.hero-stat', {
+        immediateRender: false,
+        y: 20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        delay: 0.5
+      });
+
+      initScrollAnimations();
+    }
+
+    // =============================================
+    // SCROLL ANIMATIONS
+    // =============================================
+    function initScrollAnimations() {
+
+      // Philosophy heading
+      gsap.from('.philosophy .section-tag, .philosophy .section-heading', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.philosophy',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.philosophy-intro, .philosophy-quote', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.philosophy-header',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.philosophy-card', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.philosophy-grid',
+          start: 'top 80%'
+        }
+      });
+
+      // Services
+      gsap.from('.services .section-tag, .services .section-heading, .services-intro, .services-cta-link', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.services',
+          start: 'top 75%'
+        }
+      });
+
+      gsap.from('.service-item', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.services-list',
+          start: 'top 80%'
+        }
+      });
+
+      // Featured Work
+      gsap.from('.featured-work-header', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.featured-work',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.work-card', {
+        immediateRender: false,
+        y: 20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.work-grid',
+          start: 'top 80%'
+        }
+      });
+
+      // Awards
+      gsap.from('.awards-visual', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.awards',
+          start: 'top 75%'
+        }
+      });
+
+      gsap.from('.awards-content > *', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.awards-content',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.from('.award-row', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.awards-list',
+          start: 'top 85%'
+        }
+      });
+
+      // Testimonials
+      gsap.from('.testimonials-header', {
+        immediateRender: false,
+        x: -20,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.testimonials',
+          start: 'top 80%'
+        }
+      });
+
+      // Gallery
+      gsap.from('.gallery-cell', {
+        immediateRender: false,
+        y: 20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.gallery-grid',
+          start: 'top 80%'
+        }
+      });
+
+      // Contact CTA
+      gsap.from('.contact-cta-inner > *', {
+        immediateRender: false,
+        y: 20,
+        duration: 0.75,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.contact-cta',
+          start: 'top 80%'
+        }
+      });
+    }
+
+    // =============================================
+    // HERO WIDGET — Interactive Work-Type Selector
+    // =============================================
+    const serviceData = {
+      branding: {
+        title: 'Brand Architecture',
+        desc: 'We design brand systems from the ground up — name, mark, voice, and vision. Our brands become category leaders.'
+      },
+      digital: {
+        title: 'Digital Experience',
+        desc: 'Award-winning websites, apps, and interactive platforms that convert visitors into believers and customers into advocates.'
+      },
+      campaign: {
+        title: 'Integrated Campaign',
+        desc: 'OOH, digital, broadcast, and experiential — unified by a single, irresistible idea. Built to win awards and grow business.'
+      },
+      identity: {
+        title: 'Visual Identity',
+        desc: 'Logos, colours, typography, and every visual touchpoint — a complete design language that speaks before words do.'
+      },
+      strategy: {
+        title: 'Brand Strategy',
+        desc: 'Positioning, narrative architecture, and competitive differentiation. We define who you are and why the world should care.'
+      }
+    };
+
+    const widgetTags = document.querySelectorAll('.widget-tag');
+    const revealTitle = document.getElementById('widget-reveal-title');
+    const revealDesc = document.getElementById('widget-reveal-desc');
+    const widgetReveal = document.getElementById('widget-reveal');
+
+    widgetTags.forEach(tag => {
+      tag.addEventListener('click', () => {
+        widgetTags.forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+        const serviceKey = tag.dataset.service;
+        const data = serviceData[serviceKey];
+        // Animate out
+        gsap.to(widgetReveal, {
+          duration: 0.2,
+          x: -10,
+          ease: 'power2.in',
+          onComplete: () => {
+            revealTitle.textContent = data.title;
+            revealDesc.textContent = data.desc;
+            // Animate in
+            gsap.fromTo(widgetReveal,
+              { x: 10 },
+              { x: 0, duration: 0.35, ease: 'power3.out' }
+            );
+          }
+        });
+      });
+    });
+
+    // =============================================
+    // SWIPER — TESTIMONIALS
+    // =============================================
+    new Swiper('.swiper-testimonials', {
+      slidesPerView: 1,
+      spaceBetween: 32,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination-testimonials',
+        clickable: true,
+      },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1100: { slidesPerView: 2 }
+      }
+    });
+  </script>
+</body>
+</html>
