@@ -88,7 +88,7 @@ async function main() {
     }
 
     const meta = readMeta(path.join(HOME_DIR, slug, "meta.json"));
-    const tier = meta.tier === "FREE" ? "FREE" : "PRO";
+    const tier = typeof meta.tier === "string" && meta.tier.toUpperCase() === "FREE" ? "FREE" : "PRO";
     if (tier !== "PRO") {
       skipped += 1;
       continue;

@@ -124,7 +124,7 @@ function toTitleFromSlug(slug) {
 }
 
 function normalizeTier(value) {
-  return value === "FREE" ? "FREE" : "PRO";
+  return typeof value === "string" && value.toUpperCase() === "FREE" ? "FREE" : "PRO";
 }
 
 function normalizeStatus(value) {
