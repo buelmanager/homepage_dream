@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const archiver = require("archiver");
 
 const TEMPLATES_DIR = path.join(__dirname, "..", "public", "templates");
 const MULTI_CLONE_DIR = path.join(__dirname, "..", "multi_clone_hompage", "home");
@@ -232,10 +233,64 @@ function scanTemplatesDirectory(baseDir, sourcePrefix = "/templates", sourceMeta
   return templates;
 }
 
-function generateManifest() {
+/**
+ * FREE tier 템플릿의 source.zip을 public/templates/{slug}/source.zip 에 생성.
+ * Vercel 서버리스는 public/ 파일에 fs 접근 불가(outputFileTracingExcludes)이므로
+ * 다운로드 API에서 이 정적 파일로 리다이렉트한다.
+ */
+function buildFreeZip(slug, dir) {
+  return new Promise((resolve, reject) => {
+    const zipPath = path.join(dir, "source.zip");
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver("zip", { zlib: { level: 5 } });
+
+    output.on("close", () => resolve(archive.pointer()));
+    archive.on("error", reject);
+    archive.pipe(output);
+
+    archive.glob("**/*", {
+      cwd: dir,
+      dot: false,
+      ignore: [
+        "source.zip",
+        "**/.DS_Store",
+        "**/fullpage.png",
+        "**/thumbnail.jpg",
+      ],
+    });
+
+    archive.finalize().catch(reject);
+  });
+}
+
+async function buildFreeZips(sourceMetaBySlug) {
+  if (!fs.existsSync(TEMPLATES_DIR)) return;
+
+  const folders = fs
+    .readdirSync(TEMPLATES_DIR, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name);
+
+  let built = 0;
+  for (const slug of folders) {
+    const meta = sourceMetaBySlug.get(slug) || {};
+    if (normalizeTier(meta.tier) !== "FREE") continue;
+
+    const dir = path.join(TEMPLATES_DIR, slug);
+    await buildFreeZip(slug, dir);
+    built += 1;
+  }
+
+  console.log(`✅ Built ${built} FREE source.zip files`);
+}
+
+async function generateManifest() {
   const sourceMetaBySlug = loadSourceMetaBySlug();
   const syncResult = syncSourceTemplatesToPublic();
   console.log(`✅ Synced ${syncResult.copied} template folders`);
+
+  await buildFreeZips(sourceMetaBySlug);
+
   console.log("🔍 Scanning public/templates ...");
 
   const publicTemplates = scanTemplatesDirectory(TEMPLATES_DIR, "/templates", sourceMetaBySlug);
@@ -253,4 +308,7 @@ function generateManifest() {
   console.log(`📄 Output: ${OUTPUT_FILE}`);
 }
 
-generateManifest();
+generateManifest().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

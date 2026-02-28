@@ -136,15 +136,11 @@ export async function GET(
     return NextResponse.redirect(signInUrl);
   }
 
-  // FREE → zip public/templates/[slug] and download
+  // FREE → redirect to pre-built static zip served from CDN
+  // (Vercel serverless cannot access public/ via fs; the zip is built by generate-manifest)
   if (template.tier === "FREE") {
-    const zip = zipPublicFolder(slug);
-    if (zip) return zip;
-
-    return NextResponse.json(
-      { error: "Template files not found" },
-      { status: 404 }
-    );
+    const origin = request.nextUrl.origin;
+    return NextResponse.redirect(`${origin}/templates/${slug}/source.zip`);
   }
 
   // Admins bypass subscription check
