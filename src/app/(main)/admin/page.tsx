@@ -417,6 +417,19 @@ function useAdminData() {
     setScanning(false);
   };
 
+  const handleSyncThumbnails = async () => {
+    setScanning(true); setScanResult(null);
+    try {
+      const res = await fetch("/api/admin/sync-thumbnails", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setScanResult(`Synced ${data.updated} thumbnail(s) (${data.total_null} had null)`);
+        fetchData();
+      } else { setScanResult(data.error || "Sync failed"); }
+    } catch { setScanResult("Sync thumbnails failed"); }
+    setScanning(false);
+  };
+
   const handleDelete = async (slug: string, id: string, title: string) => {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
     try {
@@ -469,7 +482,7 @@ function useAdminData() {
     lemonVariantPro, setLemonVariantPro,
     savingSettings, myMode, togglingMode,
     savingTemplateId, drafts, setDrafts, expandedId, setExpandedId,
-    handleToggleMode, handleScan, handleDelete, handleSaveSettings, handleSaveTemplate,
+    handleToggleMode, handleScan, handleSyncThumbnails, handleDelete, handleSaveSettings, handleSaveTemplate,
   };
 }
 
@@ -481,7 +494,7 @@ export default function AdminPage() {
     lemonVariantPro, setLemonVariantPro,
     savingSettings, myMode, togglingMode,
     savingTemplateId, drafts, setDrafts, expandedId, setExpandedId,
-    handleToggleMode, handleScan, handleDelete, handleSaveSettings, handleSaveTemplate,
+    handleToggleMode, handleScan, handleSyncThumbnails, handleDelete, handleSaveSettings, handleSaveTemplate,
   } = useAdminData();
 
   if (status === "loading" || loading) {
@@ -549,6 +562,19 @@ export default function AdminPage() {
               </div>
             )}
 
+            <Button
+              variant="outline"
+              onClick={handleSyncThumbnails}
+              disabled={scanning}
+              className="gap-2"
+            >
+              {scanning ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Layers className="h-4 w-4" />
+              )}
+              Sync Thumbnails
+            </Button>
             <Button
               variant="outline"
               onClick={handleScan}

@@ -160,15 +160,17 @@ export async function POST() {
         deployed.push(slug);
       }
 
-      // Check if thumbnail exists in images/ (prefer webp)
+      // Check if thumbnail exists in images/ (prefer thumbnail.webp, then fullpage)
       let thumbnailUrl: string | null = meta.thumbnailUrl ?? null;
       if (!thumbnailUrl) {
         const imagesDir = path.join(destDir, "images");
         if (fs.existsSync(imagesDir)) {
           const imgs = fs.readdirSync(imagesDir);
-          const fullpage = imgs.find((f) => f.startsWith("fullpage"));
-          if (fullpage) {
-            thumbnailUrl = `/templates/${slug}/images/${fullpage}`;
+          const thumb =
+            imgs.find((f) => f === "thumbnail.webp") ||
+            imgs.find((f) => f.startsWith("fullpage"));
+          if (thumb) {
+            thumbnailUrl = `/templates/${slug}/images/${thumb}`;
           }
         }
       }
