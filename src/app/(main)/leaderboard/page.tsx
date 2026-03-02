@@ -1,12 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import { CATEGORIES } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import { Eye, Heart, Bookmark, Trophy, Crown, Medal } from "lucide-react";
 
 type SearchParams = Promise<{
-  category?: string;
   period?: string;
   metric?: string;
 }>;
@@ -86,7 +83,7 @@ function LeaderboardRow({
   return (
     <Link
       href={`/templates/${t.slug}`}
-      className={`group grid grid-cols-[52px_1fr_100px] sm:grid-cols-[52px_1fr_110px_100px] items-center gap-4 px-5 py-3.5 transition-colors hover:bg-muted/40 ${
+      className={`group grid grid-cols-[52px_1fr_100px] items-center gap-4 px-5 py-3.5 transition-colors hover:bg-muted/40 ${
         !isLast ? "border-b border-border/50" : ""
       } ${rank <= TOP_RANK_THRESHOLD ? "bg-muted/20" : ""}`}
     >
@@ -111,15 +108,7 @@ function LeaderboardRow({
           {t.title}
         </span>
       </div>
-      <div className="hidden sm:block">
-        <Badge
-          variant="outline"
-          className="border-border/50 text-[11px] text-muted-foreground font-normal capitalize"
-        >
-          {t.category}
-        </Badge>
-      </div>
-      <div className="flex items-center justify-end gap-1.5 text-muted-foreground">
+<div className="flex items-center justify-end gap-1.5 text-muted-foreground">
         <MetricIcon className="h-3.5 w-3.5 text-muted-foreground/50" />
         <span className="text-sm font-semibold tabular-nums text-foreground">
           {metricValue.toLocaleString()}
@@ -135,7 +124,6 @@ export default async function LeaderboardPage({
   searchParams: SearchParams;
 }) {
   const params = await searchParams;
-  const category = params.category || "all";
   const metric = (params.metric || "viewCount") as
     | "viewCount"
     | "likeCount"
@@ -144,7 +132,6 @@ export default async function LeaderboardPage({
 
   const where = {
     status: "PUBLISHED" as const,
-    ...(category !== "all" && { category }),
     ...(period === "daily" && {
       createdAt: { gte: new Date(Date.now() - MS_PER_DAY) },
     }),
@@ -173,7 +160,7 @@ export default async function LeaderboardPage({
 
   function buildUrl(overrides: Record<string, string>) {
     const p = new URLSearchParams();
-    const base = { category, metric, period, ...overrides };
+    const base = { metric, period, ...overrides };
     for (const [k, v] of Object.entries(base)) {
       if (v && v !== "all" && v !== "viewCount") p.set(k, v);
     }
@@ -206,36 +193,7 @@ export default async function LeaderboardPage({
 
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         {/* Filters */}
-        <div className="mb-7 space-y-4">
-          {/* Category filter */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {CATEGORIES.filter((c) =>
-              [
-                "all",
-                "pages",
-                "hero",
-                "feature",
-                "footer",
-                "pricing",
-                "testimonial",
-                "cta",
-                "header",
-              ].includes(c.name)
-            ).map((cat) => (
-              <Link
-                key={cat.name}
-                href={buildUrl({ category: cat.name })}
-                className={`inline-flex items-center rounded-full px-3.5 py-1 text-xs font-medium transition-all ${
-                  category === cat.name
-                    ? "bg-foreground text-background shadow-sm"
-                    : "border border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
-                }`}
-              >
-                {cat.label}
-              </Link>
-            ))}
-          </div>
-
+        <div className="mb-7">
           {/* Period + Metric selectors */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex gap-0.5 rounded-lg border border-border/60 bg-muted/30 p-0.5">
@@ -290,15 +248,12 @@ export default async function LeaderboardPage({
         ) : (
           <div className="rounded-xl border border-border/60 bg-card overflow-hidden shadow-sm">
             {/* Table header */}
-            <div className="hidden sm:grid grid-cols-[52px_1fr_110px_100px] items-center gap-4 border-b border-border/50 bg-muted/20 px-5 py-2.5">
+            <div className="grid grid-cols-[52px_1fr_100px] items-center gap-4 border-b border-border/50 bg-muted/20 px-5 py-2.5">
               <span className="text-[10px] font-semibold tracking-widest text-muted-foreground/50 uppercase">
                 #
               </span>
               <span className="text-[10px] font-semibold tracking-widest text-muted-foreground/50 uppercase">
                 Template
-              </span>
-              <span className="text-[10px] font-semibold tracking-widest text-muted-foreground/50 uppercase">
-                Category
               </span>
               <span className="text-right text-[10px] font-semibold tracking-widest text-muted-foreground/50 uppercase">
                 {activeMetric.label}
