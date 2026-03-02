@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grandmaster Academy — Elite Chess Training</title>
+  <meta name="description" content="Elite chess training academy for ambitious players. Study under grandmasters. Develop opening theory, endgame mastery, and tournament psychology.">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:#181818; --surface:#222222; --surface2:#2A2A2A;
+      --accent:#B0B0C0; --accent-light:#D0D0E0; --accent-dark:#808090;
+      --ivory:#EEEEF2; --smoke:#909090; --muted:#606060; --border:#1E1E1E;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+    }
+    .preloader-mark { width: 70px; height: 70px; animation: preloaderPulse 1.5s ease-in-out infinite; }
+    .preloader-name { font-family: var(--font-serif); font-size: 1rem; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; opacity: 0; animation: preloaderFade 1s ease 0.5s forwards; }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); animation: preloaderBar 1.8s ease forwards; }
+    @keyframes preloaderPulse { 0%,100%{opacity:0.5;transform:scale(0.95)} 50%{opacity:1;transform:scale(1)} }
+    @keyframes preloaderFade { to{opacity:1} }
+    @keyframes preloaderBar { to{transform:translateX(0)} }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 28px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; opacity: 0; transition: opacity 0.6s ease; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 40%; background: var(--accent); animation: scrollFill 2s ease-in-out infinite; }
+    .scroll-label { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; writing-mode: vertical-lr; margin-top: 8px; }
+    @keyframes scrollFill { 0%{top:-40%} 100%{top:100%} }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s ease, padding 0.4s ease; }
+    nav.scrolled { background: rgba(24,24,24,0.92); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); text-decoration: none; letter-spacing: 0.05em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 24px; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO - Type G: Scroll-Driven Text */
+    .hero-text-driven { min-height: 200vh; position: relative; }
+    .hero-bg { position: absolute; inset: 0; background-image: url('images/hero-1.webp'); background-size: cover; background-position: center; filter: brightness(0.3); }
+    .hero-text-wrap {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 80px; overflow: hidden;
+    }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; display: flex; align-items: center; gap: 12px; }
+    .hero-eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--accent); }
+    .hero-word { font-family: var(--font-serif); font-size: clamp(5rem, 15vw, 14rem); line-height: 0.85; font-weight: 700; text-transform: uppercase; will-change: transform; }
+    .word-1 { color: var(--ivory); }
+    .word-2 { color: var(--accent); }
+    .hero-tagline { font-size: 1.1rem; color: var(--smoke); line-height: 1.7; max-width: 520px; margin-top: 32px; }
+    .hero-cta-row { display: flex; gap: 16px; margin-top: 36px; }
+    .btn-primary { background: var(--accent); color: var(--bg); padding: 14px 32px; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.3s; font-family: var(--font-sans); }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { background: transparent; color: var(--ivory); padding: 14px 32px; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--muted); text-decoration: none; display: inline-block; transition: all 0.3s; font-family: var(--font-sans); }
+    .btn-secondary:hover { border-color: var(--ivory); }
+    .hero-scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); font-size: 1.5rem; color: var(--smoke); animation: bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-8px)} }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); padding: 60px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .strip-stat { text-align: center; }
+    .strip-num { font-family: var(--font-serif); font-size: 3rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; }
+    .strip-label { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .section-header { text-align: center; margin-bottom: 70px; }
+    .section-eyebrow { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--ivory); line-height: 1.2; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .section-subtitle { font-size: 0.95rem; color: var(--smoke); max-width: 520px; margin: 16px auto 0; line-height: 1.8; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+    .philosophy-item { padding: 44px; background: var(--surface); position: relative; border: 1px solid var(--border); }
+    .philosophy-num { font-family: var(--font-serif); font-size: 3.5rem; color: var(--muted); position: absolute; top: 20px; right: 24px; opacity: 0.4; }
+    .philosophy-item h3 { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); margin-bottom: 14px; font-weight: 400; }
+    .philosophy-item p { font-size: 0.88rem; color: var(--smoke); line-height: 1.8; }
+
+    /* PROGRAMS */
+    .programs { padding: 120px 80px; background: var(--surface); }
+    .programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 60px; overflow: visible; }
+    .program-card { background: var(--bg); position: relative; overflow: hidden; cursor: pointer; transition: transform 0.4s ease; }
+    .program-card:hover { transform: translateY(-4px); z-index: 2; }
+    .program-img { width: 100%; height: 280px; background-size: cover; background-position: center; transition: transform 0.6s ease; }
+    .program-card:hover .program-img { transform: scale(1.04); }
+    .program-info { padding: 28px; }
+    .program-tag { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
+    .program-name { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 10px; font-weight: 400; }
+    .program-desc { font-size: 0.86rem; color: var(--smoke); line-height: 1.8; margin-bottom: 16px; }
+    .program-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; }
+
+    /* ATELIER */
+    .atelier { padding: 120px 80px; background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img-wrap { position: relative; height: 560px; overflow: hidden; }
+    .atelier-img { width: 100%; height: 110%; background-size: cover; background-position: center; position: absolute; top: -5%; will-change: transform; }
+    .atelier-content { }
+    .atelier-content h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--ivory); line-height: 1.2; margin-bottom: 24px; font-weight: 400; }
+    .atelier-content h2 em { font-style: italic; color: var(--accent-light); }
+    .atelier-content p { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .atelier-quote { margin: 30px 0; padding: 20px 0 20px 24px; border-left: 2px solid var(--accent); font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; color: var(--accent-light); line-height: 1.6; }
+
+    /* PROCESS */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-list { margin-top: 60px; }
+    .process-item { display: flex; gap: 48px; padding: 36px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .process-item:last-child { border-bottom: none; }
+    .process-num { width: 72px; height: 72px; flex-shrink: 0; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.6rem; color: var(--accent); }
+    .process-content h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 8px; font-weight: 400; }
+    .process-content p { font-size: 0.88rem; color: var(--smoke); line-height: 1.8; }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .heritage-item { background: var(--surface); padding: 32px; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); display: block; margin-bottom: 12px; }
+    .heritage-item h4 { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 10px; font-weight: 400; }
+    .heritage-item p { font-size: 0.82rem; color: var(--smoke); line-height: 1.7; }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 120px 80px; background: var(--surface); overflow: hidden; }
+    .swiper { margin-top: 60px; overflow: visible; }
+    .swiper-slide { background: var(--surface2); padding: 44px; border: 1px solid var(--border); }
+    .testimonial-text { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; color: var(--ivory); line-height: 1.8; margin-bottom: 24px; }
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+    .author-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--muted); background-size: cover; background-position: center; flex-shrink: 0; }
+    .author-name { font-family: var(--font-serif); font-size: 0.95rem; color: var(--ivory); }
+    .author-title { font-size: 0.75rem; color: var(--smoke); margin-top: 2px; }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ENROLLMENT */
+    .enrollment { padding: 120px 80px; background: var(--bg); }
+    .enrollment-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .enrollment-info h2 { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 20px; font-weight: 400; }
+    .enrollment-info p { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .contact-detail { display: flex; gap: 12px; margin-bottom: 14px; font-size: 0.85rem; color: var(--smoke); }
+    .contact-detail strong { color: var(--ivory); min-width: 80px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 16px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group select { appearance: none; }
+    .form-group textarea { height: 110px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; padding: 16px; font-family: var(--font-sans); font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; margin-top: 8px; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); padding: 80px 80px 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 14px; }
+    .footer-brand p { font-size: 0.85rem; color: var(--smoke); line-height: 1.8; max-width: 260px; }
+    .footer-col h4 { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; }
+    .footer-bottom p { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="preloader-mark" viewBox="0 0 70 70" fill="none">
+      <rect x="5" y="5" width="60" height="60" stroke="#B0B0C0" stroke-width="1" opacity="0.4"/>
+      <text x="35" y="44" text-anchor="middle" font-family="Georgia" font-size="24" fill="#B0B0C0" font-weight="700">♟</text>
+    </svg>
+    <div class="preloader-name">Grandmaster Academy</div>
+    <div class="preloader-bar"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">Grand<span>master</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="programs.html">Programs</a></li>
+      <li><a href="process.html">Trials</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Enroll Now</a>
+  </nav>
+
+  <!-- HERO - Type G: Scroll-Driven Text -->
+  <section class="hero-text-driven" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow" id="hero-eyebrow">Elite Chess Training — Since 1963</div>
+      <div class="hero-word word-1" id="hero-word1">THINK</div>
+      <div class="hero-word word-2" id="hero-word2">DEEPER</div>
+      <p class="hero-tagline" id="hero-tagline">
+        Grandmaster Academy trains the world's most ambitious chess players. From opening theory to endgame perfection, our grandmaster coaches forge champions.
+      </p>
+      <div class="hero-cta-row" id="hero-cta">
+        <a href="programs.html" class="btn-primary">View Programs</a>
+        <a href="contact.html" class="btn-secondary">Free Trial Class</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">↓</div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip" id="stats-strip">
+    <div class="strip-stat"><span class="strip-num" data-target="60">0</span><span class="strip-label">Years Training Champions</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="14">0</span><span class="strip-label">Grandmaster Coaches</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="380">0</span><span class="strip-label">Tournament Titles</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="92">0</span><span class="strip-label">% Rated Improvement</span></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-header">
+      <p class="section-eyebrow">Training Philosophy</p>
+      <h2 class="section-title">The Science of <em>Strategic Thinking</em></h2>
+      <p class="section-subtitle">Chess mastery is built on three interlocking disciplines, each essential to reaching the grandmaster level.</p>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-item">
+        <div class="philosophy-num">01</div>
+        <h3>Opening Mastery</h3>
+        <p>A strong opening repertoire is the foundation of competitive chess. We teach principled opening play — understanding the ideas behind every move rather than memorizing lines by rote.</p>
+      </div>
+      <div class="philosophy-item">
+        <div class="philosophy-num">02</div>
+        <h3>Tactical Precision</h3>
+        <p>Combinations, sacrifices, and calculation depth separate average players from masters. Our tactical training system builds pattern recognition through 10,000+ carefully sequenced exercises.</p>
+      </div>
+      <div class="philosophy-item">
+        <div class="philosophy-num">03</div>
+        <h3>Endgame Technique</h3>
+        <p>Games are won and lost in the endgame. We ensure our students master king-and-pawn endings, rook endings, and theoretical drawn positions — converting every won advantage.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="programs" id="programs">
+    <div class="section-header">
+      <p class="section-eyebrow">Training Programs</p>
+      <h2 class="section-title">Find Your <em>Level</em></h2>
+      <p class="section-subtitle">Four structured programs from ambitious beginner to elite tournament competitor.</p>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-1.webp')"></div>
+        <div class="program-info">
+          <span class="program-tag">Foundation</span>
+          <h3 class="program-name">Scholar's Path</h3>
+          <p class="program-desc">For players rated under 1200. Covers all fundamentals — piece values, basic tactics, simple endgames, and the discipline of serious tournament play.</p>
+          <div class="program-meta"><span>3 months</span><span>Under 1200 ELO</span></div>
+        </div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-2.webp')"></div>
+        <div class="program-info">
+          <span class="program-tag">Intermediate</span>
+          <h3 class="program-name">Knight's Gambit</h3>
+          <p class="program-desc">For club players rated 1200–1800. Develops opening repertoire, tactical calculation, and positional understanding through annotated game analysis with a GM coach.</p>
+          <div class="program-meta"><span>6 months</span><span>1200–1800 ELO</span></div>
+        </div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-3.webp')"></div>
+        <div class="program-info">
+          <span class="program-tag">Advanced</span>
+          <h3 class="program-name">Master's Circle</h3>
+          <p class="program-desc">For serious players rated 1800–2300. Intensive study of complex middlegame strategy, deep opening preparation, and the psychological demands of elite tournament play.</p>
+          <div class="program-meta"><span>12 months</span><span>1800–2300 ELO</span></div>
+        </div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-4.webp')"></div>
+        <div class="program-info">
+          <span class="program-tag">Elite</span>
+          <h3 class="program-name">GM Candidate Program</h3>
+          <p class="program-desc">Exclusive mentorship for players targeting IM and GM norms. Fully personalised training, premium tournament sponsorship, and dedicated GM mentorship toward title completion.</p>
+          <div class="program-meta"><span>Ongoing</span><span>2300+ ELO</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img-wrap">
+        <div class="atelier-img" id="atelier-parallax" style="background-image: url('images/workspace-1.webp')"></div>
+      </div>
+      <div class="atelier-content">
+        <p class="section-eyebrow" style="margin-bottom: 16px;">Our Training Hall</p>
+        <h2>Where <em>Champions</em><br>Are Forged</h2>
+        <p>The Grandmaster Academy training hall in Zürich spans 3,000 square feet of silent, focused competition space. Forty dedicated boards, a digital analysis room, and a comprehensive chess library create the ideal environment for deep study.</p>
+        <div class="atelier-quote">
+          "Chess is not just a game of moves. It is a mirror of the mind — and we use it to sharpen both."
+        </div>
+        <p>Online students access our proprietary platform with video coaching, live analysis sessions with GM coaches, and a database of 500,000 annotated master games updated weekly.</p>
+        <a href="about.html" class="btn-primary" style="margin-top: 24px; display: inline-block;">See Our Facilities</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-header">
+      <p class="section-eyebrow">Enrollment Journey</p>
+      <h2 class="section-title">Your Path to <em>Mastery</em></h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num">01</div>
+        <div class="process-content">
+          <h3>Assessment Game</h3>
+          <p>Complete a 15-minute online rapid game for our coaching team to assess your current level, playing style, and key weaknesses to address in training.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">02</div>
+        <div class="process-content">
+          <h3>Coaching Match</h3>
+          <p>We pair you with the grandmaster coach whose expertise and teaching style best matches your goals — whether that's tournament preparation, opening repertoire, or endgame mastery.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">03</div>
+        <div class="process-content">
+          <h3>Personalised Study Plan</h3>
+          <p>Your GM coach crafts a bespoke 90-day training plan addressing your specific weaknesses and setting measurable rating milestones to track progress objectively.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">04</div>
+        <div class="process-content">
+          <h3>Weekly Sessions & Analysis</h3>
+          <p>Regular one-on-one video sessions supplement daily training exercises, self-study, and tournament participation with real-time annotation and feedback.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">05</div>
+        <div class="process-content">
+          <h3>Tournament & Review</h3>
+          <p>Compete in rated over-the-board and online tournaments sponsored by the Academy. Post-tournament game reviews with your GM coach transform each result into accelerated improvement.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-header">
+      <p class="section-eyebrow">Our History</p>
+      <h2 class="section-title">Six Decades of <em>Chess Excellence</em></h2>
+    </div>
+    <div class="heritage-grid">
+      <div class="heritage-item">
+        <span class="heritage-year">1963</span>
+        <h4>Academy Founded</h4>
+        <p>GM Viktor Steinhardt establishes the Academy in Zürich to train the next generation of tournament players with scientific rigour.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">1981</span>
+        <h4>First World Junior</h4>
+        <p>Academy alumnus Leon Brandt claims the World Junior Chess Championship — the first of fourteen world-level titles for Grandmaster Academy students.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2004</span>
+        <h4>Digital Platform Launch</h4>
+        <p>The Academy launches its proprietary online training platform, extending grandmaster-level coaching to students in sixty countries worldwide.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2019</span>
+        <h4>GM Candidate Program</h4>
+        <p>An elite track for norm-seekers launches with five participants. To date, eleven students have earned GM or IM titles through the programme.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="section-header">
+      <p class="section-eyebrow">Student Stories</p>
+      <h2 class="section-title">What Our <em>Champions</em> Say</h2>
+    </div>
+    <div class="swiper testimonials-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <p class="testimonial-text">"I arrived at Grandmaster Academy rated 1750 and left eighteen months later with an IM norm and a completely transformed understanding of the game. The individual attention from my GM coach was unlike anything else I'd experienced."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/detail-1.webp')"></div>
+            <div><div class="author-name">Alexander Petrov</div><div class="author-title">IM, rated 2450 FIDE</div></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <p class="testimonial-text">"The GM Candidate Program gave me the structure and accountability I needed to finally cross 2400. Three norms in eighteen months — something I'd been attempting for six years without a proper training system."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/detail-2.webp')"></div>
+            <div><div class="author-name">Sophia Andersson</div><div class="author-title">GM, Swedish National Champion</div></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <p class="testimonial-text">"Chess changed my life through the discipline and problem-solving it taught me. Grandmaster Academy brought me from club player to national U20 champion in just two years of dedicated training."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/ambient-1.webp')"></div>
+            <div><div class="author-name">Marcus Obi</div><div class="author-title">U20 National Champion, Nigeria</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="position: relative; margin-top: 40px;"></div>
+    </div>
+  </section>
+
+  <!-- ENROLLMENT -->
+  <section class="enrollment" id="enrollment">
+    <div class="section-header">
+      <p class="section-eyebrow">Join the Academy</p>
+      <h2 class="section-title">Begin Your <em>Chess Journey</em></h2>
+    </div>
+    <div class="enrollment-inner">
+      <div class="enrollment-info">
+        <h2>Start with a Free Assessment</h2>
+        <p>Our admissions process begins with a complimentary assessment game. There is no obligation — just an opportunity to experience the Grandmaster Academy standard and discuss your chess goals with our team.</p>
+        <p>Programs start on the first Monday of each month. Online and in-person options are both available for all levels.</p>
+        <div class="contact-detail"><strong>Location</strong>Bahnhofstrasse 88, 8001 Zürich</div>
+        <div class="contact-detail"><strong>Phone</strong>+41 44 555 0192</div>
+        <div class="contact-detail"><strong>Email</strong>enroll@grandmasteracademy.com</div>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text"></div>
+          <div class="form-group"><label>Last Name</label><input type="text"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email"></div>
+        <div class="form-group"><label>Current Rating (ELO)</label><input type="number" placeholder="0 if unrated"></div>
+        <div class="form-group"><label>Program Interest</label>
+          <select><option>Scholar's Path</option><option>Knight's Gambit</option><option>Master's Circle</option><option>GM Candidate Program</option></select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea placeholder="Tell us about your chess goals..."></textarea></div>
+        <button type="submit" class="form-submit">Request Free Assessment</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Grandmaster Academy</h3>
+        <p>Elite chess training under grandmaster coaches. From club player to titled master — we have guided champions for sixty years.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="programs.html">Scholar's Path</a></li>
+          <li><a href="programs.html">Knight's Gambit</a></li>
+          <li><a href="programs.html">Master's Circle</a></li>
+          <li><a href="programs.html">GM Candidate</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Academy</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="about.html">Our GMs</a></li>
+          <li><a href="process.html">Trials</a></li>
+          <li><a href="#">Online Platform</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Tournaments</a></li>
+          <li><a href="#">Alumni</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Grandmaster Academy. All rights reserved.</p>
+      <p>Zürich · Online Worldwide</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // SplitText polyfill
+    class SplitText {
+      constructor(t, o = {}) {
+        const e = typeof t === 'string' ? document.querySelector(t) : (t instanceof Element ? t : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!e) return; this._el = e;
+        const tp = (o.type || 'chars,words').toLowerCase();
+        const orig = e.textContent;
+        e.setAttribute('data-split-orig', orig);
+        if (tp.includes('chars')) {
+          e.innerHTML = orig.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(e.querySelectorAll('.char'));
+        } else if (tp.includes('words')) {
+          e.innerHTML = orig.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(e.querySelectorAll('.word'));
+        }
+        this.lines = [e];
+      }
+      revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+    }
+
+    // PRELOADER
+    window.addEventListener('load', () => {
+      gsap.to('#preloader', {
+        opacity: 0, duration: 0.8, delay: 1.8, ease: 'power2.inOut',
+        onComplete: () => {
+          document.getElementById('preloader').style.display = 'none';
+          document.getElementById('scroll-indicator').classList.add('visible');
+          initHeroAnim();
+        }
+      });
+    });
+    setTimeout(() => { document.getElementById('scroll-indicator')?.classList.add('visible'); }, 4000);
+
+    function initHeroAnim() {
+      // A3 Precise: x:-20px, stagger:0.04, ease:'power3.out'
+      gsap.from('#hero-eyebrow', { immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out' });
+      gsap.from('#hero-word1', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.08 });
+      gsap.from('#hero-word2', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.12 });
+      gsap.from('#hero-tagline', { immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', delay: 0.16 });
+      gsap.from('#hero-cta', { immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', delay: 0.20 });
+    }
+
+    // Hero Type G scroll-driven
+    gsap.to('#hero-word1', {
+      x: '-30vw', scale: 0.4, opacity: 0.2,
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: '50% top', scrub: 1 }
+    });
+    gsap.to('#hero-word2', {
+      x: '30vw', scale: 0.4, opacity: 0.2,
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: '50% top', scrub: 1 }
+    });
+
+    // NAVBAR
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    // STAT COUNTERS
+    document.querySelectorAll('.strip-num').forEach(el => {
+      const target = +el.dataset.target;
+      gsap.from(el, {
+        immediateRender: false,
+        textContent: 0, duration: 2, ease: 'power2.out',
+        snap: { textContent: 1 },
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+
+    // SCROLL ANIMATIONS
+    gsap.from('.philosophy-item', {
+      immediateRender: false, opacity: 0, x: -20, duration: 0.75,
+      stagger: 0.04, ease: 'power3.out',
+      scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%' }
+    });
+    gsap.from('.program-card', {
+      immediateRender: false, opacity: 0, x: -20, duration: 0.75,
+      stagger: 0.04, ease: 'power3.out',
+      scrollTrigger: { trigger: '.programs-grid', start: 'top 85%' }
+    });
+    gsap.to('#atelier-parallax', {
+      yPercent: -12, ease: 'none',
+      scrollTrigger: { trigger: '.atelier', start: 'top bottom', end: 'bottom top', scrub: 1 }
+    });
+    gsap.from('.atelier-content', {
+      immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out',
+      scrollTrigger: { trigger: '.atelier', start: 'top 80%' }
+    });
+    gsap.from('.process-item', {
+      immediateRender: false, opacity: 0, x: -20, duration: 0.75,
+      stagger: 0.04, ease: 'power3.out',
+      scrollTrigger: { trigger: '.process-list', start: 'top 85%' }
+    });
+    gsap.from('.heritage-item', {
+      immediateRender: false, opacity: 0, x: -20, duration: 0.75,
+      stagger: 0.04, ease: 'power3.out',
+      scrollTrigger: { trigger: '.heritage-grid', start: 'top 85%' }
+    });
+    document.querySelectorAll('.section-header').forEach(header => {
+      gsap.from(header, {
+        immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: header, start: 'top 85%' }
+      });
+    });
+
+    // Swiper
+    new Swiper('.testimonials-swiper', {
+      slidesPerView: 1, spaceBetween: 24, loop: true,
+      breakpoints: { 768: { slidesPerView: 2 } },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      autoplay: { delay: 5000, disableOnInteraction: false }
+    });
+  </script>
+</body>
+</html>

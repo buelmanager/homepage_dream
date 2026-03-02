@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KVORETH — Glacial Sanctuary</title>
+  <meta name="description" content="Glacier cryotherapy and cold wellness sanctuary nestled in the Norwegian fjords. Experience the ancient healing power of glacial cold at its purest.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141820;
+      --surface: #1C2030;
+      --surface2: #222838;
+      --accent: #A0C4D8;
+      --accent-light: #C4DCE8;
+      --accent-dark: #6090B0;
+      --ivory: #DCE8F0;
+      --smoke: #809098;
+      --muted: #505860;
+      --border: #181C28;
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent-dark) var(--bg); }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--ivory); line-height: 1.6; overflow-x: hidden; }
+    body.locked { overflow: hidden; }
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .preloader-logo {
+      width: 80px; height: 80px; stroke: var(--accent); stroke-width: 1; fill: none;
+      stroke-dasharray: 300; stroke-dashoffset: 300;
+      animation: drawLogo 2s ease forwards;
+    }
+    @keyframes drawLogo { to { stroke-dashoffset: 0; } }
+    .preloader-text {
+      margin-top: 24px; font-family: var(--font-serif);
+      font-size: 1.2rem; letter-spacing: 0.3em; color: var(--accent);
+      opacity: 0; animation: fadeUp 0.8s ease 1.5s forwards;
+    }
+    .preloader-sub {
+      margin-top: 8px; font-size: 0.72rem; letter-spacing: 0.2em;
+      color: var(--smoke); text-transform: uppercase;
+      opacity: 0; animation: fadeUp 0.8s ease 1.8s forwards;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== SCROLL INDICATOR ===== */
+    #scroll-indicator {
+      position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; visibility: visible; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-progress { width: 1px; height: 80px; background: var(--border); position: relative; }
+    .scroll-progress-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); transition: height 0.1s linear; }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase; }
+    .scroll-index { font-family: var(--font-serif); font-size: 0.9rem; color: var(--accent); }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 20px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .navbar.scrolled { background: rgba(20, 24, 32, 0.95); backdrop-filter: blur(14px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.2em; color: var(--ivory); text-decoration: none; font-weight: 300; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.08em; transition: color 0.3s ease; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { padding: 10px 24px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 0.78rem; letter-spacing: 0.1em; text-decoration: none; transition: all 0.3s ease; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* ===== HERO (Type D — Portraits + Stats) ===== */
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; align-items: center;
+    }
+    .hero-content-panel { padding: 120px 60px 120px 80px; }
+    .hero-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase;
+      margin-bottom: 24px; display: block;
+    }
+    .hero-title {
+      font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 5.5rem);
+      color: var(--ivory); line-height: 1.05; font-weight: 300; margin-bottom: 24px;
+      font-style: italic;
+    }
+    .hero-title em { font-style: normal; color: var(--accent); }
+    .hero-subtitle {
+      font-size: 0.95rem; color: var(--smoke); line-height: 1.9;
+      max-width: 400px; margin-bottom: 50px; font-weight: 300;
+    }
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 50px;
+    }
+    .stat-item { }
+    .stat-num {
+      font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent); display: block; line-height: 1;
+      font-weight: 600;
+    }
+    .stat-label { font-size: 0.68rem; letter-spacing: 0.15em; color: var(--smoke); text-transform: uppercase; display: block; margin-top: 6px; }
+    .hero-cta a {
+      display: inline-block; padding: 14px 36px; background: var(--accent); color: var(--bg);
+      font-size: 0.8rem; letter-spacing: 0.15em; text-decoration: none; transition: all 0.3s;
+    }
+    .hero-cta a:hover { background: var(--accent-light); transform: translateY(-2px); }
+
+    .hero-portraits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 40px 40px 40px 0; height: 100vh; }
+    .portrait-card { background-size: cover; background-position: center; }
+    .card-3 { grid-column: span 2; }
+
+    /* ===== STATS STRIP ===== */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 60px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .stats-item { text-align: center; }
+    .stats-num { font-family: var(--font-serif); font-size: 3.2rem; color: var(--accent); display: block; line-height: 1; font-weight: 600; }
+    .stats-label { display: block; font-size: 0.72rem; letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase; margin-top: 8px; }
+
+    /* ===== PHILOSOPHY ===== */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .section-header { margin-bottom: 70px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 4.5vw, 3.5rem); color: var(--ivory); line-height: 1.1; font-weight: 300; }
+    .section-title em { font-style: italic; color: var(--accent); }
+    .phil-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .phil-card { background: var(--surface); padding: 50px 40px; border: 1px solid var(--border); transition: border-color 0.3s; }
+    .phil-card:hover { border-color: var(--accent); }
+    .phil-icon { font-family: var(--font-serif); font-size: 2.5rem; color: var(--accent); margin-bottom: 24px; font-style: italic; }
+    .phil-card h3 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 16px; font-weight: 300; }
+    .phil-card p { font-size: 0.88rem; color: var(--smoke); line-height: 1.9; font-weight: 300; }
+
+    /* ===== COLLECTION ===== */
+    .collection { padding: 120px 80px; background: var(--surface); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; overflow: visible; margin-top: 60px; }
+    .col-item { position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 4/3; }
+    .col-item-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s ease; }
+    .col-item:hover .col-item-bg { transform: scale(1.06); }
+    .col-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,24,32,0.9) 0%, transparent 50%); }
+    .col-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; }
+    .col-info h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); font-weight: 300; }
+    .col-info p { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.1em; margin-top: 6px; }
+
+    /* ===== ATELIER ===== */
+    .atelier { padding: 120px 80px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img { aspect-ratio: 3/4; overflow: hidden; position: relative; }
+    .atelier-img img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+    .atelier-content h2 { font-family: var(--font-serif); font-size: clamp(2rem,4vw,3.2rem); color: var(--ivory); font-weight: 300; line-height: 1.2; margin-bottom: 28px; }
+    .atelier-content p { font-size: 0.92rem; color: var(--smoke); line-height: 1.9; margin-bottom: 18px; font-weight: 300; }
+    .atelier-details { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 36px; }
+    .detail-item { border-left: 1px solid var(--accent); padding-left: 16px; }
+    .detail-item strong { display: block; font-size: 0.68rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
+    .detail-item span { font-size: 0.88rem; color: var(--smoke); }
+
+    /* ===== PROCESS ===== */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-timeline { margin-top: 70px; position: relative; }
+    .process-timeline::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: flex; gap: 50px; margin-bottom: 60px; }
+    .step-marker { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); flex-shrink: 0; background: var(--surface); z-index: 1; }
+    .step-content { flex: 1; padding-top: 10px; }
+    .step-content h3 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); font-weight: 300; margin-bottom: 10px; }
+    .step-content p { font-size: 0.88rem; color: var(--smoke); line-height: 1.8; font-weight: 300; }
+
+    /* ===== HERITAGE ===== */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .heritage-item { background: var(--surface); padding: 40px 28px; border: 1px solid var(--border); transition: border-color 0.3s; }
+    .heritage-item:hover { border-color: var(--accent); }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); display: block; margin-bottom: 14px; font-weight: 600; }
+    .heritage-item h3 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 10px; font-weight: 300; }
+    .heritage-item p { font-size: 0.84rem; color: var(--smoke); line-height: 1.7; }
+
+    /* ===== PRESS ===== */
+    .press { padding: 100px 80px; background: var(--surface); }
+    .press-card { background: var(--bg); border: 1px solid var(--border); padding: 50px 40px; transition: border-color 0.3s; }
+    .press-card:hover { border-color: var(--accent); }
+    .press-quote { font-family: var(--font-serif); font-size: 1.05rem; color: var(--smoke); line-height: 1.8; font-style: italic; font-weight: 300; margin-bottom: 28px; }
+    .press-source { font-size: 0.7rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; }
+
+    /* ===== COMMISSION ===== */
+    .commission { padding: 120px 80px; background: var(--bg); }
+    .commission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .commission-info h3 { font-family: var(--font-serif); font-size: 1.6rem; color: var(--ivory); font-weight: 300; margin-bottom: 18px; }
+    .commission-info p { font-size: 0.9rem; color: var(--smoke); line-height: 1.8; margin-bottom: 14px; font-weight: 300; }
+    .commission-detail { display: flex; gap: 14px; margin-bottom: 12px; font-size: 0.84rem; color: var(--smoke); }
+    .commission-detail span:first-child { color: var(--accent); }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.7rem; letter-spacing: 0.16em; color: var(--smoke); text-transform: uppercase; margin-bottom: 8px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); font-family: var(--font-sans); font-size: 0.88rem; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-submit { width: 100%; padding: 15px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* ===== FOOTER ===== */
+    .footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-col h4 { font-family: var(--font-serif); font-size: 0.95rem; letter-spacing: 0.12em; color: var(--ivory); margin-bottom: 20px; font-weight: 300; }
+    .footer-col p { font-size: 0.84rem; color: var(--smoke); line-height: 1.8; font-weight: 300; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-size: 0.84rem; color: var(--smoke); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--accent); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-bottom p { font-size: 0.78rem; color: var(--muted); }
+    .footer-logo { font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); letter-spacing: 0.2em; }
+
+    .btn-primary { display: inline-block; padding: 14px 36px; background: var(--accent); color: var(--bg); font-size: 0.8rem; letter-spacing: 0.14em; text-decoration: none; transition: all 0.3s; }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .btn-secondary { display: inline-block; padding: 14px 36px; border: 1px solid var(--accent); color: var(--accent); font-size: 0.8rem; letter-spacing: 0.14em; text-decoration: none; transition: all 0.3s; }
+    .btn-secondary:hover { background: rgba(160,196,216,0.1); transform: translateY(-2px); }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-portraits { display: none; }
+      .hero-content-panel { padding: 100px 30px 60px; }
+      .navbar { padding: 16px 24px; } .nav-links { display: none; }
+      .stats-strip, .philosophy, .collection, .atelier, .process, .heritage, .press, .commission { padding: 80px 30px; }
+      .phil-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .atelier { grid-template-columns: 1fr; }
+      .heritage-grid { grid-template-columns: 1fr 1fr; }
+      .commission-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body class="locked">
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="preloader-logo" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="42" stroke-width="1"/>
+      <circle cx="50" cy="50" r="28" stroke-width="0.8"/>
+      <circle cx="50" cy="50" r="14" stroke-width="0.6"/>
+      <line x1="50" y1="8" x2="50" y2="22" stroke-width="1"/>
+      <line x1="50" y1="78" x2="50" y2="92" stroke-width="1"/>
+      <line x1="8" y1="50" x2="22" y2="50" stroke-width="1"/>
+      <line x1="78" y1="50" x2="92" y2="50" stroke-width="1"/>
+    </svg>
+    <div class="preloader-text">KVORETH</div>
+    <div class="preloader-sub">Glacial Sanctuary · Norwegian Fjords</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <span class="scroll-index">01</span>
+    <div class="scroll-dot"></div>
+    <div class="scroll-progress">
+      <div class="scroll-progress-fill" id="scroll-fill"></div>
+    </div>
+    <span class="scroll-label" id="scroll-section-label">Sanctuary</span>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">KVORETH</a>
+    <div class="nav-links">
+      <a href="collection.html">Therapies</a>
+      <a href="process.html">Method</a>
+      <a href="about.html">Sanctuary</a>
+      <a href="contact.html">Reserve</a>
+    </div>
+    <a href="contact.html" class="nav-cta">Reserve Now</a>
+  </nav>
+
+  <!-- HERO (Type D — Portraits + Stats) -->
+  <section class="hero" id="hero">
+    <div class="hero-content-panel">
+      <span class="hero-eyebrow">Est. 2012 · Norwegian Fjords, 1,200m</span>
+      <h1 class="hero-title">Glacial<br><em>Sanctuary</em></h1>
+      <p class="hero-subtitle">The ancient healing power of glacial cold, elevated to a complete wellness philosophy. Immersive cryotherapy experiences drawn from 10,000 years of Nordic cold tradition.</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num" data-target="12">0</span>
+          <span class="stat-label">Years</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="340">0</span>
+          <span class="stat-label">Members</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="98">0</span>
+          <span class="stat-label">% Satisfaction</span>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <a href="collection.html">Explore Therapies</a>
+      </div>
+    </div>
+    <div class="hero-portraits">
+      <div class="portrait-card card-1" style="background-image: url('images/img-4.webp');"></div>
+      <div class="portrait-card card-2" style="background-image: url('images/img-6.webp');"></div>
+      <div class="portrait-card card-3" style="background-image: url('images/img-5.webp'); max-height: 220px;"></div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="stats-item">
+      <span class="stats-num" data-target="6">0</span>
+      <span class="stats-label">Glacial Pools</span>
+    </div>
+    <div class="stats-item">
+      <span class="stats-num" data-target="2">0</span>
+      <span class="stats-label">Degrees Celsius</span>
+    </div>
+    <div class="stats-item">
+      <span class="stats-num" data-target="1200">0</span>
+      <span class="stats-label">Meters Elevation</span>
+    </div>
+    <div class="stats-item">
+      <span class="stats-num" data-target="24">0</span>
+      <span class="stats-label">Hour Silence Policy</span>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-header">
+      <span class="section-eyebrow">The Kvoreth Way</span>
+      <h2 class="section-title">The Art of<br><em>Glacial Healing</em></h2>
+    </div>
+    <div class="phil-grid">
+      <div class="phil-card">
+        <div class="phil-icon">I</div>
+        <h3>Cold as Medicine</h3>
+        <p>Nordic peoples have understood glacial cold as medicine for thousands of years. Kvoreth formalizes this wisdom through modern physiological understanding — combining ancient practice with contemporary research in cold-water immersion therapy.</p>
+      </div>
+      <div class="phil-card">
+        <div class="phil-icon">II</div>
+        <h3>The Silence Protocol</h3>
+        <p>Our 24-hour silence policy is not a rule but a philosophy. The nervous system requires genuine quiet to fully metabolize the effects of cold therapy. Speaking during treatments disperses the attention that should be directed inward.</p>
+      </div>
+      <div class="phil-card">
+        <div class="phil-icon">III</div>
+        <h3>Glacial Purity</h3>
+        <p>All thermal pools at Kvoreth are fed directly from glacial runoff filtered through 800 meters of fjord granite. We add nothing and remove nothing. The mineral composition of this water is irreplaceable and central to the therapy's efficacy.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION (Therapies) -->
+  <section class="collection" id="collection">
+    <div class="section-header">
+      <span class="section-eyebrow">Therapies</span>
+      <h2 class="section-title">The Protocols</h2>
+    </div>
+    <div class="collection-grid">
+      <div class="col-item">
+        <div class="col-item-bg" style="background-image: url('images/img-3.webp');"></div>
+        <div class="col-overlay"></div>
+        <div class="col-info"><h3>Glacial Immersion</h3><p>Full Protocol · 90 Minutes</p></div>
+      </div>
+      <div class="col-item">
+        <div class="col-item-bg" style="background-image: url('images/img-8.webp');"></div>
+        <div class="col-overlay"></div>
+        <div class="col-info"><h3>Contrast Cycle</h3><p>Hot–Cold Alternation · 2 Hours</p></div>
+      </div>
+      <div class="col-item">
+        <div class="col-item-bg" style="background-image: url('images/img-4.webp');"></div>
+        <div class="col-overlay"></div>
+        <div class="col-info"><h3>Silent Retreat</h3><p>3-Day Immersive · Residential</p></div>
+      </div>
+      <div class="col-item">
+        <div class="col-item-bg" style="background-image: url('images/img-5.webp');"></div>
+        <div class="col-overlay"></div>
+        <div class="col-info"><h3>Breathwork Series</h3><p>Guided Breathing · 60 Minutes</p></div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:50px;">
+      <a href="collection.html" class="btn-primary">View All Therapies</a>
+    </div>
+  </section>
+
+  <!-- ATELIER (Sanctuary) -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-img">
+      <img src="images/img-7.webp" alt="Kvoreth Sanctuary" loading="lazy">
+    </div>
+    <div class="atelier-content">
+      <span class="section-eyebrow">The Space</span>
+      <h2>Built into<br>the Fjord Wall</h2>
+      <p>The Kvoreth sanctuary was carved into the natural rock face of the Hardangerfjord at 1,200 meters. The architecture follows the topology of the mountain rather than imposing upon it — pools fed by natural runoff, chambers warmed by geothermal gradient.</p>
+      <p>We accept eight guests per session, maintaining the intimacy and silence essential to the Kvoreth experience. No screens, no connectivity, no interruption.</p>
+      <div class="atelier-details">
+        <div class="detail-item"><strong>Elevation</strong><span>1,200 meters</span></div>
+        <div class="detail-item"><strong>Guests per Session</strong><span>Maximum 8</span></div>
+        <div class="detail-item"><strong>Pool Temperature</strong><span>2–4°C</span></div>
+        <div class="detail-item"><strong>Silence Policy</strong><span>Full 24 hours</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS (Method) -->
+  <section class="process" id="process">
+    <div class="section-header">
+      <span class="section-eyebrow">The Method</span>
+      <h2 class="section-title">Cold Therapy<br>Protocol</h2>
+    </div>
+    <div class="process-timeline">
+      <div class="process-step">
+        <div class="step-marker">01</div>
+        <div class="step-content"><h3>Thermal Preparation</h3><p>Each session begins with a 30-minute thermal preparation in our granite sauna at 80°C. Vasodilation at this stage prepares the circulatory system for the subsequent cold response and amplifies the contrast benefit.</p></div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker">02</div>
+        <div class="step-content"><h3>Breathwork Entry</h3><p>Guided breathing exercises calibrate the autonomic nervous system before cold exposure. Our method derives from Nordic cold tradition and reduces the initial shock response, allowing deeper immersion without distress.</p></div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker">03</div>
+        <div class="step-content"><h3>Glacial Immersion</h3><p>Full-body immersion in 2°C glacial pool water. The duration is calibrated individually — novices begin at 90 seconds, experienced guests progress to sustained 10-minute immersions. The cold activates deep anti-inflammatory cascades.</p></div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker">04</div>
+        <div class="step-content"><h3>Contrast Cycle</h3><p>Alternating between the glacial pool and warm mineral springs in specific timed intervals creates a vascular pumping effect. This stage drives accelerated metabolic recovery and the release of endorphins at clinical levels.</p></div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker">05</div>
+        <div class="step-content"><h3>Silent Integration</h3><p>Two hours of silent rest in heated stone chambers allow the nervous system to integrate the treatment. This stage is not optional — it is where the physiological benefit consolidates. Kvoreth considers it the most important part of the protocol.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-header">
+      <span class="section-eyebrow">Legacy</span>
+      <h2 class="section-title">Heritage of Cold</h2>
+    </div>
+    <div class="heritage-grid">
+      <div class="heritage-item">
+        <span class="heritage-year">2012</span>
+        <h3>Foundation</h3>
+        <p>Kvoreth opens with two glacial pools and a four-guest capacity, pioneering the silence protocol concept.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2016</span>
+        <h3>Expansion</h3>
+        <p>Three additional pools added following the discovery of a second glacial outflow channel at higher elevation.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2020</span>
+        <h3>Nordic Award</h3>
+        <p>Named Best Wellness Sanctuary in Scandinavia by Nordic Travel Authority for three consecutive years.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2024</span>
+        <h3>Research Partnership</h3>
+        <p>Formal research partnership with University of Oslo studying cold-water immersion effects on inflammatory markers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press" id="press">
+    <div class="section-header">
+      <span class="section-eyebrow">Recognition</span>
+      <h2 class="section-title">What They Say</h2>
+    </div>
+    <div class="swiper press-swiper" style="margin-top:60px; overflow:visible;">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="press-card"><p class="press-quote">"The Kvoreth silence protocol is the most radical and most effective wellness philosophy we have encountered. The 24-hour enforced quiet is, paradoxically, the most liberating experience we know."</p><span class="press-source">— Condé Nast Traveller, 2024</span></div></div>
+        <div class="swiper-slide"><div class="press-card"><p class="press-quote">"Cold therapy exists in many forms — but Kvoreth's glacial source makes it something else entirely. The mineral content of their pools cannot be manufactured. This is the real thing."</p><span class="press-source">— Monocle Wellness, Spring 2023</span></div></div>
+        <div class="swiper-slide"><div class="press-card"><p class="press-quote">"After three days at Kvoreth without speaking, checking notifications, or making decisions, I returned to my life as a different person. The silence is the therapy. Everything else supports it."</p><span class="press-source">— Wallpaper* Wellness Issue, 2024</span></div></div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION (Reserve) -->
+  <section class="commission" id="commission">
+    <div class="section-header">
+      <span class="section-eyebrow">Reserve</span>
+      <h2 class="section-title">Begin Your<br>Reservation</h2>
+    </div>
+    <div class="commission-grid">
+      <div class="commission-info">
+        <h3>A Place of Genuine Quiet</h3>
+        <p>Kvoreth accepts reservations up to six months in advance. Our eight-guest maximum ensures that each session maintains the silence and intimacy essential to the protocol's effectiveness.</p>
+        <p>Single-day protocols, three-day residential immersions, and private group bookings are available.</p>
+        <div class="commission-detail"><span>◆</span><span>Day sessions from NOK 4,500</span></div>
+        <div class="commission-detail"><span>◆</span><span>3-day residential from NOK 18,000</span></div>
+        <div class="commission-detail"><span>◆</span><span>Private group bookings available</span></div>
+        <div class="commission-detail"><span>◆</span><span>Transfers from Bergen arranged</span></div>
+      </div>
+      <form>
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your name"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+        <div class="form-group"><label>Therapy Type</label><select><option>Glacial Immersion (Day)</option><option>Contrast Cycle</option><option>3-Day Silent Retreat</option><option>Private Group</option><option>Custom Inquiry</option></select></div>
+        <div class="form-group"><label>Preferred Date</label><input type="text" placeholder="MM/YYYY or flexible"></div>
+        <div class="form-group"><label>Notes</label><textarea placeholder="Any medical conditions or special requirements..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Reservation Request</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-logo">KVORETH</div>
+        <p style="margin-top:18px;">Glacial Sanctuary. Cold wellness and silence therapy in the Norwegian fjords. 1,200 meters above sea level since 2012.</p>
+      </div>
+      <div class="footer-col">
+        <h4>SANCTUARY</h4>
+        <ul>
+          <li><a href="about.html">About Kvoreth</a></li>
+          <li><a href="process.html">The Method</a></li>
+          <li><a href="about.html#heritage">Heritage</a></li>
+          <li><a href="about.html#team">Therapists</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>THERAPIES</h4>
+        <ul>
+          <li><a href="collection.html">All Protocols</a></li>
+          <li><a href="collection.html#glacial">Glacial Immersion</a></li>
+          <li><a href="collection.html#retreat">Silent Retreat</a></li>
+          <li><a href="contact.html">Reserve</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>CONTACT</h4>
+        <ul>
+          <li><a href="mailto:sanctuary@kvoreth.no">sanctuary@kvoreth.no</a></li>
+          <li><a href="#">+47 56 12 8840</a></li>
+          <li><a href="#">Hardangerfjord, Norway</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Kvoreth Glacial Sanctuary. All rights reserved.</p>
+      <p>Hardangerfjord · Norway · 1,200m</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return;
+        this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('chars')) {
+          el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(el.querySelectorAll('.char'));
+        } else if (type.includes('words')) {
+          el.innerHTML = original.split(/\s+/).filter(Boolean).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() { if (this._el) { const orig = this._el.getAttribute('data-split-orig'); if (orig) this._el.textContent = orig; } }
+    }
+
+    ;(function preHideBelowFold() {
+      const VH = window.innerHeight;
+      const selectors = ['.stats-item','.stat-item','.phil-card','.col-item','.atelier-img','.atelier-content','.process-step','.heritage-item','.press-card','.form-group','.footer-col','[data-animate]'];
+      document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+        if (el.getBoundingClientRect().top > VH * 0.95) {
+          el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; el.style.willChange = 'opacity, transform';
+        }
+      });
+    })();
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('preloader').classList.add('hidden');
+        document.body.classList.remove('locked');
+        document.getElementById('scroll-indicator').classList.add('visible');
+        gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 0.2 });
+        gsap.from('.hero-title', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', delay: 0.5 });
+        gsap.from('.hero-subtitle', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 0.8 });
+        gsap.from('.stat-item', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 1.0, stagger: 0.06 });
+        gsap.from('.hero-cta', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 1.3 });
+        gsap.from('.portrait-card', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', delay: 0.4, stagger: 0.12 });
+      }, 2600);
+      setTimeout(() => { document.getElementById('scroll-indicator')?.classList.add('visible'); }, 4000);
+    });
+
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // Scroll indicator
+    const sections = ['#hero','#philosophy','#collection','#atelier','#process','#heritage','#press','#commission'];
+    const sectionNames = ['Sanctuary','Philosophy','Therapies','The Space','Method','Heritage','Press','Reserve'];
+    const scrollLabel = document.getElementById('scroll-section-label');
+    const scrollIndex = document.querySelector('.scroll-index');
+    const scrollFill = document.getElementById('scroll-fill');
+    function updateScrollIndicator() {
+      const progress = Math.min((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100, 100);
+      scrollFill.style.height = progress + '%';
+      sections.forEach((sel, i) => {
+        const el = document.querySelector(sel);
+        if (el) { const r = el.getBoundingClientRect(); if (r.top <= window.innerHeight * 0.5 && r.bottom > 0) { scrollLabel.textContent = sectionNames[i]; scrollIndex.textContent = String(i+1).padStart(2,'0'); } }
+      });
+    }
+    window.addEventListener('scroll', updateScrollIndicator);
+
+    // Stats counters
+    function animateCounter(el) {
+      const t = parseInt(el.dataset.target);
+      gsap.to({ val: 0 }, { val: t, duration: 2, ease: 'power2.out', onUpdate: function() { el.textContent = Math.round(this.targets()[0].val).toLocaleString(); } });
+    }
+    document.querySelectorAll('.stats-num, .stat-num').forEach(el => {
+      ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () => animateCounter(el) });
+    });
+
+    // Animations — Whisper (A2)
+    document.querySelectorAll('.phil-card, .col-item, .process-step, .heritage-item, .press-card, .form-group, .footer-col, .stats-item').forEach(el => {
+      gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.5, ease: 'power1.out', stagger: 0.06,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+    document.querySelectorAll('.atelier-img, .atelier-content').forEach((el, i) => {
+      gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.4, ease: 'power1.out', delay: i * 0.15,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+
+    // Swiper
+    new Swiper('.press-swiper', {
+      slidesPerView: 1, spaceBetween: 24,
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 }, 1200: { slidesPerView: 3 } }
+    });
+  </script>
+</body>
+</html>

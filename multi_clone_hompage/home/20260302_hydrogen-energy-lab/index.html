@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS HYDROGEN — Clean Hydrogen Energy Technology</title>
+  <meta name="description" content="Nexus Hydrogen develops breakthrough clean hydrogen production, storage, and utilisation technologies for industry and premium infrastructure clients.">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:#181818; --surface:#222222; --surface2:#2A2A2A;
+      --accent:#B0B0C0; --accent-light:#D0D0E0; --accent-dark:#808090;
+      --ivory:#EEEEF2; --smoke:#909090; --muted:#606060; --border:#1E1E1E;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 3rem; letter-spacing: 0.4em; color: var(--accent); margin-bottom: 24px; }
+    .preloader-bar { width: 200px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--accent); }
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; opacity: 0; transition: opacity 0.6s; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, var(--accent), transparent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; }
+    .scroll-progress { position: fixed; left: 32px; top: 0; width: 1px; height: 0%; background: var(--accent); z-index: 99; }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+    .navbar.scrolled { background: rgba(24,24,24,0.95); backdrop-filter: blur(16px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0.3em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { border: 1px solid var(--accent); color: var(--accent); padding: 10px 28px; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+    /* HERO TYPE F — Interactive Search Widget */
+    .hero { position: relative; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background-image: url('images/hero-1.webp'); background-size: cover; background-position: center; filter: brightness(0.2); }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(24,24,24,0.88) 0%, rgba(24,24,24,0.4) 100%); }
+    .hero-content { position: relative; z-index: 3; padding: 0 80px; max-width: 760px; }
+    .hero-eyebrow { font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3.5rem, 9vw, 8rem); line-height: 0.9; color: var(--ivory); letter-spacing: 0.03em; margin-bottom: 28px; }
+    .hero-sub { font-size: 1rem; line-height: 1.8; color: var(--smoke); max-width: 520px; margin-bottom: 40px; }
+    .hero-search-widget { background: rgba(255,255,255,0.06); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 24px 28px; max-width: 600px; }
+    .search-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .search-field { display: flex; gap: 0; border: 1px solid var(--border); }
+    .search-field input { flex: 1; background: transparent; border: none; outline: none; color: var(--ivory); font-family: var(--font-sans); font-size: 0.95rem; padding: 14px 16px; }
+    .search-field input::placeholder { color: var(--smoke); }
+    .search-btn { background: var(--accent); color: var(--bg); border: none; padding: 14px 24px; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; white-space: nowrap; }
+    .search-btn:hover { background: var(--accent-light); }
+    .search-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .tag { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.12); color: var(--smoke); font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+    .tag:hover { border-color: var(--accent); color: var(--accent); }
+    /* STATS */
+    .stats-strip { background: var(--surface); padding: 60px; display: grid; grid-template-columns: repeat(4,1fr); gap: 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 4rem; color: var(--accent); display: block; line-height: 1; letter-spacing: 0.02em; }
+    .stat-unit { font-size: 1.8rem; color: var(--accent-dark); }
+    .stat-label { display: block; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 60px; background: var(--bg); }
+    .section-header { margin-bottom: 72px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); color: var(--ivory); letter-spacing: 0.02em; line-height: 1; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    .philosophy-card { padding: 40px 32px; background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.8rem; letter-spacing: 0.02em; color: var(--ivory); margin-bottom: 14px; }
+    .philosophy-card p { font-size: 0.9rem; line-height: 1.8; color: var(--smoke); }
+    /* PROJECTS */
+    .projects { padding: 120px 60px; background: var(--surface); }
+    .projects-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; overflow: visible; margin-top: 60px; }
+    .project-card { position: relative; aspect-ratio: 4/3; overflow: hidden; cursor: pointer; }
+    .project-card:nth-child(2) { transform: translateY(28px); }
+    .project-card:nth-child(4) { transform: translateY(-16px); }
+    .project-img { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.6); transition: transform 0.7s, filter 0.4s; }
+    .project-card:hover .project-img { transform: scale(1.05); filter: brightness(0.82); }
+    .project-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 28px 28px; background: linear-gradient(transparent, rgba(24,24,24,0.96)); }
+    .project-category { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .project-title { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); }
+    .project-detail { font-size: 0.8rem; color: var(--smoke); margin-top: 4px; }
+    /* ATELIER */
+    .atelier { padding: 120px 60px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-image { position: relative; aspect-ratio: 4/5; overflow: hidden; }
+    .atelier-img { width: 100%; height: 100%; background-size: cover; background-position: center; filter: brightness(0.8); transition: transform 0.8s; }
+    .atelier-image:hover .atelier-img { transform: scale(1.04); }
+    .atelier-accent { position: absolute; top: -16px; right: -16px; width: 64px; height: 64px; border: 2px solid var(--accent); pointer-events: none; }
+    .atelier-content p { font-size: 0.95rem; line-height: 1.9; color: var(--smoke); margin-bottom: 20px; }
+    .atelier-stats { display: flex; gap: 40px; margin-top: 40px; }
+    .atelier-stat-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .atelier-stat-value { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); }
+    /* PROCESS */
+    .process { padding: 120px 60px; background: var(--surface); }
+    .process-steps { margin-top: 60px; position: relative; }
+    .process-line { position: absolute; left: 24px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 0 0 56px; }
+    .process-step-num { width: 48px; height: 48px; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.4rem; color: var(--accent); background: var(--surface); position: relative; z-index: 2; }
+    .process-step-title { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); margin-bottom: 10px; margin-top: 6px; }
+    .process-step-desc { font-size: 0.9rem; line-height: 1.8; color: var(--smoke); }
+    /* HERITAGE */
+    .heritage { padding: 120px 60px; background: var(--bg); }
+    .heritage-timeline { margin-top: 60px; }
+    .heritage-item { display: grid; grid-template-columns: 140px 1fr; gap: 40px; padding: 36px 0; border-bottom: 1px solid var(--border); }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); }
+    .heritage-content h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-content p { font-size: 0.9rem; line-height: 1.7; color: var(--smoke); }
+    /* PRESS */
+    .press { padding: 120px 60px; background: var(--surface); }
+    .press-swiper { margin-top: 60px; }
+    .press-slide { padding: 48px; background: var(--surface2); border: 1px solid var(--border); }
+    .press-quote { font-size: 1.1rem; font-style: italic; line-height: 1.7; color: var(--ivory); margin-bottom: 28px; }
+    .press-source { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .swiper-pagination-bullet { background: var(--smoke); }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+    /* COMMISSION */
+    .commission { padding: 120px 60px; background: var(--bg); }
+    .commission-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .commission-info p { font-size: 0.95rem; line-height: 1.8; color: var(--smoke); margin-bottom: 24px; }
+    .commission-details { display: flex; flex-direction: column; gap: 14px; margin-top: 32px; }
+    .commission-detail-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .commission-detail-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .commission-detail-value { font-size: 0.9rem; color: var(--ivory); }
+    .commission-form { display: flex; flex-direction: column; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); }
+    .form-group input, .form-group select, .form-group textarea { background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; resize: none; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-submit { background: var(--accent); color: var(--bg); border: none; padding: 16px 44px; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 60px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.8rem; letter-spacing: 0.2em; color: var(--ivory); margin-bottom: 14px; }
+    .footer-desc { font-size: 0.85rem; line-height: 1.7; color: var(--smoke); }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div id="preloader"><div class="preloader-logo">NEXUS</div><div class="preloader-bar"><div class="preloader-bar-fill" id="preloader-fill"></div></div></div>
+  <div id="scroll-indicator"><div class="scroll-dot"></div><div class="scroll-line"></div><div class="scroll-label">Scroll</div></div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">NEXUS H₂</a>
+    <ul class="nav-links">
+      <li><a href="about.html">Lab</a></li><li><a href="projects.html">Projects</a></li><li><a href="process.html">Technology</a></li><li><a href="contact.html">Collaborate</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Enquire</a>
+  </nav>
+
+  <!-- HERO TYPE F — Interactive Search Widget -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Clean Hydrogen Energy Technology</div>
+      <h1 class="hero-title">ZERO<br>CARBON<br>POWER</h1>
+      <p class="hero-sub">Nexus Hydrogen develops breakthrough green hydrogen production, storage, and fuel cell technology for industrial clients, infrastructure, and luxury applications.</p>
+      <div class="hero-search-widget">
+        <div class="search-label">Explore Our Technology</div>
+        <div class="search-field">
+          <input type="text" placeholder="Search solutions — electrolysis, fuel cell, storage...">
+          <button class="search-btn">Search</button>
+        </div>
+        <div class="search-tags">
+          <span class="tag">Green Electrolysis</span>
+          <span class="tag">Fuel Cells</span>
+          <span class="tag">H₂ Storage</span>
+          <span class="tag">Mobility</span>
+          <span class="tag">Industrial H₂</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-strip">
+    <div class="stat-item"><span class="stat-num" data-target="28">0</span><span class="stat-label">Systems Deployed</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="120">0</span><span class="stat-unit">MW</span><span class="stat-label">Electrolysis Capacity</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="12">0</span><span class="stat-label">Years of Innovation</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="95">0</span><span class="stat-unit">%</span><span class="stat-label">Green H₂ Purity</span></div>
+  </section>
+
+  <section class="philosophy">
+    <div class="section-header"><div class="section-eyebrow">Our Technology</div><h2 class="section-title">HYDROGEN<br>REIMAGINED</h2></div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card"><h3>GREEN ELECTROLYSIS</h3><p>Our PEM electrolyser systems achieve industry-leading 82% efficiency, producing green hydrogen from renewable electricity with zero carbon emissions at any scale.</p></div>
+      <div class="philosophy-card"><h3>SOLID-STATE STORAGE</h3><p>Nexus's proprietary metal hydride storage technology enables safe, compact hydrogen storage at ambient pressure — eliminating the risks of conventional compressed H₂.</p></div>
+      <div class="philosophy-card"><h3>PREMIUM FUEL CELLS</h3><p>Our luxury-grade fuel cell power systems deliver silent, emission-free electricity with 99.9% availability — perfect for yachts, estates, data centres, and critical facilities.</p></div>
+    </div>
+  </section>
+
+  <section class="projects" id="projects">
+    <div class="section-header"><div class="section-eyebrow">Deployments</div><h2 class="section-title">LANDMARK<br>H₂ SYSTEMS</h2></div>
+    <div class="projects-grid">
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-1.webp');"></div><div class="project-info"><div class="project-category">Maritime</div><div class="project-title">POSEIDON YACHT SERIES</div><div class="project-detail">200kW H₂ Fuel Cell — Monaco</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-2.webp');"></div><div class="project-info"><div class="project-category">Industrial</div><div class="project-title">APEX STEEL DECARBONISATION</div><div class="project-detail">50MW Electrolysis — Germany</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-3.webp');"></div><div class="project-info"><div class="project-category">Estate</div><div class="project-title">CHÂTEAU LUMIÈRE</div><div class="project-detail">500kW H₂ Microgrid — Burgundy</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-4.webp');"></div><div class="project-info"><div class="project-category">Aviation</div><div class="project-title">ALPINE AVIATION HUB</div><div class="project-detail">H₂ Refuelling Infrastructure — Switzerland</div></div></div>
+    </div>
+  </section>
+
+  <section class="atelier">
+    <div class="atelier-image"><div class="atelier-img" style="background-image: url('images/workspace-1.webp');"></div><div class="atelier-accent"></div></div>
+    <div class="atelier-content">
+      <div class="section-eyebrow">The Lab</div>
+      <h2 class="section-title" style="margin-bottom:24px;">WHERE CHEMISTRY<br>MEETS LUXURY</h2>
+      <p>Nexus Hydrogen was founded by electrochemists and engineers who believed clean hydrogen deserved premium engineering standards. Our laboratory in Zurich combines rigorous science with uncompromising quality.</p>
+      <p>Every system we deploy is engineered for zero-compromise performance — silent operation, zero emissions, and 99.9% availability that the most demanding clients require.</p>
+      <div class="atelier-stats">
+        <div><div class="atelier-stat-label">Stack Efficiency</div><div class="atelier-stat-value">82%+</div></div>
+        <div><div class="atelier-stat-label">System Uptime</div><div class="atelier-stat-value">99.9%</div></div>
+        <div><div class="atelier-stat-label">H₂ Purity</div><div class="atelier-stat-value">99.999%</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="process">
+    <div class="section-header"><div class="section-eyebrow">Technology Pathway</div><h2 class="section-title">FROM WATER<br>TO POWER</h2></div>
+    <div class="process-steps">
+      <div class="process-line"></div>
+      <div class="process-step"><div class="process-step-num">01</div><div><div class="process-step-title">NEEDS ASSESSMENT</div><p class="process-step-desc">We analyse your energy requirements, available renewable power, and space constraints to specify the optimal H₂ system configuration.</p></div></div>
+      <div class="process-step"><div class="process-step-num">02</div><div><div class="process-step-title">SYSTEM DESIGN</div><p class="process-step-desc">Custom PEM electrolyser, storage, and fuel cell system design — engineered to your exact power profile and aesthetic requirements.</p></div></div>
+      <div class="process-step"><div class="process-step-num">03</div><div><div class="process-step-title">MANUFACTURE & TEST</div><p class="process-step-desc">In-house manufacture of electrolyser stacks and fuel cell modules, with full system testing at our Zurich facility before delivery.</p></div></div>
+      <div class="process-step"><div class="process-step-num">04</div><div><div class="process-step-title">INSTALLATION</div><p class="process-step-desc">White-glove installation by our certified engineers, with full commissioning and staff training included in every project.</p></div></div>
+      <div class="process-step" style="padding-bottom:0"><div class="process-step-num">05</div><div><div class="process-step-title">REMOTE MONITORING</div><p class="process-step-desc">24/7 remote diagnostics, predictive maintenance alerts, and quarterly performance reports via our Nexus Connect platform.</p></div></div>
+    </div>
+  </section>
+
+  <section class="heritage">
+    <div class="section-header"><div class="section-eyebrow">Our History</div><h2 class="section-title">A DECADE OF<br>H₂ INNOVATION</h2></div>
+    <div class="heritage-timeline">
+      <div class="heritage-item"><div class="heritage-year">2013</div><div class="heritage-content"><h3>Nexus Founded in Zurich</h3><p>Three ETH Zurich electrochemists found Nexus with seed funding from a Swiss family office, pioneering premium PEM electrolysis systems.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2016</div><div class="heritage-content"><h3>First Marine Deployment</h3><p>The Poseidon prototype fuel cell system is installed aboard a 60m superyacht — proving H₂ power at sea for the first time in the luxury market.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2019</div><div class="heritage-content"><h3>Solid-State Storage Breakthrough</h3><p>Nexus patents its metal hydride storage module, enabling ambient-pressure H₂ storage at energy densities 40% higher than competing technologies.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2022</div><div class="heritage-content"><h3>Industrial Scale</h3><p>First 10MW electrolyser deployment at an Austrian steel mill marks Nexus's entry into the industrial decarbonisation market.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2025</div><div class="heritage-content"><h3>100MW Milestone</h3><p>Nexus surpasses 100MW of cumulative electrolyser capacity deployed globally — a milestone for the premium green hydrogen industry.</p></div></div>
+    </div>
+  </section>
+
+  <section class="press">
+    <div class="section-header"><div class="section-eyebrow">Recognition</div><h2 class="section-title">INDUSTRY<br>VOICES</h2></div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"Nexus Hydrogen has achieved something remarkable: making hydrogen technology genuinely elegant. Their fuel cell installations are as refined as fine engineering can be."</p><div class="press-source">Robb Report — Technology Edition, 2024</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"The technical performance of Nexus's PEM electrolysers is best-in-class. Their 82% stack efficiency sets the global benchmark for green hydrogen production."</p><div class="press-source">Hydrogen & Fuel Cell Technologies — Review, 2023</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"For luxury property owners and yacht builders seeking genuine energy independence with zero emissions, Nexus is without peer. Their systems deliver what others only promise."</p><div class="press-source">Architectural Digest — Sustainable Estates, 2024</div></div></div>
+      </div>
+      <div class="swiper-pagination" style="margin-top:28px;position:relative;"></div>
+    </div>
+  </section>
+
+  <section class="commission">
+    <div class="commission-inner">
+      <div class="commission-info">
+        <div class="section-eyebrow">Collaborate</div>
+        <h2 class="section-title" style="margin-bottom:20px;">BEGIN YOUR<br>H₂ PROJECT</h2>
+        <p>Whether your application is a superyacht, a luxury estate, an industrial facility, or a mobility hub, our engineers will design the precise hydrogen system for your needs.</p>
+        <div class="commission-details">
+          <div class="commission-detail-item"><div class="commission-detail-label">Laboratory</div><div class="commission-detail-value">Gloriastrasse 35, 8092 Zurich, Switzerland</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Email</div><div class="commission-detail-value">lab@nexush2.com</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Response</div><div class="commission-detail-value">Within 2 business days</div></div>
+        </div>
+      </div>
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" placeholder="Heinrich"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" placeholder="von Müller"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="hm@company.ch"></div>
+        <div class="form-group"><label>Application</label><select><option>Maritime — Superyacht</option><option>Luxury Estate</option><option>Industrial Decarbonisation</option><option>Aviation & Mobility</option><option>Data Centre</option></select></div>
+        <div class="form-group"><label>Power Requirement</label><input type="text" placeholder="e.g. 500kW continuous, 2MWh storage"></div>
+        <div class="form-group"><label>Brief</label><textarea rows="4" placeholder="Describe your H₂ project..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand">NEXUS H₂</div><p class="footer-desc">Clean hydrogen energy technology for the most demanding applications. Pioneering premium H₂ since 2013.</p></div>
+      <div class="footer-col"><h4>Lab</h4><ul><li><a href="about.html">About</a></li><li><a href="about.html#team">Scientists</a></li></ul></div>
+      <div class="footer-col"><h4>Technology</h4><ul><li><a href="projects.html">Deployments</a></li><li><a href="process.html">Technology</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li><a href="contact.html">Collaborate</a></li><li><a href="mailto:lab@nexush2.com">Email</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span class="footer-copy">© 2026 Nexus Hydrogen AG. All rights reserved.</span><div style="width:40px;height:1px;background:var(--accent);"></div></div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    const fill=document.getElementById('preloader-fill');let prog=0;
+    const iv=setInterval(()=>{prog+=Math.random()*15;if(prog>=100){prog=100;clearInterval(iv);}fill.style.width=prog+'%';},80);
+    window.addEventListener('load',()=>{clearInterval(iv);fill.style.width='100%';
+      setTimeout(()=>{gsap.to('#preloader',{opacity:0,duration:0.6,onComplete:()=>{
+        document.getElementById('preloader').style.display='none';
+        document.getElementById('scroll-indicator').classList.add('visible');
+        gsap.from('.hero-eyebrow',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out'});
+        gsap.from('.hero-title',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out',delay:0.1});
+        gsap.from('.hero-sub',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out',delay:0.2});
+        gsap.from('.hero-search-widget',{immediateRender:false,opacity:0,y:20,duration:0.8,ease:'power3.out',delay:0.3});
+      }});},400);
+    });
+    setTimeout(()=>{document.getElementById('scroll-indicator')?.classList.add('visible');},4000);
+    window.addEventListener('scroll',()=>{
+      if(window.scrollY>60)document.getElementById('navbar').classList.add('scrolled');
+      else document.getElementById('navbar').classList.remove('scrolled');
+      document.getElementById('scroll-progress').style.height=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100)+'%';
+    });
+    document.querySelectorAll('.tag').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tag').forEach(x=>x.style.borderColor='');t.style.borderColor='var(--accent)';t.style.color='var(--accent)';}));
+    document.querySelectorAll('.stat-num').forEach(el=>{gsap.from(el,{immediateRender:false,textContent:0,duration:2.5,ease:'power2.out',snap:{textContent:1},scrollTrigger:{trigger:el,start:'top 85%',once:true}});});
+    gsap.from('.philosophy-card',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out',stagger:0.04,scrollTrigger:{trigger:'.philosophy-grid',start:'top 85%'}});
+    gsap.from('.project-card',{immediateRender:false,opacity:0,y:20,duration:0.8,ease:'power3.out',stagger:0.04,scrollTrigger:{trigger:'.projects-grid',start:'top 85%'}});
+    gsap.from('.atelier-image',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:'.atelier',start:'top 85%'}});
+    gsap.from('.atelier-content',{immediateRender:false,opacity:0,x:20,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:'.atelier',start:'top 85%'}});
+    gsap.from('.process-step',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out',stagger:0.04,scrollTrigger:{trigger:'.process-steps',start:'top 85%'}});
+    gsap.from('.heritage-item',{immediateRender:false,opacity:0,y:20,duration:0.8,ease:'power3.out',stagger:0.04,scrollTrigger:{trigger:'.heritage-timeline',start:'top 85%'}});
+    document.querySelectorAll('.section-header').forEach(h=>{gsap.from(h,{immediateRender:false,opacity:0,y:20,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:h,start:'top 85%'}});});
+    new Swiper('.press-swiper',{slidesPerView:1,loop:true,autoplay:{delay:5000},pagination:{el:'.swiper-pagination',clickable:true}});
+  </script>
+</body>
+</html>

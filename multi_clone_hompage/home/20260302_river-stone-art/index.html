@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STRATUM — Stone Atelier | River Stone Sculpture & Fine Art</title>
+  <meta name="description" content="STRATUM Stone Atelier — Handcrafted river stone sculptures and fine art objects created by master artisans from ancient river-worn stone.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #1C1008; --surface: #261608; --surface2: #2E1C0A;
+      --accent: #D4612A; --accent-light: #E8884A; --accent-dark: #9C3C14;
+      --ivory: #F0E4DC; --smoke: #A07860; --muted: #604840;
+      --border: #201408;
+      --font-serif: 'EB Garamond', Georgia, serif;
+      --font-sans: 'Nunito', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent-dark) var(--bg); }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--ivory); line-height: 1.6; overflow-x: hidden; }
+    body.locked { overflow: hidden; }
+
+    /* Preloader */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .preloader-logo {
+      width: 90px; height: 90px;
+      stroke: var(--accent); stroke-width: 1.5; fill: none;
+      stroke-dasharray: 350; stroke-dashoffset: 350;
+      animation: drawLogo 2s ease forwards;
+    }
+    @keyframes drawLogo { to { stroke-dashoffset: 0; } }
+    .preloader-text {
+      margin-top: 24px; font-family: var(--font-serif);
+      font-size: 1.1rem; letter-spacing: 0.3em; color: var(--accent);
+      opacity: 0; animation: fadeIn 1s ease 1.2s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* Scroll Indicator */
+    #scroll-indicator {
+      position: fixed; left: 30px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 12px;
+      opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; visibility: visible; }
+    .scroll-progress { width: 2px; height: 80px; background: var(--border); position: relative; border-radius: 1px; }
+    .scroll-progress-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); border-radius: 1px; transition: height 0.1s ease; }
+    .scroll-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--smoke); text-transform: uppercase; }
+
+    /* Navbar */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 20px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .navbar.scrolled { background: rgba(28,16,8,0.95); backdrop-filter: blur(12px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.15rem; letter-spacing: 0.2em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; transition: color 0.3s ease; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { padding: 10px 24px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; font-family: var(--font-sans); }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* Hero Type B — Parallax Full-Screen */
+    .hero { position: relative; width: 100%; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+    .hero-parallax-bg { position: absolute; inset: -10%; }
+    .parallax-layer { position: absolute; inset: 0; background-size: cover; background-position: center; will-change: transform; }
+    .layer-1 {
+      background-image: url('images/img-10.webp');
+      filter: brightness(0.6);
+    }
+    .layer-2 {
+      background-image: url('images/img-11.webp');
+      mix-blend-mode: overlay; opacity: 0.25;
+    }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(28,16,8,0.6) 0%, rgba(14,8,4,0.3) 100%); }
+    .hero-content { position: relative; z-index: 2; max-width: 680px; padding: 0 80px; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.4em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; font-family: var(--font-sans); }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 600; line-height: 1.05; margin-bottom: 20px; color: var(--ivory); }
+    .hero-subtitle { font-size: 1.05rem; color: var(--smoke); max-width: 480px; font-weight: 300; line-height: 1.8; margin-bottom: 36px; }
+    .hero-ctas { display: flex; gap: 20px; flex-wrap: wrap; }
+    .btn-primary { display: inline-block; padding: 16px 40px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.14em; border: none; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { display: inline-block; padding: 16px 40px; background: transparent; color: var(--ivory); font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.14em; border: 1px solid rgba(240,228,220,0.3); cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; }
+    .btn-secondary:hover { border-color: var(--ivory); }
+    .hero-floating { position: absolute; right: 80px; bottom: 80px; z-index: 3; }
+    .float-badge { border: 1px solid var(--accent); color: var(--accent); padding: 14px 22px; font-size: 0.72rem; letter-spacing: 0.18em; font-family: var(--font-sans); text-transform: uppercase; }
+
+    /* Stats Strip */
+    .stats-strip { background: var(--surface); padding: 48px 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent); display: block; }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase; margin-top: 8px; }
+
+    /* Sections */
+    section { padding: 120px 60px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; font-family: var(--font-sans); }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 400; margin-bottom: 24px; }
+    .section-subtitle { color: var(--smoke); max-width: 600px; font-weight: 300; line-height: 1.8; }
+
+    /* Philosophy */
+    .philosophy { background: var(--surface); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; }
+    .philosophy-card { background: var(--bg); padding: 48px 36px; border: 1px solid var(--border); transition: border-color 0.3s ease, transform 0.3s ease; }
+    .philosophy-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .philosophy-icon { font-size: 2rem; color: var(--accent); margin-bottom: 24px; }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 16px; }
+    .philosophy-card p { color: var(--smoke); font-size: 0.95rem; line-height: 1.7; }
+
+    /* Collection */
+    .collection { background: var(--bg); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 60px; overflow: visible; }
+    .collection-item { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--surface); }
+    .collection-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .collection-item:hover img { transform: scale(1.05); }
+    .collection-item-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(28,16,8,0.9) 0%, transparent 50%); display: flex; flex-direction: column; justify-content: flex-end; padding: 30px; }
+    .collection-item h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 8px; }
+    .collection-item p { color: var(--smoke); font-size: 0.88rem; }
+
+    /* Atelier */
+    .atelier { background: var(--surface); }
+    .atelier-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 60px; }
+    .atelier-img { position: relative; aspect-ratio: 4/3; overflow: hidden; }
+    .atelier-img img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-text h3 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: 24px; }
+    .atelier-text p { color: var(--smoke); margin-bottom: 16px; line-height: 1.8; font-size: 0.95rem; }
+
+    /* Process */
+    .process { background: var(--bg); }
+    .process-timeline { margin-top: 80px; position: relative; padding-left: 60px; }
+    .process-timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+    .process-step { position: relative; padding-bottom: 60px; }
+    .process-step:last-child { padding-bottom: 0; }
+    .process-step::before { content: ''; position: absolute; left: -48px; top: 8px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); }
+    .step-num { font-family: var(--font-serif); font-size: 0.85rem; color: var(--accent); margin-bottom: 8px; letter-spacing: 0.2em; }
+    .process-step h4 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 12px; }
+    .process-step p { color: var(--smoke); line-height: 1.7; max-width: 520px; font-size: 0.95rem; }
+
+    /* Heritage */
+    .heritage { background: var(--surface); }
+    .heritage-timeline { display: flex; gap: 40px; margin-top: 60px; overflow-x: auto; padding-bottom: 20px; }
+    .heritage-item { min-width: 280px; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.5rem; color: var(--accent); margin-bottom: 16px; display: block; }
+    .heritage-item h4 { font-size: 1.05rem; margin-bottom: 12px; font-family: var(--font-serif); }
+    .heritage-item p { color: var(--smoke); font-size: 0.88rem; line-height: 1.6; }
+
+    /* Press */
+    .press { background: var(--bg); }
+    .press-slider { margin-top: 60px; }
+    .press-quote { background: var(--surface); padding: 60px; text-align: center; border: 1px solid var(--border); }
+    .press-quote blockquote { font-family: var(--font-serif); font-size: 1.55rem; font-style: italic; line-height: 1.6; margin-bottom: 24px; color: var(--ivory); }
+    .press-quote cite { color: var(--accent); font-size: 0.82rem; letter-spacing: 0.12em; font-family: var(--font-sans); }
+
+    /* Commission */
+    .commission { background: var(--surface); }
+    .commission-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .commission-form { display: flex; flex-direction: column; gap: 24px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 0.78rem; letter-spacing: 0.12em; color: var(--smoke); text-transform: uppercase; font-family: var(--font-sans); }
+    .form-group input, .form-group textarea, .form-group select { padding: 16px; background: var(--bg); border: 1px solid var(--border); color: var(--ivory); font-family: var(--font-sans); font-size: 0.95rem; transition: border-color 0.3s ease; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+    .form-group textarea { min-height: 140px; resize: vertical; }
+    .commission-info h3 { font-family: var(--font-serif); font-size: 1.9rem; margin-bottom: 24px; }
+    .commission-info p { color: var(--smoke); margin-bottom: 16px; line-height: 1.7; font-size: 0.95rem; }
+    .commission-detail { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+    .commission-detail-icon { color: var(--accent); font-size: 1.1rem; margin-top: 2px; flex-shrink: 0; }
+    .commission-detail p { color: var(--smoke); font-size: 0.9rem; margin: 0; }
+
+    /* Footer */
+    .footer { background: var(--bg); padding: 80px 60px 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 60px; margin-bottom: 60px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 16px; }
+    .footer-brand p { color: var(--smoke); font-size: 0.9rem; line-height: 1.7; max-width: 300px; }
+    .footer-col h4 { font-size: 0.78rem; letter-spacing: 0.18em; color: var(--accent); margin-bottom: 20px; text-transform: uppercase; font-family: var(--font-sans); }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { color: var(--smoke); text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 40px; border-top: 1px solid var(--border); }
+    .footer-bottom p { color: var(--muted); font-size: 0.78rem; }
+    .footer-social { display: flex; gap: 20px; }
+    .footer-social a { color: var(--smoke); font-size: 0.88rem; text-decoration: none; transition: color 0.3s ease; }
+    .footer-social a:hover { color: var(--accent); }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .atelier-content { grid-template-columns: 1fr; }
+      .commission-content { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .hero { height: auto; min-height: 100vh; }
+      .hero-content { padding: 0 40px; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 80px 24px; }
+      .navbar { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 30px 24px; }
+      #scroll-indicator { display: none; }
+      .hero-content { padding: 0 24px; }
+      .hero-floating { display: none; }
+      .footer { padding: 60px 24px 30px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+      .heritage-timeline { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body class="locked">
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <svg class="preloader-logo" viewBox="0 0 100 100">
+      <polygon points="50,10 90,80 10,80"/>
+      <polygon points="50,28 75,72 25,72" fill="none"/>
+      <line x1="50" y1="10" x2="50" y2="80"/>
+    </svg>
+    <span class="preloader-text">STRATUM</span>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-progress"><div class="scroll-progress-fill" style="height:0%"></div></div>
+    <span class="scroll-label" id="scroll-section-label">Hero</span>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="mainNav">
+    <a href="#" class="nav-logo">STRATUM</a>
+    <div class="nav-links">
+      <a href="about.html">Our Story</a>
+      <a href="collection.html">Works</a>
+      <a href="process.html">Craft</a>
+      <a href="contact.html">Commission</a>
+    </div>
+    <button class="nav-cta">Enquire</button>
+  </nav>
+
+  <!-- Hero Type B — Parallax -->
+  <section class="hero" id="hero" data-section="Hero">
+    <div class="hero-parallax-bg">
+      <div class="parallax-layer layer-1"></div>
+      <div class="parallax-layer layer-2"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Est. 1987 · Riverbank Atelier</div>
+      <h1 class="hero-title">Stone Born<br>from the River</h1>
+      <p class="hero-subtitle">Ancient stones shaped by millennia of current, reborn as enduring works of fine art. Each piece carries the memory of water.</p>
+      <div class="hero-ctas">
+        <a href="collection.html" class="btn-primary">Explore Works</a>
+        <a href="process.html" class="btn-secondary">Our Craft</a>
+      </div>
+    </div>
+    <div class="hero-floating">
+      <div class="float-badge">★ Handcrafted ★</div>
+    </div>
+  </section>
+
+  <!-- Stats Strip -->
+  <div class="stats-strip" data-section="Legacy">
+    <div class="stat-item">
+      <span class="stat-num" data-target="37">0</span>
+      <span class="stat-label">Years of Craft</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="840">0</span>
+      <span class="stat-label">Works Created</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="28">0</span>
+      <span class="stat-label">Stone Species</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="19">0</span>
+      <span class="stat-label">Countries Collected</span>
+    </div>
+  </div>
+
+  <!-- Philosophy -->
+  <section class="philosophy" data-section="Philosophy">
+    <p class="section-eyebrow">Our Philosophy</p>
+    <h2 class="section-title">The River's Language in Stone</h2>
+    <p class="section-subtitle">We do not carve stone — we listen to it. Each river stone speaks its own ancient language of sediment, pressure, and time.</p>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <div class="philosophy-icon">◈</div>
+        <h3>Riverine Origin</h3>
+        <p>Every stone in our collection is hand-selected from rivers across the world — the Arno, the Yangtze, the Colorado. Only stones with exceptional character are chosen.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">◉</div>
+        <h3>Minimal Intervention</h3>
+        <p>Our master sculptors work with the stone's natural grain, enhancing rather than overriding. The river's work is the foundation; human hands are the final conversation.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">◎</div>
+        <h3>Eternal Presence</h3>
+        <p>Stone that survived ten thousand years of current will outlast anything we build. Our pieces are investments in permanence, objects that only deepen with time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collection -->
+  <section class="collection" data-section="Works">
+    <p class="section-eyebrow">The Collection</p>
+    <h2 class="section-title">Sculptural Works</h2>
+    <p class="section-subtitle">From intimate desk objects to monumental garden installations, each work is unique and never reproduced.</p>
+    <div class="collection-grid">
+      <div class="collection-item">
+        <img src="images/img-5.webp" alt="River Stone Sculpture Series I" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Stratum Series I</h3>
+          <p>Basalt river stone · Hand-ground polish</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-6.webp" alt="Mineral Stack Sculpture" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Mineral Stack</h3>
+          <p>Layered schist · Oxidized iron inlay</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-7.webp" alt="Erosion Form" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Erosion Form</h3>
+          <p>White quartzite · Natural weathering</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-8.webp" alt="Sediment Archive" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Sediment Archive</h3>
+          <p>Multi-stone composite · Resin enclosure</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Atelier -->
+  <section class="atelier" data-section="Atelier">
+    <p class="section-eyebrow">The Studio</p>
+    <h2 class="section-title">Where Stone Meets Vision</h2>
+    <div class="atelier-content">
+      <div class="atelier-img">
+        <img src="images/img-1.webp" alt="STRATUM stone atelier workshop" loading="lazy">
+      </div>
+      <div class="atelier-text">
+        <h3>Hands that Read the River</h3>
+        <p>Our atelier sits on the banks of the Upper Dordogne, where stones have been gathering for ten thousand years. We begin every piece by listening — spending hours with the stone before a single tool is raised.</p>
+        <p>The studio employs three master sculptors, each with over twenty years of experience in lithic art. Apprentices spend their first year doing nothing but stone identification and sorting. Only then are tools introduced.</p>
+        <p>We work without electricity where possible. Diamond hand-files, water-fed grinding wheels, and traditional Japanese polishing stones. The silence in the atelier is deliberate. Stone demands patience.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="process" data-section="Process">
+    <p class="section-eyebrow">The Craft</p>
+    <h2 class="section-title">From River to Artwork</h2>
+    <p class="section-subtitle">A process measured in weeks, not hours. Each step honors both the stone's history and its future.</p>
+    <div class="process-timeline">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <h4>Selection & Sourcing</h4>
+        <p>Twice yearly, our sculptors travel to river sources across Europe and Asia. We wade through shallow water, handle hundreds of stones, and select only those with exceptional character — a particular density, strata pattern, or surface story.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <h4>Rest & Assessment</h4>
+        <p>Selected stones dry for a minimum of six weeks in our outdoor stone garden. We observe how they change as moisture leaves, how light plays across the surface at different hours. Only then do we assign each stone to a sculptor.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <h4>Form Finding</h4>
+        <p>Before any material removal, the sculptor draws on the stone's surface with chalk — a dialogue about what the stone already is, and what it might become. These drawings are photographed and archived.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <h4>Shaping</h4>
+        <p>Hand tools only. We remove as little material as necessary, following the grain lines laid down by the river over millennia. The process can take from three days to three months depending on the complexity of the form.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num">05</div>
+        <h4>Finishing & Authentication</h4>
+        <p>Final polishing with progressively finer Japanese water stones. Each finished work receives a unique geological report, documentation of its river origin, and a signed certificate of authenticity.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage -->
+  <section class="heritage" data-section="Heritage">
+    <p class="section-eyebrow">Our Story</p>
+    <h2 class="section-title">Three Decades by the River</h2>
+    <div class="heritage-timeline">
+      <div class="heritage-item">
+        <span class="heritage-year">1987</span>
+        <h4>The First Stone</h4>
+        <p>Founder Edouard Masse, a former geologist, creates his first river stone sculpture during a survey expedition on the Dordogne. The work sells within a week to a Paris gallery.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">1994</span>
+        <h4>The Atelier Opens</h4>
+        <p>STRATUM studio formally established on the riverbank in Beaulieu-sur-Dordogne. First apprentice trained. First solo exhibition at Galerie Denise René, Paris.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2003</span>
+        <h4>International Recognition</h4>
+        <p>Three monumental STRATUM pieces installed at the Musée d'Art Moderne. Featured in Architectural Digest and Wallpaper as defining voices in contemporary lithic art.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2018</span>
+        <h4>Asian Stone Series</h4>
+        <p>First collection sourced entirely from Yangtze River basin stones. Partnership with Kyoto's finest lacquer masters creates the acclaimed River & Urushi series.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2024</span>
+        <h4>The River Archive</h4>
+        <p>Launch of a permanent archive of over 2,000 documented river stone specimens — a geological and artistic resource open to researchers and collectors worldwide.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Press -->
+  <section class="press" data-section="Press">
+    <p class="section-eyebrow">Recognition</p>
+    <h2 class="section-title">What They Say</h2>
+    <div class="press-slider swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"STRATUM's work does something rare — it makes you feel the weight of geological time in your hands. These are not decorative objects; they are time capsules."</blockquote>
+            <cite>— Wallpaper Magazine, Annual Design Issue</cite>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"Edouard Masse and his team have created a new language for stone — one that respects both the material's ancient origins and the possibility of contemporary art."</blockquote>
+            <cite>— Architectural Digest, Collectors Edition</cite>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"The finest river stone sculpture studio in the world. Nothing comes close to the depth of geological knowledge and artistic vision found at STRATUM."</blockquote>
+            <cite>— The Art Newspaper, Studio Portrait</cite>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- Commission -->
+  <section class="commission" data-section="Commission">
+    <p class="section-eyebrow">Bespoke Works</p>
+    <h2 class="section-title">Commission a Piece</h2>
+    <div class="commission-content">
+      <div class="commission-info">
+        <h3>Your Vision in Stone</h3>
+        <p>Every STRATUM commission begins with a conversation about space, light, and intention. We work with architects, interior designers, and private collectors to create pieces that belong exactly where they are placed.</p>
+        <p>Commissions typically take 3–9 months from initial brief to delivery, depending on scale. We provide regular photographic updates throughout the process.</p>
+        <div class="commission-detail">
+          <span class="commission-detail-icon">◈</span>
+          <p>Desk objects from €2,400 · Garden installations from €18,000</p>
+        </div>
+        <div class="commission-detail">
+          <span class="commission-detail-icon">◈</span>
+          <p>Site visit and geological consultation included for all major commissions</p>
+        </div>
+        <div class="commission-detail">
+          <span class="commission-detail-icon">◈</span>
+          <p>International shipping with custom crating to any destination</p>
+        </div>
+      </div>
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label for="type">Commission Type</label>
+          <select id="type">
+            <option value="">Select scale</option>
+            <option>Desk Object (under 30cm)</option>
+            <option>Interior Sculpture (30–120cm)</option>
+            <option>Monumental Work (over 120cm)</option>
+            <option>Garden / Exterior Installation</option>
+            <option>Corporate Collection</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Your Vision</label>
+          <textarea id="message" placeholder="Describe the space, the feeling, the occasion..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Send Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>STRATUM</h3>
+        <p>River stone sculpture and fine art objects created in our Dordogne atelier. Each piece is unique, unrepeatable, and carries the memory of water.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html#team">The Sculptors</a></li>
+          <li><a href="about.html#atelier">The Atelier</a></li>
+          <li><a href="about.html#philosophy">Philosophy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Works</h4>
+        <ul>
+          <li><a href="collection.html">All Works</a></li>
+          <li><a href="collection.html#available">Available Now</a></li>
+          <li><a href="contact.html">Commissions</a></li>
+          <li><a href="process.html">The Process</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="contact.html">Enquiries</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Dordogne Atelier</a></li>
+          <li><a href="#">Newsletter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 STRATUM Stone Atelier. All works are unique originals.</p>
+      <div class="footer-social">
+        <a href="#">Instagram</a>
+        <a href="#">Pinterest</a>
+        <a href="#">Press Kit</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // SplitText Polyfill
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return; this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('chars')) {
+          el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(el.querySelectorAll('.char'));
+        } else if (type.includes('words')) {
+          el.innerHTML = original.split(/\s+/).filter(Boolean).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() { if (this._el) { const orig = this._el.getAttribute('data-split-orig'); if (orig) this._el.textContent = orig; } }
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Preloader
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.getElementById('preloader').classList.add('hidden');
+        document.body.classList.remove('locked');
+        // Scroll indicator visible — place 1 (preloader callback)
+        document.getElementById('scroll-indicator').classList.add('visible');
+        initAnimations();
+      }, 2400);
+    });
+
+    // Scroll indicator visible — place 2 (fallback)
+    setTimeout(function() {
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }, 4000);
+
+    // Navbar scroll
+    window.addEventListener('scroll', function() {
+      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+      const fill = document.querySelector('.scroll-progress-fill');
+      const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      if (fill) fill.style.height = pct + '%';
+    });
+
+    // Parallax hero mousemove
+    document.querySelector('.hero').addEventListener('mousemove', function(e) {
+      const x = (e.clientX / window.innerWidth - 0.5) * 30;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      gsap.to('.layer-1', { x: x * 0.5, y: y * 0.5, duration: 1, ease: 'power2.out' });
+      gsap.to('.layer-2', { x: x * 1.2, y: y * 1.0, duration: 1, ease: 'power2.out' });
+    });
+
+    // preHideBelowFold
+    ;(function preHideBelowFold() {
+      const VH = window.innerHeight;
+      const selectors = ['.stat-item','.philosophy-card','.collection-item','.atelier-img','.atelier-content','.process-step','.heritage-item','.press-quote','.form-group','.footer-col','[data-animate]'];
+      document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+        if (el.getBoundingClientRect().top > VH * 0.95) {
+          el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; el.style.willChange = 'opacity, transform';
+        }
+      });
+    })();
+
+    function initAnimations() {
+      // Hero title — SplitText
+      const heroTitle = document.querySelector('.hero-title');
+      const split = new SplitText(heroTitle, { type: 'words' });
+      gsap.from(split.words, { opacity: 0, y: 30, duration: 1.2, stagger: 0.08, ease: 'power2.out', delay: 0.3 });
+      gsap.from('.hero-eyebrow', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 0.1 });
+      gsap.from('.hero-subtitle', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 0.6 });
+      gsap.from('.hero-ctas', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 0.9 });
+      gsap.from('.float-badge', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 1.2 });
+
+      // Stats — count up
+      document.querySelectorAll('.stat-num[data-target]').forEach(function(el) {
+        const target = parseInt(el.dataset.target);
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 85%',
+          once: true,
+          onEnter: function() {
+            gsap.to(el, {
+              immediateRender: false,
+              duration: 1.5, ease: 'power2.out',
+              onUpdate: function() {
+                el.textContent = Math.round(gsap.getProperty(el, 'x') * 0 + target * this.progress());
+              }
+            });
+          }
+        });
+        gsap.from(el.parentElement, { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.10, scrollTrigger: { trigger: el.parentElement, start: 'top 85%', once: true } });
+      });
+
+      // Philosophy cards — A5 Organic
+      document.querySelectorAll('.philosophy-card').forEach(function(el) {
+        const dur = 1.0 + Math.random() * 0.4;
+        const yVal = 20 + Math.random() * 8;
+        gsap.from(el, { immediateRender: false, opacity: 0, y: yVal, duration: dur, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+      });
+
+      // Collection items — A5 Organic
+      document.querySelectorAll('.collection-item').forEach(function(el) {
+        const dur = 1.0 + Math.random() * 0.4;
+        const yVal = 20 + Math.random() * 8;
+        gsap.from(el, { immediateRender: false, opacity: 0, y: yVal, duration: dur, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+      });
+
+      // Atelier
+      gsap.from('.atelier-img', { immediateRender: false, opacity: 0, x: -40, duration: 1.2, ease: 'power2.out', scrollTrigger: { trigger: '.atelier-content', start: 'top 80%', once: true } });
+      gsap.from('.atelier-text', { immediateRender: false, opacity: 0, x: 40, duration: 1.2, ease: 'power2.out', scrollTrigger: { trigger: '.atelier-content', start: 'top 80%', once: true } });
+
+      // Process steps — A5 Organic
+      document.querySelectorAll('.process-step').forEach(function(el) {
+        const dur = 1.0 + Math.random() * 0.4;
+        const yVal = 20 + Math.random() * 8;
+        gsap.from(el, { immediateRender: false, opacity: 0, y: yVal, duration: dur, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+      });
+
+      // Heritage
+      gsap.from('.heritage-item', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, stagger: 0.10, ease: 'power2.out', scrollTrigger: { trigger: '.heritage-timeline', start: 'top 85%', once: true } });
+
+      // Press
+      gsap.from('.press-quote', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', scrollTrigger: { trigger: '.press-slider', start: 'top 85%', once: true } });
+
+      // Commission
+      gsap.from('.form-group', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, stagger: 0.10, ease: 'power2.out', scrollTrigger: { trigger: '.commission-form', start: 'top 85%', once: true } });
+
+      // Footer
+      gsap.from('.footer-col', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, stagger: 0.10, ease: 'power2.out', scrollTrigger: { trigger: '.footer-grid', start: 'top 90%', once: true } });
+    }
+
+    // Swiper press
+    new Swiper('.press-slider', {
+      loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      speed: 700
+    });
+
+    // Scroll section label
+    document.querySelectorAll('[data-section]').forEach(function(sec) {
+      ScrollTrigger.create({
+        trigger: sec,
+        start: 'top center',
+        end: 'bottom center',
+        onEnter: function() { const el = document.getElementById('scroll-section-label'); if(el) el.textContent = sec.dataset.section; },
+        onEnterBack: function() { const el = document.getElementById('scroll-section-label'); if(el) el.textContent = sec.dataset.section; }
+      });
+    });
+  </script>
+</body>
+</html>

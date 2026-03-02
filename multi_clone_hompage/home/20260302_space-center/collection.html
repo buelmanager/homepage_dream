@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Missions — Stellaris Space Centre</title>
+  <meta name="description" content="Explore Stellaris Space Centre's full mission catalogue — deep space probes, lunar programs, satellite constellations, and Earth observation projects.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #101420; --surface: #181E2A; --surface2: #1E2438;
+      --accent: #4EE8FF; --accent-light: #8AF3FF; --accent-dark: #22B8CC;
+      --ivory: #DCE8F0; --smoke: #8090A0; --muted: #506070; --border: #1A2234;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 20px 60px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(16,20,32,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 0.12em; color: var(--ivory); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { border: 1px solid var(--accent); color: var(--accent); padding: 9px 22px; font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    .page-hero {
+      min-height: 50vh; display: flex; align-items: flex-end; padding: 0 80px 72px;
+      background: url('images/img-3.webp') center/cover no-repeat;
+      position: relative; margin-top: 65px;
+    }
+    .page-hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(16,20,32,0.95) 40%, rgba(16,20,32,0.35)); }
+    .page-hero-content { position: relative; z-index: 2; }
+    .page-eyebrow { font-size: 0.68rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 14px; display: block; }
+    .page-title { font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 6rem); color: var(--ivory); line-height: 0.9; letter-spacing: 0.04em; text-transform: uppercase; }
+
+    section { padding: 90px 80px; }
+    .section-label { font-size: 0.68rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 16px; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); color: var(--ivory); line-height: 0.95; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 24px; }
+    .section-body { font-size: 0.96rem; line-height: 1.75; color: var(--smoke); max-width: 660px; font-weight: 300; }
+    hr.section-rule { border: none; border-top: 1px solid var(--border); margin: 0 80px; }
+
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+    .filter-btn { padding: 8px 20px; border: 1px solid var(--border); background: transparent; color: var(--smoke); font-family: var(--font-sans); font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); }
+
+    .missions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .mission-card { background: var(--surface); border: 1px solid var(--border); overflow: hidden; transition: border-color 0.3s; }
+    .mission-card:hover { border-color: var(--accent); }
+    .mission-img { height: 220px; overflow: hidden; }
+    .mission-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); transition: transform 0.6s ease; }
+    .mission-card:hover .mission-img img { transform: scale(1.05); }
+    .mission-body { padding: 32px 28px; }
+    .mission-cat { font-size: 0.62rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 10px; }
+    .mission-name { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px; }
+    .mission-desc { font-size: 0.84rem; color: var(--smoke); line-height: 1.65; font-weight: 300; margin-bottom: 20px; }
+    .mission-status { display: inline-block; font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 12px; border: 1px solid; font-family: var(--font-sans); }
+    .mission-status.active { color: var(--accent); border-color: var(--accent); }
+    .mission-status.planned { color: var(--smoke); border-color: var(--muted); }
+    .mission-status.completed { color: var(--muted); border-color: var(--border); }
+
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border); padding: 64px 80px 40px;
+    }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 56px; }
+    .footer-brand p { font-size: 0.84rem; color: var(--muted); line-height: 1.65; font-weight: 300; max-width: 280px; margin-top: 14px; }
+    .footer-col h5 { font-size: 0.68rem; letter-spacing: 0.2em; color: var(--ivory); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 0.84rem; color: var(--muted); text-decoration: none; transition: color 0.2s; font-family: var(--font-sans); font-weight: 300; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.76rem; color: var(--muted); font-family: var(--font-sans); font-weight: 300; }
+    .footer-legal { display: flex; gap: 28px; }
+    .footer-legal a { font-size: 0.76rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .footer-legal a:hover { color: var(--accent); }
+
+    @media (max-width: 1024px) {
+      section { padding: 70px 40px; }
+      .page-hero { padding: 0 40px 56px; }
+      .missions-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      hr.section-rule { margin: 0 40px; }
+      #navbar { padding: 16px 40px; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 60px 24px; }
+      .page-hero { padding: 0 24px 44px; }
+      .nav-links { display: none; }
+      .missions-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      hr.section-rule { margin: 0 24px; }
+      #navbar { padding: 16px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">STELLARIS<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html#programs">Programs</a></li>
+      <li><a href="collection.html" class="active">Missions</a></li>
+      <li><a href="process.html">Operations</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Contact Us</a>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-content">
+      <span class="page-eyebrow">Mission Catalogue</span>
+      <h1 class="page-title">Active &amp;<br>Completed Missions</h1>
+    </div>
+  </div>
+
+  <section>
+    <span class="section-label">All Programs</span>
+    <h2 class="section-title">Our Full Mission<br>Portfolio</h2>
+    <p class="section-body">From close Earth orbit to the outer reaches of the solar system, Stellaris operates missions across every domain of space science.</p>
+
+    <div class="filter-bar" style="margin-top: 40px;">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Interplanetary</button>
+      <button class="filter-btn">Lunar</button>
+      <button class="filter-btn">Earth Orbit</button>
+      <button class="filter-btn">Astronomy</button>
+    </div>
+
+    <div class="missions-grid">
+      <div class="mission-card">
+        <div class="mission-img">
+          <img src="images/img-3.webp" alt="Project Helios">
+        </div>
+        <div class="mission-body">
+          <div class="mission-cat">Interplanetary</div>
+          <div class="mission-name">Project Helios</div>
+          <p class="mission-desc">Dual-probe solar observation and heliosphere boundary mapping mission. Launched 2021, currently at 0.95 AU inbound trajectory.</p>
+          <span class="mission-status active">Active</span>
+        </div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-img">
+          <img src="images/img-4.webp" alt="Selene Program">
+        </div>
+        <div class="mission-body">
+          <div class="mission-cat">Lunar</div>
+          <div class="mission-name">Selene Program</div>
+          <p class="mission-desc">Permanent lunar surface research station initiative. Phase 1 lander successfully deployed at Mare Imbrium. Phase 2 crew habitat planned 2027.</p>
+          <span class="mission-status active">Active</span>
+        </div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-img">
+          <img src="images/img-2.webp" alt="Nebula Watch">
+        </div>
+        <div class="mission-body">
+          <div class="mission-cat">Astronomy</div>
+          <div class="mission-name">Nebula Watch</div>
+          <p class="mission-desc">Space-based infrared telescope array for stellar nursery observation. Mapping protostellar discs within 500 light-years.</p>
+          <span class="mission-status active">Active</span>
+        </div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-img">
+          <img src="images/img-5.webp" alt="Sentinel Network">
+        </div>
+        <div class="mission-body">
+          <div class="mission-cat">Earth Orbit</div>
+          <div class="mission-name">Sentinel Network</div>
+          <p class="mission-desc">32-satellite climate and environmental monitoring constellation providing real-time atmospheric, ocean, and land surface data.</p>
+          <span class="mission-status active">Active</span>
+        </div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-img">
+          <img src="images/img-6.webp" alt="Meridian-7">
+        </div>
+        <div class="mission-body">
+          <div class="mission-cat">Earth Orbit</div>
+          <div class="mission-name">Meridian-7</div>
+          <p class="mission-desc">High-resolution synthetic aperture radar satellite for topographic mapping, disaster monitoring, and urban expansion assessment.</p>
+          <span class="mission-status active">Active</span>
+        </div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-img">
+          <img src="images/img-1.webp" alt="Arcturus Program">
+        </div>
+        <div class="mission-body">
+          <div class="mission-cat">Interplanetary</div>
+          <div class="mission-name">Arcturus Program</div>
+          <p class="mission-desc">Historic series of 14 Earth-observation and communications satellites launched between 1981 and 2010. Established national orbital capability.</p>
+          <span class="mission-status completed">Completed</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">STELLARIS<span style="color:var(--accent)">.</span></a>
+        <p>A national institution dedicated to space exploration, satellite science, and inspiring humanity to look beyond the horizon of the known.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Programs</h5>
+        <ul>
+          <li><a href="collection.html">Active Missions</a></li>
+          <li><a href="collection.html">Satellites</a></li>
+          <li><a href="collection.html">Deep Space</a></li>
+          <li><a href="collection.html">Education</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Centre</h5>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="about.html">Leadership</a></li>
+          <li><a href="process.html">How We Work</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Public</h5>
+        <ul>
+          <li><a href="#">Visitor Centre</a></li>
+          <li><a href="#">Open Data</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 Stellaris Space Centre. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.mission-card', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.06, scrollTrigger: { trigger: '.missions-grid', start: 'top 85%', once: true } });
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); });
+    });
+  </script>
+</body>
+</html>

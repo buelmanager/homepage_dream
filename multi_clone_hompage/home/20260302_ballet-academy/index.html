@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pointe Royale Ballet — Classical Ballet School</title>
+  <meta name="description" content="Premier classical ballet school offering rigorous training in the Vaganova and Royal Ballet traditions. Training professional dancers for the world's great companies since 1948.">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:#1A0A0E; --surface:#241016; --surface2:#2C1420;
+      --accent:#C96A8A; --accent-light:#E090A8; --accent-dark:#8A3A5C;
+      --ivory:#F0DCE4; --smoke:#A08088; --muted:#604A52; --border:#200C12;
+      --font-serif: 'Bodoni Moda', 'Didot', serif;
+      --font-sans: 'Work Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+    .preloader-mark { width: 72px; height: 72px; animation: preloaderPulse 1.5s ease-in-out infinite; }
+    .preloader-name { font-family: var(--font-serif); font-size: 1rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; opacity: 0; animation: preloaderFade 1s ease 0.5s forwards; }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); animation: preloaderBar 1.8s ease forwards; }
+    @keyframes preloaderPulse { 0%,100%{opacity:0.6;transform:scale(0.95)} 50%{opacity:1;transform:scale(1)} }
+    @keyframes preloaderFade { to{opacity:1} }
+    @keyframes preloaderBar { to{transform:translateX(0)} }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 28px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; opacity: 0; transition: opacity 0.6s ease; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 40%; background: var(--accent); animation: scrollFill 2s ease-in-out infinite; }
+    .scroll-label { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; writing-mode: vertical-lr; margin-top: 8px; }
+    @keyframes scrollFill { 0%{top:-40%} 100%{top:100%} }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+    nav.scrolled { background: rgba(26,10,14,0.92); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); text-decoration: none; letter-spacing: 0.05em; font-style: italic; }
+    .nav-logo span { color: var(--accent); font-style: normal; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 24px; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO - Type C: Diagonal Split */
+    .hero { position: relative; width: 100%; height: 100vh; display: flex; overflow: hidden; }
+    .hero-left {
+      width: 50%; background: var(--bg); display: flex; align-items: center;
+      padding: 0 70px 0 80px; position: relative; z-index: 2;
+      clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+    }
+    .hero-left::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,106,138,0.08) 0%, transparent 60%);
+    }
+    .hero-right { flex: 1; position: relative; }
+    .hero-img { position: absolute; inset: 0; background-image: url('images/hero-1.webp'); background-size: cover; background-position: center top; filter: brightness(0.75); }
+    .hero-img-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(26,10,14,0.5) 0%, transparent 40%); }
+    .hero-content { position: relative; z-index: 1; max-width: 500px; }
+    .hero-eyebrow { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .hero-eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--accent); }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.8rem, 4.5vw, 4.5rem); font-weight: 700; line-height: 1.05; color: var(--ivory); margin-bottom: 20px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); font-weight: 400; }
+    .hero-subtitle { font-size: 0.95rem; color: var(--smoke); line-height: 1.8; margin-bottom: 36px; max-width: 380px; }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary { background: var(--accent); color: var(--bg); padding: 14px 30px; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; text-decoration: none; display: inline-block; transition: all 0.3s; font-family: var(--font-sans); }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { background: transparent; color: var(--ivory); padding: 14px 30px; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--muted); text-decoration: none; display: inline-block; transition: all 0.3s; font-family: var(--font-sans); }
+    .btn-secondary:hover { border-color: var(--ivory); }
+    .hero-badge { position: absolute; bottom: 48px; right: 60px; background: rgba(26,10,14,0.85); backdrop-filter: blur(10px); border: 1px solid var(--border); padding: 20px 28px; text-align: center; z-index: 10; }
+    .badge-num { font-family: var(--font-serif); font-size: 2.5rem; color: var(--accent); display: block; line-height: 1; }
+    .badge-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); display: block; margin-top: 6px; }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); padding: 60px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .strip-stat { text-align: center; }
+    .strip-num { font-family: var(--font-serif); font-size: 2.8rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; }
+    .strip-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .section-header { text-align: center; margin-bottom: 70px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--ivory); line-height: 1.2; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .section-subtitle { font-size: 0.95rem; color: var(--smoke); max-width: 520px; margin: 16px auto 0; line-height: 1.8; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 60px; }
+    .philosophy-item { padding: 40px; background: var(--surface); border: 1px solid var(--border); position: relative; overflow: hidden; }
+    .philosophy-item::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
+    .philosophy-item h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 14px; font-weight: 400; }
+    .philosophy-item p { font-size: 0.87rem; color: var(--smoke); line-height: 1.8; }
+    .philosophy-icon { font-size: 1.8rem; margin-bottom: 18px; display: block; }
+
+    /* PROGRAMS */
+    .programs { padding: 120px 80px; background: var(--surface); }
+    .programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 60px; overflow: visible; }
+    .program-card { background: var(--bg); overflow: hidden; cursor: pointer; transition: transform 0.4s ease; }
+    .program-card:hover { transform: translateY(-4px); z-index: 2; }
+    .program-img { width: 100%; height: 300px; background-size: cover; background-position: center top; transition: transform 0.6s ease; }
+    .program-card:hover .program-img { transform: scale(1.04); }
+    .program-info { padding: 28px; }
+    .program-tag { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
+    .program-name { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 10px; font-weight: 400; }
+    .program-desc { font-size: 0.86rem; color: var(--smoke); line-height: 1.8; margin-bottom: 16px; }
+    .program-meta { font-size: 0.75rem; color: var(--muted); display: flex; gap: 16px; }
+
+    /* ATELIER */
+    .atelier { padding: 120px 80px; background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img-wrap { position: relative; height: 580px; overflow: hidden; }
+    .atelier-img { width: 100%; height: 110%; background-size: cover; background-position: center top; position: absolute; top: -5%; will-change: transform; }
+    .atelier-content h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--ivory); line-height: 1.2; margin-bottom: 24px; font-weight: 400; }
+    .atelier-content h2 em { font-style: italic; color: var(--accent-light); }
+    .atelier-content p { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .atelier-quote { margin: 28px 0; padding: 20px 0 20px 24px; border-left: 2px solid var(--accent); font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; color: var(--accent-light); line-height: 1.6; }
+
+    /* PROCESS */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-list { margin-top: 60px; }
+    .process-item { display: flex; gap: 48px; padding: 36px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .process-item:last-child { border-bottom: none; }
+    .process-num { width: 72px; height: 72px; flex-shrink: 0; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.6rem; color: var(--accent); }
+    .process-content h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 8px; font-weight: 400; }
+    .process-content p { font-size: 0.87rem; color: var(--smoke); line-height: 1.8; }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .heritage-item { background: var(--surface); padding: 32px; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); display: block; margin-bottom: 12px; }
+    .heritage-item h4 { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 10px; font-weight: 400; }
+    .heritage-item p { font-size: 0.82rem; color: var(--smoke); line-height: 1.7; }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 120px 80px; background: var(--surface); overflow: hidden; }
+    .swiper { margin-top: 60px; overflow: visible; }
+    .swiper-slide { background: var(--surface2); padding: 44px; border: 1px solid var(--border); }
+    .testimonial-text { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; color: var(--ivory); line-height: 1.8; margin-bottom: 24px; }
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+    .author-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--muted); background-size: cover; background-position: center; flex-shrink: 0; }
+    .author-name { font-family: var(--font-serif); font-size: 0.95rem; color: var(--ivory); }
+    .author-title { font-size: 0.75rem; color: var(--smoke); margin-top: 2px; }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ENROLLMENT */
+    .enrollment { padding: 120px 80px; background: var(--bg); }
+    .enrollment-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .enrollment-info h2 { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 20px; font-weight: 400; }
+    .enrollment-info p { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .contact-detail { display: flex; gap: 12px; margin-bottom: 14px; font-size: 0.85rem; color: var(--smoke); }
+    .contact-detail strong { color: var(--ivory); min-width: 80px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 16px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group select { appearance: none; }
+    .form-group textarea { height: 110px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; padding: 16px; font-family: var(--font-sans); font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: background 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); padding: 80px 80px 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 14px; font-style: italic; }
+    .footer-brand p { font-size: 0.85rem; color: var(--smoke); line-height: 1.8; max-width: 260px; }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; }
+    .footer-bottom p { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="preloader-mark" viewBox="0 0 72 72" fill="none">
+      <circle cx="36" cy="36" r="32" stroke="#C96A8A" stroke-width="1" opacity="0.4"/>
+      <text x="36" y="46" text-anchor="middle" font-family="Didot, Georgia, serif" font-size="22" fill="#C96A8A" font-style="italic">PR</text>
+    </svg>
+    <div class="preloader-name">Pointe Royale Ballet</div>
+    <div class="preloader-bar"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo"><em>Pointe</em> <span>Royale</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="programs.html">Programs</a></li>
+      <li><a href="process.html">Auditions</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Audition</a>
+  </nav>
+
+  <!-- HERO - Type C: Diagonal Split -->
+  <section class="hero" id="hero">
+    <div class="hero-left">
+      <div class="hero-content">
+        <div class="hero-eyebrow" id="hero-eyebrow">Est. 1948 — Paris & London</div>
+        <h1 class="hero-title" id="hero-title">
+          The <em>Art</em><br>of Classical<br>Ballet
+        </h1>
+        <p class="hero-subtitle" id="hero-subtitle">
+          Pointe Royale trains the next generation of professional ballet dancers in the Vaganova and Royal Ballet traditions. Our alumni grace the stages of the world's greatest companies.
+        </p>
+        <div class="hero-ctas" id="hero-ctas">
+          <a href="programs.html" class="btn-primary">Our Programs</a>
+          <a href="contact.html" class="btn-secondary">Request Audition</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-img"></div>
+      <div class="hero-img-overlay"></div>
+      <div class="hero-badge">
+        <span class="badge-num" data-target="78">0</span>
+        <span class="badge-label">Years of Excellence</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="strip-stat"><span class="strip-num" data-target="1200">0</span><span class="strip-label">Alumni in Companies</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="22">0</span><span class="strip-label">Faculty Artists</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="40">0</span><span class="strip-label">Annual Performances</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="32">0</span><span class="strip-label">International Partners</span></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-header">
+      <p class="section-eyebrow">Our Philosophy</p>
+      <h2 class="section-title">The Pointe Royale <em>Method</em></h2>
+      <p class="section-subtitle">Three pillars form the foundation of a Pointe Royale education — technical mastery, artistic depth, and the performer's spirit.</p>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-item">
+        <span class="philosophy-icon">𝅘𝅥𝅮</span>
+        <h3>Technical Foundation</h3>
+        <p>The Vaganova curriculum forms the technical backbone of every student's training. Seven years of progressive study build the placement, strength, and precision required for professional classical ballet.</p>
+      </div>
+      <div class="philosophy-item">
+        <span class="philosophy-icon">✦</span>
+        <h3>Artistic Interpretation</h3>
+        <p>Ballet is not athletics — it is storytelling. Every class, every combination, every rehearsal is guided by the question: what does this movement communicate? We cultivate dancers with genuine artistic presence.</p>
+      </div>
+      <div class="philosophy-item">
+        <span class="philosophy-icon">◈</span>
+        <h3>Performance Character</h3>
+        <p>The transition from student to professional requires resilience, adaptability, and stage intelligence. Our performance program places students on stage 40 times per year — building unshakeable confidence.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="programs" id="programs">
+    <div class="section-header">
+      <p class="section-eyebrow">Training Programs</p>
+      <h2 class="section-title">Your <em>Training Path</em></h2>
+      <p class="section-subtitle">Four programs spanning junior intensive to pre-professional training, each delivered by former principal dancers from the world's great companies.</p>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-1.webp')"></div>
+        <div class="program-info">
+          <span class="program-tag">Junior Intensive</span>
+          <h3 class="program-name">Foundation Programme</h3>
+          <p class="program-desc">For students aged 8–12. Three weekly classes develop correct alignment, musicality, and the joy of movement within the Vaganova system's earliest grades.</p>
+          <div class="program-meta"><span>Ages 8–12</span><span>3 classes/week</span></div>
+        </div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-2.webp')"></div>
+        <div class="program-info">
+          <span class="program-tag">Intermediate</span>
+          <h3 class="program-name">Académie Programme</h3>
+          <p class="program-desc">For students aged 12–15. Daily training in classical ballet technique, character dance, pas de deux foundations, and Cecchetti exams toward Royal Academy of Dance grades.</p>
+          <div class="program-meta"><span>Ages 12–15</span><span>Daily training</span></div>
+        </div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-3.webp')"></div>
+        <div class="program-info">
+          <span class="program-tag">Senior Conservatoire</span>
+          <h3 class="program-name">Conservatoire Programme</h3>
+          <p class="program-desc">For students aged 15–18. Full-time ballet training equivalent to a professional school education, with international summer intensives and company audition preparation.</p>
+          <div class="program-meta"><span>Ages 15–18</span><span>Full-time</span></div>
+        </div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-4.webp')"></div>
+        <div class="program-info">
+          <span class="program-tag">Pre-Professional</span>
+          <h3 class="program-name">Company Preparation</h3>
+          <p class="program-desc">A two-year pre-professional programme for students 18–21, including company placement, répertoire, and direct mentorship by artistic directors of partner ballet companies.</p>
+          <div class="program-meta"><span>Ages 18–21</span><span>2 years</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img-wrap">
+        <div class="atelier-img" id="atelier-parallax" style="background-image: url('images/workspace-1.webp')"></div>
+      </div>
+      <div class="atelier-content">
+        <p class="section-eyebrow" style="margin-bottom: 16px;">The Studio</p>
+        <h2>Studios Built<br>for <em>Brilliance</em></h2>
+        <p>Our Marais district atelier in Paris houses eight professional-grade studios, all with sprung Harlequin floors, floor-to-ceiling mirrors, and natural light. The historic building has been the training ground of three generations of Pointe Royale graduates.</p>
+        <div class="atelier-quote">
+          "The studio is where we learn to listen — to the music, to our bodies, and to the character within each role."
+        </div>
+        <p>London students train in our newly renovated Covent Garden studio, three minutes from the Royal Opera House. Summer intensives at our Paris campus are open to international students by audition.</p>
+        <a href="about.html" class="btn-primary" style="margin-top: 24px; display: inline-block;">Tour the Studio</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-header">
+      <p class="section-eyebrow">Admissions</p>
+      <h2 class="section-title">The Audition <em>Process</em></h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num">01</div>
+        <div class="process-content">
+          <h3>Enquiry & Application</h3>
+          <p>Submit an online enquiry including the student's age, current training background, and any recent examinations or performance experience. Our admissions team will confirm eligibility within five days.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">02</div>
+        <div class="process-content">
+          <h3>Video Audition</h3>
+          <p>Submit a 10-minute video showing barre work, centre exercises, and a short solo variation. Video auditions are reviewed by our faculty panel within two weeks of receipt.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">03</div>
+        <div class="process-content">
+          <h3>Live Audition Class</h3>
+          <p>Shortlisted candidates attend a live audition class at our Paris or London studio. The class is taken by a senior faculty member and observed by the artistic director.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">04</div>
+        <div class="process-content">
+          <h3>Assessment & Placement</h3>
+          <p>The artistic committee assesses each candidate's technical foundation, proportions, musicality, and potential. Accepted students receive a programme offer and scholarship assessment within one week.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">05</div>
+        <div class="process-content">
+          <h3>Enrolment & First Class</h3>
+          <p>Complete enrolment formalities and receive your class timetable and pointe shoe fitting appointment. New students are welcomed at an orientation evening before the first week of term.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-header">
+      <p class="section-eyebrow">Our Legacy</p>
+      <h2 class="section-title">Seventy-Eight <em>Years of Grace</em></h2>
+    </div>
+    <div class="heritage-grid">
+      <div class="heritage-item">
+        <span class="heritage-year">1948</span>
+        <h4>Founded in Paris</h4>
+        <p>Maître de ballet Isabelle Fontaine establishes Pointe Royale in the Marais, offering girls of exceptional talent tuition in the classical French and Russian traditions.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">1967</span>
+        <h4>London Studio Opens</h4>
+        <p>A Covent Garden studio brings the Pointe Royale tradition to London, establishing the first partnership with the Royal Ballet for student exchanges.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">1989</span>
+        <h4>Vaganova Accreditation</h4>
+        <p>Pointe Royale receives formal accreditation from the Vaganova Ballet Academy, certifying the curriculum and ensuring graduates meet the standard expected by the world's top companies.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2012</span>
+        <h4>Pre-Professional Track</h4>
+        <p>The Company Preparation Programme launches, with its first cohort placing students in the Paris Opéra Ballet, English National Ballet, and the Bolshoi within three years.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="section-header">
+      <p class="section-eyebrow">Alumni Voices</p>
+      <h2 class="section-title">Shaped by <em>Pointe Royale</em></h2>
+    </div>
+    <div class="swiper testimonials-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <p class="testimonial-text">"Pointe Royale gave me the technical foundation and the artistic heart I needed to succeed professionally. Every teacher there was a true artist, and that quality of instruction is what separates it from every other school I've encountered."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/detail-1.webp')"></div>
+            <div><div class="author-name">Camille Lefebvre</div><div class="author-title">Principal Dancer, Paris Opéra Ballet</div></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <p class="testimonial-text">"The Company Preparation programme was the single most important year of my training. The répertoire, the coaching, the connections — all of it prepared me for the reality of a professional ballet career in a way no other school had managed."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/detail-2.webp')"></div>
+            <div><div class="author-name">Yuki Tanaka</div><div class="author-title">Soloist, English National Ballet</div></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <p class="testimonial-text">"I trained at Pointe Royale from age ten until my professional debut at nineteen. The consistency of the teaching, the genuine care for each student as an individual, and the absolute commitment to the classical tradition are unmatched anywhere in the world."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/ambient-1.webp')"></div>
+            <div><div class="author-name">Sofia Reinholt</div><div class="author-title">First Soloist, Royal Danish Ballet</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="position: relative; margin-top: 40px;"></div>
+    </div>
+  </section>
+
+  <!-- ENROLLMENT -->
+  <section class="enrollment" id="enrollment">
+    <div class="section-header">
+      <p class="section-eyebrow">Begin Your Training</p>
+      <h2 class="section-title">Apply to <em>Pointe Royale</em></h2>
+    </div>
+    <div class="enrollment-inner">
+      <div class="enrollment-info">
+        <h2>Enquire Today</h2>
+        <p>Auditions for the 2026–2027 academic year are now open. We welcome applications from dancers of all backgrounds who demonstrate exceptional talent and a serious commitment to classical ballet.</p>
+        <p>Scholarships covering up to 100% of tuition are available to the most gifted students regardless of financial circumstances.</p>
+        <div class="contact-detail"><strong>Paris</strong>14 Rue des Archives, 75004 Paris</div>
+        <div class="contact-detail"><strong>London</strong>12 Floral Street, London WC2E 9DH</div>
+        <div class="contact-detail"><strong>Phone</strong>+33 1 42 55 0192</div>
+        <div class="contact-detail"><strong>Email</strong>auditions@pointeroyale.com</div>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text"></div>
+          <div class="form-group"><label>Last Name</label><input type="text"></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email"></div>
+        <div class="form-group"><label>Date of Birth</label><input type="date"></div>
+        <div class="form-group"><label>Desired Programme</label>
+          <select><option>Foundation Programme</option><option>Académie Programme</option><option>Conservatoire Programme</option><option>Company Preparation</option></select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea placeholder="Tell us about your training background and goals..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Pointe Royale Ballet</h3>
+        <p>A world-class classical ballet school in Paris and London, training the next generation of professional dancers since 1948.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="programs.html">Foundation Programme</a></li>
+          <li><a href="programs.html">Académie Programme</a></li>
+          <li><a href="programs.html">Conservatoire</a></li>
+          <li><a href="programs.html">Company Preparation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>School</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="about.html">Faculty</a></li>
+          <li><a href="process.html">Auditions</a></li>
+          <li><a href="about.html">Studios</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Scholarships</a></li>
+          <li><a href="#">Summer Intensive</a></li>
+          <li><a href="#">Alumni</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Pointe Royale Ballet. All rights reserved.</p>
+      <p>Paris · London</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    class SplitText {
+      constructor(t, o = {}) {
+        const e = typeof t === 'string' ? document.querySelector(t) : (t instanceof Element ? t : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!e) return; this._el = e;
+        const tp = (o.type || 'chars,words').toLowerCase();
+        const orig = e.textContent;
+        e.setAttribute('data-split-orig', orig);
+        if (tp.includes('chars')) {
+          e.innerHTML = orig.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(e.querySelectorAll('.char'));
+        } else if (tp.includes('words')) {
+          e.innerHTML = orig.split(' ').filter(w => w.length > 0).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(e.querySelectorAll('.word'));
+        }
+        this.lines = [e];
+      }
+      revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+    }
+
+    window.addEventListener('load', () => {
+      gsap.to('#preloader', {
+        opacity: 0, duration: 0.8, delay: 1.8, ease: 'power2.inOut',
+        onComplete: () => {
+          document.getElementById('preloader').style.display = 'none';
+          document.getElementById('scroll-indicator').classList.add('visible');
+          initHeroAnim();
+        }
+      });
+    });
+    setTimeout(() => { document.getElementById('scroll-indicator')?.classList.add('visible'); }, 4000);
+
+    function initHeroAnim() {
+      // A4 Dramatic: y:40px, stagger:0.15, ease:'power2.inOut'
+      gsap.from('#hero-eyebrow', { immediateRender: false, opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut' });
+      gsap.from('#hero-title', { immediateRender: false, opacity: 0, y: 40, duration: 1.3, ease: 'power2.inOut', delay: 0.15 });
+      gsap.from('#hero-subtitle', { immediateRender: false, opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', delay: 0.3 });
+      gsap.from('#hero-ctas', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', delay: 0.45 });
+      gsap.from('.hero-right', { immediateRender: false, opacity: 0, scale: 1.03, duration: 1.4, ease: 'power2.inOut', delay: 0.1 });
+      gsap.from('.hero-badge', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', delay: 0.6 });
+    }
+
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    // Badge counter
+    document.querySelectorAll('[data-target], .strip-num').forEach(el => {
+      const target = +(el.dataset?.target || 0);
+      if (!target) return;
+      gsap.from(el, {
+        immediateRender: false, textContent: 0, duration: 2, ease: 'power2.out',
+        snap: { textContent: 1 },
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+
+    gsap.from('.philosophy-item', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.2, stagger: 0.15, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%' }
+    });
+    gsap.from('.program-card', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.2, stagger: 0.15, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '.programs-grid', start: 'top 85%' }
+    });
+    gsap.to('#atelier-parallax', {
+      yPercent: -12, ease: 'none',
+      scrollTrigger: { trigger: '.atelier', start: 'top bottom', end: 'bottom top', scrub: 1 }
+    });
+    gsap.from('.atelier-content', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '.atelier', start: 'top 80%' }
+    });
+    gsap.from('.process-item', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.1, stagger: 0.15, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '.process-list', start: 'top 85%' }
+    });
+    gsap.from('.heritage-item', {
+      immediateRender: false, opacity: 0, y: 40, duration: 1.2, stagger: 0.15, ease: 'power2.inOut',
+      scrollTrigger: { trigger: '.heritage-grid', start: 'top 85%' }
+    });
+    document.querySelectorAll('.section-header').forEach(h => {
+      gsap.from(h, {
+        immediateRender: false, opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut',
+        scrollTrigger: { trigger: h, start: 'top 85%' }
+      });
+    });
+
+    new Swiper('.testimonials-swiper', {
+      slidesPerView: 1, spaceBetween: 24, loop: true,
+      breakpoints: { 768: { slidesPerView: 2 } },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      autoplay: { delay: 5000, disableOnInteraction: false }
+    });
+  </script>
+</body>
+</html>

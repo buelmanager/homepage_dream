@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Loom School — Thread by Thread, Story by Story</title>
+<meta name="description" content="The Loom School offers traditional textile weaving education — loom techniques, natural dye and heritage fabric traditions passed through master weavers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #1C1008;
+  --surface: #261608;
+  --surface2: #2E1C0A;
+  --accent: #D4612A;
+  --accent-light: #E8884A;
+  --accent-dark: #9C3C14;
+  --ivory: #F0E4DC;
+  --smoke: #A07860;
+  --muted: #604840;
+  --border: #201408;
+  --font-serif: 'Cinzel', 'Times New Roman', serif;
+  --font-sans: 'Crimson Pro', Georgia, serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Preloader */
+#preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.preloader-loom { width: 60px; height: 40px; position: relative; }
+.loom-warp { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--muted); animation: weavePulse 1.2s ease-in-out infinite; }
+.loom-warp:nth-child(1) { left: 0; animation-delay: 0s; }
+.loom-warp:nth-child(2) { left: 14px; animation-delay: 0.15s; }
+.loom-warp:nth-child(3) { left: 28px; animation-delay: 0.3s; }
+.loom-warp:nth-child(4) { left: 42px; animation-delay: 0.45s; }
+.loom-warp:nth-child(5) { left: 56px; animation-delay: 0.6s; }
+@keyframes weavePulse { 0%,100% { background: var(--muted); } 50% { background: var(--accent); } }
+.preloader-text { font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--smoke); margin-top: 24px; }
+
+/* Scroll Indicator */
+#scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.6s; }
+#scroll-indicator.visible { opacity: 1; }
+.scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--accent)); }
+.scroll-label { font-family: var(--font-sans); font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-rl; transform: rotate(180deg); }
+
+/* Navbar */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+nav.scrolled { background: rgba(28,16,8,0.92); backdrop-filter: blur(12px); padding: 16px 60px; }
+.nav-logo { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; letter-spacing: 0.08em; color: var(--ivory); }
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 40px; list-style: none; }
+.nav-links a { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; font-family: var(--font-serif); }
+.nav-links a:hover { color: var(--accent); }
+.nav-cta { padding: 10px 28px; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; transition: background 0.3s, color 0.3s; }
+.nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+/* Hero — Type E Grid/Pattern */
+.hero { position: relative; height: 100vh; display: flex; align-items: center; background: var(--bg); overflow: hidden; }
+.hero-grid-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-overlay { position: absolute; inset: 0; background: radial-gradient(ellipse at 40% 50%, transparent 10%, rgba(28,16,8,0.85) 80%); }
+.corner { position: absolute; width: 60px; height: 60px; border-color: var(--accent); border-style: solid; opacity: 0.4; }
+.corner.tl { top: 30px; left: 30px; border-width: 2px 0 0 2px; }
+.corner.tr { top: 30px; right: 30px; border-width: 2px 2px 0 0; }
+.corner.bl { bottom: 30px; left: 30px; border-width: 0 0 2px 2px; }
+.corner.br { bottom: 30px; right: 30px; border-width: 0 2px 2px 0; }
+.hero-content { position: relative; z-index: 2; max-width: 700px; padding: 0 80px; }
+.hero-eyebrow { font-family: var(--font-serif); font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: block; }
+.hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 6rem); font-weight: 700; line-height: 1.0; color: var(--ivory); margin-bottom: 24px; letter-spacing: 0.02em; }
+.hero-rule { width: 60px; height: 1px; background: var(--accent); margin-bottom: 24px; }
+.hero-sub { font-family: var(--font-sans); font-size: 1.1rem; line-height: 1.7; color: var(--smoke); max-width: 420px; margin-bottom: 40px; font-style: italic; }
+.hero-ctas { display: flex; gap: 20px; align-items: center; }
+.btn-primary { display: inline-block; padding: 14px 40px; background: var(--accent); color: var(--ivory); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; transition: background 0.3s; }
+.btn-primary:hover { background: var(--accent-light); }
+.btn-outline { display: inline-block; padding: 14px 40px; border: 1px solid rgba(240,228,220,0.25); color: var(--ivory); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; transition: border-color 0.3s, color 0.3s; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Stats Strip */
+.stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 60px 80px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; max-width: 1200px; margin: 0 auto; }
+.stat-item { text-align: center; }
+.stat-num { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--accent); display: block; line-height: 1; }
+.stat-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 10px; display: block; font-family: var(--font-serif); }
+
+/* Section commons */
+.section-label { font-family: var(--font-serif); font-size: 0.62rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: block; }
+.section-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 600; color: var(--ivory); margin-bottom: 60px; line-height: 1.15; letter-spacing: 0.03em; }
+
+/* Philosophy */
+.philosophy { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+.phil-card { padding: 48px 36px; background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); }
+.phil-num { font-family: var(--font-serif); font-size: 0.68rem; letter-spacing: 0.3em; color: var(--accent); margin-bottom: 20px; display: block; }
+.phil-card h3 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; color: var(--ivory); margin-bottom: 16px; letter-spacing: 0.04em; }
+.phil-card p { font-family: var(--font-sans); font-size: 0.95rem; line-height: 1.8; color: var(--smoke); }
+
+/* Programs Grid */
+.programs { padding: 0 80px 120px; max-width: 1300px; margin: 0 auto; }
+.programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; overflow: visible; }
+.program-card { background: var(--surface); border: 1px solid var(--border); overflow: hidden; transition: transform 0.4s, box-shadow 0.4s; }
+.program-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.program-card-img { height: 280px; overflow: hidden; }
+.program-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+.program-card:hover .program-card-img img { transform: scale(1.05); }
+.program-card-body { padding: 40px; }
+.program-tag { font-family: var(--font-serif); font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: block; }
+.program-card h3 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--ivory); margin-bottom: 12px; }
+.program-card p { font-family: var(--font-sans); font-size: 0.92rem; line-height: 1.8; color: var(--smoke); margin-bottom: 24px; }
+.program-meta { display: flex; gap: 20px; font-size: 0.78rem; color: var(--muted); padding-top: 20px; border-top: 1px solid var(--border); font-family: var(--font-serif); }
+
+/* Master */
+.master { padding: 120px 80px; background: var(--surface); }
+.master-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.master-img { position: relative; }
+.master-img img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+.master-img-accent { position: absolute; bottom: -20px; right: -20px; width: 55%; aspect-ratio: 1; border: 1px solid var(--accent); z-index: -1; }
+.master-body { padding-right: 40px; }
+.master-name { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 600; color: var(--ivory); margin-bottom: 8px; }
+.master-role { font-family: var(--font-serif); font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; display: block; }
+.master-bio { font-family: var(--font-sans); font-size: 0.98rem; line-height: 1.9; color: var(--smoke); margin-bottom: 32px; }
+.master-credentials { display: flex; flex-direction: column; gap: 12px; }
+.credential { display: flex; gap: 16px; align-items: flex-start; }
+.credential-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-top: 8px; flex-shrink: 0; }
+.credential p { font-family: var(--font-sans); font-size: 0.85rem; color: var(--smoke); line-height: 1.6; }
+
+/* Curriculum */
+.curriculum { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.curriculum-steps { margin-top: 60px; }
+.step { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 40px 0; border-top: 1px solid var(--border); align-items: start; }
+.step:last-child { border-bottom: 1px solid var(--border); }
+.step-num { font-family: var(--font-serif); font-size: 3rem; font-weight: 400; color: var(--muted); line-height: 1; }
+.step-body h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; color: var(--ivory); margin-bottom: 12px; }
+.step-body p { font-family: var(--font-sans); font-size: 0.9rem; line-height: 1.8; color: var(--smoke); }
+.step-duration { font-family: var(--font-serif); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-top: 12px; display: block; }
+
+/* History */
+.history { padding: 120px 80px; background: var(--surface); }
+.history-inner { max-width: 1200px; margin: 0 auto; }
+.timeline-item { display: grid; grid-template-columns: 120px 1fr; gap: 48px; padding: 32px 0; border-top: 1px solid var(--border); align-items: start; }
+.timeline-year { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: var(--accent); }
+.timeline-content h3 { font-family: var(--font-serif); font-size: 1.05rem; color: var(--ivory); margin-bottom: 8px; }
+.timeline-content p { font-family: var(--font-sans); font-size: 0.87rem; line-height: 1.7; color: var(--smoke); }
+
+/* Testimonials */
+.testimonials { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.swiper-slide-content { padding: 48px; background: var(--surface); border: 1px solid var(--border); }
+.testimonial-stars { color: var(--accent); font-size: 0.9rem; margin-bottom: 24px; }
+.testimonial-text { font-family: var(--font-sans); font-size: 1.15rem; line-height: 1.8; color: var(--ivory); font-style: italic; margin-bottom: 32px; }
+.testimonial-author { display: flex; align-items: center; gap: 16px; }
+.author-avatar { width: 48px; height: 48px; background: var(--surface2); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1rem; color: var(--accent); }
+.author-info h4 { font-family: var(--font-serif); font-size: 0.88rem; font-weight: 600; color: var(--ivory); }
+.author-info span { font-size: 0.78rem; color: var(--smoke); }
+.swiper-pagination-bullet { background: var(--muted) !important; }
+.swiper-pagination-bullet-active { background: var(--accent) !important; }
+
+/* Enrollment */
+.enrollment { padding: 120px 80px; background: var(--surface); }
+.enrollment-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+.enrollment form { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-family: var(--font-serif); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+.form-group input, .form-group select, .form-group textarea { background: var(--bg); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; width: 100%; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+.form-group select option { background: var(--bg); }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-submit { grid-column: 1 / -1; }
+.form-submit button { width: 100%; padding: 18px; background: var(--accent); color: var(--ivory); border: none; font-family: var(--font-serif); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; font-weight: 600; transition: background 0.3s; }
+.form-submit button:hover { background: var(--accent-light); }
+
+/* Footer */
+footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+.footer-brand p { font-family: var(--font-sans); font-size: 0.88rem; line-height: 1.7; color: var(--smoke); max-width: 280px; margin-top: 16px; }
+.footer-col h4 { font-family: var(--font-serif); font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col ul a { font-family: var(--font-sans); font-size: 0.85rem; color: var(--smoke); transition: color 0.3s; }
+.footer-col ul a:hover { color: var(--accent); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 32px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-family: var(--font-sans); font-size: 0.78rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-loom">
+    <div class="loom-warp"></div>
+    <div class="loom-warp"></div>
+    <div class="loom-warp"></div>
+    <div class="loom-warp"></div>
+    <div class="loom-warp"></div>
+  </div>
+  <p class="preloader-text">The Loom School</p>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <span class="scroll-label">Scroll</span>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">The <span>Loom</span> School</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Programs</a></li>
+    <li><a href="process.html">Method</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Enrol</a>
+</nav>
+
+<!-- Hero — Type E Grid/Pattern -->
+<section class="hero" id="hero">
+  <canvas class="hero-grid-canvas" id="heroCanvas"></canvas>
+  <div class="hero-overlay"></div>
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">Founded 1961 · Oaxacan Tradition</span>
+    <h1 class="hero-title">The<br>Loom<br>School</h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">Thread by Thread, Story by Story. Mastering the ancient arts of loom weaving, natural dye and heritage textile traditions.</p>
+    <div class="hero-ctas">
+      <a href="collection.html" class="btn-primary">Begin Weaving</a>
+      <a href="about.html" class="btn-outline">Our Heritage</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section class="stats-strip">
+  <div class="stats-grid">
+    <div class="stat-item reveal-organic">
+      <span class="stat-num">63</span>
+      <span class="stat-label">Years of Tradition</span>
+    </div>
+    <div class="stat-item reveal-organic">
+      <span class="stat-num">40+</span>
+      <span class="stat-label">Loom Varieties Taught</span>
+    </div>
+    <div class="stat-item reveal-organic">
+      <span class="stat-num">2,400</span>
+      <span class="stat-label">Alumni Worldwide</span>
+    </div>
+    <div class="stat-item reveal-organic">
+      <span class="stat-num">18</span>
+      <span class="stat-label">Master Weavers on Faculty</span>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy">
+  <span class="section-label reveal-organic">Our Principles</span>
+  <h2 class="section-title reveal-organic">Three Threads<br>of Our Teaching</h2>
+  <div class="philosophy-grid">
+    <div class="phil-card reveal-organic">
+      <span class="phil-num">I — Thread</span>
+      <h3>Technique & Structure</h3>
+      <p>Weaving begins in the warp — the invisible architecture that holds everything together. We teach structure, sett, tie-up and threading with rigorous attention, forming the foundation for all creative work.</p>
+    </div>
+    <div class="phil-card reveal-organic">
+      <span class="phil-num">II — Colour</span>
+      <h3>Natural Dye & Colour</h3>
+      <p>Before synthetic pigments, all colour came from root, bark, berry and insect. We preserve and practise plant-based dye traditions from indigenous communities across Mesoamerica and Central Asia.</p>
+    </div>
+    <div class="phil-card reveal-organic">
+      <span class="phil-num">III — Story</span>
+      <h3>Heritage & Memory</h3>
+      <p>Textiles are the oldest archive. Each pattern holds genealogy, ceremony, cosmology and resistance. Our ethnotextile studies place technical skill within its full cultural and historical context.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Programs Grid -->
+<section class="programs">
+  <div class="section-header">
+    <span class="section-label reveal-organic">Our Offerings</span>
+    <h2 class="section-title reveal-organic">Courses &amp; Programmes</h2>
+  </div>
+  <div class="programs-grid">
+    <div class="program-card reveal-organic">
+      <div class="program-card-img">
+        <img src="images/img-1.webp" alt="Foundation Loom Weaving">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Foundation</span>
+        <h3>Foundation Loom Weaving</h3>
+        <p>Learn to dress a loom from scratch — warping, threading, tie-up and treadling. Students produce four sampler cloths demonstrating plain weave, twill, satin and simple pattern.</p>
+        <div class="program-meta">
+          <span>6 Weeks</span>
+          <span>·</span>
+          <span>All Levels</span>
+          <span>·</span>
+          <span>Morning Cohort</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-organic">
+      <div class="program-card-img">
+        <img src="images/img-2.webp" alt="Natural Dye Studio">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Intermediate</span>
+        <h3>Natural Dye Studio</h3>
+        <p>An intensive exploration of plant-based colour — mordanting, substantive dyes, extraction methods and resist techniques. Students build a personal dye book across ten sessions in the dyehouse.</p>
+        <div class="program-meta">
+          <span>10 Weeks</span>
+          <span>·</span>
+          <span>Foundation required</span>
+          <span>·</span>
+          <span>Full Year</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-organic">
+      <div class="program-card-img">
+        <img src="images/img-3.webp" alt="Heritage Tapestry Programme">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Advanced</span>
+        <h3>Heritage Tapestry</h3>
+        <p>The most demanding programme we offer: the full study of tapestry weaving in the Gobelin and Navajo traditions, from cartoon preparation through narrative image construction in wool and silk.</p>
+        <div class="program-meta">
+          <span>12 Months</span>
+          <span>·</span>
+          <span>Application required</span>
+          <span>·</span>
+          <span>Annual intake</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-organic">
+      <div class="program-card-img">
+        <img src="images/img-4.webp" alt="Master Weaver Residency">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Residency</span>
+        <h3>Master Weaver Residency</h3>
+        <p>A six-month immersive residency for established textile artists seeking to deepen their practice under the daily mentorship of a senior Loom School master weaver in their chosen tradition.</p>
+        <div class="program-meta">
+          <span>6 Months</span>
+          <span>·</span>
+          <span>Portfolio selection</span>
+          <span>·</span>
+          <span>4 places only</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Master Section -->
+<section class="master">
+  <div class="master-inner">
+    <div class="master-img reveal-organic">
+      <img src="images/img-1.webp" alt="Master Weaver Catalina Morales">
+      <div class="master-img-accent"></div>
+    </div>
+    <div class="master-body reveal-organic">
+      <h2 class="master-name">Catalina Morales</h2>
+      <span class="master-role">Master Weaver & Founding Director</span>
+      <p class="master-bio">Born in Teotitlán del Valle, Oaxaca, into a family of Zapotec weavers, Catalina Morales spent her childhood at the loom before leaving to study ethnotextiles at the Universidad Nacional Autónoma de México. She returned with a conviction: that weaving is not craft but philosophy, and that the loom encodes the entire logic of the universe — warp and weft, tension and release, pattern and ground.</p>
+      <div class="master-credentials">
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Third-generation Zapotec weaver in the cochineal tradition</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>UNESCO Living Human Treasure designation, 2011</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Author of <em>The Woven World: Textile as Memory</em> (2018)</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Residencies in Japan, Morocco, India and Guatemala</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Curriculum -->
+<section class="curriculum">
+  <span class="section-label reveal-organic">The Method</span>
+  <h2 class="section-title reveal-organic">How We Teach<br>the Loom</h2>
+  <div class="curriculum-steps">
+    <div class="step reveal-organic">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Understanding Thread: Fibre & Yarn</h3>
+        <p>Before touching the loom, students must know the materials — wool, cotton, silk, linen, bast fibres, and the hand-spun traditions of each. Yarn weight, twist, and fibre behaviour determine every subsequent choice.</p>
+        <span class="step-duration">Week 1–2</span>
+      </div>
+    </div>
+    <div class="step reveal-organic">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>Dressing the Loom: Warping & Threading</h3>
+        <p>The warp is the skeleton. Students learn back-to-front and front-to-back warping methods, sett calculation, threading drafts and tie-up patterns for four-shaft looms in multiple weave structures.</p>
+        <span class="step-duration">Week 3–5</span>
+      </div>
+    </div>
+    <div class="step reveal-organic">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>Weave Structures: From Plain to Complex</h3>
+        <p>Plain weave, twill, satin, overshot, Summer and Winter, double weave — each structure creates a distinct cloth with its own drape, texture and symbolic vocabulary, explored through focused sampling.</p>
+        <span class="step-duration">Week 6–10</span>
+      </div>
+    </div>
+    <div class="step reveal-organic">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>Colour: Natural Dye Practice</h3>
+        <p>Students enter the dyehouse — mordanting fibre, preparing plant extracts, building a dye notebook of sustainable colour relationships that will define their personal palette for years to come.</p>
+        <span class="step-duration">Week 11–16</span>
+      </div>
+    </div>
+    <div class="step reveal-organic">
+      <div class="step-num">05</div>
+      <div class="step-body">
+        <h3>Design: Pattern, Narrative & Final Project</h3>
+        <p>The culminating project brings technique and intention together. Each student weaves an original cloth — a full statement of their voice, their learning, and their relationship to the tradition.</p>
+        <span class="step-duration">Week 17–20</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- History -->
+<section class="history">
+  <div class="history-inner">
+    <span class="section-label reveal-organic">Our Story</span>
+    <h2 class="section-title reveal-organic">Six Decades<br>at the Loom</h2>
+    <div class="timeline">
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">1961</div>
+        <div class="timeline-content">
+          <h3>Founded in Oaxaca</h3>
+          <p>Elena Morales opens a teaching studio in a converted colonial house in Oaxaca City, gathering twelve Zapotec and Mixtec weavers to share techniques across communities.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">1974</div>
+        <div class="timeline-content">
+          <h3>The Natural Dye Revival</h3>
+          <p>Alarmed by the disappearance of cochineal and indigo knowledge, the school launches a formal natural dye curriculum — one of the first structured programmes of its kind in the Americas.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">1998</div>
+        <div class="timeline-content">
+          <h3>International Residency Programme</h3>
+          <p>Exchange residencies with Japan, Morocco and India begin under the leadership of Catalina Morales, bringing master weavers from three continents to teach at the school each year.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">2011</div>
+        <div class="timeline-content">
+          <h3>UNESCO Living Human Treasure</h3>
+          <p>Director Catalina Morales receives the UNESCO Living Human Treasure designation for her work preserving Zapotec weaving traditions and transmitting them to new generations.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-content">
+          <h3>The Heritage Textile Archive</h3>
+          <p>The school opens a public archive of over 1,200 historical samples, pattern drafts and dye records — the largest freely accessible textile research collection in Latin America.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+  <span class="section-label reveal-organic">Student Words</span>
+  <h2 class="section-title reveal-organic">Voices from<br>the Loom Room</h2>
+  <div class="swiper testimonials-swiper reveal-organic">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"Catalina taught me that every thread carries a decision — about tension, about colour, about what you want to say. The Loom School changed how I understand time, patience and the nature of making."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">R</div>
+            <div class="author-info">
+              <h4>Rosario Villanueva</h4>
+              <span>Foundation Graduate, Mexico City</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"The Natural Dye Studio was the most challenging and rewarding course I have ever taken. I came for the colour and left with a completely transformed understanding of ecology, history and beauty."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">H</div>
+            <div class="author-info">
+              <h4>Hana Watanabe</h4>
+              <span>Natural Dye Graduate, Kyoto</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"Six months as a resident weaver under Maestro Juan Pérez completely reshaped my practice. The Loom School holds a rare combination of rigour and generosity that I have not found anywhere else."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">A</div>
+            <div class="author-info">
+              <h4>Anya Kowalski</h4>
+              <span>Residency Graduate, Warsaw</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination" style="margin-top: 32px; position: relative; bottom: auto;"></div>
+  </div>
+</section>
+
+<!-- Enrollment Form -->
+<section class="enrollment">
+  <div class="enrollment-inner">
+    <span class="section-label reveal-organic" style="display:block; text-align:center;">Take Your Seat at the Loom</span>
+    <h2 class="section-title reveal-organic" style="text-align:center;">Apply or Enquire</h2>
+    <p style="font-size:0.95rem; font-family:var(--font-sans); color:var(--smoke); line-height:1.7; text-align:center;" class="reveal-organic">We accept students year-round for Foundation courses and once annually for Heritage Tapestry and Residency. Write to us — we respond to every message personally.</p>
+    <form class="reveal-organic">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" placeholder="Your first name">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" placeholder="Your last name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>Country of Origin</label>
+        <input type="text" placeholder="Your country">
+      </div>
+      <div class="form-group full">
+        <label>Programme of Interest</label>
+        <select>
+          <option>Foundation Loom Weaving</option>
+          <option>Natural Dye Studio</option>
+          <option>Heritage Tapestry (12 months)</option>
+          <option>Master Weaver Residency</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Your Background & Textile Experience</label>
+        <textarea placeholder="Tell us about any experience with textiles, weaving, fibre arts or your interest in the tradition..."></textarea>
+      </div>
+      <div class="form-submit">
+        <button type="submit">Submit Enquiry</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="nav-logo">The <span style="color:var(--accent)">Loom</span> School</span>
+        <p>Traditional textile weaving education rooted in Zapotec heritage. Teaching loom techniques, natural dye and the stories woven into every thread.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="collection.html">Programs</a></li>
+          <li><a href="process.html">Method</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="collection.html">Foundation Weaving</a></li>
+          <li><a href="collection.html">Natural Dye</a></li>
+          <li><a href="collection.html">Heritage Tapestry</a></li>
+          <li><a href="collection.html">Residency</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:hola@theloomschool.mx">hola@theloomschool.mx</a></li>
+          <li><a href="#">Oaxaca de Juárez</a></li>
+          <li><a href="#">México 68000</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 The Loom School. All rights reserved.</p>
+      <p>Thread by Thread, Story by Story</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Preloader
+window.addEventListener('load', () => {
+  gsap.to('#preloader', { opacity: 0, duration: 1.0, ease: 'power2.out', onComplete: () => {
+    document.getElementById('preloader').style.display = 'none';
+    document.getElementById('scroll-indicator').classList.add('visible');
+  }});
+  gsap.from('.hero-eyebrow', { opacity: 0, y: gsap.utils.random(20,28), duration: gsap.utils.random(1.0,1.4), ease: 'power2.out', delay: 0.5, immediateRender: false });
+  gsap.from('.hero-title', { opacity: 0, y: gsap.utils.random(20,28), duration: gsap.utils.random(1.0,1.4), ease: 'power2.out', delay: 0.7, immediateRender: false });
+  gsap.from('.hero-rule', { opacity: 0, scaleX: 0, duration: 1.0, ease: 'power2.out', delay: 0.9, transformOrigin: 'left', immediateRender: false });
+  gsap.from('.hero-sub', { opacity: 0, y: gsap.utils.random(20,28), duration: gsap.utils.random(1.0,1.4), ease: 'power2.out', delay: 1.0, immediateRender: false });
+  gsap.from('.hero-ctas', { opacity: 0, y: gsap.utils.random(20,28), duration: gsap.utils.random(1.0,1.4), ease: 'power2.out', delay: 1.2, immediateRender: false });
+});
+
+setTimeout(() => { document.getElementById('scroll-indicator').classList.add('visible'); }, 4000);
+
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Canvas grid
+const canvas = document.getElementById('heroCanvas');
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; draw(); }
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle = 'rgba(212,97,42,0.12)'; ctx.lineWidth = 0.5;
+    for (let x=0; x<=canvas.width; x+=60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+    for (let y=0; y<=canvas.height; y+=60) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+    // Weave pattern dots at intersections
+    ctx.fillStyle = 'rgba(212,97,42,0.06)';
+    for (let x=60; x<canvas.width; x+=120) {
+      for (let y=60; y<canvas.height; y+=120) {
+        ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fill();
+      }
+    }
+  }
+  window.addEventListener('resize', resize); resize();
+}
+
+// Corners animation
+gsap.from('.corner', { opacity: 0, scale: 0.5, duration: 1.2, ease: 'power2.out', stagger: 0.1, delay: 0.8, immediateRender: false });
+
+// Scroll animations — A5 Organic
+document.querySelectorAll('.reveal-organic').forEach(el => {
+  gsap.from(el, {
+    opacity: 0, y: gsap.utils.random(20,28), duration: gsap.utils.random(1.0,1.4),
+    ease: 'power2.out', immediateRender: false,
+    scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+  });
+});
+
+// Swiper
+new Swiper('.testimonials-swiper', {
+  slidesPerView: 1, spaceBetween: 32, loop: true,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXON — Celestial Forge | Meteorite Fine Jewelry</title>
+  <meta name="description" content="EXON Celestial Forge crafts extraordinary fine jewelry from meteorite and celestial metals. Each piece is forged from the cosmos — rare, eternal, and beyond this world." />
+
+  <!-- Fonts: F9 Spectral + Mulish -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- GSAP 3.12.2 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Swiper 11 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    /* =============================================
+       CSS RESET & CUSTOM PROPERTIES
+    ============================================= */
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #130F1A;
+      --surface: #1C1626;
+      --surface2: #231D30;
+      --accent: #9B6EDB;
+      --accent-light: #B894EE;
+      --accent-dark: #6840A8;
+      --ivory: #EAE0F8;
+      --smoke: #907890;
+      --muted: #544860;
+      --border: #181420;
+      --font-serif: 'Spectral', Georgia, serif;
+      --font-sans: 'Mulish', system-ui, sans-serif;
+      --max-w: 1400px;
+      --nav-h: 88px;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+
+    /* =============================================
+       PRELOADER
+    ============================================= */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: 3.5rem; font-weight: 300; letter-spacing: 0.5em;
+      color: var(--ivory); margin-bottom: 2rem;
+    }
+    .preloader-bar {
+      width: 200px; height: 1px; background: var(--muted); position: relative; overflow: hidden;
+    }
+    .preloader-bar-fill {
+      position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: var(--accent); animation: barFill 2s ease forwards;
+    }
+    @keyframes barFill { to { left: 0; } }
+
+    /* =============================================
+       NAVIGATION
+    ============================================= */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-h); display: flex; align-items: center;
+      padding: 0 60px; z-index: 100;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .nav.scrolled {
+      background: rgba(19,15,26,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand {
+      font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300;
+      letter-spacing: 0.35em; color: var(--ivory); flex: 1;
+    }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a {
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--smoke); transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent-light); }
+    .nav-cta {
+      margin-left: 40px; padding: 10px 24px;
+      border: 1px solid var(--accent); color: var(--accent);
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* =============================================
+       BUTTONS
+    ============================================= */
+    .btn-primary {
+      display: inline-block; padding: 16px 44px;
+      background: var(--accent); color: var(--bg);
+      font-family: var(--font-sans); font-size: 0.75rem;
+      letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500;
+      transition: all 0.3s;
+    }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary {
+      display: inline-block; padding: 16px 44px;
+      border: 1px solid var(--smoke); color: var(--smoke);
+      font-family: var(--font-sans); font-size: 0.75rem;
+      letter-spacing: 0.15em; text-transform: uppercase; font-weight: 400;
+      transition: all 0.3s;
+    }
+    .btn-secondary:hover { border-color: var(--ivory); color: var(--ivory); }
+
+    /* =============================================
+       HERO — TYPE G (Scroll-Driven Text Transform)
+    ============================================= */
+    .hero-text-driven {
+      position: relative; min-height: 200vh;
+    }
+    .hero-bg {
+      position: fixed; inset: 0;
+      background-image: url('images/img-10.webp');
+      background-size: cover; background-position: center;
+      filter: brightness(0.45);
+      z-index: -2;
+    }
+    .hero-overlay {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, rgba(19,15,26,0.55) 0%, rgba(10,8,18,0.3) 100%);
+      z-index: -1;
+    }
+    .hero-text-wrap {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 80px; z-index: 1;
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.5rem;
+      font-family: var(--font-sans); font-weight: 400;
+    }
+    .hero-word {
+      font-family: var(--font-serif);
+      font-size: clamp(4rem, 14vw, 14rem);
+      line-height: 0.85; font-weight: 600;
+      text-transform: uppercase; color: var(--ivory);
+      will-change: transform;
+    }
+    .word-2 { color: var(--accent-light); }
+    .hero-tagline {
+      font-size: 0.95rem; letter-spacing: 0.2em; color: var(--accent);
+      margin-top: 2.5rem; font-family: var(--font-sans); font-weight: 300;
+      text-transform: uppercase;
+    }
+    .hero-cta { margin-top: 3rem; }
+    .hero-scroll-hint {
+      position: fixed; bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      color: var(--accent); font-size: 1.8rem; z-index: 2;
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+    .hero-side-text {
+      position: fixed; right: 30px; top: 50%;
+      transform: translateY(-50%) rotate(90deg);
+      font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--muted); z-index: 2;
+    }
+
+    /* Section that follows the sticky hero */
+    .hero-spacer { height: 100vh; }
+
+    /* =============================================
+       SECTIONS SHARED
+    ============================================= */
+    section { position: relative; z-index: 2; background: var(--bg); }
+    .section-pad { padding: 120px 80px; }
+    .section-label {
+      font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 4rem);
+      font-weight: 300; line-height: 1.1; color: var(--ivory);
+    }
+    .section-subtitle {
+      font-size: 1rem; color: var(--smoke); line-height: 1.8;
+      max-width: 560px; margin-top: 1.5rem;
+    }
+    .divider {
+      width: 60px; height: 1px; background: var(--accent);
+      margin: 2rem 0;
+    }
+
+    /* =============================================
+       PHILOSOPHY
+    ============================================= */
+    #philosophy { background: var(--surface); }
+    .philosophy-intro { max-width: 900px; margin: 0 auto 80px; text-align: center; }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px; max-width: var(--max-w); margin: 0 auto;
+    }
+    .phil-card {
+      border: 1px solid var(--border); padding: 48px 36px;
+      transition: border-color 0.3s;
+    }
+    .phil-card:hover { border-color: var(--accent); }
+    .phil-icon {
+      font-size: 2rem; margin-bottom: 1.5rem; color: var(--accent);
+    }
+    .phil-title {
+      font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300;
+      color: var(--ivory); margin-bottom: 1rem;
+    }
+    .phil-text { font-size: 0.9rem; color: var(--smoke); line-height: 1.8; }
+
+    /* =============================================
+       COLLECTION
+    ============================================= */
+    #collection { background: var(--bg); }
+    .collection-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 60px; max-width: var(--max-w); margin-left: auto; margin-right: auto;
+    }
+    .collection-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2px; max-width: var(--max-w); margin: 0 auto;
+      overflow: visible;
+    }
+    .col-item {
+      position: relative; aspect-ratio: 3/4; overflow: hidden;
+      cursor: pointer;
+    }
+    .col-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.7s ease, filter 0.3s;
+      filter: brightness(0.75);
+    }
+    .col-item:hover img { transform: scale(1.06); filter: brightness(0.9); }
+    .col-item-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 24px 20px;
+      background: linear-gradient(transparent, rgba(19,15,26,0.9));
+    }
+    .col-item-name {
+      font-family: var(--font-serif); font-size: 1.05rem; font-weight: 300;
+      color: var(--ivory); margin-bottom: 4px;
+    }
+    .col-item-price {
+      font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em;
+    }
+    .col-item-tag {
+      position: absolute; top: 16px; right: 16px;
+      font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--accent); color: var(--bg); padding: 4px 10px;
+    }
+
+    /* =============================================
+       PROCESS
+    ============================================= */
+    #process { background: var(--surface); }
+    .process-inner { max-width: var(--max-w); margin: 0 auto; }
+    .process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 60px; }
+    .process-steps { display: flex; flex-direction: column; gap: 40px; }
+    .process-step {
+      display: flex; gap: 24px; align-items: flex-start;
+      padding-bottom: 40px; border-bottom: 1px solid var(--border);
+    }
+    .process-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: var(--font-serif); font-size: 3rem; font-weight: 300;
+      color: var(--accent); line-height: 1; min-width: 56px;
+    }
+    .step-content {}
+    .step-title {
+      font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory);
+      margin-bottom: 0.5rem;
+    }
+    .step-text { font-size: 0.9rem; color: var(--smoke); line-height: 1.7; }
+    .process-visual {
+      position: relative; aspect-ratio: 4/5;
+      overflow: hidden;
+    }
+    .process-visual img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.75); }
+    .process-visual-overlay {
+      position: absolute; inset: 0;
+      border: 1px solid var(--accent); margin: 20px;
+      pointer-events: none;
+    }
+
+    /* =============================================
+       HERITAGE
+    ============================================= */
+    #heritage { background: var(--bg); }
+    .heritage-inner { max-width: var(--max-w); margin: 0 auto; }
+    .heritage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .heritage-visual { position: relative; }
+    .heritage-img-main { aspect-ratio: 4/5; overflow: hidden; }
+    .heritage-img-main img { filter: brightness(0.8); }
+    .heritage-img-accent {
+      position: absolute; bottom: -40px; right: -40px;
+      width: 240px; aspect-ratio: 3/4; overflow: hidden;
+      border: 4px solid var(--bg);
+    }
+    .heritage-img-accent img { filter: brightness(0.75); }
+    .heritage-content { padding: 40px 0; }
+    .heritage-stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 50px; }
+    .heritage-stat {}
+    .heritage-stat-num {
+      font-family: var(--font-serif); font-size: 3.5rem; font-weight: 300;
+      color: var(--accent); line-height: 1;
+    }
+    .heritage-stat-label { font-size: 0.8rem; color: var(--smoke); letter-spacing: 0.1em; margin-top: 6px; }
+
+    /* =============================================
+       ATELIER
+    ============================================= */
+    #atelier { background: var(--surface); }
+    .atelier-inner { max-width: var(--max-w); margin: 0 auto; }
+    .atelier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-content {}
+    .atelier-img { aspect-ratio: 5/4; overflow: hidden; }
+    .atelier-img img { filter: brightness(0.8); transition: transform 0.7s; }
+    .atelier-img:hover img { transform: scale(1.04); }
+    .atelier-features { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+    .atelier-feature { padding: 24px; border: 1px solid var(--border); }
+    .atelier-feature-icon { font-size: 1.4rem; color: var(--accent); margin-bottom: 0.75rem; }
+    .atelier-feature-title { font-family: var(--font-serif); font-size: 0.95rem; color: var(--ivory); margin-bottom: 6px; }
+    .atelier-feature-text { font-size: 0.82rem; color: var(--smoke); }
+
+    /* =============================================
+       TESTIMONIALS
+    ============================================= */
+    #testimonials { background: var(--bg); }
+    .testimonials-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+    .testimonials-swiper { margin-top: 60px; }
+    .testimonial-card { padding: 60px 40px; }
+    .testimonial-quote {
+      font-family: var(--font-serif); font-size: clamp(1.3rem, 2.5vw, 2rem);
+      font-style: italic; font-weight: 300; color: var(--ivory);
+      line-height: 1.6; margin-bottom: 2rem;
+    }
+    .testimonial-author { font-size: 0.8rem; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; }
+    .swiper-pagination-bullet { background: var(--muted); }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* =============================================
+       PRESS
+    ============================================= */
+    #press { background: var(--surface); }
+    .press-inner { max-width: var(--max-w); margin: 0 auto; }
+    .press-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .press-card {
+      background: var(--surface2); padding: 40px 30px;
+      text-align: center; border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .press-card:hover { border-color: var(--accent); }
+    .press-name { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 1rem; }
+    .press-quote { font-size: 0.85rem; color: var(--smoke); font-style: italic; line-height: 1.7; }
+
+    /* =============================================
+       CTA BAND
+    ============================================= */
+    #cta-band {
+      background: var(--accent-dark); padding: 100px 80px;
+      text-align: center;
+    }
+    .cta-band-title {
+      font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 4rem);
+      font-weight: 300; color: var(--ivory); margin-bottom: 1.5rem;
+    }
+    .cta-band-subtitle { font-size: 1rem; color: rgba(234,224,248,0.7); margin-bottom: 3rem; }
+    .cta-band-actions { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      background: var(--bg);
+      padding: 80px; border-top: 1px solid var(--border);
+    }
+    .footer-inner { max-width: var(--max-w); margin: 0 auto; }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px; padding-bottom: 60px; border-bottom: 1px solid var(--border);
+    }
+    .footer-col {}
+    .footer-brand {
+      font-family: var(--font-serif); font-size: 1.8rem; font-weight: 300;
+      letter-spacing: 0.3em; color: var(--ivory); margin-bottom: 1rem;
+    }
+    .footer-tagline { font-size: 0.85rem; color: var(--smoke); line-height: 1.7; max-width: 280px; }
+    .footer-col-title {
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.5rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul li a { font-size: 0.85rem; color: var(--smoke); transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--accent-light); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 30px;
+    }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+    .footer-socials { display: flex; gap: 20px; }
+    .footer-social-link { font-size: 0.75rem; letter-spacing: 0.1em; color: var(--smoke); transition: color 0.3s; }
+    .footer-social-link:hover { color: var(--accent); }
+
+    /* =============================================
+       SCROLL INDICATOR (second instance)
+    ============================================= */
+    .scroll-indicator-bar {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: var(--accent); z-index: 101;
+      width: 0%; transition: width 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-indicator-bar" id="scrollBar"></div>
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="preloader-logo">EXON</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill"></div></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-brand">EXON</div>
+    <div class="nav-links">
+      <a href="#collection">Collection</a>
+      <a href="#process">Process</a>
+      <a href="#heritage">Heritage</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <a href="#collection" class="nav-cta">Commission</a>
+  </nav>
+
+  <!-- Hero: Type G — Scroll-Driven Text Transform -->
+  <section class="hero-text-driven" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow">Est. 2009 · London Forge</div>
+      <div class="hero-word word-1">CELESTIAL</div>
+      <div class="hero-word word-2">FORGE</div>
+      <div class="hero-tagline">Meteorite-born jewelry, forged from the cosmos</div>
+      <div class="hero-cta">
+        <a href="#collection" class="btn-primary">Explore Collection</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">↓</div>
+    <div class="hero-side-text">Scroll to Discover</div>
+  </section>
+
+  <!-- Philosophy -->
+  <section id="philosophy" class="section-pad">
+    <div style="max-width: var(--max-w); margin: 0 auto;">
+      <div class="philosophy-intro">
+        <div class="section-label">Our Foundation</div>
+        <h2 class="section-title">Every Piece Carries the Memory of a Star</h2>
+        <div class="divider" style="margin: 2rem auto;"></div>
+        <p class="section-subtitle" style="margin: 0 auto; text-align: center; max-width: 680px;">
+          We harvest meteorites from the world's most remote crater fields — materials that crossed
+          the void of interstellar space to arrive on Earth. We then work with master metallurgists
+          to transform them into objects of transcendent beauty.
+        </p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="phil-card">
+          <div class="phil-icon">◈</div>
+          <div class="phil-title">Celestial Origins</div>
+          <p class="phil-text">Every meteorite we source is authenticated by gemological and meteoritical experts. We trace the provenance of each specimen to its fall site, cataloguing its cosmic journey.</p>
+        </div>
+        <div class="phil-card">
+          <div class="phil-icon">⬡</div>
+          <div class="phil-title">Master Metallurgy</div>
+          <p class="phil-text">Our forge masters have trained under the finest European metalworking traditions. The pairing of ancient craft with extraterrestrial material yields jewelry unlike anything on Earth.</p>
+        </div>
+        <div class="phil-card">
+          <div class="phil-icon">✦</div>
+          <div class="phil-title">Eternal Signatures</div>
+          <p class="phil-text">Each EXON piece is registered in our permanent archive, complete with its meteorite certificate of authenticity, spectroscopic analysis, and numbered provenance document.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collection -->
+  <section id="collection" class="section-pad">
+    <div class="collection-header">
+      <div>
+        <div class="section-label">Selected Works</div>
+        <h2 class="section-title">The Celestial Collection</h2>
+      </div>
+      <a href="collection.html" class="btn-secondary">All Pieces</a>
+    </div>
+    <div class="collection-grid">
+      <div class="col-item">
+        <img src="images/img-4.webp" alt="Orion Ring" />
+        <div class="col-item-info">
+          <div class="col-item-name">Orion Ring</div>
+          <div class="col-item-price">From £4,800</div>
+        </div>
+        <div class="col-item-tag">New</div>
+      </div>
+      <div class="col-item">
+        <img src="images/img-7.webp" alt="Vega Pendant" />
+        <div class="col-item-info">
+          <div class="col-item-name">Vega Pendant</div>
+          <div class="col-item-price">From £6,200</div>
+        </div>
+      </div>
+      <div class="col-item">
+        <img src="images/img-8.webp" alt="Sirius Cuff" />
+        <div class="col-item-info">
+          <div class="col-item-name">Sirius Cuff</div>
+          <div class="col-item-price">From £8,900</div>
+        </div>
+        <div class="col-item-tag">Exclusive</div>
+      </div>
+      <div class="col-item">
+        <img src="images/img-9.webp" alt="Lyra Earrings" />
+        <div class="col-item-info">
+          <div class="col-item-name">Lyra Earrings</div>
+          <div class="col-item-price">From £3,400</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section id="process" class="section-pad">
+    <div class="process-inner">
+      <div style="text-align: center; margin-bottom: 60px;">
+        <div class="section-label">How We Work</div>
+        <h2 class="section-title">From Cosmos to Craft</h2>
+      </div>
+      <div class="process-grid">
+        <div class="process-steps">
+          <div class="process-step">
+            <div class="step-num">01</div>
+            <div class="step-content">
+              <div class="step-title">Meteorite Sourcing</div>
+              <p class="step-text">We work with certified meteorite hunters and scientific institutions worldwide to ethically source authenticated specimens — from Gibeon iron meteorites to pallasite olivine.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <div class="step-num">02</div>
+            <div class="step-content">
+              <div class="step-title">Gemological Analysis</div>
+              <p class="step-text">Each specimen undergoes rigorous testing — spectroscopic analysis, Widmanstätten pattern examination, and chemical composition profiling before a single cut is made.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <div class="step-num">03</div>
+            <div class="step-content">
+              <div class="step-title">Forge & Fabrication</div>
+              <p class="step-text">Working in our London atelier, our master smiths integrate the meteorite with 18k gold, platinum, or blackened silver using techniques refined over two decades.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <div class="step-num">04</div>
+            <div class="step-content">
+              <div class="step-title">Archive & Certification</div>
+              <p class="step-text">Your piece is permanently numbered, photographed, and registered in the EXON archive. A bound provenance document accompanies every commission.</p>
+            </div>
+          </div>
+        </div>
+        <div class="process-visual">
+          <img src="images/img-6.webp" alt="Forge Process" />
+          <div class="process-visual-overlay"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage -->
+  <section id="heritage" class="section-pad">
+    <div class="heritage-inner">
+      <div class="heritage-grid">
+        <div class="heritage-visual">
+          <div class="heritage-img-main">
+            <img src="images/img-11.webp" alt="EXON Heritage" />
+          </div>
+          <div class="heritage-img-accent">
+            <img src="images/img-12.webp" alt="Meteorite detail" />
+          </div>
+        </div>
+        <div class="heritage-content">
+          <div class="section-label">Our Story</div>
+          <h2 class="section-title">Fifteen Years at the Intersection of Sky and Earth</h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">
+            EXON was founded in 2009 by metallurgist and astronomer Callum Rowe, whose lifelong
+            obsession with celestial materials led him to the realization that the most extraordinary
+            jewelry on Earth would be made from beyond it. Our London forge has since created over
+            3,000 singular pieces for collectors on six continents.
+          </p>
+          <div class="heritage-stat-row">
+            <div class="heritage-stat">
+              <div class="heritage-stat-num">3,000+</div>
+              <div class="heritage-stat-label">Pieces Archived</div>
+            </div>
+            <div class="heritage-stat">
+              <div class="heritage-stat-num">48</div>
+              <div class="heritage-stat-label">Meteorite Varieties</div>
+            </div>
+            <div class="heritage-stat">
+              <div class="heritage-stat-num">6</div>
+              <div class="heritage-stat-label">Continents Collected</div>
+            </div>
+            <div class="heritage-stat">
+              <div class="heritage-stat-num">15</div>
+              <div class="heritage-stat-label">Years of Craft</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Atelier -->
+  <section id="atelier" class="section-pad">
+    <div class="atelier-inner">
+      <div class="atelier-grid">
+        <div class="atelier-content">
+          <div class="section-label">The Studio</div>
+          <h2 class="section-title">A Forge Built for the Extraordinary</h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">
+            Our Bermondsey atelier houses a complete gemological laboratory alongside traditional
+            forging hearths. Every tool, technique, and material choice is made with a single
+            purpose: to honor the celestial matter we are privileged to work with.
+          </p>
+          <div class="atelier-features">
+            <div class="atelier-feature">
+              <div class="atelier-feature-icon">⚡</div>
+              <div class="atelier-feature-title">Plasma Arc Furnace</div>
+              <p class="atelier-feature-text">For precision alloy fusion at temperatures exceeding 3,000°C.</p>
+            </div>
+            <div class="atelier-feature">
+              <div class="atelier-feature-icon">◎</div>
+              <div class="atelier-feature-title">XRF Analysis Suite</div>
+              <p class="atelier-feature-text">In-house spectroscopic verification of all materials.</p>
+            </div>
+            <div class="atelier-feature">
+              <div class="atelier-feature-icon">◈</div>
+              <div class="atelier-feature-title">Hand Engraving</div>
+              <p class="atelier-feature-text">Traditional engraving by BAFRA-trained craftspeople.</p>
+            </div>
+            <div class="atelier-feature">
+              <div class="atelier-feature-icon">⬡</div>
+              <div class="atelier-feature-title">Archive Vault</div>
+              <p class="atelier-feature-text">Climate-controlled permanent archive of every piece.</p>
+            </div>
+          </div>
+        </div>
+        <div class="atelier-img">
+          <img src="images/img-13.webp" alt="EXON Atelier" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonials" class="section-pad">
+    <div class="testimonials-inner">
+      <div class="section-label" style="text-align: center;">Collector Voices</div>
+      <h2 class="section-title" style="text-align: center;">Worn by Those Who Know</h2>
+      <div class="swiper testimonials-swiper" id="testimonialsSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p class="testimonial-quote">"Wearing an EXON piece is wearing a fragment of the universe. There is nothing else like it — not in price, not in concept, not in the profound weight of what it represents."</p>
+              <div class="testimonial-author">— Lady H. Ashworth, Private Collector, Geneva</div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p class="testimonial-quote">"I commissioned a ring for my wife's 50th year. Callum spent two hours on the phone with me, explaining the specific meteorite fall and what it meant. That conversation alone was worth everything."</p>
+              <div class="testimonial-author">— M. Thornton, Investment Director, Hong Kong</div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <p class="testimonial-quote">"The Vega pendant I received is accompanied by more documentation than most artworks I own. EXON treats meteoritical jewelry as what it is: a scientific and artistic marvel."</p>
+              <div class="testimonial-author">— Dr. A. Lindqvist, Astrophysicist & Collector, Stockholm</div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Press -->
+  <section id="press" class="section-pad">
+    <div class="press-inner">
+      <div class="section-label" style="text-align: center;">Press</div>
+      <h2 class="section-title" style="text-align: center;">As Seen In</h2>
+      <div class="press-grid">
+        <div class="press-card">
+          <div class="press-name">The Financial Times</div>
+          <p class="press-quote">"EXON occupies a category entirely its own — not watch, not gem, not metal art, but something altogether more extraordinary."</p>
+        </div>
+        <div class="press-card">
+          <div class="press-name">Wallpaper*</div>
+          <p class="press-quote">"Callum Rowe has achieved the genuinely impossible: making an object that is simultaneously a scientific artifact and a work of art."</p>
+        </div>
+        <div class="press-card">
+          <div class="press-name">Vogue Jewellery</div>
+          <p class="press-quote">"The Celestial Forge collection for autumn represents the highest ambition in contemporary fine jewelry — and the most convincing execution."</p>
+        </div>
+        <div class="press-card">
+          <div class="press-name">Apollo Magazine</div>
+          <p class="press-quote">"A genuine artistic phenomenon. EXON's archive pieces deserve a place in every serious collection of contemporary craft."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <section id="cta-band">
+    <div class="cta-band-title">Commission Your Celestial Piece</div>
+    <p class="cta-band-subtitle">Each EXON commission begins with a private consultation. Production takes 10–18 weeks.</p>
+    <div class="cta-band-actions">
+      <a href="contact.html" class="btn-primary" style="background: var(--ivory); color: var(--accent-dark);">Begin a Commission</a>
+      <a href="collection.html" class="btn-secondary" style="border-color: rgba(234,224,248,0.4); color: var(--ivory);">View All Works</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-col">
+          <div class="footer-brand">EXON</div>
+          <p class="footer-tagline">Meteorite & celestial metals fine jewelry. Forged in London, worn across the cosmos.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Collection</div>
+          <ul>
+            <li><a href="collection.html">All Pieces</a></li>
+            <li><a href="collection.html#rings">Rings</a></li>
+            <li><a href="collection.html#pendants">Pendants</a></li>
+            <li><a href="collection.html#cuffs">Cuffs</a></li>
+            <li><a href="collection.html#bespoke">Bespoke</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Forge</div>
+          <ul>
+            <li><a href="about.html">About EXON</a></li>
+            <li><a href="process.html">Our Process</a></li>
+            <li><a href="about.html#atelier">The Atelier</a></li>
+            <li><a href="about.html#archive">Archive</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Connect</div>
+          <ul>
+            <li><a href="contact.html">Commission</a></li>
+            <li><a href="contact.html#consultation">Consultation</a></li>
+            <li><a href="contact.html#care">Care Guide</a></li>
+            <li><a href="contact.html#press">Press</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2026 EXON Celestial Forge. All rights reserved.</span>
+        <div class="footer-socials">
+          <a href="#" class="footer-social-link">Instagram</a>
+          <a href="#" class="footer-social-link">Pinterest</a>
+          <a href="#" class="footer-social-link">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // =============================================
+    // SplitText Polyfill
+    // =============================================
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return; this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('chars')) {
+          el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(el.querySelectorAll('.char'));
+        } else if (type.includes('words')) {
+          el.innerHTML = original.split(/\s+/).filter(Boolean).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() { if (this._el) { const orig = this._el.getAttribute('data-split-orig'); if (orig) this._el.textContent = orig; } }
+    }
+
+    // =============================================
+    // Preloader
+    // =============================================
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('preloader').classList.add('hidden');
+        initAnimations();
+        // Show scroll hint in two places
+        document.querySelector('.hero-scroll-hint').style.opacity = '1';
+        document.querySelector('.hero-side-text').style.opacity = '1';
+      }, 2200);
+    });
+
+    // Scroll progress bar
+    window.addEventListener('scroll', () => {
+      const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      document.getElementById('scrollBar').style.width = scrolled + '%';
+    });
+
+    // Nav scroll state
+    window.addEventListener('scroll', () => {
+      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // =============================================
+    // preHideBelowFold
+    // =============================================
+    ;(function preHideBelowFold() {
+      const VH = window.innerHeight;
+      const selectors = ['.stats-item','.stat-item','.phil-card','.philosophy-card','.collection-item','.col-item','.grid-item','.atelier-img','.atelier-content','.process-step','.step','.timeline-step','.milestone','.heritage-item','.press-card','.swiper-slide','.form-group','.footer-col','[data-animate]'];
+      document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+        if (el.getBoundingClientRect().top > VH * 0.95) {
+          el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; el.style.willChange = 'opacity, transform';
+        }
+      });
+    })();
+
+    // =============================================
+    // GSAP Animations
+    // =============================================
+    function initAnimations() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero Type G: Scroll-driven text transform
+      gsap.to('.word-1', {
+        x: '-30vw', scale: 0.4, opacity: 0.2,
+        scrollTrigger: {
+          trigger: '.hero-text-driven',
+          start: 'top top',
+          end: '40% top',
+          scrub: 1
+        }
+      });
+      gsap.to('.word-2', {
+        x: '30vw', scale: 0.4, opacity: 0.2,
+        scrollTrigger: {
+          trigger: '.hero-text-driven',
+          start: 'top top',
+          end: '40% top',
+          scrub: 1
+        }
+      });
+      gsap.to('.hero-tagline', {
+        opacity: 0, y: 30,
+        scrollTrigger: {
+          trigger: '.hero-text-driven',
+          start: '10% top',
+          end: '35% top',
+          scrub: 1
+        }
+      });
+
+      // Hero fixed bg: unfix after hero section
+      ScrollTrigger.create({
+        trigger: '.hero-text-driven',
+        start: 'bottom 50%',
+        onEnter: () => {
+          document.querySelector('.hero-bg').style.position = 'absolute';
+          document.querySelector('.hero-overlay').style.position = 'absolute';
+        },
+        onLeaveBack: () => {
+          document.querySelector('.hero-bg').style.position = 'fixed';
+          document.querySelector('.hero-overlay').style.position = 'fixed';
+        }
+      });
+
+      // Philosophy cards — A4 Dramatic
+      gsap.from('.phil-card', {
+        immediateRender: false,
+        y: 40, opacity: 0, duration: 1.2,
+        stagger: 0.15, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#philosophy', start: 'top 80%' }
+      });
+
+      // Collection items
+      gsap.from('.col-item', {
+        immediateRender: false,
+        y: 40, opacity: 0, duration: 1.1,
+        stagger: 0.15, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#collection', start: 'top 75%' }
+      });
+
+      // Process steps
+      gsap.from('.process-step', {
+        immediateRender: false,
+        x: -30, opacity: 0, duration: 1.2,
+        stagger: 0.15, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#process', start: 'top 75%' }
+      });
+      gsap.from('.process-visual', {
+        immediateRender: false,
+        x: 40, opacity: 0, duration: 1.3, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#process', start: 'top 75%' }
+      });
+
+      // Heritage stats
+      gsap.from('.heritage-stat', {
+        immediateRender: false,
+        y: 30, opacity: 0, duration: 1.1,
+        stagger: 0.15, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#heritage', start: 'top 75%' }
+      });
+      gsap.from('.heritage-img-main', {
+        immediateRender: false,
+        x: -40, opacity: 0, duration: 1.3, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#heritage', start: 'top 75%' }
+      });
+
+      // Atelier
+      gsap.from('.atelier-img', {
+        immediateRender: false,
+        x: 40, opacity: 0, duration: 1.3, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#atelier', start: 'top 75%' }
+      });
+      gsap.from('.atelier-feature', {
+        immediateRender: false,
+        y: 30, opacity: 0, duration: 1.1,
+        stagger: 0.12, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#atelier', start: 'top 75%' }
+      });
+
+      // Press cards
+      gsap.from('.press-card', {
+        immediateRender: false,
+        y: 40, opacity: 0, duration: 1.1,
+        stagger: 0.12, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#press', start: 'top 80%' }
+      });
+
+      // Footer cols
+      gsap.from('.footer-col', {
+        immediateRender: false,
+        y: 30, opacity: 0, duration: 1.0,
+        stagger: 0.12, ease: 'power2.inOut',
+        scrollTrigger: { trigger: 'footer', start: 'top 85%' }
+      });
+
+      // Number counter for heritage stats
+      document.querySelectorAll('.heritage-stat-num').forEach(el => {
+        const text = el.textContent.trim();
+        const num = parseFloat(text.replace(/[^0-9.]/g, ''));
+        const suffix = text.replace(/[0-9.]/g, '');
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 80%',
+          once: true,
+          onEnter: () => {
+            gsap.from({ val: 0 }, {
+              val: num, duration: 1.6, ease: 'power2.out',
+              onUpdate: function() {
+                el.textContent = Math.round(this.targets()[0].val) + suffix;
+              }
+            });
+          }
+        });
+      });
+    }
+
+    // Swiper
+    new Swiper('#testimonialsSwiper', {
+      loop: true, autoplay: { delay: 5000 },
+      pagination: { el: '.swiper-pagination', clickable: true }
+    });
+  </script>
+</body>
+</html>

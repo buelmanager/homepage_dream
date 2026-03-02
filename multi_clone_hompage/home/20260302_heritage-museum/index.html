@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The National Heritage Museum — The Past, Preserved for the Future</title>
+  <meta name="description" content="The National Heritage Museum preserves and interprets the nation's cultural artifacts and historical collections, welcoming visitors to explore 5,000 years of civilisation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #181818;
+      --surface: #222222;
+      --surface2: #2A2A2A;
+      --accent: #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark: #808090;
+      --ivory: #EEEEF2;
+      --smoke: #909090;
+      --muted: #606060;
+      --border: #1E1E1E;
+      --font-serif: 'Bodoni Moda', 'Didot', serif;
+      --font-sans: 'Work Sans', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px;
+    }
+    .preloader-logo { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; text-align: center; }
+    .preloader-svg { width: 60px; height: 60px; }
+    .preloader-circle { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 160; stroke-dashoffset: 160; animation: drawCircle 1.6s ease forwards; }
+    @keyframes drawCircle { to { stroke-dashoffset: 0; } }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator {
+      position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0; transition: opacity 0.6s;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .si-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .si-line-wrap { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .si-fill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: var(--accent); transition: height 0.1s; }
+    .si-label { writing-mode: vertical-rl; font-family: var(--font-sans); font-size: 0.62rem; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 60px; transition: background 0.4s;
+    }
+    nav.scrolled { background: rgba(24,24,24,0.9); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); text-decoration: none; letter-spacing: 0.08em; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-family: var(--font-sans); font-size: 0.82rem; color: var(--smoke); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 10px 24px; text-decoration: none; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* HERO TYPE G — SCROLL-DRIVEN TEXT TRANSFORM */
+    .hero-text-driven { min-height: 200vh; position: relative; }
+    .hero-bg {
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
+      background-image: url('images/img-2.webp');
+      background-size: cover; background-position: center;
+    }
+    .hero-bg-overlay {
+      position: absolute; inset: 0;
+      background: rgba(24,24,24,0.70);
+    }
+    .hero-text-wrap {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center; padding: 0 80px; overflow: hidden;
+    }
+    .hero-word { font-family: var(--font-serif); font-size: clamp(5rem, 14vw, 13rem); line-height: 0.85; font-weight: 700; text-transform: uppercase; color: var(--ivory); will-change: transform; }
+    .hero-tagline { font-family: var(--font-sans); color: var(--smoke); letter-spacing: 0.15em; text-transform: uppercase; font-size: 0.88rem; margin: 28px 0 44px; }
+    .btn-primary { display: inline-block; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 14px 36px; text-decoration: none; transition: background 0.3s; align-self: flex-start; }
+    .btn-primary:hover { background: var(--accent-light); }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .strip-stat { text-align: center; }
+    .strip-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); display: block; }
+    .strip-label { font-family: var(--font-sans); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--smoke); margin-top: 6px; display: block; }
+
+    /* SECTIONS */
+    section { padding: 100px 80px; }
+    .section-eyebrow { font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 3vw, 3rem); color: var(--ivory); font-weight: 700; line-height: 1.12; margin-bottom: 20px; }
+    .section-sub { font-family: var(--font-sans); font-size: 0.95rem; color: var(--smoke); line-height: 1.8; max-width: 560px; }
+
+    /* PHILOSOPHY */
+    .philosophy { background: var(--bg); }
+    .philosophy-header { text-align: center; margin-bottom: 64px; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+    .phil-card { background: var(--bg); padding: 52px 36px; }
+    .phil-icon { font-size: 1.8rem; color: var(--accent); margin-bottom: 24px; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-bottom: 16px; }
+    .phil-text { font-family: var(--font-sans); font-size: 0.88rem; color: var(--smoke); line-height: 1.8; }
+
+    /* COLLECTIONS */
+    .collections { background: var(--surface); overflow: visible; }
+    .collections-header { margin-bottom: 56px; }
+    .collections-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; overflow: visible; }
+    .collection-card { position: relative; overflow: hidden; cursor: pointer; }
+    .coll-img { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; transition: transform 0.8s ease; filter: brightness(0.85); }
+    .collection-card:hover .coll-img { transform: scale(1.05); }
+    .coll-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(24,24,24,0.92) 0%, transparent 55%);
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 36px;
+    }
+    .coll-period { font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .coll-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); font-style: italic; margin-bottom: 8px; }
+    .coll-count { font-family: var(--font-sans); font-size: 0.78rem; color: var(--smoke); }
+
+    /* ABOUT */
+    .about-section { background: var(--bg); }
+    .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-img-wrap { position: relative; }
+    .about-img { width: 100%; aspect-ratio: 3/4; background-size: cover; background-position: center; filter: brightness(0.9); }
+    .about-img-accent { position: absolute; bottom: -24px; right: -24px; width: 52%; aspect-ratio: 1; background-size: cover; background-position: center; border: 4px solid var(--bg); }
+    .about-title { font-family: var(--font-serif); font-size: 2.2rem; color: var(--ivory); margin-bottom: 24px; line-height: 1.2; }
+    .about-body { font-family: var(--font-sans); font-size: 0.93rem; color: var(--smoke); line-height: 1.8; margin-bottom: 20px; }
+    .about-link { font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; }
+
+    /* PROCESS TIMELINE */
+    .process { background: var(--surface); }
+    .process-header { text-align: center; margin-bottom: 64px; }
+    .process-timeline { display: flex; gap: 0; }
+    .process-step { flex: 1; padding: 40px 28px; border-left: 1px solid var(--border); }
+    .process-step:first-child { border-left: none; }
+    .step-num { font-family: var(--font-serif); font-size: 3rem; color: var(--border); line-height: 1; margin-bottom: 20px; }
+    .step-accent { width: 28px; height: 1px; background: var(--accent); margin-bottom: 20px; }
+    .step-title { font-family: var(--font-serif); font-size: 1.05rem; color: var(--ivory); margin-bottom: 12px; }
+    .step-text { font-family: var(--font-sans); font-size: 0.83rem; color: var(--smoke); line-height: 1.75; }
+
+    /* MILESTONES */
+    .milestones { background: var(--bg); }
+    .milestones-header { text-align: center; margin-bottom: 64px; }
+    .milestone-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); }
+    .milestone-item { background: var(--bg); padding: 52px 28px; }
+    .milestone-year { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); display: block; margin-bottom: 16px; font-style: italic; }
+    .milestone-title { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 12px; }
+    .milestone-text { font-family: var(--font-sans); font-size: 0.82rem; color: var(--smoke); line-height: 1.7; }
+
+    /* PRESS */
+    .press { background: var(--surface); }
+    .press-header { text-align: center; margin-bottom: 56px; }
+    .swiper-press .swiper-slide { padding: 0 16px; }
+    .review-card { background: var(--surface2); padding: 44px 36px; border-top: 1px solid var(--accent); }
+    .review-quote { font-family: var(--font-serif); font-size: 1.05rem; color: var(--ivory); line-height: 1.8; font-style: italic; margin-bottom: 28px; }
+    .review-source { font-family: var(--font-sans); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); }
+    .review-name { font-family: var(--font-sans); font-size: 0.82rem; color: var(--smoke); margin-top: 4px; }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* CONTACT */
+    .contact-section { background: var(--bg); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .contact-title { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 24px; }
+    .contact-body { font-family: var(--font-sans); font-size: 0.93rem; color: var(--smoke); line-height: 1.8; margin-bottom: 32px; }
+    .c-detail-item { font-family: var(--font-sans); font-size: 0.87rem; color: var(--smoke); margin-bottom: 10px; }
+    .c-detail-item span { color: var(--accent); font-weight: 500; margin-right: 8px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      color: var(--ivory); font-family: var(--font-sans); font-size: 0.88rem;
+      padding: 13px 16px; outline: none; transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea { height: 110px; resize: vertical; }
+    .form-group select option { background: var(--surface); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .btn-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 16px; cursor: pointer; transition: background 0.3s; }
+    .btn-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 80px 40px; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 48px; }
+    .footer-logo { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 16px; }
+    .footer-tagline { font-family: var(--font-sans); font-size: 0.82rem; color: var(--smoke); line-height: 1.7; max-width: 280px; }
+    .footer-col h4 { font-family: var(--font-sans); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-family: var(--font-sans); font-size: 0.83rem; color: var(--smoke); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--ivory); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 24px; }
+    .footer-copy { font-family: var(--font-sans); font-size: 0.75rem; color: var(--muted); }
+    .footer-links-bottom { display: flex; gap: 24px; }
+    .footer-links-bottom a { font-family: var(--font-sans); font-size: 0.75rem; color: var(--muted); text-decoration: none; }
+
+    @media (max-width: 900px) {
+      nav { padding: 16px 32px; }
+      .nav-links { display: none; }
+      .hero-text-wrap { padding: 0 32px; }
+      .hero-word { font-size: 4rem; }
+      section { padding: 60px 32px; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 40px 32px; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collections-grid { grid-template-columns: 1fr; }
+      .about-inner { grid-template-columns: 1fr; }
+      .process-timeline { flex-direction: column; }
+      .milestone-list { grid-template-columns: repeat(2, 1fr); }
+      .contact-inner { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <svg class="preloader-svg" viewBox="0 0 60 60">
+    <circle class="preloader-circle" cx="30" cy="30" r="26"/>
+  </svg>
+  <div class="preloader-logo">The National Heritage Museum</div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div id="scroll-indicator">
+  <div class="si-dot"></div>
+  <div class="si-line-wrap"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-label">Scroll</div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Heritage Museum</a>
+  <ul class="nav-links">
+    <li><a href="collection.html">Collections</a></li>
+    <li><a href="process.html">Research</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Visit</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Plan Visit</a>
+</nav>
+
+<!-- HERO TYPE G — SCROLL-DRIVEN -->
+<section class="hero-text-driven" id="hero">
+  <div class="hero-bg">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-word word-1">HISTORY</div>
+      <div class="hero-word word-2">LIVES</div>
+      <p class="hero-tagline">The Past, Preserved for the Future</p>
+      <a href="collection.html" class="btn-primary">Explore Collections</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="strip-stat">
+    <span class="strip-num counter" data-target="2">0</span><span class="strip-num" style="font-size:1.8rem; color:var(--accent);">M+</span>
+    <span class="strip-label">Artefacts Held</span>
+  </div>
+  <div class="strip-stat">
+    <span class="strip-num counter" data-target="160">0</span>
+    <span class="strip-label">Years of History</span>
+  </div>
+  <div class="strip-stat">
+    <span class="strip-num counter" data-target="38">0</span>
+    <span class="strip-label">Permanent Galleries</span>
+  </div>
+  <div class="strip-stat">
+    <span class="strip-num counter" data-target="3">0</span><span class="strip-num" style="font-size:1.8rem; color:var(--accent);">.4M</span>
+    <span class="strip-label">Annual Visitors</span>
+  </div>
+</div>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy" id="philosophy">
+  <div class="philosophy-header">
+    <div class="section-eyebrow">Our Purpose</div>
+    <h2 class="section-title">Why We Preserve</h2>
+    <p class="section-sub" style="margin: 0 auto; text-align: center;">Every artefact is a witness. Every object carries within it the story of a life, an era, a civilisation. We are the custodians of that testimony.</p>
+  </div>
+  <div class="philosophy-grid">
+    <div class="phil-card">
+      <div class="phil-icon">◈</div>
+      <h3 class="phil-title">Preservation</h3>
+      <p class="phil-text">We employ the world's most advanced conservation science to stabilise, restore, and safeguard objects that might otherwise be lost forever — ensuring they survive for generations to come.</p>
+    </div>
+    <div class="phil-card">
+      <div class="phil-icon">◉</div>
+      <h3 class="phil-title">Interpretation</h3>
+      <p class="phil-text">Objects do not speak for themselves. Our curators, scholars, and educators translate the evidence of the past into living stories that resonate with visitors from every background.</p>
+    </div>
+    <div class="phil-card">
+      <div class="phil-icon">◌</div>
+      <h3 class="phil-title">Access</h3>
+      <p class="phil-text">The national heritage belongs to everyone. Free admission to our permanent collection is a founding principle — history is a public right, not a privilege reserved for the few.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTIONS GRID -->
+<section class="collections" id="collections">
+  <div class="collections-header">
+    <div class="section-eyebrow">Permanent Collection</div>
+    <h2 class="section-title">Five Thousand Years of Civilisation</h2>
+  </div>
+  <div class="collections-grid">
+    <div class="collection-card">
+      <div class="coll-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="coll-overlay">
+        <div class="coll-period">3000 BCE — 500 CE</div>
+        <div class="coll-title">Ancient Worlds</div>
+        <div class="coll-count">14 galleries · 40,000 objects</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <div class="coll-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="coll-overlay">
+        <div class="coll-period">500 — 1500 CE</div>
+        <div class="coll-title">Medieval Kingdoms</div>
+        <div class="coll-count">8 galleries · 28,000 objects</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <div class="coll-img" style="background-image: url('images/img-3.webp')"></div>
+      <div class="coll-overlay">
+        <div class="coll-period">1500 — 1900 CE</div>
+        <div class="coll-title">Age of Empires</div>
+        <div class="coll-count">10 galleries · 35,000 objects</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <div class="coll-img" style="background-image: url('images/img-4.webp')"></div>
+      <div class="coll-overlay">
+        <div class="coll-period">1900 — Present</div>
+        <div class="coll-title">The Modern Era</div>
+        <div class="coll-count">6 galleries · 18,000 objects</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section class="about-section" id="about">
+  <div class="about-inner">
+    <div class="about-img-wrap">
+      <div class="about-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="about-img-accent" style="background-image: url('images/img-2.webp')"></div>
+    </div>
+    <div>
+      <div class="section-eyebrow">Our Story</div>
+      <h2 class="about-title">160 Years in the Service of Memory</h2>
+      <p class="about-body">Founded by Royal Charter in 1864, The National Heritage Museum began as a repository of archaeological finds from the first great age of scientific excavation. Over 160 years, it has grown into one of the world's great encyclopaedic museums — home to more than two million objects spanning 5,000 years of human civilisation.</p>
+      <p class="about-body">Our mission has never changed: to preserve the artefacts of the past so that every generation may encounter history face to face. Today we receive 3.4 million visitors annually, and our digital collection reaches millions more worldwide.</p>
+      <a href="about.html" class="about-link">Our History</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS / RESEARCH TIMELINE -->
+<section class="process" id="research">
+  <div class="process-header">
+    <div class="section-eyebrow">Conservation Science</div>
+    <h2 class="section-title">From Discovery to Display</h2>
+  </div>
+  <div class="process-timeline">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Acquisition</h3>
+      <p class="step-text">Objects enter the collection through donation, bequest, purchase, or transfer. Each acquisition is rigorously assessed for provenance, legal title, and cultural significance.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Analysis</h3>
+      <p class="step-text">Advanced imaging, isotopic analysis, and material science techniques reveal the age, origin, and composition of each object — building the evidence base for interpretation.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Conservation</h3>
+      <p class="step-text">Our conservation studios stabilise fragile objects and arrest deterioration, using reversible treatments that protect artefacts while preserving the integrity of the original material.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">04</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Research</h3>
+      <p class="step-text">Curators and visiting scholars conduct original research, contributing new knowledge to the academic record and enriching the stories we tell to our visitors.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">05</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Display</h3>
+      <p class="step-text">Finally, objects are installed in purpose-designed gallery environments that control light, humidity, and temperature — ensuring optimal preservation and visitor experience simultaneously.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MILESTONES -->
+<section class="milestones" id="milestones">
+  <div class="milestones-header">
+    <div class="section-eyebrow">Timeline</div>
+    <h2 class="section-title">160 Years of Heritage</h2>
+  </div>
+  <div class="milestone-list">
+    <div class="milestone-item">
+      <span class="milestone-year">1864</span>
+      <h3 class="milestone-title">Royal Foundation</h3>
+      <p class="milestone-text">Founded by Royal Charter as the National Repository of Antiquities, with an initial collection of 4,200 objects from early archaeological surveys.</p>
+    </div>
+    <div class="milestone-item">
+      <span class="milestone-year">1906</span>
+      <h3 class="milestone-title">The Great Hall Opens</h3>
+      <p class="milestone-text">The iconic Great Hall is inaugurated, providing the first purpose-built galleries designed to display ancient artefacts in their historical context.</p>
+    </div>
+    <div class="milestone-item">
+      <span class="milestone-year">1971</span>
+      <h3 class="milestone-title">Free Admission</h3>
+      <p class="milestone-text">A landmark decision: the Museum introduces free permanent collection admission, becoming the first national institution to guarantee universal access to heritage.</p>
+    </div>
+    <div class="milestone-item">
+      <span class="milestone-year">2018</span>
+      <h3 class="milestone-title">Digital Collection Launch</h3>
+      <p class="milestone-text">The complete collection catalogue goes online, providing free public access to high-resolution images and detailed records of all 2 million objects.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="press" id="press">
+  <div class="press-header">
+    <div class="section-eyebrow">Critical Reception</div>
+    <h2 class="section-title">Voices on Heritage</h2>
+  </div>
+  <div class="swiper swiper-press">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The National Heritage Museum is not merely a repository of the past — it is an argument for why the past matters. Its collections are unmatched; its scholarship, exemplary."</p>
+          <div class="review-source">The Journal of Cultural Heritage</div>
+          <div class="review-name">Professor Alistair Fairweather</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"Walking through the ancient worlds galleries is one of the most extraordinary experiences available to any museum-goer on earth. Time collapses; history becomes tangible."</p>
+          <div class="review-source">The Art Newspaper</div>
+          <div class="review-name">Rosalind Chu, Senior Correspondent</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"A model institution. The combination of world-class conservation science, rigorous scholarship, and genuine public accessibility is almost unique among museums of this scale."</p>
+          <div class="review-source">Museum Studies Review</div>
+          <div class="review-name">Dr. Emmanuel Asante</div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination" style="margin-top: 32px; position: relative;"></div>
+  </div>
+</section>
+
+<!-- CONTACT FORM -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div>
+      <div class="section-eyebrow">Plan Your Visit</div>
+      <h2 class="contact-title">Come Face to Face with History</h2>
+      <p class="contact-body">Permanent collection admission is free. Special exhibitions require a ticket. We are open daily, with extended hours on Fridays.</p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="c-detail-item"><span>Address</span>Great Court Square, Museum Quarter</div>
+        <div class="c-detail-item"><span>Open</span>Daily 10:00 — 18:00, Fri until 20:30</div>
+        <div class="c-detail-item"><span>Admission</span>Free (permanent collection)</div>
+        <div class="c-detail-item"><span>Phone</span>+1 (555) 300-0100</div>
+        <div class="c-detail-item"><span>Email</span>info@heritagemuseum.org</div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" placeholder="Jane">
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" placeholder="Smith">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="jane@example.com">
+      </div>
+      <div class="form-group">
+        <label>Enquiry</label>
+        <select>
+          <option>General Visit</option>
+          <option>Group Booking</option>
+          <option>School Visit</option>
+          <option>Research Access</option>
+          <option>Press & Media</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="How can we help?"></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Send Enquiry</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">The National Heritage Museum</div>
+      <p class="footer-tagline">The Past, Preserved for the Future. Free admission to the permanent collection. Open daily.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Discover</h4>
+      <ul>
+        <li><a href="collection.html">Collections</a></li>
+        <li><a href="#">Exhibitions</a></li>
+        <li><a href="#">Online Collection</a></li>
+        <li><a href="#">Audio Guides</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="process.html">Research</a></li>
+        <li><a href="#">School Visits</a></li>
+        <li><a href="#">Publications</a></li>
+        <li><a href="#">Lectures</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Membership</a></li>
+        <li><a href="#">Donate</a></li>
+        <li><a href="#">Corporate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2026 The National Heritage Museum. A National Institution.</div>
+    <div class="footer-links-bottom">
+      <a href="#">Privacy</a>
+      <a href="#">Accessibility</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span');
+      wSpan.className = 'split-word'; wSpan.style.cssText = 'display:inline-block;';
+      if (type.includes('chars')) {
+        [...word].forEach(ch => {
+          const c = document.createElement('span');
+          c.className = 'split-char'; c.style.display = 'inline-block'; c.textContent = ch;
+          wSpan.appendChild(c); this.chars.push(c);
+        });
+      } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+// PRELOADER
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    gsap.to('#preloader', { opacity: 0, duration: 0.9, ease: 'power2.out', onComplete: () => {
+      document.getElementById('preloader').style.display = 'none';
+      showScrollIndicator();
+      initHeroAnim();
+    }});
+  }, 1400);
+});
+
+function showScrollIndicator() {
+  document.getElementById('scroll-indicator').classList.add('visible');
+}
+setTimeout(showScrollIndicator, 4000);
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  document.getElementById('si-fill').style.height = (scrolled * 100) + '%';
+});
+
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 80);
+});
+
+function initHeroAnim() {
+  gsap.from('.hero-tagline', { opacity: 0, y: 16, duration: 1.1, ease: 'power2.out', immediateRender: false, delay: 0.4 });
+  gsap.from('.btn-primary', { opacity: 0, y: 16, duration: 1.1, ease: 'power2.out', immediateRender: false, delay: 0.7 });
+}
+
+// HERO SCROLL-DRIVEN
+gsap.to('.word-1', { x: '-25vw', scale: 0.5, opacity: 0.12, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 } });
+gsap.to('.word-2', { x: '25vw', scale: 0.5, opacity: 0.12, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 } });
+gsap.to('.hero-tagline', { opacity: 0, scrollTrigger: { trigger: '.hero-text-driven', start: '20% top', end: '50% top', scrub: 1 } });
+gsap.to('.btn-primary', { opacity: 0, scrollTrigger: { trigger: '.hero-text-driven', start: '20% top', end: '50% top', scrub: 1 } });
+
+// STRIP COUNTERS
+document.querySelectorAll('.counter').forEach(el => {
+  gsap.from(el, { textContent: 0, duration: 2.0, ease: 'power2.out', snap: { textContent: 1 }, immediateRender: false, scrollTrigger: { trigger: el, start: 'top 80%', once: true } });
+});
+
+// SCROLL ANIMATIONS
+gsap.utils.toArray('.phil-card').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, delay: i * 0.15, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+gsap.utils.toArray('.collection-card').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, delay: i * 0.15, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+gsap.from('.about-img-wrap', { opacity: 0, x: -40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, scrollTrigger: { trigger: '.about-section', start: 'top 80%', once: true } });
+gsap.utils.toArray('.process-step').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, delay: i * 0.15, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+gsap.utils.toArray('.milestone-item').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, delay: i * 0.15, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+gsap.utils.toArray('.strip-stat').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, y: 24, duration: 1.2, ease: 'power2.inOut', immediateRender: false, delay: i * 0.15, scrollTrigger: { trigger: '.stats-strip', start: 'top 85%', once: true } });
+});
+
+// SWIPER
+new Swiper('.swiper-press', {
+  slidesPerView: 1, spaceBetween: 24,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1200: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

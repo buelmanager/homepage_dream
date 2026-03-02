@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETHER WIND — Premium Wind Energy Estate</title>
+  <meta name="description" content="Aether Wind designs and develops premium wind energy estates for visionary landowners and institutional investors seeking both yield and landscape distinction.">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:#101420; --surface:#181E2A; --surface2:#1E2438;
+      --accent:#4EE8FF; --accent-light:#8AF3FF; --accent-dark:#22B8CC;
+      --ivory:#DCE8F0; --smoke:#8090A0; --muted:#506070; --border:#1A2234;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 3rem; letter-spacing: 0.5em; color: var(--accent); margin-bottom: 24px; }
+    .preloader-bar { width: 200px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--accent); }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; opacity: 0; transition: opacity 0.6s; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, var(--accent), transparent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; }
+    .scroll-progress { position: fixed; left: 32px; top: 0; width: 1px; height: 0%; background: var(--accent); z-index: 99; }
+
+    /* NAVBAR */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+    .navbar.scrolled { background: rgba(16,20,32,0.92); backdrop-filter: blur(16px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0.3em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 28px; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO TYPE E — Grid/Pattern Background */
+    .hero { position: relative; height: 100vh; display: flex; align-items: center; background: var(--bg); overflow: hidden; }
+    canvas.hero-grid-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.2; }
+    .hero-bg-img { position: absolute; inset: 0; background-image: url('images/hero-1.webp'); background-size: cover; background-position: center; filter: brightness(0.2); }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(16,20,32,0.85) 0%, rgba(16,20,32,0.4) 100%); }
+    .hero-content { position: relative; z-index: 3; padding: 0 80px; max-width: 760px; }
+    .hero-eyebrow { font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(4rem, 10vw, 9rem); line-height: 0.9; color: var(--ivory); letter-spacing: 0.05em; margin-bottom: 28px; }
+    .hero-title span { color: var(--accent); }
+    .hero-sub { font-size: 1rem; line-height: 1.8; color: var(--smoke); max-width: 480px; margin-bottom: 40px; }
+    .hero-ctas { display: flex; gap: 20px; }
+    .btn-primary { background: var(--accent); color: var(--bg); padding: 16px 40px; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; transition: background 0.3s; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-ghost { border: 1px solid var(--smoke); color: var(--smoke); padding: 16px 40px; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-corner-accents .corner { position: absolute; width: 60px; height: 60px; border-color: var(--accent); border-style: solid; opacity: 0.6; }
+    .corner.tl { top: 30px; left: 30px; border-width: 2px 0 0 2px; }
+    .corner.tr { top: 30px; right: 30px; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: 30px; left: 30px; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: 30px; right: 30px; border-width: 0 2px 2px 0; }
+
+    /* STATS */
+    .stats-strip { background: var(--surface); padding: 60px; display: grid; grid-template-columns: repeat(4,1fr); gap: 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 4rem; color: var(--accent); display: block; line-height: 1; letter-spacing: 0.02em; }
+    .stat-unit { font-size: 2rem; color: var(--accent-dark); }
+    .stat-label { display: block; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 60px; background: var(--bg); }
+    .section-header { margin-bottom: 72px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); color: var(--ivory); letter-spacing: 0.02em; line-height: 1; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    .philosophy-card { padding: 40px 32px; background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.8rem; letter-spacing: 0.03em; color: var(--ivory); margin-bottom: 14px; }
+    .philosophy-card p { font-size: 0.9rem; line-height: 1.8; color: var(--smoke); }
+
+    /* PROJECTS */
+    .projects { padding: 120px 60px; background: var(--surface); }
+    .projects-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; overflow: visible; margin-top: 60px; }
+    .project-card { position: relative; aspect-ratio: 4/3; overflow: hidden; cursor: pointer; }
+    .project-card:nth-child(2) { transform: translateY(32px); }
+    .project-card:nth-child(4) { transform: translateY(-16px); }
+    .project-img { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.65); transition: transform 0.7s, filter 0.4s; }
+    .project-card:hover .project-img { transform: scale(1.05); filter: brightness(0.85); }
+    .project-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 28px 28px; background: linear-gradient(transparent, rgba(10,14,22,0.95)); }
+    .project-category { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .project-title { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); letter-spacing: 0.03em; }
+    .project-detail { font-size: 0.8rem; color: var(--smoke); margin-top: 6px; }
+
+    /* ATELIER */
+    .atelier { padding: 120px 60px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-image { position: relative; aspect-ratio: 4/5; overflow: hidden; }
+    .atelier-img { width: 100%; height: 100%; background-size: cover; background-position: center; filter: brightness(0.8); transition: transform 0.8s; }
+    .atelier-image:hover .atelier-img { transform: scale(1.04); }
+    .atelier-accent { position: absolute; bottom: -16px; right: -16px; width: 60px; height: 60px; border: 2px solid var(--accent); pointer-events: none; }
+    .atelier-content p { font-size: 1rem; line-height: 1.9; color: var(--smoke); margin-bottom: 20px; }
+    .atelier-stats { display: flex; gap: 40px; margin-top: 40px; }
+    .atelier-stat-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .atelier-stat-value { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); }
+
+    /* PROCESS */
+    .process { padding: 120px 60px; background: var(--surface); }
+    .process-steps { margin-top: 60px; position: relative; }
+    .process-line { position: absolute; left: 24px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 0 0 56px; position: relative; }
+    .process-step-num { width: 48px; height: 48px; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.4rem; color: var(--accent); background: var(--surface); position: relative; z-index: 2; }
+    .process-step-title { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); margin-bottom: 10px; margin-top: 6px; }
+    .process-step-desc { font-size: 0.9rem; line-height: 1.8; color: var(--smoke); }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 60px; background: var(--bg); }
+    .heritage-timeline { margin-top: 60px; }
+    .heritage-item { display: grid; grid-template-columns: 140px 1fr; gap: 40px; padding: 36px 0; border-bottom: 1px solid var(--border); }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); }
+    .heritage-content h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-content p { font-size: 0.9rem; line-height: 1.7; color: var(--smoke); }
+
+    /* PRESS */
+    .press { padding: 120px 60px; background: var(--surface); }
+    .press-swiper { margin-top: 60px; }
+    .press-slide { padding: 48px; background: var(--surface2); border: 1px solid var(--border); }
+    .press-quote { font-size: 1.1rem; font-weight: 300; font-style: italic; line-height: 1.7; color: var(--ivory); margin-bottom: 28px; }
+    .press-source { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .swiper-pagination-bullet { background: var(--smoke); }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* COMMISSION */
+    .commission { padding: 120px 60px; background: var(--bg); }
+    .commission-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .commission-info p { font-size: 1rem; line-height: 1.8; color: var(--smoke); margin-bottom: 28px; }
+    .commission-details { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+    .commission-detail-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .commission-detail-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .commission-detail-value { font-size: 0.9rem; color: var(--ivory); }
+    .commission-form { display: flex; flex-direction: column; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .form-group input, .form-group select, .form-group textarea { background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; resize: none; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-submit { background: var(--accent); color: var(--bg); border: none; padding: 18px 48px; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 60px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.8rem; letter-spacing: 0.2em; color: var(--ivory); margin-bottom: 14px; }
+    .footer-desc { font-size: 0.85rem; line-height: 1.7; color: var(--smoke); }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">AETHER</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="preloader-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">AETHER WIND</a>
+    <ul class="nav-links">
+      <li><a href="about.html">Estate</a></li>
+      <li><a href="projects.html">Developments</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html">Consult</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Enquire</a>
+  </nav>
+
+  <!-- HERO TYPE E — Grid Pattern -->
+  <section class="hero" id="hero">
+    <div class="hero-bg-img"></div>
+    <canvas class="hero-grid-canvas" id="heroCanvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-corner-accents">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Premium Wind Energy Estate & Consulting</div>
+      <h1 class="hero-title">AETHER<br><span>WIND</span><br>ESTATE</h1>
+      <p class="hero-sub">Where the land meets the sky. We develop, consult, and manage premium wind energy estates for visionary landowners and institutional investors.</p>
+      <div class="hero-ctas">
+        <a href="projects.html" class="btn-primary">Explore Estates</a>
+        <a href="contact.html" class="btn-ghost">Speak to an Expert</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="stat-item"><span class="stat-num" data-target="185">0</span><span class="stat-label">Turbines Commissioned</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="620">0</span><span class="stat-unit">MW</span><span class="stat-label">Total Installed Capacity</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="22">0</span><span class="stat-label">Estates Under Management</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="15">0</span><span class="stat-label">Years of Wind Expertise</span></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="section-header">
+      <div class="section-eyebrow">Our Philosophy</div>
+      <h2 class="section-title">WIND AS<br>INVESTMENT</h2>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card"><h3>SITE MASTERY</h3><p>Every estate begins with a 12-month wind resource assessment using LiDAR technology, mesoscale modelling, and onsite anemometry to establish the true yield potential of your land.</p></div>
+      <div class="philosophy-card"><h3>TURBINE CURATION</h3><p>We specify turbines from Vestas, Siemens Gamesa, and GE Vernova — matching rotor diameter, hub height, and capacity to the site's precise wind profile for optimal annual energy production.</p></div>
+      <div class="philosophy-card"><h3>ESTATE STEWARDSHIP</h3><p>Our estate management team operates wind developments with the care of a luxury property manager — proactive maintenance, community engagement, and transparent reporting to all stakeholders.</p></div>
+    </div>
+  </section>
+
+  <!-- PROJECTS GRID -->
+  <section class="projects" id="projects">
+    <div class="section-header">
+      <div class="section-eyebrow">Our Portfolio</div>
+      <h2 class="section-title">LANDMARK<br>ESTATES</h2>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-1.webp');"></div><div class="project-info"><div class="project-category">Onshore Wind</div><div class="project-title">NORTHFIELD ESTATE</div><div class="project-detail">42MW — Scottish Highlands</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-2.webp');"></div><div class="project-info"><div class="project-category">Offshore Wind</div><div class="project-title">ARGENT OFFSHORE</div><div class="project-detail">120MW — North Sea</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-3.webp');"></div><div class="project-info"><div class="project-category">Community Wind</div><div class="project-title">VERDANT COMMONS</div><div class="project-detail">18MW — Yorkshire Moors</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-4.webp');"></div><div class="project-info"><div class="project-category">Commercial</div><div class="project-title">THE MERIDIAN CLUSTER</div><div class="project-detail">85MW — Orkney Islands</div></div></div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier">
+    <div class="atelier-image">
+      <div class="atelier-img" style="background-image: url('images/workspace-1.webp');"></div>
+      <div class="atelier-accent"></div>
+    </div>
+    <div class="atelier-content">
+      <div class="section-eyebrow">Our Expertise</div>
+      <h2 class="section-title" style="margin-bottom:24px;">WHERE LAND<br>YIELDS POWER</h2>
+      <p>Aether Wind is a boutique wind energy consultancy and estate developer founded by a team of former turbine engineers, landowners, and energy finance specialists.</p>
+      <p>We navigate the complete development lifecycle — from initial feasibility and planning consent through grid connection, construction, and long-term operations management — with an uncompromising commitment to excellence at every stage.</p>
+      <div class="atelier-stats">
+        <div><div class="atelier-stat-label">Avg. ROI</div><div class="atelier-stat-value">12-18%</div></div>
+        <div><div class="atelier-stat-label">Turbine Uptime</div><div class="atelier-stat-value">97.4%</div></div>
+        <div><div class="atelier-stat-label">Grid Connection</div><div class="atelier-stat-value">100% Success</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process">
+    <div class="section-header">
+      <div class="section-eyebrow">Development Pathway</div>
+      <h2 class="section-title">FROM LAND<br>TO MEGAWATTS</h2>
+    </div>
+    <div class="process-steps">
+      <div class="process-line"></div>
+      <div class="process-step"><div class="process-step-num">01</div><div><div class="process-step-title">WIND RESOURCE ASSESSMENT</div><p class="process-step-desc">12-month LiDAR campaign combined with mesoscale modelling delivers bankable energy yield estimates with P50/P90 confidence levels.</p></div></div>
+      <div class="process-step"><div class="process-step-num">02</div><div><div class="process-step-title">PLANNING & CONSENTING</div><p class="process-step-desc">We manage environmental impact assessment, community consultation, and planning applications through to consent — a process typically spanning 18-36 months.</p></div></div>
+      <div class="process-step"><div class="process-step-num">03</div><div><div class="process-step-title">GRID & FINANCING</div><p class="process-step-desc">Aether secures grid connection agreements and structures project financing — debt, equity, or our proprietary co-investment framework — to suit the landowner's objectives.</p></div></div>
+      <div class="process-step"><div class="process-step-num">04</div><div><div class="process-step-title">CONSTRUCTION MANAGEMENT</div><p class="process-step-desc">Our construction management team oversees civil works, turbine erection, electrical infrastructure, and substation commissioning to programme and budget.</p></div></div>
+      <div class="process-step" style="padding-bottom:0"><div class="process-step-num">05</div><div><div class="process-step-title">LONG-TERM O&M</div><p class="process-step-desc">Post-commissioning, our O&M team maximises availability and revenue through predictive maintenance, real-time SCADA monitoring, and annual performance reviews.</p></div></div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage">
+    <div class="section-header">
+      <div class="section-eyebrow">Our History</div>
+      <h2 class="section-title">A DECADE OF<br>WIND MASTERY</h2>
+    </div>
+    <div class="heritage-timeline">
+      <div class="heritage-item"><div class="heritage-year">2009</div><div class="heritage-content"><h3>Aether Wind Founded</h3><p>Three turbine engineers and a land agent establish Aether in Edinburgh, commissioning their first 6-turbine community wind farm in Aberdeenshire.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2013</div><div class="heritage-content"><h3>First 100MW Milestone</h3><p>Aether surpasses 100MW of commissioned capacity across five Scottish estates, attracting first institutional investment from a major pension fund.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2017</div><div class="heritage-content"><h3>Offshore Expansion</h3><p>Aether enters the offshore market with a 40MW nearshore development in the Moray Firth — the studio's most technically complex project to date.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2021</div><div class="heritage-content"><h3>International Portfolio</h3><p>Expansion into Ireland, Sweden, and Australia adds 200MW of international capacity under the Aether management platform.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2025</div><div class="heritage-content"><h3>600MW Under Management</h3><p>Aether Wind reaches 600MW of total capacity under management — delivering clean power to over 400,000 homes annually.</p></div></div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press">
+    <div class="section-header">
+      <div class="section-eyebrow">Recognition</div>
+      <h2 class="section-title">INDUSTRY<br>ACCLAIM</h2>
+    </div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"Aether Wind has established itself as the gold standard for onshore wind development in the British Isles. Their meticulous approach to site selection and community engagement is unmatched."</p><div class="press-source">Renewable Energy World — Developer of the Year, 2024</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"In a sector where promises often exceed delivery, Aether stands apart. Their track record of achieving planning consent at a 94% success rate is remarkable in any planning environment."</p><div class="press-source">Wind Energy Journal — Expert Analysis, 2023</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"For institutional investors seeking reliable wind energy exposure, Aether's co-investment framework offers exceptional risk-adjusted returns with best-in-class technical execution."</p><div class="press-source">Infrastructure Investor — Renewable Energy Report, 2024</div></div></div>
+      </div>
+      <div class="swiper-pagination" style="margin-top:28px; position:relative;"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION FORM -->
+  <section class="commission">
+    <div class="commission-inner">
+      <div class="commission-info">
+        <div class="section-eyebrow">Begin Your Journey</div>
+        <h2 class="section-title" style="margin-bottom:20px;">CONSULT WITH<br>OUR TEAM</h2>
+        <p>Whether you are a landowner exploring wind energy potential, or an investor seeking premium wind asset exposure, our team will provide an honest, expert assessment of your opportunity.</p>
+        <div class="commission-details">
+          <div class="commission-detail-item"><div class="commission-detail-label">Head Office</div><div class="commission-detail-value">14 Charlotte Square, Edinburgh, EH2 4DR</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Email</div><div class="commission-detail-value">consult@aetherwind.co.uk</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Response Time</div><div class="commission-detail-value">Within 2 business days</div></div>
+        </div>
+      </div>
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" placeholder="William"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" placeholder="MacPherson"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="wm@estate.co.uk"></div>
+        <div class="form-group"><label>Enquiry Type</label><select><option>Landowner — Feasibility Study</option><option>Investor — Co-investment</option><option>Development Consultancy</option><option>O&M Management</option></select></div>
+        <div class="form-group"><label>Land/Portfolio Size</label><input type="text" placeholder="e.g. 500 acres, upland, Scotland"></div>
+        <div class="form-group"><label>Message</label><textarea rows="4" placeholder="Tell us about your opportunity..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">AETHER WIND</div>
+        <p class="footer-desc">Premium wind energy estate developer and consultancy. Delivering excellence from feasibility to megawatts since 2009.</p>
+      </div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="about.html#team">Team</a></li><li><a href="about.html#values">Values</a></li></ul></div>
+      <div class="footer-col"><h4>Services</h4><ul><li><a href="projects.html">Estates</a></li><li><a href="process.html">Development</a></li><li><a href="process.html#om">O&M</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li><a href="contact.html">Consult</a></li><li><a href="contact.html#faq">FAQ</a></li><li><a href="mailto:consult@aetherwind.co.uk">Email</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 Aether Wind Estate Ltd. All rights reserved.</span>
+      <div style="width:40px;height:1px;background:var(--accent);"></div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // CANVAS GRID
+    const canvas = document.getElementById('heroCanvas');
+    const ctx = canvas.getContext('2d');
+    function drawGrid() {
+      canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+      const size = 60; ctx.strokeStyle = 'rgba(78,232,255,0.12)'; ctx.lineWidth = 0.5;
+      for (let x = 0; x <= canvas.width; x += size) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+      for (let y = 0; y <= canvas.height; y += size) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+      // Dots at intersections
+      for (let x = 0; x <= canvas.width; x += size) {
+        for (let y = 0; y <= canvas.height; y += size) {
+          ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI*2); ctx.fillStyle = 'rgba(78,232,255,0.25)'; ctx.fill();
+        }
+      }
+    }
+    drawGrid(); window.addEventListener('resize', drawGrid);
+
+    // PRELOADER
+    const fill = document.getElementById('preloader-fill');
+    let prog = 0;
+    const iv = setInterval(() => { prog += Math.random()*15; if(prog>=100){prog=100;clearInterval(iv);} fill.style.width=prog+'%'; }, 80);
+    window.addEventListener('load', () => {
+      clearInterval(iv); fill.style.width='100%';
+      setTimeout(() => {
+        gsap.to('#preloader', { opacity:0, duration:0.6, onComplete:()=>{
+          document.getElementById('preloader').style.display='none';
+          document.getElementById('scroll-indicator').classList.add('visible');
+          animateHero();
+        }});
+      }, 400);
+    });
+    setTimeout(() => { document.getElementById('scroll-indicator')?.classList.add('visible'); }, 4000);
+
+    window.addEventListener('scroll', () => {
+      if(window.scrollY>60) document.getElementById('navbar').classList.add('scrolled');
+      else document.getElementById('navbar').classList.remove('scrolled');
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      document.getElementById('scroll-progress').style.height = (window.scrollY/total*100)+'%';
+    });
+
+    function animateHero() {
+      gsap.from('.hero-eyebrow', { immediateRender:false, opacity:0, x:-20, duration:0.8, ease:'power3.out' });
+      gsap.from('.hero-title', { immediateRender:false, opacity:0, x:-20, duration:0.8, ease:'power3.out', delay:0.15 });
+      gsap.from('.hero-sub', { immediateRender:false, opacity:0, x:-20, duration:0.8, ease:'power3.out', delay:0.25 });
+      gsap.from('.hero-ctas', { immediateRender:false, opacity:0, x:-20, duration:0.8, ease:'power3.out', delay:0.35 });
+      gsap.from('.corner', { immediateRender:false, opacity:0, scale:0.7, duration:0.8, ease:'power3.out', stagger:0.04, delay:0.4 });
+    }
+
+    document.querySelectorAll('.stat-num').forEach(el => {
+      gsap.from(el, { immediateRender:false, textContent:0, duration:2.5, ease:'power2.out', snap:{textContent:1}, scrollTrigger:{trigger:el,start:'top 85%',once:true} });
+    });
+    gsap.from('.philosophy-card', { immediateRender:false, opacity:0, y:24, duration:0.8, ease:'power3.out', stagger:0.04, scrollTrigger:{trigger:'.philosophy-grid',start:'top 85%'} });
+    gsap.from('.project-card', { immediateRender:false, opacity:0, y:24, duration:0.8, ease:'power3.out', stagger:0.04, scrollTrigger:{trigger:'.projects-grid',start:'top 85%'} });
+    gsap.from('.atelier-image', { immediateRender:false, opacity:0, x:-24, duration:0.8, ease:'power3.out', scrollTrigger:{trigger:'.atelier',start:'top 85%'} });
+    gsap.from('.atelier-content', { immediateRender:false, opacity:0, x:24, duration:0.8, ease:'power3.out', scrollTrigger:{trigger:'.atelier',start:'top 85%'} });
+    gsap.from('.process-step', { immediateRender:false, opacity:0, x:-20, duration:0.8, ease:'power3.out', stagger:0.04, scrollTrigger:{trigger:'.process-steps',start:'top 85%'} });
+    gsap.from('.heritage-item', { immediateRender:false, opacity:0, y:20, duration:0.8, ease:'power3.out', stagger:0.04, scrollTrigger:{trigger:'.heritage-timeline',start:'top 85%'} });
+    document.querySelectorAll('.section-header').forEach(h => { gsap.from(h, { immediateRender:false, opacity:0, y:20, duration:0.8, ease:'power3.out', scrollTrigger:{trigger:h,start:'top 85%'} }); });
+
+    new Swiper('.press-swiper', { slidesPerView:1, spaceBetween:24, loop:true, autoplay:{delay:5000}, pagination:{el:'.swiper-pagination',clickable:true} });
+  </script>
+</body>
+</html>

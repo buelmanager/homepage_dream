@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Institute — Elite Software Engineering Education</title>
+  <meta name="description" content="Elite coding institute training world-class software engineers. Intensive full-stack, algorithms, and systems programming programmes with industry-leading placement rates.">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:#101420; --surface:#181E2A; --surface2:#1E2438;
+      --accent:#4EE8FF; --accent-light:#8AF3FF; --accent-dark:#22B8CC;
+      --ivory:#DCE8F0; --smoke:#8090A0; --muted:#506070; --border:#1A2234;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+    .preloader-mark { width: 72px; height: 72px; animation: preloaderPulse 1.5s ease-in-out infinite; }
+    .preloader-name { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; opacity: 0; animation: preloaderFade 1s ease 0.5s forwards; }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); animation: preloaderBar 1.8s ease forwards; }
+    @keyframes preloaderPulse { 0%,100%{opacity:0.5;transform:scale(0.95)} 50%{opacity:1;transform:scale(1)} }
+    @keyframes preloaderFade { to{opacity:1} }
+    @keyframes preloaderBar { to{transform:translateX(0)} }
+
+    #scroll-indicator { position: fixed; left: 28px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; opacity: 0; transition: opacity 0.6s ease; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 40%; background: var(--accent); animation: scrollFill 2s ease-in-out infinite; }
+    .scroll-label { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; writing-mode: vertical-lr; margin-top: 8px; }
+    @keyframes scrollFill { 0%{top:-40%} 100%{top:100%} }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+    nav.scrolled { background: rgba(16,20,32,0.92); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.6rem; color: var(--ivory); text-decoration: none; letter-spacing: 0.1em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 24px; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO - Type G: Scroll-Driven Text */
+    .hero-text-driven { min-height: 200vh; position: relative; }
+    .hero-bg { position: absolute; inset: 0; background-image: url('images/hero-1.webp'); background-size: cover; background-position: center; filter: brightness(0.25); }
+    .hero-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(78,232,255,0.08) 0%, transparent 60%); }
+    .hero-text-wrap { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 80px; overflow: hidden; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .hero-eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--accent); }
+    .hero-word { font-family: var(--font-serif); font-size: clamp(5rem, 14vw, 13rem); line-height: 0.85; font-weight: 400; text-transform: uppercase; will-change: transform; letter-spacing: 0.02em; }
+    .word-1 { color: var(--ivory); }
+    .word-2 { color: var(--accent); }
+    .hero-tagline { font-size: 1rem; color: var(--smoke); line-height: 1.8; max-width: 560px; margin-top: 28px; font-family: var(--font-sans); }
+    .hero-cta-row { display: flex; gap: 16px; margin-top: 32px; }
+    .btn-primary { background: var(--accent); color: var(--bg); padding: 14px 30px; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; text-decoration: none; display: inline-block; transition: all 0.3s; font-family: var(--font-sans); font-weight: 500; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { background: transparent; color: var(--ivory); padding: 14px 30px; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--muted); text-decoration: none; display: inline-block; transition: all 0.3s; font-family: var(--font-sans); }
+    .btn-secondary:hover { border-color: var(--ivory); }
+    .hero-scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); font-size: 1.2rem; color: var(--accent); animation: bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-8px)} }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); padding: 60px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .strip-stat { text-align: center; }
+    .strip-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); display: block; line-height: 1; }
+    .strip-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .section-header { text-align: center; margin-bottom: 70px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 400; color: var(--ivory); line-height: 1; letter-spacing: 0.05em; }
+    .section-title em { color: var(--accent); font-style: normal; }
+    .section-subtitle { font-size: 0.95rem; color: var(--smoke); max-width: 520px; margin: 16px auto 0; line-height: 1.8; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+    .philosophy-item { padding: 40px; background: var(--surface); border: 1px solid var(--border); position: relative; }
+    .philosophy-item::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
+    .philosophy-num { font-family: var(--font-serif); font-size: 3rem; color: var(--muted); position: absolute; top: 16px; right: 20px; opacity: 0.5; }
+    .philosophy-item h3 { font-family: var(--font-sans); font-size: 1rem; color: var(--accent); margin-bottom: 14px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+    .philosophy-item p { font-size: 0.87rem; color: var(--smoke); line-height: 1.8; }
+
+    /* PROGRAMS */
+    .programs { padding: 120px 80px; background: var(--surface); }
+    .programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 60px; overflow: visible; }
+    .program-card { background: var(--bg); overflow: hidden; cursor: pointer; transition: transform 0.4s ease; border: 1px solid var(--border); }
+    .program-card:hover { transform: translateY(-4px); z-index: 2; border-color: var(--accent-dark); }
+    .program-img { width: 100%; height: 280px; background-size: cover; background-position: center; transition: transform 0.6s ease; }
+    .program-card:hover .program-img { transform: scale(1.04); }
+    .program-info { padding: 28px; }
+    .program-tag { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
+    .program-name { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 10px; line-height: 1; letter-spacing: 0.05em; }
+    .program-desc { font-size: 0.85rem; color: var(--smoke); line-height: 1.8; margin-bottom: 14px; }
+    .program-meta { font-size: 0.73rem; color: var(--muted); display: flex; gap: 16px; }
+
+    /* ATELIER */
+    .atelier { padding: 120px 80px; background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img-wrap { position: relative; height: 560px; overflow: hidden; }
+    .atelier-img { width: 100%; height: 110%; background-size: cover; background-position: center; position: absolute; top: -5%; will-change: transform; }
+    .atelier-content h2 { font-family: var(--font-serif); font-size: clamp(2.5rem, 4.5vw, 4rem); color: var(--ivory); line-height: 1; margin-bottom: 24px; letter-spacing: 0.05em; }
+    .atelier-content h2 em { color: var(--accent); font-style: normal; }
+    .atelier-content p { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .atelier-quote { margin: 28px 0; padding: 20px 0 20px 24px; border-left: 2px solid var(--accent); font-size: 1rem; color: var(--accent-light); line-height: 1.6; font-family: var(--font-sans); }
+
+    /* PROCESS */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-list { margin-top: 60px; }
+    .process-item { display: flex; gap: 48px; padding: 36px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .process-item:last-child { border-bottom: none; }
+    .process-num { width: 72px; height: 72px; flex-shrink: 0; background: var(--surface2); border: 1px solid var(--accent-dark); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 2rem; color: var(--accent); }
+    .process-content h3 { font-family: var(--font-sans); font-size: 1rem; color: var(--ivory); margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .process-content p { font-size: 0.87rem; color: var(--smoke); line-height: 1.8; }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .heritage-item { background: var(--surface); padding: 32px; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.5rem; color: var(--accent); display: block; margin-bottom: 12px; }
+    .heritage-item h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ivory); margin-bottom: 10px; font-weight: 500; }
+    .heritage-item p { font-size: 0.82rem; color: var(--smoke); line-height: 1.7; }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 120px 80px; background: var(--surface); overflow: hidden; }
+    .swiper { margin-top: 60px; overflow: visible; }
+    .swiper-slide { background: var(--surface2); padding: 44px; border: 1px solid var(--border); }
+    .testimonial-text { font-size: 1rem; color: var(--ivory); line-height: 1.8; margin-bottom: 24px; }
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+    .author-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--muted); background-size: cover; background-position: center; flex-shrink: 0; }
+    .author-name { font-family: var(--font-sans); font-size: 0.9rem; color: var(--ivory); font-weight: 500; }
+    .author-title { font-size: 0.75rem; color: var(--smoke); margin-top: 2px; }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ENROLLMENT */
+    .enrollment { padding: 120px 80px; background: var(--bg); }
+    .enrollment-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .enrollment-info h2 { font-family: var(--font-serif); font-size: 3rem; color: var(--ivory); margin-bottom: 20px; line-height: 1; letter-spacing: 0.05em; }
+    .enrollment-info h2 em { color: var(--accent); font-style: normal; }
+    .enrollment-info p { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .contact-detail { display: flex; gap: 12px; margin-bottom: 14px; font-size: 0.85rem; color: var(--smoke); }
+    .contact-detail strong { color: var(--ivory); min-width: 80px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 16px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group select { appearance: none; }
+    .form-group textarea { height: 110px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; padding: 16px; font-family: var(--font-sans); font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; margin-top: 8px; font-weight: 500; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    footer { background: var(--bg); padding: 80px 80px 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.6rem; color: var(--ivory); margin-bottom: 14px; letter-spacing: 0.1em; }
+    .footer-brand p { font-size: 0.85rem; color: var(--smoke); line-height: 1.8; max-width: 260px; }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; }
+    .footer-bottom p { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+    <svg class="preloader-mark" viewBox="0 0 72 72" fill="none">
+      <rect x="8" y="20" width="56" height="36" rx="3" stroke="#4EE8FF" stroke-width="1" opacity="0.4"/>
+      <text x="36" y="43" text-anchor="middle" font-family="monospace" font-size="16" fill="#4EE8FF">&lt;/&gt;</text>
+    </svg>
+    <div class="preloader-name">NEXUS INSTITUTE</div>
+    <div class="preloader-bar"></div>
+  </div>
+
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">NEX<span>US</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="programs.html">Programs</a></li>
+      <li><a href="process.html">Enroll</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Apply</a>
+  </nav>
+
+  <!-- HERO - Type G: Scroll-Driven Text -->
+  <section class="hero-text-driven" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow" id="hero-eyebrow">Elite Software Engineering — San Francisco · Berlin · Singapore</div>
+      <div class="hero-word word-1" id="hero-word1">BUILD</div>
+      <div class="hero-word word-2" id="hero-word2">BETTER</div>
+      <p class="hero-tagline" id="hero-tagline">
+        Nexus Institute trains elite software engineers through intensive, mentor-driven programmes. No lectures — only building. Graduate with a portfolio of production-grade systems and the skills the world's best companies demand.
+      </p>
+      <div class="hero-cta-row" id="hero-cta">
+        <a href="programs.html" class="btn-primary">View Programmes</a>
+        <a href="contact.html" class="btn-secondary">Apply Now</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">↓</div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="strip-stat"><span class="strip-num" data-target="96">0</span><span class="strip-label">% Job Placement</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="140">0</span><span class="strip-label">Hiring Partners</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="4200">0</span><span class="strip-label">Graduates Hired</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="18">0</span><span class="strip-label">Week Programmes</span></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-header">
+      <p class="section-eyebrow">Our Method</p>
+      <h2 class="section-title">CODE EVERY <em>DAY</em></h2>
+      <p class="section-subtitle">We believe engineers are made in the editor, not the classroom. Every day at Nexus, students write real code solving real problems.</p>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-item">
+        <div class="philosophy-num">01</div>
+        <h3>Project-First Learning</h3>
+        <p>No lectures without code. Every concept is introduced through a concrete project — building a distributed system, writing a compiler, architecting an API. Students ship working software from week one.</p>
+      </div>
+      <div class="philosophy-item">
+        <div class="philosophy-num">02</div>
+        <h3>Mentor-Driven Intensity</h3>
+        <p>Every student is paired with a senior engineer mentor from a top-tier company. Daily code reviews, pair programming sessions, and architectural discussions create the feedback loop that accelerates growth by 10x.</p>
+      </div>
+      <div class="philosophy-item">
+        <div class="philosophy-num">03</div>
+        <h3>Production Standards</h3>
+        <p>We hold all student work to production code standards — testing, documentation, code review, CI/CD. Graduates arrive at top companies with habits that would take a junior engineer years to acquire independently.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="programs" id="programs">
+    <div class="section-header">
+      <p class="section-eyebrow">Programmes</p>
+      <h2 class="section-title">CHOOSE YOUR <em>STACK</em></h2>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-1.webp')"></div>
+        <div class="program-info"><span class="program-tag">Full-Stack</span><h3 class="program-name">FULL STACK ENGINEER</h3><p class="program-desc">18 weeks. React, Node, TypeScript, PostgreSQL, Redis, Docker, Kubernetes. Build and deploy three full-stack applications with engineering mentor and production infrastructure.</p><div class="program-meta"><span>18 weeks</span><span>Full-time intensive</span></div></div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-2.webp')"></div>
+        <div class="program-info"><span class="program-tag">Systems</span><h3 class="program-name">SYSTEMS ENGINEER</h3><p class="program-desc">20 weeks. C, Rust, operating systems, distributed systems, performance engineering. For engineers who want to go deep — building databases, language runtimes, and network infrastructure.</p><div class="program-meta"><span>20 weeks</span><span>Full-time intensive</span></div></div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-3.webp')"></div>
+        <div class="program-info"><span class="program-tag">ML Engineering</span><h3 class="program-name">ML ENGINEER</h3><p class="program-desc">16 weeks. Python, PyTorch, model training, MLOps, inference infrastructure. Build and deploy production ML models with industry engineers from leading AI labs.</p><div class="program-meta"><span>16 weeks</span><span>Full-time intensive</span></div></div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-4.webp')"></div>
+        <div class="program-info"><span class="program-tag">Algorithms</span><h3 class="program-name">ALGORITHM SPECIALIST</h3><p class="program-desc">12-week algorithms and data structures deep-dive targeting senior engineering interviews at FAANG companies. Daily problem solving, system design, and mock interview sessions with Google/Meta engineers.</p><div class="program-meta"><span>12 weeks</span><span>Part-time available</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img-wrap">
+        <div class="atelier-img" id="atelier-parallax" style="background-image: url('images/workspace-1.webp')"></div>
+      </div>
+      <div class="atelier-content">
+        <p class="section-eyebrow" style="margin-bottom: 16px;">Our Campus</p>
+        <h2>BUILT FOR <em>BUILDERS</em></h2>
+        <p>Our San Francisco campus is a converted warehouse engineered for deep work — 80 engineering stations, private pairing rooms, a server room for hands-on infrastructure work, and a whiteboard-covered system design lab.</p>
+        <div class="atelier-quote">"The best way to learn engineering is to engineer things that are hard. We build the environment where hard is the baseline."</div>
+        <p>All campuses run 6 AM to 10 PM. Students have 24/7 access to development infrastructure, cloud environments, and the mentor network. When you're building, we're here.</p>
+        <a href="about.html" class="btn-primary" style="margin-top: 24px; display: inline-block;">Tour Our Campus</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-header">
+      <p class="section-eyebrow">Admissions</p>
+      <h2 class="section-title">YOUR PATH TO <em>NEXUS</em></h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item"><div class="process-num">01</div><div class="process-content"><h3>Technical Assessment</h3><p>A 90-minute online coding challenge assessing algorithmic thinking, problem decomposition, and code quality. We evaluate how you think, not what you know — prior programming experience helps but is not required.</p></div></div>
+      <div class="process-item"><div class="process-num">02</div><div class="process-content"><h3>Engineering Interview</h3><p>A 60-minute video interview with a Nexus engineering mentor. Live coding, system design thinking, and a conversation about your technical background and what you want to build.</p></div></div>
+      <div class="process-item"><div class="process-num">03</div><div class="process-content"><h3>Programme Placement</h3><p>The admissions committee places each accepted student in the programme that best matches their background and goals. We may recommend prerequisites or suggest a particular starting programme based on your assessment results.</p></div></div>
+      <div class="process-item"><div class="process-num">04</div><div class="process-content"><h3>Pre-Cohort Preparation</h3><p>Accepted students receive a four-week pre-cohort programme: setup, foundational reading, and starter exercises designed to ensure everyone arrives at an equivalent baseline on day one.</p></div></div>
+      <div class="process-item"><div class="process-num">05</div><div class="process-content"><h3>Day One</h3><p>Your first day begins with a two-hour deep-dive into the system you will build across the programme. No orientation presentations — we start building immediately. This is Nexus.</p></div></div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-header">
+      <p class="section-eyebrow">Our Track Record</p>
+      <h2 class="section-title">10 YEARS OF <em>OUTPUT</em></h2>
+    </div>
+    <div class="heritage-grid">
+      <div class="heritage-item"><span class="heritage-year">2016</span><h4>Founded in SF</h4><p>Three engineers from Google, Stripe, and Dropbox launch Nexus with a first cohort of twelve students in a SoMa loft. All twelve are hired within 60 days of graduation.</p></div>
+      <div class="heritage-item"><span class="heritage-year">2019</span><h4>Berlin Campus</h4><p>European demand drives the opening of a Berlin campus serving students across the EU. The cohort sells out within 24 hours of announcement.</p></div>
+      <div class="heritage-item"><span class="heritage-year">2022</span><h4>ML Programme Launch</h4><p>The Machine Learning Engineering programme launches to address the acute global shortage of production ML engineers. First cohort includes six students who go on to join leading AI labs.</p></div>
+      <div class="heritage-item"><span class="heritage-year">2025</span><h4>4,200 Graduates</h4><p>Nexus crosses 4,200 graduates with a 96% placement rate and an average starting salary 40% above the industry median. Our hiring partner network now includes 140 leading companies.</p></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="section-header">
+      <p class="section-eyebrow">Graduates</p>
+      <h2 class="section-title">BUILT AT <em>NEXUS</em></h2>
+    </div>
+    <div class="swiper testimonials-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <p class="testimonial-text">"Nexus is the best investment I've ever made. Eighteen weeks of the most intense, focused, productive work of my life — and I graduated with three production systems in my portfolio and an offer from Stripe before the programme even ended."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/detail-1.webp')"></div>
+            <div><div class="author-name">Marcus Chen</div><div class="author-title">Senior Engineer, Stripe</div></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <p class="testimonial-text">"I'd been coding for five years but felt stuck. Nexus's Systems programme broke every ceiling I'd hit. The depth of the curriculum, the quality of the mentors, and the standard of work demanded — it transformed me from a competent developer into an engineer."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/detail-2.webp')"></div>
+            <div><div class="author-name">Fatima Al-Rashid</div><div class="author-title">Systems Engineer, Cloudflare</div></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <p class="testimonial-text">"I switched from finance to engineering at 31. The Nexus Full-Stack programme gave me a 10-year head start. The mentor pairing is what makes it — having a senior Google engineer review my code daily accelerated my growth by an order of magnitude."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/ambient-1.webp')"></div>
+            <div><div class="author-name">James Okonkwo</div><div class="author-title">Senior Engineer, Google</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="position: relative; margin-top: 40px;"></div>
+    </div>
+  </section>
+
+  <!-- ENROLLMENT -->
+  <section class="enrollment" id="enrollment">
+    <div class="section-header">
+      <p class="section-eyebrow">Apply Now</p>
+      <h2 class="section-title">JOIN <em>NEXUS</em></h2>
+    </div>
+    <div class="enrollment-inner">
+      <div class="enrollment-info">
+        <h2>START <em>BUILDING</em></h2>
+        <p>Cohorts begin quarterly. Each programme accepts a maximum of 30 students to maintain the quality of mentorship and peer learning that defines the Nexus experience.</p>
+        <p>Income Share Agreements (ISAs) are available — no upfront cost, pay only when you're earning above $80,000. We only succeed if you do.</p>
+        <div class="contact-detail"><strong>San Francisco</strong>340 Bryant Street, SoMa, SF 94107</div>
+        <div class="contact-detail"><strong>Berlin</strong>Rosenthaler Str. 40, 10178 Berlin</div>
+        <div class="contact-detail"><strong>Phone</strong>+1 (415) 555-0192</div>
+        <div class="contact-detail"><strong>Email</strong>apply@nexus.institute</div>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text"></div>
+          <div class="form-group"><label>Last Name</label><input type="text"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email"></div>
+        <div class="form-group"><label>GitHub Profile</label><input type="url" placeholder="https://github.com/username"></div>
+        <div class="form-group"><label>Programme</label>
+          <select><option>Full Stack Engineer</option><option>Systems Engineer</option><option>ML Engineer</option><option>Algorithm Specialist</option></select>
+        </div>
+        <div class="form-group"><label>Tell us about yourself</label><textarea placeholder="Current skills, career goals, what you want to build..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Application</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><h3>NEXUS INSTITUTE</h3><p>Elite software engineering education. Training world-class engineers in San Francisco, Berlin, and Singapore since 2016.</p></div>
+      <div class="footer-col"><h4>Programmes</h4><ul><li><a href="programs.html">Full Stack</a></li><li><a href="programs.html">Systems</a></li><li><a href="programs.html">ML Engineering</a></li><li><a href="programs.html">Algorithms</a></li></ul></div>
+      <div class="footer-col"><h4>Institute</h4><ul><li><a href="about.html">About</a></li><li><a href="about.html">Mentors</a></li><li><a href="process.html">Apply</a></li><li><a href="about.html">Campus</a></li></ul></div>
+      <div class="footer-col"><h4>Connect</h4><ul><li><a href="contact.html">Contact</a></li><li><a href="#">Hiring Partners</a></li><li><a href="#">Alumni</a></li><li><a href="#">GitHub</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Nexus Institute. All rights reserved.</p>
+      <p>San Francisco · Berlin · Singapore</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    class SplitText {
+      constructor(t, o = {}) {
+        const e = typeof t === 'string' ? document.querySelector(t) : (t instanceof Element ? t : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!e) return; this._el = e;
+        const tp = (o.type || 'chars,words').toLowerCase(); const orig = e.textContent;
+        e.setAttribute('data-split-orig', orig);
+        if (tp.includes('words')) { e.innerHTML = orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join(''); this.words = Array.from(e.querySelectorAll('.word')); }
+        this.lines = [e];
+      }
+      revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+    }
+
+    window.addEventListener('load', () => {
+      gsap.to('#preloader', { opacity: 0, duration: 0.8, delay: 1.8, ease: 'power2.inOut',
+        onComplete: () => { document.getElementById('preloader').style.display = 'none'; document.getElementById('scroll-indicator').classList.add('visible'); initHeroAnim(); }
+      });
+    });
+    setTimeout(() => { document.getElementById('scroll-indicator')?.classList.add('visible'); }, 4000);
+
+    function initHeroAnim() {
+      // A3 Precise: x:-20px, stagger:0.04, ease:'power3.out'
+      gsap.from('#hero-eyebrow', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, ease: 'power3.out' });
+      gsap.from('#hero-word1', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.04 });
+      gsap.from('#hero-word2', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.08 });
+      gsap.from('#hero-tagline', { immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', delay: 0.12 });
+      gsap.from('#hero-cta', { immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', delay: 0.16 });
+    }
+
+    // Type G scroll-driven
+    gsap.to('#hero-word1', { x: '-30vw', scale: 0.4, opacity: 0.15, scrollTrigger: { trigger: '#hero', start: 'top top', end: '50% top', scrub: 1 } });
+    gsap.to('#hero-word2', { x: '30vw', scale: 0.4, opacity: 0.15, scrollTrigger: { trigger: '#hero', start: 'top top', end: '50% top', scrub: 1 } });
+
+    window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80); });
+
+    document.querySelectorAll('.strip-num').forEach(el => {
+      const target = +el.dataset.target;
+      gsap.from(el, { immediateRender: false, textContent: 0, duration: 2, ease: 'power2.out', snap: { textContent: 1 }, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+    });
+
+    gsap.from('.philosophy-item', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, stagger: 0.04, ease: 'power3.out', scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%' } });
+    gsap.from('.program-card', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, stagger: 0.04, ease: 'power3.out', scrollTrigger: { trigger: '.programs-grid', start: 'top 85%' } });
+    gsap.to('#atelier-parallax', { yPercent: -12, ease: 'none', scrollTrigger: { trigger: '.atelier', start: 'top bottom', end: 'bottom top', scrub: 1 } });
+    gsap.from('.atelier-content', { immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: '.atelier', start: 'top 80%' } });
+    gsap.from('.process-item', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, stagger: 0.04, ease: 'power3.out', scrollTrigger: { trigger: '.process-list', start: 'top 85%' } });
+    gsap.from('.heritage-item', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, stagger: 0.04, ease: 'power3.out', scrollTrigger: { trigger: '.heritage-grid', start: 'top 85%' } });
+    document.querySelectorAll('.section-header').forEach(h => { gsap.from(h, { immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: h, start: 'top 85%' } }); });
+
+    new Swiper('.testimonials-swiper', { slidesPerView: 1, spaceBetween: 24, loop: true, breakpoints: { 768: { slidesPerView: 2 } }, pagination: { el: '.swiper-pagination', clickable: true }, autoplay: { delay: 5000, disableOnInteraction: false } });
+  </script>
+</body>
+</html>

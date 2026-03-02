@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIDALUX — Luxury Tidal Power Station</title>
+  <meta name="description" content="Tidalux designs and operates luxury tidal power stations — harnessing the most predictable force in nature to deliver premium baseload renewable energy.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:#101420; --surface:#181E2A; --surface2:#1E2438;
+      --accent:#4EE8FF; --accent-light:#8AF3FF; --accent-dark:#22B8CC;
+      --ivory:#DCE8F0; --smoke:#8090A0; --muted:#506070; --border:#1A2234;
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+    #preloader { position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column; }
+    .preloader-logo { font-family:var(--font-serif);font-size:2.2rem;font-weight:300;letter-spacing:0.3em;color:var(--accent);margin-bottom:24px; }
+    .preloader-bar { width:200px;height:1px;background:var(--border);position:relative;overflow:hidden; }
+    .preloader-bar-fill { position:absolute;left:0;top:0;height:100%;width:0;background:var(--accent); }
+    #scroll-indicator { position:fixed;left:32px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:100;opacity:0;transition:opacity 0.6s; }
+    #scroll-indicator.visible { opacity:1; }
+    .scroll-dot { width:6px;height:6px;border-radius:50%;background:var(--accent); }
+    .scroll-line { width:1px;height:60px;background:linear-gradient(to bottom,var(--accent),transparent); }
+    .scroll-label { writing-mode:vertical-rl;font-size:0.65rem;letter-spacing:0.2em;color:var(--smoke);text-transform:uppercase; }
+    .scroll-progress { position:fixed;left:32px;top:0;width:1px;height:0%;background:var(--accent);z-index:99; }
+    .navbar { position:fixed;top:0;left:0;right:0;z-index:500;padding:24px 60px;display:flex;align-items:center;justify-content:space-between;transition:background 0.4s,padding 0.4s; }
+    .navbar.scrolled { background:rgba(16,20,32,0.92);backdrop-filter:blur(16px);padding:16px 60px;border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:var(--font-serif);font-size:1.4rem;font-weight:300;letter-spacing:0.2em;color:var(--ivory);text-decoration:none; }
+    .nav-links { display:flex;gap:40px;list-style:none; }
+    .nav-links a { color:var(--smoke);text-decoration:none;font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;transition:color 0.3s; }
+    .nav-links a:hover { color:var(--accent); }
+    .nav-cta { border:1px solid var(--accent);color:var(--accent);padding:10px 28px;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;transition:all 0.3s; }
+    .nav-cta:hover { background:var(--accent);color:var(--bg); }
+    /* HERO TYPE G */
+    .hero { min-height:200vh;position:relative;background:var(--bg); }
+    .hero-bg { position:fixed;top:0;left:0;right:0;bottom:0;background-image:url('images/hero-1.webp');background-size:cover;background-position:center;filter:brightness(0.2);z-index:0;pointer-events:none; }
+    .hero-text-wrap { position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 80px;z-index:2;overflow:hidden; }
+    .hero-eyebrow { font-size:0.75rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:24px; }
+    .hero-word { font-family:var(--font-serif);font-weight:300;font-size:clamp(5rem,14vw,14rem);line-height:0.85;text-transform:uppercase;color:var(--ivory);will-change:transform; }
+    .hero-word.word-2 { color:var(--accent); }
+    .hero-tagline { margin-top:32px;font-size:1.1rem;font-weight:300;line-height:1.7;color:var(--smoke);max-width:520px; }
+    .hero-ctas { margin-top:48px;display:flex;gap:20px; }
+    .btn-primary { background:var(--accent);color:var(--bg);padding:16px 40px;font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;transition:background 0.3s; }
+    .btn-primary:hover { background:var(--accent-light); }
+    .btn-ghost { border:1px solid var(--smoke);color:var(--smoke);padding:16px 40px;font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;transition:all 0.3s; }
+    .btn-ghost:hover { border-color:var(--accent);color:var(--accent); }
+    /* STATS */
+    .stats-strip { background:var(--surface);padding:60px;display:grid;grid-template-columns:repeat(4,1fr);gap:40px;border-top:1px solid var(--border);border-bottom:1px solid var(--border); }
+    .stat-item { text-align:center; }
+    .stat-num { font-family:var(--font-serif);font-size:3.5rem;font-weight:300;color:var(--accent);display:block;line-height:1; }
+    .stat-unit { font-size:1.5rem;color:var(--accent-dark); }
+    .stat-label { display:block;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--smoke);margin-top:8px; }
+    /* SECTIONS */
+    .philosophy { padding:120px 60px;background:var(--bg); }
+    .section-header { margin-bottom:72px; }
+    .section-eyebrow { font-size:0.7rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--accent);margin-bottom:14px; }
+    .section-title { font-family:var(--font-serif);font-size:clamp(2.2rem,4vw,4rem);font-weight:300;color:var(--ivory);line-height:1.2; }
+    .philosophy-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:32px; }
+    .philosophy-card { padding:44px 36px;background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--accent); }
+    .philosophy-card h3 { font-family:var(--font-serif);font-size:1.4rem;font-weight:300;color:var(--ivory);margin-bottom:14px; }
+    .philosophy-card p { font-size:0.9rem;line-height:1.8;color:var(--smoke); }
+    .projects { padding:120px 60px;background:var(--surface); }
+    .projects-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:24px;overflow:visible;margin-top:60px; }
+    .project-card { position:relative;aspect-ratio:4/3;overflow:hidden;cursor:pointer; }
+    .project-card:nth-child(2) { transform:translateY(28px); }
+    .project-card:nth-child(4) { transform:translateY(-18px); }
+    .project-img { position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(0.6);transition:transform 0.7s,filter 0.4s; }
+    .project-card:hover .project-img { transform:scale(1.05);filter:brightness(0.82); }
+    .project-info { position:absolute;bottom:0;left:0;right:0;padding:40px 28px 28px;background:linear-gradient(transparent,rgba(16,20,32,0.96)); }
+    .project-category { font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:6px; }
+    .project-title { font-family:var(--font-serif);font-size:1.4rem;font-weight:300;color:var(--ivory); }
+    .project-detail { font-size:0.8rem;color:var(--smoke);margin-top:4px; }
+    .atelier { padding:120px 60px;background:var(--bg);display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center; }
+    .atelier-image { position:relative;aspect-ratio:4/5;overflow:hidden; }
+    .atelier-img { width:100%;height:100%;background-size:cover;background-position:center;filter:brightness(0.8);transition:transform 0.8s; }
+    .atelier-image:hover .atelier-img { transform:scale(1.04); }
+    .atelier-accent { position:absolute;bottom:-16px;right:-16px;width:64px;height:64px;border:2px solid var(--accent);pointer-events:none; }
+    .atelier-content p { font-size:0.95rem;line-height:1.9;color:var(--smoke);margin-bottom:20px; }
+    .atelier-stats { display:flex;gap:40px;margin-top:40px; }
+    .atelier-stat-label { font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:4px; }
+    .atelier-stat-value { font-family:var(--font-serif);font-size:1.2rem;font-weight:300;color:var(--ivory); }
+    .process { padding:120px 60px;background:var(--surface); }
+    .process-steps { margin-top:60px;position:relative; }
+    .process-line { position:absolute;left:24px;top:0;bottom:0;width:1px;background:var(--border); }
+    .process-step { display:grid;grid-template-columns:80px 1fr;gap:40px;padding:0 0 56px; }
+    .process-step-num { width:48px;height:48px;border:1px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:1.1rem;font-weight:300;color:var(--accent);background:var(--surface);position:relative;z-index:2; }
+    .process-step-title { font-family:var(--font-serif);font-size:1.3rem;font-weight:300;color:var(--ivory);margin-bottom:10px;margin-top:8px; }
+    .process-step-desc { font-size:0.9rem;line-height:1.8;color:var(--smoke); }
+    .heritage { padding:120px 60px;background:var(--bg); }
+    .heritage-timeline { margin-top:60px; }
+    .heritage-item { display:grid;grid-template-columns:140px 1fr;gap:40px;padding:36px 0;border-bottom:1px solid var(--border); }
+    .heritage-year { font-family:var(--font-serif);font-size:2rem;font-weight:300;color:var(--accent); }
+    .heritage-content h3 { font-family:var(--font-serif);font-size:1.2rem;font-weight:300;color:var(--ivory);margin-bottom:8px; }
+    .heritage-content p { font-size:0.9rem;line-height:1.7;color:var(--smoke); }
+    .press { padding:120px 60px;background:var(--surface); }
+    .press-swiper { margin-top:60px; }
+    .press-slide { padding:48px;background:var(--surface2);border:1px solid var(--border); }
+    .press-quote { font-family:var(--font-serif);font-size:1.15rem;font-weight:300;font-style:italic;line-height:1.7;color:var(--ivory);margin-bottom:28px; }
+    .press-source { font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent); }
+    .swiper-pagination-bullet { background:var(--smoke); }
+    .swiper-pagination-bullet-active { background:var(--accent); }
+    .commission { padding:120px 60px;background:var(--bg); }
+    .commission-inner { display:grid;grid-template-columns:1fr 1fr;gap:80px; }
+    .commission-info p { font-size:0.95rem;line-height:1.8;color:var(--smoke);margin-bottom:24px; }
+    .commission-details { display:flex;flex-direction:column;gap:14px;margin-top:32px; }
+    .commission-detail-item { padding:14px 0;border-bottom:1px solid var(--border); }
+    .commission-detail-label { font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:4px; }
+    .commission-detail-value { font-size:0.9rem;color:var(--ivory); }
+    .commission-form { display:flex;flex-direction:column;gap:18px; }
+    .form-group { display:flex;flex-direction:column;gap:8px; }
+    .form-group label { font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--smoke); }
+    .form-group input,.form-group select,.form-group textarea { background:var(--surface);border:1px solid var(--border);color:var(--ivory);padding:14px 18px;font-family:var(--font-sans);font-size:0.9rem;outline:none;transition:border-color 0.3s;resize:none; }
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus { border-color:var(--accent); }
+    .form-row { display:grid;grid-template-columns:1fr 1fr;gap:18px; }
+    .form-submit { background:var(--accent);color:var(--bg);border:none;padding:16px 44px;font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:background 0.3s; }
+    .form-submit:hover { background:var(--accent-light); }
+    footer { background:var(--bg);border-top:1px solid var(--border);padding:80px 60px 40px; }
+    .footer-grid { display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;margin-bottom:60px; }
+    .footer-brand { font-family:var(--font-serif);font-size:1.4rem;font-weight:300;letter-spacing:0.2em;color:var(--ivory);margin-bottom:14px; }
+    .footer-desc { font-size:0.85rem;line-height:1.7;color:var(--smoke); }
+    .footer-col h4 { font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:18px; }
+    .footer-col ul { list-style:none;display:flex;flex-direction:column;gap:10px; }
+    .footer-col ul a { color:var(--smoke);text-decoration:none;font-size:0.85rem;transition:color 0.3s; }
+    .footer-col ul a:hover { color:var(--ivory); }
+    .footer-bottom { border-top:1px solid var(--border);padding-top:28px;display:flex;justify-content:space-between; }
+    .footer-copy { font-size:0.75rem;color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div id="preloader"><div class="preloader-logo">TIDALUX</div><div class="preloader-bar"><div class="preloader-bar-fill" id="preloader-fill"></div></div></div>
+  <div id="scroll-indicator"><div class="scroll-dot"></div><div class="scroll-line"></div><div class="scroll-label">Scroll</div></div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">TIDALUX</a>
+    <ul class="nav-links"><li><a href="about.html">Station</a></li><li><a href="projects.html">Projects</a></li><li><a href="process.html">Technology</a></li><li><a href="contact.html">Commission</a></li></ul>
+    <a href="contact.html" class="nav-cta">Enquire</a>
+  </nav>
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow">Luxury Tidal Power Station</div>
+      <div class="hero-word word-1" id="word1">TIDAL</div>
+      <div class="hero-word word-2" id="word2">POWER</div>
+      <p class="hero-tagline">Tidalux designs and operates the world's most sophisticated tidal power stations — harnessing nature's most predictable energy force to deliver premium baseload renewable electricity.</p>
+      <div class="hero-ctas">
+        <a href="projects.html" class="btn-primary">View Stations</a>
+        <a href="contact.html" class="btn-ghost">Commission a Study</a>
+      </div>
+    </div>
+  </section>
+  <section class="stats-strip">
+    <div class="stat-item"><span class="stat-num" data-target="18">0</span><span class="stat-label">Tidal Stations</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="240">0</span><span class="stat-unit">MW</span><span class="stat-label">Installed Capacity</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="11">0</span><span class="stat-label">Years of Precision</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="99">0</span><span class="stat-unit">%</span><span class="stat-label">Tidal Predictability</span></div>
+  </section>
+  <section class="philosophy">
+    <div class="section-header"><div class="section-eyebrow">Our Science</div><h2 class="section-title">Precision Energy<br>from the Tides</h2></div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card"><h3>Tidal Resource Mastery</h3><p>Unlike wind or solar, tidal energy is perfectly predictable 100 years into the future. Our hydrodynamic modelling translates tidal data into bankable generation profiles with extraordinary accuracy.</p></div>
+      <div class="philosophy-card"><h3>Turbine Excellence</h3><p>Tidalux horizontal-axis turbines are engineered from duplex stainless steel and composite blades — designed for 25-year immersed operation in the harshest estuarial environments.</p></div>
+      <div class="philosophy-card"><h3>Environmental Leadership</h3><p>Our turbines operate at blade tip speeds below the avoidance threshold of marine mammals and fish, making Tidalux stations among the most ecologically benign energy installations on Earth.</p></div>
+    </div>
+  </section>
+  <section class="projects" id="projects">
+    <div class="section-header"><div class="section-eyebrow">Our Stations</div><h2 class="section-title">Landmark<br>Tidal Power</h2></div>
+    <div class="projects-grid">
+      <div class="project-card"><div class="project-img" style="background-image:url('images/product-1.webp')"></div><div class="project-info"><div class="project-category">Tidal Array</div><div class="project-title">Pentland Firth Station</div><div class="project-detail">16MW — Caithness, Scotland</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image:url('images/product-2.webp')"></div><div class="project-info"><div class="project-category">Tidal Barrage</div><div class="project-title">Swansea Bay Lagoon</div><div class="project-detail">32MW — South Wales</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image:url('images/product-3.webp')"></div><div class="project-info"><div class="project-category">Island Power</div><div class="project-title">Alderney Race Project</div><div class="project-detail">48MW — Channel Islands</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image:url('images/product-4.webp')"></div><div class="project-info"><div class="project-category">Tidal Stream</div><div class="project-title">Minas Passage Station</div><div class="project-detail">80MW — Bay of Fundy, Canada</div></div></div>
+    </div>
+  </section>
+  <section class="atelier">
+    <div class="atelier-image"><div class="atelier-img" style="background-image:url('images/workspace-1.webp')"></div><div class="atelier-accent"></div></div>
+    <div class="atelier-content">
+      <div class="section-eyebrow">The Station</div>
+      <h2 class="section-title" style="margin-bottom:24px;">Engineering the<br>Inevitable Tide</h2>
+      <p>Tidalux was founded in 2014 by tidal hydrodynamicists and marine engineers who recognised that the world's tidal energy resource — 1,000 terawatt-hours per year — was almost entirely untapped.</p>
+      <p>Our stations are more than energy installations: they are precision instruments calibrated to the rhythms of the ocean, delivering power as reliably as the tides themselves.</p>
+      <div class="atelier-stats">
+        <div><div class="atelier-stat-label">Capacity Factor</div><div class="atelier-stat-value">40–45%</div></div>
+        <div><div class="atelier-stat-label">Device Life</div><div class="atelier-stat-value">25+ years</div></div>
+        <div><div class="atelier-stat-label">Predictability</div><div class="atelier-stat-value">100 years</div></div>
+      </div>
+    </div>
+  </section>
+  <section class="process">
+    <div class="section-header"><div class="section-eyebrow">Development</div><h2 class="section-title">From Tide Table<br>to Power Grid</h2></div>
+    <div class="process-steps">
+      <div class="process-line"></div>
+      <div class="process-step"><div class="process-step-num">01</div><div><div class="process-step-title">Tidal Hydrodynamic Survey</div><p class="process-step-desc">ADCP current profiling, bathymetric survey, and hydrodynamic modelling to characterise tidal velocities and energy flux at your site.</p></div></div>
+      <div class="process-step"><div class="process-step-num">02</div><div><div class="process-step-title">Array Layout Optimisation</div><p class="process-step-desc">CFD modelling of turbine array configurations to maximise energy yield while minimising wake interference and bathymetric impact.</p></div></div>
+      <div class="process-step"><div class="process-step-num">03</div><div><div class="process-step-title">Marine Consenting</div><p class="process-step-desc">Environmental impact assessment, benthic survey, and consultation with maritime regulators and stakeholders through to marine licence approval.</p></div></div>
+      <div class="process-step"><div class="process-step-num">04</div><div><div class="process-step-title">Installation & Grid Connection</div><p class="process-step-desc">Turbine seabed foundation installation, underwater cable laying, and onshore grid connection managed by our specialist marine contractors.</p></div></div>
+      <div class="process-step" style="padding-bottom:0"><div class="process-step-num">05</div><div><div class="process-step-title">Remote Operations</div><p class="process-step-desc">Satellite-connected SCADA with real-time generation data, automated fault detection, and scheduled diver inspection programmes.</p></div></div>
+    </div>
+  </section>
+  <section class="heritage">
+    <div class="section-header"><div class="section-eyebrow">Our History</div><h2 class="section-title">A Decade of<br>Tidal Excellence</h2></div>
+    <div class="heritage-timeline">
+      <div class="heritage-item"><div class="heritage-year">2014</div><div class="heritage-content"><h3>Tidalux Founded</h3><p>Tidal hydrodynamicists establish Tidalux with backing from a UK infrastructure fund, deploying the first prototype turbine in the Pentland Firth.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2017</div><div class="heritage-content"><h3>First Commercial Station</h3><p>The Pentland Firth 16MW station delivers first power to the Scottish grid — the world's first commercially licensed tidal stream installation.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2020</div><div class="heritage-content"><h3>100MW Milestone</h3><p>Tidalux passes 100MW of commissioned tidal capacity across four stations — a global milestone for the tidal energy industry.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2023</div><div class="heritage-content"><h3>International Expansion</h3><p>The Bay of Fundy, with the world's highest tidal range, becomes Tidalux's first North American station — a 80MW landmark project.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2025</div><div class="heritage-content"><h3>240MW Global Portfolio</h3><p>18 tidal stations delivering 240MW of clean, predictable energy across the UK, Europe, and North America.</p></div></div>
+    </div>
+  </section>
+  <section class="press">
+    <div class="section-header"><div class="section-eyebrow">Recognition</div><h2 class="section-title">What the<br>World Says</h2></div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"Tidalux has done the impossible: made tidal energy commercially viable. Their stations deliver predictable baseload power that no other renewable technology can match."</p><div class="press-source">Offshore Engineer — Tidal Energy Report, 2024</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"The Alderney Race project will change how the Channel Islands think about energy security forever. Tidalux has delivered a genuine marvel of marine engineering."</p><div class="press-source">The Guardian — Renewable Energy, 2023</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"For grid operators seeking predictable, dispatchable renewable energy, Tidalux represents the ideal complement to wind and solar — power that arrives precisely when modelled."</p><div class="press-source">National Grid — Flexibility Procurement Review, 2024</div></div></div>
+      </div>
+      <div class="swiper-pagination" style="margin-top:28px;position:relative;"></div>
+    </div>
+  </section>
+  <section class="commission">
+    <div class="commission-inner">
+      <div class="commission-info">
+        <div class="section-eyebrow">Commission</div>
+        <h2 class="section-title" style="margin-bottom:20px;">Begin Your<br>Tidal Study</h2>
+        <p>If your coastline experiences significant tidal flows, you may be sitting on one of the most valuable renewable energy resources on Earth. Our hydrodynamicists will assess your site's potential.</p>
+        <div class="commission-details">
+          <div class="commission-detail-item"><div class="commission-detail-label">Station</div><div class="commission-detail-value">Harbour View, Wick, Caithness KW1 4QG</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Email</div><div class="commission-detail-value">tides@tidalux.com</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Response</div><div class="commission-detail-value">Within 2 business days</div></div>
+        </div>
+      </div>
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" placeholder="Sorcha"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" placeholder="O'Brien"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="sorcha@tidal.ie"></div>
+        <div class="form-group"><label>Project Type</label><select><option>Tidal Stream Array</option><option>Tidal Barrage</option><option>Tidal Lagoon</option><option>Island Power</option></select></div>
+        <div class="form-group"><label>Site Location</label><input type="text" placeholder="Coastline, estuary or tidal strait"></div>
+        <div class="form-group"><label>Brief</label><textarea rows="4" placeholder="Describe your tidal resource..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Enquiry</button>
+      </form>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand">TIDALUX</div><p class="footer-desc">Luxury tidal power stations engineered for the most demanding marine environments. Predictable clean energy since 2014.</p></div>
+      <div class="footer-col"><h4>Station</h4><ul><li><a href="about.html">About</a></li><li><a href="about.html#team">Engineers</a></li></ul></div>
+      <div class="footer-col"><h4>Work</h4><ul><li><a href="projects.html">Stations</a></li><li><a href="process.html">Technology</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li><a href="contact.html">Commission</a></li><li><a href="mailto:tides@tidalux.com">Email</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span class="footer-copy">© 2026 Tidalux Ltd. All rights reserved.</span><div style="width:40px;height:1px;background:var(--accent);"></div></div>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    const fill=document.getElementById('preloader-fill');let prog=0;
+    const iv=setInterval(()=>{prog+=Math.random()*15;if(prog>=100){prog=100;clearInterval(iv);}fill.style.width=prog+'%';},80);
+    window.addEventListener('load',()=>{clearInterval(iv);fill.style.width='100%';
+      setTimeout(()=>{gsap.to('#preloader',{opacity:0,duration:0.6,onComplete:()=>{
+        document.getElementById('preloader').style.display='none';
+        document.getElementById('scroll-indicator').classList.add('visible');
+        gsap.from('.hero-eyebrow',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out'});
+        gsap.from('#word1',{immediateRender:false,opacity:0,x:-60,duration:0.9,ease:'power3.out',delay:0.2});
+        gsap.from('#word2',{immediateRender:false,opacity:0,x:60,duration:0.9,ease:'power3.out',delay:0.35});
+        gsap.from('.hero-tagline,.hero-ctas',{immediateRender:false,opacity:0,y:20,duration:0.9,ease:'power3.out',stagger:0.1,delay:0.5});
+        gsap.to('#word1',{x:'-30vw',scale:0.4,scrollTrigger:{trigger:'.hero',start:'top top',end:'50% top',scrub:1}});
+        gsap.to('#word2',{x:'30vw',scale:0.4,scrollTrigger:{trigger:'.hero',start:'top top',end:'50% top',scrub:1}});
+        gsap.to('.hero-tagline,.hero-ctas,.hero-eyebrow',{opacity:0,scrollTrigger:{trigger:'.hero',start:'top top',end:'30% top',scrub:1}});
+      }});},400);
+    });
+    setTimeout(()=>{document.getElementById('scroll-indicator')?.classList.add('visible');},4000);
+    window.addEventListener('scroll',()=>{if(window.scrollY>60)document.getElementById('navbar').classList.add('scrolled');else document.getElementById('navbar').classList.remove('scrolled');document.getElementById('scroll-progress').style.height=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100)+'%';});
+    document.querySelectorAll('.stat-num').forEach(el=>{gsap.from(el,{immediateRender:false,textContent:0,duration:2.5,ease:'power2.out',snap:{textContent:1},scrollTrigger:{trigger:el,start:'top 85%',once:true}});});
+    gsap.from('.philosophy-card',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out',stagger:0.04,scrollTrigger:{trigger:'.philosophy-grid',start:'top 85%'}});
+    gsap.from('.project-card',{immediateRender:false,opacity:0,y:20,duration:0.8,ease:'power3.out',stagger:0.04,scrollTrigger:{trigger:'.projects-grid',start:'top 85%'}});
+    gsap.from('.atelier-image',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:'.atelier',start:'top 85%'}});
+    gsap.from('.atelier-content',{immediateRender:false,opacity:0,x:20,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:'.atelier',start:'top 85%'}});
+    gsap.from('.process-step',{immediateRender:false,opacity:0,x:-20,duration:0.8,ease:'power3.out',stagger:0.04,scrollTrigger:{trigger:'.process-steps',start:'top 85%'}});
+    gsap.from('.heritage-item',{immediateRender:false,opacity:0,y:20,duration:0.8,ease:'power3.out',stagger:0.04,scrollTrigger:{trigger:'.heritage-timeline',start:'top 85%'}});
+    document.querySelectorAll('.section-header').forEach(h=>{gsap.from(h,{immediateRender:false,opacity:0,y:20,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:h,start:'top 85%'}});});
+    new Swiper('.press-swiper',{slidesPerView:1,loop:true,autoplay:{delay:5000},pagination:{el:'.swiper-pagination',clickable:true}});
+  </script>
+</body>
+</html>

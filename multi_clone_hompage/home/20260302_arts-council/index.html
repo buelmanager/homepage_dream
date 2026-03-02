@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The National Arts Council — Investing in the Human Imagination</title>
+  <meta name="description" content="The National Arts Council funds, champions and develops the arts across communities nationwide. Supporting thousands of artists, organisations and creative projects every year.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #130F1A;
+      --surface: #1C1626;
+      --surface2: #231D30;
+      --accent: #9B6EDB;
+      --accent-light: #B894EE;
+      --accent-dark: #6840A8;
+      --ivory: #EAE0F8;
+      --smoke: #907890;
+      --muted: #544860;
+      --border: #181420;
+      --font-serif: 'Spectral', Georgia, serif;
+      --font-sans: 'Mulish', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s, visibility 0.8s; }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 1.0rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 2rem; font-style: italic; }
+    .preloader-bar { width: 200px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--accent); transition: width 0.8s ease; }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; transition: opacity 0.6s; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent); animation: scrollDown 2s ease infinite; }
+    @keyframes scrollDown { 0% { top: -100%; } 100% { top: 100%; } }
+    .scroll-text { writing-mode: vertical-lr; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 20px 60px; display: flex; align-items: center; justify-content: space-between; background: transparent; transition: background 0.4s; }
+    nav.scrolled { background: rgba(19,15,26,0.95); backdrop-filter: blur(12px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.0rem; letter-spacing: 0.1em; color: var(--ivory); text-decoration: none; font-style: italic; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { padding: 8px 20px; border: 1px solid var(--accent); color: var(--accent); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO — TYPE D: Portraits + Stats */
+    .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; background: var(--bg); }
+    .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 140px 80px 80px; position: relative; }
+    .hero-eyebrow { font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 300; color: var(--ivory); line-height: 1.05; margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-sub { font-size: 1rem; color: var(--smoke); line-height: 1.7; max-width: 440px; margin-bottom: 40px; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, auto); gap: 30px; border-top: 1px solid var(--border); padding-top: 30px; margin-bottom: 40px; }
+    .hero-stat-num { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); font-weight: 300; }
+    .hero-stat-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--smoke); margin-top: 4px; }
+    .hero-actions { display: flex; gap: 16px; }
+    .btn-primary { padding: 14px 36px; background: var(--accent); color: var(--bg); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.3s; font-weight: 500; display: inline-block; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-outline { padding: 14px 36px; border: 1px solid var(--smoke); color: var(--smoke); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; display: inline-block; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-right { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 4px; background: var(--border); }
+    .hero-image-cell { overflow: hidden; }
+    .hero-image-cell img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+    .hero-image-cell:hover img { transform: scale(1.04); }
+
+    /* STATS STRIP */
+    .stats-strip { padding: 60px 80px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); font-weight: 300; }
+    .stat-unit { font-size: 0.8rem; }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300; color: var(--ivory); line-height: 1.1; margin-bottom: 60px; max-width: 640px; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+    .philosophy-card { padding: 40px; background: var(--surface); border: 1px solid var(--border); transition: border-color 0.3s; }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .phil-num { font-family: var(--font-serif); font-size: 2.5rem; color: var(--muted); font-weight: 300; margin-bottom: 20px; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.25rem; color: var(--accent-light); margin-bottom: 12px; font-style: italic; }
+    .phil-text { font-size: 0.85rem; color: var(--smoke); line-height: 1.7; }
+
+    /* COLLECTION GRID */
+    .collection { padding: 120px 80px; background: var(--surface); }
+    .collection-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 50px; }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; overflow: visible; }
+    .collection-card { position: relative; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; }
+    .collection-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+    .collection-card:hover img { transform: scale(1.06); }
+    .collection-card-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(19,15,26,0.9) 0%, transparent 55%); display: flex; flex-direction: column; justify-content: flex-end; padding: 28px; }
+    .card-label { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .card-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); font-style: italic; }
+    .card-sub { font-size: 0.78rem; color: var(--smoke); margin-top: 6px; }
+
+    /* ATELIER */
+    .atelier { padding: 120px 80px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-image { position: relative; aspect-ratio: 3/4; overflow: hidden; }
+    .atelier-image img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-badge { position: absolute; bottom: -20px; right: -20px; width: 120px; height: 120px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 0.7rem; text-align: center; color: var(--bg); letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.4; }
+    .atelier-body { font-size: 0.9rem; color: var(--smoke); line-height: 1.8; margin-bottom: 32px; }
+    .atelier-list { list-style: none; }
+    .atelier-list li { padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; color: var(--smoke); display: flex; align-items: center; gap: 12px; }
+    .atelier-list li::before { content: '—'; color: var(--accent); }
+
+    /* PROCESS */
+    .process { padding: 120px 80px; background: var(--surface2); }
+    .process-timeline { margin-top: 60px; position: relative; padding-left: 60px; }
+    .process-timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { position: relative; margin-bottom: 50px; padding-left: 40px; }
+    .process-step:last-child { margin-bottom: 0; }
+    .step-dot { position: absolute; left: -48px; top: 6px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; }
+    .step-num { font-size: 0.65rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+    .step-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 10px; font-style: italic; }
+    .step-text { font-size: 0.85rem; color: var(--smoke); line-height: 1.7; max-width: 560px; }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-milestones { margin-top: 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); }
+    .milestone { background: var(--surface); padding: 40px 28px; transition: background 0.3s; }
+    .milestone:hover { background: var(--surface2); }
+    .milestone-year { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); font-weight: 300; margin-bottom: 12px; }
+    .milestone-title { font-family: var(--font-serif); font-size: 1.0rem; color: var(--ivory); margin-bottom: 10px; font-style: italic; }
+    .milestone-text { font-size: 0.78rem; color: var(--smoke); line-height: 1.6; }
+
+    /* PRESS */
+    .press { padding: 100px 80px; background: var(--surface); }
+    .press-slide { padding: 40px; background: var(--surface2); border: 1px solid var(--border); }
+    .press-quote { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); line-height: 1.6; font-style: italic; margin-bottom: 24px; }
+    .press-source { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+
+    /* COMMISSION */
+    .commission { padding: 120px 80px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .commission-body { font-size: 0.9rem; color: var(--smoke); line-height: 1.8; }
+    .form-row { margin-bottom: 20px; }
+    .form-row label { display: block; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-row input, .form-row select, .form-row textarea { width: 100%; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); font-family: var(--font-sans); font-size: 0.85rem; outline: none; transition: border-color 0.3s; }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--accent); }
+    .form-row textarea { resize: vertical; min-height: 100px; }
+    .form-submit { width: 100%; padding: 14px; background: var(--accent); border: none; cursor: pointer; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bg); transition: background 0.3s; font-weight: 500; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { padding: 60px 80px 40px; background: var(--bg); border-top: 1px solid var(--border); }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 50px; }
+    .footer-logo { font-family: var(--font-serif); font-size: 1.0rem; letter-spacing: 0.1em; color: var(--ivory); display: block; margin-bottom: 14px; font-style: italic; }
+    .footer-brand p { font-size: 0.8rem; color: var(--smoke); line-height: 1.7; }
+    .footer-col h4 { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a { color: var(--smoke); font-size: 0.8rem; text-decoration: none; transition: color 0.3s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 24px; font-size: 0.72rem; color: var(--muted); }
+
+    @media (max-width: 1024px) {
+      nav { padding: 20px 30px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { min-height: 400px; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 50px 40px; }
+      .philosophy, .collection, .process, .heritage, .press { padding: 80px 40px; }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .atelier, .commission { padding: 80px 40px; grid-template-columns: 1fr; }
+      .heritage-milestones { grid-template-columns: repeat(2, 1fr); }
+      footer { padding: 50px 40px 30px; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .heritage-milestones { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="preloader-logo">The National Arts Council</div>
+  <div class="preloader-bar"><div class="preloader-fill" id="preloader-fill"></div></div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <span class="scroll-text">Scroll</span>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">National Arts Council</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Grants</a></li>
+    <li><a href="process.html">Initiatives</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="collection.html" class="nav-cta">Apply for Funding</a>
+</nav>
+
+<!-- HERO — TYPE D: Portraits + Stats Grid -->
+<section class="hero" id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">National Arts Council &nbsp;·&nbsp; Est. 1946</div>
+    <h1 class="hero-title">Investing in the<br><em>Human Imagination</em></h1>
+    <p class="hero-sub">We fund, champion and develop the arts across our communities. From a village theatre to a national opera house — creativity deserves investment at every scale.</p>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">£420<span style="font-size:1.4rem">m</span></div><div class="hero-stat-label">Annual Funding</div></div>
+      <div><div class="hero-stat-num">4,800</div><div class="hero-stat-label">Organisations</div></div>
+      <div><div class="hero-stat-num">21k+</div><div class="hero-stat-label">Individual Artists</div></div>
+    </div>
+    <div class="hero-actions">
+      <a href="collection.html" class="btn-primary">Explore Grants</a>
+      <a href="about.html" class="btn-outline">Our Mission</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-image-cell"><img src="images/img-1.webp" alt="Contemporary art gallery" loading="lazy"></div>
+    <div class="hero-image-cell"><img src="images/img-2.webp" alt="Art gallery interior" loading="lazy"></div>
+    <div class="hero-image-cell"><img src="images/img-3.webp" alt="Performance arts" loading="lazy"></div>
+    <div class="hero-image-cell"><img src="images/img-4.webp" alt="Creative arts studio" loading="lazy"></div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<section class="stats-strip">
+  <div><div class="stat-num">£420<span class="stat-unit">m</span></div><div class="stat-label">Distributed Annually</div></div>
+  <div><div class="stat-num">4,800</div><div class="stat-label">Arts Organisations</div></div>
+  <div><div class="stat-num">21k</div><div class="stat-label">Individual Artists</div></div>
+  <div><div class="stat-num">79</div><div class="stat-label">Years of Service</div></div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy" id="philosophy">
+  <div class="section-label">Our Beliefs</div>
+  <h2 class="section-title">Why the Arts Matter to Society</h2>
+  <div class="philosophy-grid">
+    <div class="philosophy-card">
+      <div class="phil-num">01</div>
+      <div class="phil-title">Access for All</div>
+      <p class="phil-text">Great art should not be determined by postcode or income. We work to ensure that communities everywhere — rural, urban, marginalised — can access and participate in cultural life.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="phil-num">02</div>
+      <div class="phil-title">Creative Risk</div>
+      <p class="phil-text">Extraordinary art rarely emerges from safe choices. We champion bold, experimental work that takes risks — because that is where culture advances and new voices emerge.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="phil-num">03</div>
+      <div class="phil-title">Economic Value</div>
+      <p class="phil-text">The creative industries contribute over £116 billion to the national economy. We make the case for arts investment as economic and social infrastructure, not luxury.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION GRID -->
+<section class="collection" id="collection">
+  <div class="collection-header">
+    <div>
+      <div class="section-label">Funding Streams</div>
+      <h2 class="section-title" style="margin-bottom:0;">Supporting Every Art Form</h2>
+    </div>
+    <a href="collection.html" class="btn-outline">All Grants</a>
+  </div>
+  <div class="collection-grid">
+    <div class="collection-card">
+      <img src="images/img-1.webp" alt="Visual Arts" loading="lazy">
+      <div class="collection-card-overlay">
+        <div class="card-label">Visual Arts</div>
+        <div class="card-title">Painting, Sculpture &amp; Installation</div>
+        <div class="card-sub">Grants from £2,000 to £500,000</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="images/img-2.webp" alt="Performing Arts" loading="lazy">
+      <div class="collection-card-overlay">
+        <div class="card-label">Performing Arts</div>
+        <div class="card-title">Theatre, Dance &amp; Opera</div>
+        <div class="card-sub">Production and touring support</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="images/img-3.webp" alt="Music" loading="lazy">
+      <div class="collection-card-overlay">
+        <div class="card-label">Music</div>
+        <div class="card-title">Classical, Contemporary &amp; Folk</div>
+        <div class="card-sub">Composition and performance funding</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="images/img-4.webp" alt="Literature" loading="lazy">
+      <div class="collection-card-overlay">
+        <div class="card-label">Literature</div>
+        <div class="card-title">Writing, Publishing &amp; Poetry</div>
+        <div class="card-sub">Author development and literary festivals</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATELIER -->
+<section class="atelier" id="atelier">
+  <div class="atelier-image">
+    <img src="images/img-5.webp" alt="Artist at work" loading="lazy">
+    <div class="atelier-badge">Est.<br>1946</div>
+  </div>
+  <div class="atelier-text">
+    <div class="section-label">Our History</div>
+    <h2 class="section-title">Eight Decades of Cultural Investment</h2>
+    <p class="atelier-body">The National Arts Council was established in the aftermath of the Second World War, founded on the conviction that a civilised society must nurture its artistic life. For 79 years, we have been the principal means by which public funds are distributed to artists and arts organisations across the country.</p>
+    <ul class="atelier-list">
+      <li>£420 million distributed in 2025–26</li>
+      <li>4,800 regularly funded organisations</li>
+      <li>National Portfolio — 900 flagship organisations</li>
+      <li>Emergency Relief Fund — available year-round</li>
+      <li>International touring support for British artists</li>
+    </ul>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-label">How We Fund</div>
+  <h2 class="section-title">The Grant Process</h2>
+  <div class="process-timeline">
+    <div class="process-step"><div class="step-dot"></div><div class="step-num">Stage 01</div><div class="step-title">Open Application</div><p class="step-text">Grants are open to individuals and organisations across all art forms. Applications are assessed against clear public benefit, artistic quality and access criteria.</p></div>
+    <div class="process-step"><div class="step-dot"></div><div class="step-num">Stage 02</div><div class="step-title">Expert Assessment</div><p class="step-text">Peer review panels of practising artists and sector professionals assess applications — ensuring decisions are made by people who understand creative risk.</p></div>
+    <div class="process-step"><div class="step-dot"></div><div class="step-num">Stage 03</div><div class="step-title">Investment Decision</div><p class="step-text">Successful applicants receive funding agreements with clear milestones and reporting requirements that are proportionate to the grant size.</p></div>
+    <div class="process-step"><div class="step-dot"></div><div class="step-num">Stage 04</div><div class="step-title">Delivery &amp; Support</div><p class="step-text">Our relationship managers provide ongoing support, connecting funded organisations with peer networks, skills development and additional resources.</p></div>
+    <div class="process-step"><div class="step-dot"></div><div class="step-num">Stage 05</div><div class="step-title">Impact Reporting</div><p class="step-text">We publish annual impact reports documenting the reach, audiences and economic effect of every funded programme — maintaining public accountability.</p></div>
+  </div>
+</section>
+
+<!-- HERITAGE -->
+<section class="heritage" id="heritage">
+  <div class="section-label">Our Timeline</div>
+  <h2 class="section-title">Moments that Shaped Culture</h2>
+  <div class="heritage-milestones">
+    <div class="milestone"><div class="milestone-year">1946</div><div class="milestone-title">Foundation</div><p class="milestone-text">Established by Royal Charter following the wartime CEMA programme, with an initial budget of £235,000.</p></div>
+    <div class="milestone"><div class="milestone-year">1967</div><div class="milestone-title">First Regional Offices</div><p class="milestone-text">Decentralisation to nine regional arts associations, ensuring funding reached communities beyond the capital.</p></div>
+    <div class="milestone"><div class="milestone-year">2000</div><div class="milestone-title">National Lottery Integration</div><p class="milestone-text">Lottery funding transforms the Council's capacity, enabling landmark capital projects and touring programmes.</p></div>
+    <div class="milestone"><div class="milestone-year">2020</div><div class="milestone-title">Culture Recovery Fund</div><p class="milestone-text">Emergency response to the pandemic: £1.57 billion distributed to keep arts organisations alive during lockdowns.</p></div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="press" id="press">
+  <div class="section-label">Recognition</div>
+  <h2 class="section-title">In Their Words</h2>
+  <div class="swiper press-swiper" style="margin-top:50px;">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide press-slide"><p class="press-quote">"The National Arts Council's grants programme is the single most important mechanism for cultural diversity in this country — and it shows."</p><div class="press-source">The Observer &nbsp;·&nbsp; Arts Funding Review 2025</div></div>
+      <div class="swiper-slide press-slide"><p class="press-quote">"My entire career exists because of an Arts Council emergency grant at a moment when I had nothing. That investment multiplied a thousandfold."</p><div class="press-source">Turner Prize Winner &nbsp;·&nbsp; Acceptance Speech 2024</div></div>
+      <div class="swiper-slide press-slide"><p class="press-quote">"Without the Council's touring fund, three-quarters of the country would never see live professional theatre. That is what public investment means."</p><div class="press-source">Society of London Theatre &nbsp;·&nbsp; Annual Report</div></div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- COMMISSION FORM -->
+<section class="commission" id="commission">
+  <div class="commission-text">
+    <div class="section-label">Apply for Funding</div>
+    <h2 class="section-title">Start Your Application</h2>
+    <p class="commission-body">We fund artists and organisations at every stage of their career. Whether you are an emerging artist seeking your first grant or an established institution planning a major commission, our funding programmes are designed to support creative ambition.</p>
+  </div>
+  <form>
+    <div class="form-row"><label>Name / Organisation</label><input type="text" placeholder="Your name or organisation"></div>
+    <div class="form-row"><label>Email Address</label><input type="email" placeholder="your@email.com"></div>
+    <div class="form-row"><label>Art Form</label><select><option>Visual Arts</option><option>Theatre &amp; Dance</option><option>Music</option><option>Literature</option><option>Combined Arts</option><option>Film &amp; Media</option></select></div>
+    <div class="form-row"><label>Funding Amount Sought</label><select><option>Under £10,000</option><option>£10,000 – £50,000</option><option>£50,000 – £250,000</option><option>Over £250,000</option></select></div>
+    <div class="form-row"><label>Project Description</label><textarea placeholder="Tell us about your project…"></textarea></div>
+    <button type="submit" class="form-submit">Begin Application</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="footer-logo">National Arts Council</span>
+      <p>Investing in the human imagination — funding over 4,800 organisations and 21,000 individual artists across every art form and community.</p>
+    </div>
+    <div class="footer-col"><h4>Funding</h4><ul><li><a href="collection.html">All Grants</a></li><li><a href="#">Project Grants</a></li><li><a href="#">National Portfolio</a></li><li><a href="#">Emergency Funding</a></li></ul></div>
+    <div class="footer-col"><h4>About</h4><ul><li><a href="about.html">Our Story</a></li><li><a href="#">Leadership</a></li><li><a href="#">Annual Report</a></li><li><a href="process.html">Initiatives</a></li></ul></div>
+    <div class="footer-col"><h4>Help</h4><ul><li><a href="#">Apply Online</a></li><li><a href="#">Eligibility Guide</a></li><li><a href="#">FAQs</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 The National Arts Council. All rights reserved.</span>
+    <span>Investing in the Human Imagination</span>
+  </div>
+</footer>
+
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span'); wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+      if (type.includes('chars')) { [...word].forEach(ch => { const c = document.createElement('span'); c.className = 'split-char'; c.style.display = 'inline-block'; c.textContent = ch; wSpan.appendChild(c); this.chars.push(c); }); } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+window.addEventListener('load', () => {
+  const fill = document.getElementById('preloader-fill');
+  const preloader = document.getElementById('preloader');
+  let w = 0;
+  const interval = setInterval(() => {
+    w += Math.random() * 15 + 5;
+    if (w >= 100) { w = 100; clearInterval(interval); setTimeout(() => { preloader.classList.add('hidden'); document.getElementById('scroll-indicator').classList.add('visible'); initAnimations(); }, 400); }
+    fill.style.width = w + '%';
+  }, 80);
+});
+
+setTimeout(() => { document.getElementById('scroll-indicator').classList.add('visible'); }, 4000);
+
+window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
+
+function initAnimations() {
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', delay: 0.2 });
+  gsap.from('.hero-title', { immediateRender: false, opacity: 0, y: 40, duration: 1.3, ease: 'power2.inOut', delay: 0.35 });
+  gsap.from('.hero-sub', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', delay: 0.5 });
+  gsap.from('.hero-stats', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', delay: 0.65 });
+  gsap.from('.hero-actions', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', delay: 0.8 });
+  gsap.from('.hero-image-cell', { immediateRender: false, opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', stagger: 0.15, delay: 0.3 });
+  gsap.from('.stat-item, .stats-strip > div', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, scrollTrigger: { trigger: '.stats-strip', start: 'top 85%', once: true } });
+  gsap.from('.philosophy-card', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true } });
+  gsap.from('.collection-card', { immediateRender: false, opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', stagger: 0.15, scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true } });
+  gsap.from('.atelier-image', { immediateRender: false, opacity: 0, x: -30, duration: 1.3, ease: 'power2.inOut', scrollTrigger: { trigger: '.atelier', start: 'top 85%', once: true } });
+  gsap.from('.atelier-text', { immediateRender: false, opacity: 0, x: 30, duration: 1.3, ease: 'power2.inOut', scrollTrigger: { trigger: '.atelier', start: 'top 85%', once: true } });
+  gsap.from('.process-step', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, scrollTrigger: { trigger: '.process-timeline', start: 'top 85%', once: true } });
+  gsap.from('.milestone', { immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, scrollTrigger: { trigger: '.heritage-milestones', start: 'top 85%', once: true } });
+}
+
+new Swiper('.press-swiper', { slidesPerView: 1, spaceBetween: 24, loop: true, autoplay: { delay: 5000 }, pagination: { el: '.swiper-pagination', clickable: true }, breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } } });
+</script>
+</body>
+</html>

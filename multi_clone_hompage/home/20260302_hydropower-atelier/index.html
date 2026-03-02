@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AQUA ATELIER — Premium Hydropower Design</title>
+  <meta name="description" content="Aqua Atelier designs and engineers premium hydropower systems — from intimate run-of-river micro-schemes to landmark reservoir installations.">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:#0A1818; --surface:#0F2020; --surface2:#142828;
+      --accent:#4DCFB0; --accent-light:#7ADFC8; --accent-dark:#2A9A80;
+      --ivory:#DCEFEC; --smoke:#809890; --muted:#4A6860; --border:#0C1E1E;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 2rem; letter-spacing: 0.3em; color: var(--accent); margin-bottom: 24px; }
+    .preloader-bar { width: 200px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--accent); }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; opacity: 0; transition: opacity 0.6s; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, var(--accent), transparent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; }
+    .scroll-progress { position: fixed; left: 32px; top: 0; width: 1px; height: 0%; background: var(--accent); z-index: 99; }
+
+    /* NAVBAR */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+    .navbar.scrolled { background: rgba(10,24,24,0.92); backdrop-filter: blur(16px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 0.1em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { border: 1px solid var(--accent); color: var(--accent); padding: 10px 28px; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO TYPE B — Parallax Full-Screen */
+    .hero { position: relative; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+    .hero-parallax-bg { position: absolute; inset: -10%; }
+    .parallax-layer { position: absolute; inset: 0; background-size: cover; background-position: center; will-change: transform; }
+    .layer-1 { background-image: url('images/hero-1.webp'); filter: brightness(0.5); }
+    .layer-2 { background-image: url('images/hero-2.webp'); filter: brightness(0.3); mix-blend-mode: overlay; opacity: 0.4; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(10,24,24,0.7) 0%, rgba(10,24,24,0.2) 100%); }
+    .hero-content { position: relative; z-index: 3; padding: 0 80px; max-width: 680px; }
+    .hero-eyebrow { font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 6rem); line-height: 1.05; color: var(--ivory); margin-bottom: 28px; }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub { font-size: 1.05rem; font-weight: 300; line-height: 1.8; color: var(--smoke); max-width: 480px; margin-bottom: 40px; }
+    .hero-ctas { display: flex; gap: 20px; }
+    .btn-primary { background: var(--accent); color: var(--bg); padding: 16px 40px; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; transition: background 0.3s; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-ghost { border: 1px solid var(--smoke); color: var(--smoke); padding: 16px 40px; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-float-badge { position: absolute; bottom: 60px; right: 80px; z-index: 3; text-align: right; background: rgba(10,24,24,0.7); backdrop-filter: blur(8px); border: 1px solid var(--border); padding: 20px 28px; }
+    .badge-num { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); display: block; }
+    .badge-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+
+    /* STATS */
+    .stats-strip { background: var(--surface); padding: 60px; display: grid; grid-template-columns: repeat(4,1fr); gap: 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 3.5rem; color: var(--accent); display: block; line-height: 1; }
+    .stat-unit { font-size: 1.6rem; color: var(--accent-dark); }
+    .stat-label { display: block; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 60px; background: var(--bg); }
+    .section-header { margin-bottom: 72px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 4rem); color: var(--ivory); line-height: 1.2; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    .philosophy-card { padding: 44px 36px; background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 16px; }
+    .philosophy-card p { font-size: 0.9rem; line-height: 1.8; color: var(--smoke); }
+
+    /* PROJECTS */
+    .projects { padding: 120px 60px; background: var(--surface); }
+    .projects-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; overflow: visible; margin-top: 60px; }
+    .project-card { position: relative; aspect-ratio: 4/3; overflow: hidden; cursor: pointer; }
+    .project-card:nth-child(2) { transform: translateY(28px); }
+    .project-card:nth-child(4) { transform: translateY(-18px); }
+    .project-img { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.6); transition: transform 0.7s, filter 0.4s; }
+    .project-card:hover .project-img { transform: scale(1.05); filter: brightness(0.82); }
+    .project-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 28px 28px; background: linear-gradient(transparent, rgba(10,24,24,0.96)); }
+    .project-category { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .project-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); }
+    .project-detail { font-size: 0.8rem; color: var(--smoke); margin-top: 4px; }
+
+    /* ATELIER */
+    .atelier { padding: 120px 60px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-image { position: relative; aspect-ratio: 4/5; overflow: hidden; }
+    .atelier-img { width: 100%; height: 100%; background-size: cover; background-position: center; filter: brightness(0.8); transition: transform 0.8s; }
+    .atelier-image:hover .atelier-img { transform: scale(1.04); }
+    .atelier-accent { position: absolute; bottom: -16px; left: -16px; width: 70px; height: 70px; border: 2px solid var(--accent); pointer-events: none; }
+    .atelier-content p { font-size: 0.95rem; line-height: 1.9; color: var(--smoke); margin-bottom: 20px; }
+    .atelier-stats { display: flex; gap: 40px; margin-top: 40px; }
+    .atelier-stat-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .atelier-stat-value { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); }
+
+    /* PROCESS */
+    .process { padding: 120px 60px; background: var(--surface); }
+    .process-steps { margin-top: 60px; position: relative; }
+    .process-line { position: absolute; left: 24px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 0 0 56px; position: relative; }
+    .process-step-num { width: 48px; height: 48px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); background: var(--surface); position: relative; z-index: 2; }
+    .process-step-title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-bottom: 10px; margin-top: 8px; }
+    .process-step-desc { font-size: 0.9rem; line-height: 1.8; color: var(--smoke); }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 60px; background: var(--bg); }
+    .heritage-timeline { margin-top: 60px; }
+    .heritage-item { display: grid; grid-template-columns: 140px 1fr; gap: 40px; padding: 36px 0; border-bottom: 1px solid var(--border); }
+    .heritage-year { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); }
+    .heritage-content h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-content p { font-size: 0.9rem; line-height: 1.7; color: var(--smoke); }
+
+    /* PRESS */
+    .press { padding: 120px 60px; background: var(--surface); }
+    .press-swiper { margin-top: 60px; }
+    .press-slide { padding: 48px; background: var(--surface2); border: 1px solid var(--border); }
+    .press-quote { font-family: var(--font-serif); font-size: 1.2rem; font-style: italic; line-height: 1.7; color: var(--ivory); margin-bottom: 28px; }
+    .press-source { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .swiper-pagination-bullet { background: var(--smoke); }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* COMMISSION */
+    .commission { padding: 120px 60px; background: var(--bg); }
+    .commission-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .commission-info p { font-size: 0.95rem; line-height: 1.8; color: var(--smoke); margin-bottom: 24px; }
+    .commission-details { display: flex; flex-direction: column; gap: 14px; margin-top: 32px; }
+    .commission-detail-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .commission-detail-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .commission-detail-value { font-size: 0.9rem; color: var(--ivory); }
+    .commission-form { display: flex; flex-direction: column; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .form-group input, .form-group select, .form-group textarea { background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; resize: none; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-submit { background: var(--accent); color: var(--bg); border: none; padding: 16px 44px; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 60px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 0.1em; color: var(--ivory); margin-bottom: 14px; }
+    .footer-desc { font-size: 0.85rem; line-height: 1.7; color: var(--smoke); }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">Aqua Atelier</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="preloader-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator"><div class="scroll-dot"></div><div class="scroll-line"></div><div class="scroll-label">Scroll</div></div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">Aqua Atelier</a>
+    <ul class="nav-links">
+      <li><a href="about.html">Atelier</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="process.html">Engineering</a></li>
+      <li><a href="contact.html">Commission</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Enquire</a>
+  </nav>
+
+  <!-- HERO TYPE B — Parallax -->
+  <section class="hero" id="hero">
+    <div class="hero-parallax-bg">
+      <div class="parallax-layer layer-1" id="layer1"></div>
+      <div class="parallax-layer layer-2" id="layer2"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Premium Hydropower Design & Engineering</div>
+      <h1 class="hero-title">Water in<br><em>Perfect</em><br>Motion</h1>
+      <p class="hero-sub">Aqua Atelier designs and engineers premium hydropower systems — from intimate run-of-river micro-schemes to landmark reservoir installations that define landscapes.</p>
+      <div class="hero-ctas">
+        <a href="projects.html" class="btn-primary">Explore Projects</a>
+        <a href="contact.html" class="btn-ghost">Commission a Study</a>
+      </div>
+    </div>
+    <div class="hero-float-badge">
+      <span class="badge-num">35+</span>
+      <span class="badge-label">Hydro Schemes</span>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-strip">
+    <div class="stat-item"><span class="stat-num" data-target="35">0</span><span class="stat-label">Schemes Commissioned</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="480">0</span><span class="stat-unit">MW</span><span class="stat-label">Installed Capacity</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="18">0</span><span class="stat-label">Years of Expertise</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="100">0</span><span class="stat-unit">%</span><span class="stat-label">Renewable Baseload</span></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="section-header"><div class="section-eyebrow">Our Craft</div><h2 class="section-title">Water Shaped<br>with Precision</h2></div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card"><h3>Hydrology Mastery</h3><p>Every scheme begins with a thorough hydrological assessment — flow duration curves, flood frequency analysis, and seasonal yield modelling that informs every engineering decision.</p></div>
+      <div class="philosophy-card"><h3>Turbine Selection</h3><p>We curate Kaplan, Pelton, and Francis turbines from leading manufacturers, specifying the optimal type and size for each scheme's unique head and flow characteristics.</p></div>
+      <div class="philosophy-card"><h3>Landscape Harmony</h3><p>Our hydropower schemes are designed to enhance their riparian setting — from heritage-inspired intake structures to powerhouses that read as natural extensions of their geography.</p></div>
+    </div>
+  </section>
+
+  <!-- PROJECTS GRID -->
+  <section class="projects" id="projects">
+    <div class="section-header"><div class="section-eyebrow">Selected Work</div><h2 class="section-title">Landmark<br>Hydropower</h2></div>
+    <div class="projects-grid">
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-1.webp');"></div><div class="project-info"><div class="project-category">Run-of-River</div><div class="project-title">Glen Affric Scheme</div><div class="project-detail">4.8MW Pelton — Scottish Highlands</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-2.webp');"></div><div class="project-info"><div class="project-category">Reservoir</div><div class="project-title">Loch Rannoch Power</div><div class="project-detail">22MW Kaplan — Perthshire</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-3.webp');"></div><div class="project-info"><div class="project-category">Micro Hydro</div><div class="project-title">Chamonix Estate Scheme</div><div class="project-detail">180kW Francis — French Alps</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-4.webp');"></div><div class="project-info"><div class="project-category">Industrial</div><div class="project-title">Furnas Power Complex</div><div class="project-detail">120MW Multiple Kaplan — Portugal</div></div></div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier">
+    <div class="atelier-image"><div class="atelier-img" style="background-image: url('images/workspace-1.webp');"></div><div class="atelier-accent"></div></div>
+    <div class="atelier-content">
+      <div class="section-eyebrow">The Atelier</div>
+      <h2 class="section-title" style="margin-bottom:24px;">Engineering<br>as Fine Craft</h2>
+      <p>Aqua Atelier was founded on the conviction that hydropower engineering is both a science and an art. Our team combines civil, mechanical, and electrical engineering expertise with a deep respect for the watercourses and landscapes we work within.</p>
+      <p>Every project is personally managed by a principal engineer from feasibility through commissioning — ensuring that the vision established at conception is faithfully realised in every detail of construction.</p>
+      <div class="atelier-stats">
+        <div><div class="atelier-stat-label">Capacity Factor</div><div class="atelier-stat-value">58% avg</div></div>
+        <div><div class="atelier-stat-label">Plant Life</div><div class="atelier-stat-value">50–80 years</div></div>
+        <div><div class="atelier-stat-label">Availability</div><div class="atelier-stat-value">98.5%</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process">
+    <div class="section-header"><div class="section-eyebrow">How We Work</div><h2 class="section-title">From Catchment<br>to Current</h2></div>
+    <div class="process-steps">
+      <div class="process-line"></div>
+      <div class="process-step"><div class="process-step-num">01</div><div><div class="process-step-title">Hydrological Assessment</div><p class="process-step-desc">Flow gauging, catchment analysis, and 3D modelling establish the available water resource and optimal generation profile for your site.</p></div></div>
+      <div class="process-step"><div class="process-step-num">02</div><div><div class="process-step-title">Concept Design</div><p class="process-step-desc">Civil, mechanical, and electrical concept design explores intake, penstock, powerhouse, and tailrace options — optimising yield, cost, and environmental impact.</p></div></div>
+      <div class="process-step"><div class="process-step-num">03</div><div><div class="process-step-title">Environmental Consenting</div><p class="process-step-desc">We prepare environmental impact assessments and manage regulatory consenting, including fish pass design and abstraction licensing.</p></div></div>
+      <div class="process-step"><div class="process-step-num">04</div><div><div class="process-step-title">Procurement & Construction</div><p class="process-step-desc">Turbine and generator procurement, civil works supervision, and commissioning management — delivered to programme and budget.</p></div></div>
+      <div class="process-step" style="padding-bottom:0"><div class="process-step-num">05</div><div><div class="process-step-title">Operations & Optimisation</div><p class="process-step-desc">SCADA-monitored operations with real-time generation reporting, fish pass monitoring, and scheduled maintenance programmes.</p></div></div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage">
+    <div class="section-header"><div class="section-eyebrow">Our Story</div><h2 class="section-title">Two Decades of<br>Flowing Power</h2></div>
+    <div class="heritage-timeline">
+      <div class="heritage-item"><div class="heritage-year">2006</div><div class="heritage-content"><h3>Aqua Atelier Founded</h3><p>Three civil engineers establish the atelier in Inverness, commissioning their first 1.2MW run-of-river scheme on the River Findhorn.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2010</div><div class="heritage-content"><h3>First International Project</h3><p>A 6MW Alpine scheme in Haute-Savoie marks Aqua's first international commission, establishing a pattern of European excellence.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2015</div><div class="heritage-content"><h3>100MW Milestone</h3><p>The completion of Loch Rannoch Power pushes total commissioned capacity beyond 100MW — a landmark in the studio's history.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2020</div><div class="heritage-content"><h3>Micro Hydro Division</h3><p>Aqua launches a dedicated micro hydro service for estates, farms, and private landowners — making premium hydropower accessible at any scale.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2025</div><div class="heritage-content"><h3>35 Schemes Worldwide</h3><p>A global portfolio of 35 completed hydropower schemes delivering 480MW of clean, renewable baseload electricity from flowing water.</p></div></div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press">
+    <div class="section-header"><div class="section-eyebrow">Recognition</div><h2 class="section-title">Critical<br>Acclaim</h2></div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"Aqua Atelier's approach to hydropower engineering is genuinely distinguished. Their Glen Affric scheme is at once technically excellent and architecturally sympathetic — a rare combination."</p><div class="press-source">International Journal of Hydropower & Dams, 2024</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"In an era of cookie-cutter renewable energy projects, Aqua Atelier's bespoke approach to each catchment and community stands out. They treat hydropower as a craft, and the results show."</p><div class="press-source">The Engineer — Renewable Energy Special, 2023</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"For institutional investors seeking long-lived, low-risk renewable infrastructure, Aqua's portfolio of hydropower assets offers exactly the predictable baseload generation that solar and wind cannot."</p><div class="press-source">Infrastructure Journal — Clean Energy, 2024</div></div></div>
+      </div>
+      <div class="swiper-pagination" style="margin-top:28px; position:relative;"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION -->
+  <section class="commission">
+    <div class="commission-inner">
+      <div class="commission-info">
+        <div class="section-eyebrow">Commission</div>
+        <h2 class="section-title" style="margin-bottom:20px;">Begin Your<br>Hydropower Study</h2>
+        <p>Whether you own a Highland estate with a tumbling stream, or are developing a large-scale hydropower project, our engineers will provide an honest, expert assessment of your water resource.</p>
+        <div class="commission-details">
+          <div class="commission-detail-item"><div class="commission-detail-label">Atelier</div><div class="commission-detail-value">44 Church Street, Inverness, IV1 1EH</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Email</div><div class="commission-detail-value">studio@aquaatelier.co.uk</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Response</div><div class="commission-detail-value">Within 2 business days</div></div>
+        </div>
+      </div>
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" placeholder="Alasdair"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" placeholder="Mackenzie"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="am@estate.co.uk"></div>
+        <div class="form-group"><label>Project Scale</label><select><option>Micro Hydro (&lt;100kW)</option><option>Small Hydro (100kW–2MW)</option><option>Medium Hydro (2–20MW)</option><option>Large Hydro (&gt;20MW)</option></select></div>
+        <div class="form-group"><label>Site Location</label><input type="text" placeholder="River and catchment area"></div>
+        <div class="form-group"><label>Brief</label><textarea rows="4" placeholder="Describe your watercourse and objectives..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand">Aqua Atelier</div><p class="footer-desc">Premium hydropower design and engineering. Crafting bespoke hydro schemes with precision and craft since 2006.</p></div>
+      <div class="footer-col"><h4>Atelier</h4><ul><li><a href="about.html">About</a></li><li><a href="about.html#team">Engineers</a></li></ul></div>
+      <div class="footer-col"><h4>Work</h4><ul><li><a href="projects.html">Projects</a></li><li><a href="process.html">Engineering</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li><a href="contact.html">Commission</a></li><li><a href="mailto:studio@aquaatelier.co.uk">Email</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span class="footer-copy">© 2026 Aqua Atelier Ltd. All rights reserved.</span><div style="width:40px;height:1px;background:var(--accent);"></div></div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    const fill=document.getElementById('preloader-fill');let prog=0;
+    const iv=setInterval(()=>{prog+=Math.random()*15;if(prog>=100){prog=100;clearInterval(iv);}fill.style.width=prog+'%';},80);
+    window.addEventListener('load',()=>{clearInterval(iv);fill.style.width='100%';
+      setTimeout(()=>{gsap.to('#preloader',{opacity:0,duration:0.6,onComplete:()=>{
+        document.getElementById('preloader').style.display='none';
+        document.getElementById('scroll-indicator').classList.add('visible');
+        gsap.from('.hero-eyebrow',{immediateRender:false,opacity:0,y:20,duration:1.4,ease:'power1.out'});
+        gsap.from('.hero-title',{immediateRender:false,opacity:0,y:14,duration:1.5,ease:'power1.out',delay:0.1,stagger:0.06});
+        gsap.from('.hero-sub',{immediateRender:false,opacity:0,y:14,duration:1.4,ease:'power1.out',delay:0.2,stagger:0.06});
+        gsap.from('.hero-ctas',{immediateRender:false,opacity:0,y:14,duration:1.4,ease:'power1.out',delay:0.3,stagger:0.06});
+        gsap.from('.hero-float-badge',{immediateRender:false,opacity:0,y:14,duration:1.4,ease:'power1.out',delay:0.4,stagger:0.06});
+      }});},400);
+    });
+    setTimeout(()=>{document.getElementById('scroll-indicator')?.classList.add('visible');},4000);
+    window.addEventListener('scroll',()=>{
+      if(window.scrollY>60)document.getElementById('navbar').classList.add('scrolled');
+      else document.getElementById('navbar').classList.remove('scrolled');
+      document.getElementById('scroll-progress').style.height=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100)+'%';
+    });
+    document.querySelector('.hero').addEventListener('mousemove',e=>{
+      const x=(e.clientX/window.innerWidth-0.5)*30,y=(e.clientY/window.innerHeight-0.5)*20;
+      gsap.to('#layer1',{x:x*0.5,y:y*0.5,duration:1,ease:'power2.out'});
+      gsap.to('#layer2',{x:x*1.2,y:y*1.0,duration:1,ease:'power2.out'});
+    });
+    document.querySelectorAll('.stat-num').forEach(el=>{gsap.from(el,{immediateRender:false,textContent:0,duration:2.5,ease:'power2.out',snap:{textContent:1},scrollTrigger:{trigger:el,start:'top 85%',once:true}});});
+    gsap.from('.philosophy-card',{immediateRender:false,opacity:0,y:14,duration:1.4,ease:'power1.out',stagger:0.06,scrollTrigger:{trigger:'.philosophy-grid',start:'top 85%'}});
+    gsap.from('.project-card',{immediateRender:false,opacity:0,y:14,duration:1.4,ease:'power1.out',stagger:0.06,scrollTrigger:{trigger:'.projects-grid',start:'top 85%'}});
+    gsap.from('.atelier-image',{immediateRender:false,opacity:0,x:-20,duration:1.5,ease:'power1.out',scrollTrigger:{trigger:'.atelier',start:'top 85%'}});
+    gsap.from('.atelier-content',{immediateRender:false,opacity:0,x:20,duration:1.5,ease:'power1.out',scrollTrigger:{trigger:'.atelier',start:'top 85%'}});
+    gsap.from('.process-step',{immediateRender:false,opacity:0,x:-14,duration:1.4,ease:'power1.out',stagger:0.06,scrollTrigger:{trigger:'.process-steps',start:'top 85%'}});
+    gsap.from('.heritage-item',{immediateRender:false,opacity:0,y:14,duration:1.4,ease:'power1.out',stagger:0.06,scrollTrigger:{trigger:'.heritage-timeline',start:'top 85%'}});
+    document.querySelectorAll('.section-header').forEach(h=>{gsap.from(h,{immediateRender:false,opacity:0,y:14,duration:1.4,ease:'power1.out',scrollTrigger:{trigger:h,start:'top 85%'}});});
+    new Swiper('.press-swiper',{slidesPerView:1,loop:true,autoplay:{delay:5000},pagination:{el:'.swiper-pagination',clickable:true}});
+  </script>
+</body>
+</html>

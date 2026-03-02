@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaVerde Foundation — Clean Water Is Not a Privilege</title>
+  <meta name="description" content="AquaVerde Foundation delivers water purification projects and sustainable infrastructure for underserved communities across three continents.">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A1818;
+      --surface: #0F2020;
+      --surface2: #142828;
+      --accent: #4DCFB0;
+      --accent-light: #7ADFC8;
+      --accent-dark: #2A9A80;
+      --ivory: #DCEFEC;
+      --smoke: #809890;
+      --muted: #4A6860;
+      --border: #0C1E1E;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* ─── PRELOADER ─── */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+    .preloader-mark svg { width: 64px; height: 64px; }
+    .preloader-brand { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.2em; color: var(--smoke); }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+
+    /* ─── SCROLL INDICATOR ─── */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 100; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 80px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line-fill { position: absolute; top: 0; left: 0; right: 0; height: 0%; background: var(--accent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+
+    /* ─── NAVBAR ─── */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 24px 64px; transition: background 0.4s; }
+    nav.scrolled { background: rgba(10,24,24,0.92); backdrop-filter: blur(14px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── HERO TYPE G (Scroll-Driven Text Transform) ─── */
+    .hero { min-height: 200vh; position: relative; }
+    .hero-bg {
+      position: fixed; inset: 0;
+      background-image: url('images/img-1.webp');
+      background-size: cover; background-position: center;
+      filter: brightness(0.28); z-index: -1;
+    }
+    .hero-text-wrap { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 80px; overflow: hidden; }
+    .hero-eyebrow { font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+    .hero-word { font-family: var(--font-serif); font-size: clamp(4rem, 13vw, 13rem); line-height: 0.88; font-weight: 400; text-transform: uppercase; color: var(--ivory); }
+    .hero-word.word-2 { color: var(--accent-light); }
+    .hero-tagline { font-family: var(--font-sans); font-size: clamp(1rem, 1.8vw, 1.35rem); font-weight: 300; color: var(--smoke); letter-spacing: 0.06em; margin-top: 28px; max-width: 520px; }
+    .btn-primary { display: inline-block; margin-top: 40px; padding: 14px 44px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: background 0.3s, color 0.3s; }
+    .btn-primary:hover { background: var(--accent); color: var(--bg); }
+    .btn-ghost { display: inline-block; padding: 14px 44px; background: transparent; border: 1px solid var(--muted); color: var(--smoke); font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── SECTION COMMONS ─── */
+    section { position: relative; z-index: 1; }
+    .section-label { font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-family: var(--font-sans); }
+    .section-heading { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); color: var(--ivory); line-height: 1.2; }
+    .section-sub { color: var(--smoke); font-size: 1rem; font-weight: 300; line-height: 1.85; max-width: 580px; }
+
+    /* ─── STATS ─── */
+    .stats-strip { background: var(--surface); padding: 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); display: block; }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* ─── PHILOSOPHY ─── */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .philosophy-header { margin-bottom: 64px; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .philosophy-card { padding: 40px 32px; border: 1px solid var(--border); background: var(--surface); transition: border-color 0.3s; }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .philosophy-icon { width: 44px; height: 44px; margin-bottom: 20px; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; }
+    .philosophy-icon svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); margin-bottom: 14px; }
+    .philosophy-card p { color: var(--smoke); font-size: 0.92rem; line-height: 1.85; font-weight: 300; }
+
+    /* ─── COLLECTION ─── */
+    .collection { padding: 120px 80px; background: var(--surface); }
+    .collection-header { margin-bottom: 64px; }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; overflow: visible; }
+    .collection-card { position: relative; overflow: hidden; cursor: pointer; }
+    .collection-img { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; transition: transform 0.8s ease; }
+    .collection-card:hover .collection-img { transform: scale(1.04); }
+    .collection-info { padding: 24px 0 0; }
+    .collection-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); }
+    .collection-title { font-family: var(--font-serif); font-size: 1.35rem; color: var(--ivory); margin-top: 8px; }
+    .collection-desc { color: var(--smoke); font-size: 0.9rem; margin-top: 8px; line-height: 1.7; }
+
+    /* ─── ATELIER ─── */
+    .atelier { padding: 120px 80px; background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img { width: 100%; aspect-ratio: 3/4; background-size: cover; background-position: center; }
+    .atelier-content p { color: var(--smoke); line-height: 1.85; margin-bottom: 16px; font-weight: 300; }
+
+    /* ─── PROCESS ─── */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-header { margin-bottom: 64px; }
+    .process-list { display: flex; flex-direction: column; }
+    .process-item { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 48px 0; border-top: 1px solid var(--border); align-items: start; }
+    .process-item:last-child { border-bottom: 1px solid var(--border); }
+    .process-num { font-family: var(--font-serif); font-size: 2.4rem; color: var(--muted); }
+    .process-content h3 { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); margin-bottom: 12px; }
+    .process-content p { color: var(--smoke); font-size: 0.95rem; line-height: 1.85; font-weight: 300; }
+
+    /* ─── HERITAGE ─── */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-header { margin-bottom: 64px; }
+    .heritage-timeline { display: flex; flex-direction: column; position: relative; }
+    .heritage-timeline::before { content: ''; position: absolute; left: 100px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .heritage-item { display: grid; grid-template-columns: 100px 1fr; gap: 48px; padding: 36px 0; align-items: start; position: relative; }
+    .heritage-item::before { content: ''; position: absolute; left: 96px; top: 46px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .heritage-year { font-family: var(--font-serif); font-size: 1rem; color: var(--accent); padding-top: 8px; }
+    .heritage-content h3 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-content p { color: var(--smoke); font-size: 0.9rem; line-height: 1.75; font-weight: 300; }
+
+    /* ─── PRESS ─── */
+    .press { padding: 120px 80px; background: var(--surface); }
+    .press-header { margin-bottom: 56px; }
+    .swiper { overflow: hidden; }
+    .press-card { background: var(--bg); padding: 48px 44px; border: 1px solid var(--border); }
+    .press-quote { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); line-height: 1.75; margin-bottom: 28px; }
+    .press-quote::before { content: '\201C'; font-size: 3rem; color: var(--accent); line-height: 0.5; display: block; margin-bottom: 14px; }
+    .press-source { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ─── COMMISSION ─── */
+    .commission { padding: 120px 80px; background: var(--bg); }
+    .commission-header { margin-bottom: 64px; }
+    .commission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .form-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .form-input, .form-select, .form-textarea { background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 20px; font-family: var(--font-sans); font-size: 0.92rem; outline: none; transition: border-color 0.3s; -webkit-appearance: none; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .commission-info h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 20px; }
+    .commission-info p { color: var(--smoke); line-height: 1.85; font-weight: 300; margin-bottom: 16px; }
+    .contact-item { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px; }
+    .contact-item-icon { color: var(--accent); }
+    .contact-item-text { color: var(--smoke); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 64px 80px 40px; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; margin-bottom: 48px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.05rem; color: var(--ivory); margin-bottom: 14px; }
+    .footer-brand p { color: var(--smoke); font-size: 0.86rem; line-height: 1.7; font-weight: 300; }
+    .footer-col h4 { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.86rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { color: var(--muted); font-size: 0.76rem; }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { color: var(--muted); font-size: 0.76rem; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 10 C20 22 14 30 14 38 C14 50 22 56 32 56 C42 56 50 50 50 38 C50 30 44 22 32 10Z" stroke="#4DCFB0" stroke-width="1.5" fill="none"/>
+        <path d="M24 42 Q32 36 40 42" stroke="#4DCFB0" stroke-width="1" fill="none"/>
+        <line x1="32" y1="10" x2="32" y2="18" stroke="#4DCFB0" stroke-width="0.5"/>
+      </svg>
+    </div>
+    <div class="preloader-brand">AquaVerde Foundation</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="bar-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"><div class="scroll-line-fill" id="scroll-fill"></div></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">AquaVerde</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Projects</a></li>
+      <li><a href="process.html">How We Work</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="#commission" class="btn-primary" style="padding: 10px 24px;">Donate</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO TYPE G -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow">Est. 2011 — Clean Water Access Foundation</div>
+      <div class="hero-word word-1">Clean</div>
+      <div class="hero-word word-2">Water</div>
+      <div class="hero-tagline">Is Not a Privilege. Delivering purification infrastructure and watershed stewardship to underserved communities across three continents.</div>
+      <a href="#collection" class="btn-primary" style="width: fit-content;">See Our Projects</a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-strip">
+    <div class="stat-item">
+      <span class="stat-num" data-target="840000">0</span>
+      <div class="stat-label">People With Clean Water Access</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="214">0</span>
+      <div class="stat-label">Infrastructure Projects Completed</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="23">0</span>
+      <div class="stat-label">Countries</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="97">0</span>
+      <div class="stat-label">% Projects Still Operational After 5 Yrs</div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="philosophy-header">
+      <div class="section-label">Our Approach</div>
+      <h2 class="section-heading">Water as a Right, Not a Resource</h2>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 2C8 8 5 12 5 16C5 20.4 8.1 22 12 22C15.9 22 19 20.4 19 16C19 12 16 8 12 2Z"/></svg>
+        </div>
+        <h3>Community Ownership</h3>
+        <p>Every infrastructure project we build is designed, approved, and ultimately owned by the community it serves. External solutions that bypass local governance fail within five years. Community-owned systems last decades.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3>Ecological Sustainability</h3>
+        <p>We do not extract water from ecosystems — we steward it. Watershed protection, rainwater harvesting, and aquifer recharge are as central to our work as the pipes and filters they protect.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h3>Long-Term Accountability</h3>
+        <p>We stay. Every project we complete is monitored for five years post-completion, with trained local technicians and a 24-hour support line. Our 97% operational rate is the proof of this commitment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION -->
+  <section class="collection" id="collection">
+    <div class="collection-header">
+      <div class="section-label">Projects</div>
+      <h2 class="section-heading">What We Build</h2>
+    </div>
+    <div class="collection-grid">
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-1.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Purification</div>
+          <div class="collection-title">Community Water Purification Systems</div>
+          <div class="collection-desc">Solar-powered ceramic and activated carbon filtration units delivering clean water to 500–5,000 households. Designed for community maintenance with no specialist tools required.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-2.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Infrastructure</div>
+          <div class="collection-title">Rural Borehole & Well Programs</div>
+          <div class="collection-desc">Deep borehole drilling and hand-pump installation in sub-Saharan African communities currently dependent on contaminated surface water. Community water committees oversee each well.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-3.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Watershed</div>
+          <div class="collection-title">Watershed Restoration Projects</div>
+          <div class="collection-desc">Upstream reforestation and erosion control to protect critical water sources. Each watershed project protects the long-term sustainability of downstream purification infrastructure.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-4.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Rainwater</div>
+          <div class="collection-title">Rainwater Harvesting Infrastructure</div>
+          <div class="collection-desc">Roof catchment systems and community cisterns for climate-vulnerable communities in arid and semi-arid regions experiencing increasing precipitation unpredictability.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="atelier-content">
+        <div class="section-label">Our Model</div>
+        <h2 class="section-heading">Infrastructure That Outlasts Us</h2>
+        <p>Most water charity projects fail within three years of the implementing organization's departure. AquaVerde was founded to change that pattern. Our model transfers all technical knowledge, maintenance training, and ownership to the community before we leave.</p>
+        <p>We work in each community for a minimum of eighteen months — far longer than most projects — because genuine knowledge transfer takes time. We do not install and depart. We build relationships and then hand over the keys.</p>
+        <p>Every project includes a five-year monitoring period, a local technician trained to a recognized qualification standard, and a spare parts fund managed by the community water committee.</p>
+        <a href="about.html" class="btn-ghost" style="margin-top: 24px;">Our Model in Detail</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="process-header">
+      <div class="section-label">How We Work</div>
+      <h2 class="section-heading">From Assessment to Handover</h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num">01</div>
+        <div class="process-content">
+          <h3>Community-Led Assessment</h3>
+          <p>We never impose a solution. Our hydrological assessment is conducted alongside a community-driven needs consultation, ensuring that our technical analysis aligns with the community's own priorities and existing water governance structures.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">02</div>
+        <div class="process-content">
+          <h3>System Design and Approval</h3>
+          <p>System design proposals are presented to the community for review and approval. Modifications requested by community members are incorporated before any ground is broken. No project proceeds without community endorsement.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">03</div>
+        <div class="process-content">
+          <h3>Construction with Local Labor</h3>
+          <p>We hire locally wherever possible. Construction teams include a minimum 70% local workforce, ensuring economic benefit flows into the community and workers gain transferable technical skills.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">04</div>
+        <div class="process-content">
+          <h3>Training and Knowledge Transfer</h3>
+          <p>Before commissioning, two or more local technicians complete a full maintenance training program. Operations manuals are produced in the local language and illustrated format. The community water committee is established and trained in financial management.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">05</div>
+        <div class="process-content">
+          <h3>Commissioning and Five-Year Monitoring</h3>
+          <p>At handover, the system is officially transferred to community ownership. AquaVerde provides remote technical support and quarterly field visits for five years, with a rapid-response fund for unexpected repairs in the first twenty-four months.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage">
+    <div class="heritage-header">
+      <div class="section-label">Our History</div>
+      <h2 class="section-heading">Fifteen Years of Water Justice</h2>
+    </div>
+    <div class="heritage-timeline">
+      <div class="heritage-item">
+        <div class="heritage-year">2011</div>
+        <div class="heritage-content">
+          <h3>Founded in Response to a Water Crisis</h3>
+          <p>Following a severe drought that contaminated water supplies across a region of eastern sub-Saharan Africa, hydrologist Dr. Ines Carvalho and water policy advocate Tariq Osei co-founded AquaVerde to build lasting solutions, not emergency responses.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2014</div>
+        <div class="heritage-content">
+          <h3>100,000 People Reached</h3>
+          <p>Completion of our thirty-fifth project marked the milestone of 100,000 people gaining reliable clean water access. The project received UN recognition for community ownership model innovation.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2018</div>
+        <div class="heritage-content">
+          <h3>Expansion to Latin America and South Asia</h3>
+          <p>Operations expanded from sub-Saharan Africa to include programs in rural Colombia, Bolivia, Bangladesh, and Nepal — adapting the core model to distinct hydrological and cultural contexts.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2022</div>
+        <div class="heritage-content">
+          <h3>Watershed Stewardship Program Launched</h3>
+          <p>Recognition that clean water infrastructure must be paired with upstream ecological protection led to the launch of our watershed restoration and reforestation program.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2025</div>
+        <div class="heritage-content">
+          <h3>840,000 People, 214 Projects, 97% Operational Rate</h3>
+          <p>Our most impactful year to date. The 97% five-year operational rate remains the highest in the sector — a vindication of our community-ownership model and long-term monitoring commitment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press">
+    <div class="press-header">
+      <div class="section-label">Recognition</div>
+      <h2 class="section-heading">What Others Say</h2>
+    </div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">AquaVerde's 97% operational rate challenges the development sector's chronic short-termism. Their community-ownership model is not just more ethical — it is demonstrably more effective.</div>
+            <div class="press-source">— Journal of Water Policy, Vol. 26, 2024</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">In a sector where the average project lifespan is two years post-funding, AquaVerde's fifteen-year record of durable infrastructure and community stewardship is genuinely extraordinary.</div>
+            <div class="press-source">— Global Development Review, Spring 2024</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">The foundation's insistence on eighteen-month minimum field presence before project handover is costly and slow. It is also why their systems still work a decade later. The sector should be paying attention.</div>
+            <div class="press-source">— Water & Sanitation Forum, Annual Report 2023</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="margin-top: 32px; position: static;"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION FORM -->
+  <section class="commission" id="commission">
+    <div class="commission-header">
+      <div class="section-label">Get Involved</div>
+      <h2 class="section-heading">Support Clean Water Access</h2>
+    </div>
+    <div class="commission-grid">
+      <form>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-input" placeholder="Ines"></div>
+          <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-input" placeholder="Carvalho"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="you@example.com"></div>
+        <div class="form-group"><label class="form-label">Organisation (optional)</label><input type="text" class="form-input" placeholder="Foundation / Company / Institution"></div>
+        <div class="form-group">
+          <label class="form-label">How Would You Like to Help?</label>
+          <select class="form-select">
+            <option>Make an individual donation</option>
+            <option>Become a corporate or foundation partner</option>
+            <option>Sponsor a specific project or region</option>
+            <option>Volunteer as a field hydrologist or engineer</option>
+            <option>Academic or policy collaboration</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="Tell us more about how you'd like to be involved..."></textarea></div>
+        <button type="submit" class="btn-primary" style="border: none; cursor: pointer; width: 100%;">Send Message</button>
+      </form>
+      <div class="commission-info">
+        <h3>Every Donation Flows Forward</h3>
+        <p>A donation of $50 funds water safety testing equipment for one community well. $500 trains a local water technician. $5,000 co-funds a complete purification system for a village of 300 households.</p>
+        <p>100% of project-directed donations reach the field. Our operational costs are covered by a separate endowment fund maintained by our founding partners.</p>
+        <div class="contact-item"><span class="contact-item-icon">✉</span><span class="contact-item-text">hello@aquaverde.org</span></div>
+        <div class="contact-item"><span class="contact-item-icon">☎</span><span class="contact-item-text">+1 (415) 682-3300<br>Mon–Fri 9am–5pm PST</span></div>
+        <div class="contact-item"><span class="contact-item-icon">⊕</span><span class="contact-item-text">AquaVerde Foundation<br>580 Market Street, San Francisco, CA 94104</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>AquaVerde Foundation</h3>
+        <p>Delivering water purification infrastructure and watershed stewardship to underserved communities across three continents since 2011. A registered 501(c)(3) foundation.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Projects</h4>
+        <ul>
+          <li><a href="collection.html">Purification Systems</a></li>
+          <li><a href="collection.html">Borehole Programs</a></li>
+          <li><a href="collection.html">Watershed Restoration</a></li>
+          <li><a href="collection.html">Rainwater Harvesting</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Foundation</h4>
+        <ul>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="process.html">How We Work</a></li>
+          <li><a href="#">Annual Report</a></li>
+          <li><a href="#">Field Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#commission">Donate</a></li>
+          <li><a href="#">Newsletter</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 AquaVerde Foundation. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Tax Information</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SPLITTEXT POLYFILL -->
+  <script>
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = []; this.lines = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim(); el.innerHTML = '';
+      const wordArr = text.split(/\s+/);
+      wordArr.forEach((word, wi) => {
+        const wSpan = document.createElement('span'); wSpan.className = 'split-word'; wSpan.style.cssText = 'display:inline-block;overflow:hidden;';
+        if (type.includes('chars')) {
+          [...word].forEach(ch => { const cSpan = document.createElement('span'); cSpan.className = 'split-char'; cSpan.style.display = 'inline-block'; cSpan.textContent = ch; wSpan.appendChild(cSpan); this.chars.push(cSpan); });
+        } else { wSpan.style.overflow = 'visible'; wSpan.textContent = word; }
+        this.words.push(wSpan); el.appendChild(wSpan);
+        if (wi < wordArr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => { el.innerHTML = this.originals[i]; }); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // PRELOADER
+    gsap.to('#bar-fill', { scaleX: 1, duration: 1.8, ease: 'power2.inOut', onComplete: () => {
+      gsap.to('#preloader', { autoAlpha: 0, duration: 0.6, onComplete: () => {
+        document.getElementById('preloader').style.display = 'none';
+        gsap.fromTo('#scroll-indicator', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.8 });
+      }});
+    }});
+    setTimeout(() => { gsap.to('#scroll-indicator', { autoAlpha: 1, duration: 0.6 }); }, 4000);
+
+    // SCROLL
+    window.addEventListener('scroll', () => {
+      const s = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      document.getElementById('scroll-fill').style.height = (s * 100) + '%';
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // HERO TYPE G — Scroll text transform
+    gsap.to('.word-1', {
+      x: '-25vw', scale: 0.5, opacity: 0.12,
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: '55% top', scrub: 1.5 }
+    });
+    gsap.to('.word-2', {
+      x: '25vw', scale: 0.5, opacity: 0.12,
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: '55% top', scrub: 1.5 }
+    });
+    gsap.to('.hero-tagline, .hero-eyebrow', {
+      y: '30vh', opacity: 0,
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: '40% top', scrub: 1 }
+    });
+
+    // STATS COUNTERS
+    document.querySelectorAll('.stat-num').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      gsap.from(el, {
+        textContent: 0, duration: 2.5, ease: 'power1.out', snap: { textContent: 1 }, immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)).toLocaleString(); }
+      });
+    });
+
+    // SECTION REVEALS
+    gsap.utils.toArray('.philosophy-card').forEach((card, i) => {
+      gsap.from(card, { y: 14, duration: 1.5, ease: 'power1.out', delay: i * 0.06, immediateRender: false, scrollTrigger: { trigger: card, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.collection-card').forEach((card, i) => {
+      gsap.from(card, { y: 14, duration: 1.4, ease: 'power1.out', delay: i * 0.06, immediateRender: false, scrollTrigger: { trigger: card, start: 'top 88%', once: true } });
+    });
+    gsap.from('.atelier-img', { y: 14, duration: 1.5, ease: 'power1.out', immediateRender: false, scrollTrigger: { trigger: '.atelier', start: 'top 80%', once: true } });
+    gsap.utils.toArray('.process-item').forEach((item, i) => {
+      gsap.from(item, { y: 14, duration: 1.4, ease: 'power1.out', delay: i * 0.06, immediateRender: false, scrollTrigger: { trigger: item, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.heritage-item').forEach((item, i) => {
+      gsap.from(item, { y: 14, duration: 1.4, ease: 'power1.out', delay: i * 0.06, immediateRender: false, scrollTrigger: { trigger: item, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.section-heading').forEach(el => {
+      gsap.from(el, { y: 14, duration: 1.5, ease: 'power1.out', immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+    });
+
+    // PRESS
+    new Swiper('.press-swiper', {
+      slidesPerView: 1, spaceBetween: 40, loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 } }
+    });
+  </script>
+</body>
+</html>

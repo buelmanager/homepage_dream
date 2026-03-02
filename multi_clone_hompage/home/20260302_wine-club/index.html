@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clos Velours Wine Club — The Art of the Perfect Vintage</title>
+  <meta name="description" content="A private wine appreciation club offering cellar tours, vertical tastings, sommelier education, and vintage collecting. Join Clos Velours for the art of the perfect vintage." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #1A0A0E;
+      --surface: #241016;
+      --surface2: #2C1420;
+      --accent: #C96A8A;
+      --accent-light: #E090A8;
+      --accent-dark: #8A3A5C;
+      --ivory: #F0DCE4;
+      --smoke: #A08088;
+      --muted: #604A52;
+      --border: #200C12;
+      --font-serif: 'EB Garamond', Georgia, serif;
+      --font-sans: 'Nunito', sans-serif;
+      --max-w: 1400px;
+      --nav-h: 80px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 26px; color: var(--ivory); letter-spacing: 0.12em; font-style: italic; }
+    .preloader-logo strong { font-style: normal; color: var(--accent); }
+    .preloader-bar { width: 180px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+    .preloader-text { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--smoke); }
+
+    /* SCROLL INDICATOR */
+    .scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 400; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .scroll-indicator-line { width: 1px; height: 60px; background: var(--border); overflow: hidden; position: relative; }
+    .scroll-indicator-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent); animation: scrollLine 2s ease-in-out infinite; }
+    @keyframes scrollLine { 0% { top: -100%; } 100% { top: 100%; } }
+    .scroll-indicator-text { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-rl; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 60px; background: rgba(26,10,14,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 20px; font-style: italic; letter-spacing: 0.08em; color: var(--ivory); }
+    .nav-logo strong { font-style: normal; color: var(--accent); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 12px 28px; border-radius: 1px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* HERO TYPE D — PORTRAITS + STATS */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; background: var(--bg); }
+    .hero-content-panel { display: flex; flex-direction: column; justify-content: center; padding: 120px 60px 120px 80px; }
+    .hero-eyebrow { font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; display: flex; align-items: center; gap: 14px; }
+    .hero-eyebrow::before { content: ''; display: block; width: 36px; height: 1px; background: var(--accent); }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 5.5vw, 5.5rem); line-height: 1.05; color: var(--ivory); margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub { font-size: 16px; font-weight: 300; color: var(--smoke); max-width: 400px; margin-bottom: 40px; line-height: 1.8; }
+    .btn-primary { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 16px 40px; border-radius: 1px; transition: background 0.3s; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 40px 0; }
+    .hero-stat-num { font-size: 2.5rem; font-family: var(--font-serif); color: var(--accent); display: block; line-height: 1; font-style: italic; }
+    .hero-stat-label { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); margin-top: 6px; display: block; }
+    .hero-portraits { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 8px; padding: 40px; }
+    .portrait-card { background-size: cover; background-position: center; border-radius: 2px; overflow: hidden; transition: transform 0.7s ease; }
+    .portrait-card:hover { transform: scale(1.02); }
+    .pc-large { grid-row: span 2; }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 0; }
+    .stats-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 60px; display: grid; grid-template-columns: repeat(4, 1fr); }
+    .stat-item { text-align: center; padding: 0 32px; border-right: 1px solid var(--border); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: var(--font-serif); font-size: 3.5rem; color: var(--accent); display: block; line-height: 1; font-style: italic; }
+    .stat-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+    /* CONTAINER */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 60px; }
+    .section-tag { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .section-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+    .section-tag-text { font-size: 10px; font-weight: 600; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); }
+    .section-heading { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); color: var(--ivory); line-height: 1.1; margin-bottom: 16px; }
+    .section-sub { font-size: 16px; font-weight: 300; color: var(--smoke); line-height: 1.8; max-width: 560px; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 0; background: var(--bg); }
+    .philosophy-header { text-align: center; margin-bottom: 72px; }
+    .philosophy-header .section-sub { margin: 0 auto; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .philosophy-card { background: var(--surface); padding: 48px 40px; border: 1px solid var(--border); transition: border-color 0.4s; }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .philosophy-card-num { font-family: var(--font-serif); font-size: 4rem; color: var(--border); margin-bottom: 20px; font-style: italic; transition: color 0.4s; }
+    .philosophy-card:hover .philosophy-card-num { color: var(--accent-dark); }
+    .philosophy-card-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 16px; }
+    .philosophy-card p { font-size: 14px; color: var(--smoke); line-height: 1.75; }
+
+    /* COLLECTION (Cellar) */
+    .collection { padding: 120px 0; background: var(--surface); }
+    .collection-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; overflow: visible; }
+    .collection-card { position: relative; overflow: hidden; border-radius: 2px; aspect-ratio: 4/3; }
+    .collection-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+    .collection-card:hover img { transform: scale(1.04); }
+    .collection-card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 32px 28px 24px; background: linear-gradient(transparent, rgba(26,10,14,0.92)); }
+    .collection-card-title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-bottom: 4px; }
+    .collection-card-sub { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .btn-outline { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 14px 32px; border-radius: 1px; transition: all 0.3s; }
+    .btn-outline:hover { background: var(--accent); color: var(--bg); }
+
+    /* ATELIER (Cellar) */
+    .atelier { padding: 120px 0; background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
+    .atelier-image { aspect-ratio: 4/5; overflow: hidden; border-radius: 2px; }
+    .atelier-image img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-content p { font-size: 15px; color: var(--smoke); line-height: 1.8; margin-bottom: 20px; }
+    .atelier-feature { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .atelier-feature-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .atelier-feature-text { font-size: 14px; color: var(--ivory); }
+
+    /* PROCESS */
+    .process { padding: 120px 0; background: var(--surface); }
+    .process-header { text-align: center; margin-bottom: 80px; }
+    .process-header .section-sub { margin: 0 auto; }
+    .process-timeline { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
+    .process-timeline::before { content: ''; position: absolute; top: 32px; left: 10%; right: 10%; height: 1px; background: var(--border); }
+    .process-step { text-align: center; padding: 0 16px; }
+    .process-step-num { width: 64px; height: 64px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.25rem; color: var(--accent); background: var(--surface); margin: 0 auto 24px; position: relative; z-index: 1; transition: all 0.3s; font-style: italic; }
+    .process-step:hover .process-step-num { border-color: var(--accent); background: var(--surface2); }
+    .process-step-title { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 10px; }
+    .process-step p { font-size: 13px; color: var(--smoke); line-height: 1.6; }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 0; background: var(--bg); }
+    .heritage-header { text-align: center; margin-bottom: 80px; }
+    .heritage-timeline { display: flex; flex-direction: column; gap: 0; max-width: 800px; margin: 0 auto; }
+    .heritage-item { display: grid; grid-template-columns: 120px 1px 1fr; gap: 0 40px; align-items: start; padding: 32px 0; border-bottom: 1px solid var(--border); }
+    .heritage-item:last-child { border-bottom: none; }
+    .heritage-year { font-family: var(--font-serif); font-size: 1.75rem; color: var(--accent); text-align: right; padding-top: 4px; font-style: italic; }
+    .heritage-divider { background: var(--border); position: relative; }
+    .heritage-divider::before { content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .heritage-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-text { font-size: 14px; color: var(--smoke); line-height: 1.7; }
+
+    /* PRESS */
+    .press { padding: 120px 0; background: var(--surface); }
+    .press-header { text-align: center; margin-bottom: 56px; }
+    .swiper-press { padding-bottom: 48px !important; }
+    .press-card { background: var(--surface2); border: 1px solid var(--border); padding: 48px 40px; border-radius: 2px; }
+    .press-quote { font-family: var(--font-serif); font-style: italic; font-size: 1.2rem; color: var(--ivory); line-height: 1.65; margin-bottom: 28px; }
+    .press-quote::before { content: '\201C'; color: var(--accent); font-size: 2.5rem; line-height: 0; vertical-align: -0.5em; margin-right: 6px; }
+    .press-source { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--smoke) !important; }
+    .swiper-pagination-bullet-active { background: var(--accent) !important; }
+
+    /* MEMBERSHIP */
+    .membership { padding: 120px 0; background: var(--bg); }
+    .membership-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
+    .membership-content p { font-size: 15px; color: var(--smoke); line-height: 1.8; margin-bottom: 32px; }
+    .membership-benefit { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+    .membership-benefit-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .membership-benefit-text { font-size: 14px; color: var(--ivory); }
+    .membership-form { background: var(--surface); border: 1px solid var(--border); padding: 48px; border-radius: 2px; }
+    .form-title { font-family: var(--font-serif); font-size: 1.75rem; color: var(--ivory); margin-bottom: 32px; font-style: italic; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 1px; padding: 14px 18px; font-family: var(--font-sans); font-size: 14px; color: var(--ivory); outline: none; transition: border-color 0.3s; appearance: none; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-submit { width: 100%; padding: 18px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; border: none; border-radius: 1px; cursor: pointer; transition: background 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 0 40px; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand-name { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 16px; font-style: italic; }
+    .footer-brand-name strong { font-style: normal; color: var(--accent); }
+    .footer-tagline { font-size: 14px; color: var(--smoke); line-height: 1.7; max-width: 280px; }
+    .footer-col-title { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-links a { font-size: 14px; color: var(--smoke); transition: color 0.3s; }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 32px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+    .footer-legal { display: flex; gap: 32px; }
+    .footer-legal a { font-size: 12px; color: var(--muted); transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--smoke); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo"><em><strong>Clos Velours</strong></em> Wine Club</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="preloaderFill"></div></div>
+    <div class="preloader-text">Decanting</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollIndicator" style="opacity:0">
+    <div class="scroll-indicator-line"></div>
+    <div class="scroll-indicator-text">Scroll</div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo"><em><strong>Clos Velours</strong></em></div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Cellar</a></li>
+      <li><a href="process.html">Tastings</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Join Club</a>
+  </nav>
+
+  <!-- HERO TYPE D -->
+  <section class="hero" id="hero">
+    <div class="hero-content-panel">
+      <div class="hero-eyebrow">Est. 1978 — Fine Wine Club</div>
+      <h1 class="hero-title">The Art of<br>the <em>Perfect</em><br>Vintage</h1>
+      <p class="hero-sub">A private wine appreciation club — cellar tours, vertical tastings, sommelier education, and the serious pleasure of vintage collecting.</p>
+      <div class="hero-stats">
+        <div>
+          <span class="hero-stat-num">1,200</span>
+          <span class="hero-stat-label">Cellar Labels</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">46</span>
+          <span class="hero-stat-label">Years of Taste</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">160</span>
+          <span class="hero-stat-label">Members</span>
+        </div>
+      </div>
+      <a href="#collection" class="btn-primary">Explore the Cellar</a>
+    </div>
+    <div class="hero-portraits">
+      <div class="portrait-card pc-large" style="background-image: url('images/img-1.webp')"></div>
+      <div class="portrait-card" style="background-image: url('images/img-2.webp')"></div>
+      <div class="portrait-card" style="background-image: url('images/img-1.webp')"></div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <span class="stat-num">1,200</span>
+        <span class="stat-label">Cellar Labels</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">46</span>
+        <span class="stat-label">Years of Taste</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">160</span>
+        <span class="stat-label">Members</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">24</span>
+        <span class="stat-label">Tasting Events/Year</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="about">
+    <div class="container">
+      <div class="philosophy-header">
+        <div class="section-tag"><span class="section-tag-text">Our Philosophy</span></div>
+        <h2 class="section-heading">Three Principles<br>of Fine Wine</h2>
+        <p class="section-sub">Clos Velours was founded on three beliefs about how wine should be appreciated — slowly, deeply, and in excellent company.</p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">I</div>
+          <div class="philosophy-card-title">Patience is Everything</div>
+          <p>Great wine cannot be rushed. We hold vertical tastings spanning decades, teaching members to understand how time transforms even the most humble grape into something transcendent.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">II</div>
+          <div class="philosophy-card-title">Context Matters</div>
+          <p>Every bottle has a story — the soil, the season, the winemaker's decisions. Understanding a wine's context transforms drinking into a profound form of reading.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">III</div>
+          <div class="philosophy-card-title">Share the Best</div>
+          <p>A great wine held alone is a private joy; shared among those who understand it, it becomes a conversation across centuries and continents.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="collection">
+    <div class="container">
+      <div class="collection-header">
+        <div>
+          <div class="section-tag"><span class="section-tag-text">Featured Cellar</span></div>
+          <h2 class="section-heading">Selected Vintages<br>This Season</h2>
+        </div>
+        <a href="collection.html" class="btn-outline">View Full Cellar</a>
+      </div>
+      <div class="collection-grid">
+        <div class="collection-card">
+          <img src="images/img-1.webp" alt="Wine barrels cellar" loading="lazy" />
+          <div class="collection-card-info">
+            <div class="collection-card-title">Château Margaux 2015</div>
+            <div class="collection-card-sub">Médoc — Grand Cru Classé</div>
+          </div>
+        </div>
+        <div class="collection-card">
+          <img src="images/img-2.webp" alt="Vineyard harvest" loading="lazy" />
+          <div class="collection-card-info">
+            <div class="collection-card-title">Domaine Leflaive 2018</div>
+            <div class="collection-card-sub">Puligny-Montrachet Premier Cru</div>
+          </div>
+        </div>
+        <div class="collection-card">
+          <img src="images/img-1.webp" alt="Wine aging barrels" loading="lazy" />
+          <div class="collection-card-info">
+            <div class="collection-card-title">Sassicaia 2019</div>
+            <div class="collection-card-sub">Bolgheri DOC — Super Tuscan</div>
+          </div>
+        </div>
+        <div class="collection-card">
+          <img src="images/img-2.webp" alt="Wine estate vineyard" loading="lazy" />
+          <div class="collection-card-info">
+            <div class="collection-card-title">Opus One 2017</div>
+            <div class="collection-card-sub">Napa Valley — Mondavi &amp; Rothschild</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER (CELLAR) -->
+  <section class="atelier" id="cellar">
+    <div class="container">
+      <div class="atelier-inner">
+        <div class="atelier-image">
+          <img src="images/img-1.webp" alt="Private wine cellar" loading="lazy" />
+        </div>
+        <div class="atelier-content">
+          <div class="section-tag"><span class="section-tag-text">The Cellar</span></div>
+          <h2 class="section-heading">Our Private<br>Cellar in Bordeaux</h2>
+          <p>The Clos Velours cellar is housed in an eighteenth-century château cave outside Saint-Émilion. 1,200 labels are held in perfect conditions — temperature, humidity, and vibration precisely controlled.</p>
+          <p>Members may visit the cellar by appointment, participate in barrel-tasting sessions during harvest, and access preferential pricing on selected bottles for their personal collections.</p>
+          <div class="atelier-feature">
+            <div class="atelier-feature-dot"></div>
+            <div class="atelier-feature-text">1,200 labels from 40 appellations</div>
+          </div>
+          <div class="atelier-feature">
+            <div class="atelier-feature-dot"></div>
+            <div class="atelier-feature-text">Annual Bordeaux harvest visit for members</div>
+          </div>
+          <div class="atelier-feature">
+            <div class="atelier-feature-dot"></div>
+            <div class="atelier-feature-text">En primeur purchasing through the cellar</div>
+          </div>
+          <div class="atelier-feature" style="border-bottom:none">
+            <div class="atelier-feature-dot"></div>
+            <div class="atelier-feature-text">Monthly member allocation — 6 bottles at cost</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS (TASTING PROGRAMME) -->
+  <section class="process" id="tastings">
+    <div class="container">
+      <div class="process-header">
+        <div class="section-tag"><span class="section-tag-text">Tasting Programme</span></div>
+        <h2 class="section-heading">The Five Formats</h2>
+        <p class="section-sub">Our tasting programme spans five formats, each designed to develop a different dimension of vinous understanding.</p>
+      </div>
+      <div class="process-timeline">
+        <div class="process-step">
+          <div class="process-step-num">I</div>
+          <div class="process-step-title">Blind Tasting</div>
+          <p>Weekly blind tasting circles — training palate and memory simultaneously.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">II</div>
+          <div class="process-step-title">Vertical</div>
+          <p>A single estate across multiple vintages — understanding time's role in wine.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">III</div>
+          <div class="process-step-title">Horizontal</div>
+          <p>Multiple estates from a single vintage — understanding terroir and appellation.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">IV</div>
+          <div class="process-step-title">Cellar Tour</div>
+          <p>Annual Bordeaux visit — vineyard walks, barrel tastings, and winemaker dinners.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">V</div>
+          <div class="process-step-title">Grand Dégustation</div>
+          <p>Annual gala tasting — 40 labels, full service, guest sommeliers from three-star restaurants.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="container">
+      <div class="heritage-header">
+        <div class="section-tag"><span class="section-tag-text">Our Provenance</span></div>
+        <h2 class="section-heading">Forty-Six Years<br>of Fine Taste</h2>
+      </div>
+      <div class="heritage-timeline">
+        <div class="heritage-item">
+          <div class="heritage-year">1978</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">Club Founded</div>
+            <p class="heritage-text">Eight London wine merchants and collectors founded Clos Velours with an initial cellar of 80 labels and a shared conviction that fine wine deserved serious attention.</p>
+          </div>
+        </div>
+        <div class="heritage-item">
+          <div class="heritage-year">1989</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">Bordeaux Cellar Acquired</div>
+            <p class="heritage-text">The club acquired its cave in Saint-Émilion — giving members direct access to Bordeaux producers and the ability to purchase en primeur.</p>
+          </div>
+        </div>
+        <div class="heritage-item">
+          <div class="heritage-year">2001</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">Sommelier Programme Launched</div>
+            <p class="heritage-text">The Clos Velours sommelier education programme launched in partnership with the Court of Master Sommeliers, providing structured wine education for members.</p>
+          </div>
+        </div>
+        <div class="heritage-item">
+          <div class="heritage-year">2015</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">1,000th Label Acquired</div>
+            <p class="heritage-text">A milestone year — the cellar's 1,000th label entered storage: a Pétrus 1982 donated by a founding member to mark the occasion.</p>
+          </div>
+        </div>
+        <div class="heritage-item">
+          <div class="heritage-year">2024</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">New World Programme</div>
+            <p class="heritage-text">Launched a dedicated New World programme covering Napa Valley, Barossa, Mendoza, and Marlborough — expanding our members' vinous horizons beyond Europe.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press">
+    <div class="container">
+      <div class="press-header">
+        <div class="section-tag"><span class="section-tag-text">Recognition</span></div>
+        <h2 class="section-heading">What Connoisseurs Say</h2>
+      </div>
+      <div class="swiper swiper-press">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="press-card">
+              <p class="press-quote">Clos Velours is perhaps the most intellectually serious wine club in Britain. Their vertical tastings are educational events of the highest order — I have learned more in an evening here than in years of drinking alone.</p>
+              <div class="press-source">— Decanter Magazine, 2024</div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="press-card">
+              <p class="press-quote">The access that membership provides — to the Bordeaux cellar, to en primeur pricing, to the sommelier programme — is extraordinary value for anyone serious about wine.</p>
+              <div class="press-source">— Wine Spectator, Feature 2023</div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="press-card">
+              <p class="press-quote">The annual Grand Dégustation is the finest private wine event I attend. Forty extraordinary labels in one evening — it should not be possible, and yet Clos Velours makes it seem effortless.</p>
+              <div class="press-source">— Member since 1992</div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMBERSHIP -->
+  <section class="membership" id="membership">
+    <div class="container">
+      <div class="membership-inner">
+        <div class="membership-content">
+          <div class="section-tag"><span class="section-tag-text">Membership</span></div>
+          <h2 class="section-heading">Join Clos Velours</h2>
+          <p>Membership grants access to our Bordeaux cellar, the full tasting programme, sommelier education, and the monthly member allocation — six bottles at cellar cost price.</p>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Access to the Bordeaux cellar with 1,200+ labels</div>
+          </div>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Monthly allocation — 6 bottles at cost price</div>
+          </div>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Full tasting programme — 24 events per year</div>
+          </div>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Sommelier education programme included</div>
+          </div>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Annual Bordeaux harvest visit (members only)</div>
+          </div>
+        </div>
+        <div class="membership-form">
+          <div class="form-title">Apply for Membership</div>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your full name" />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="your@email.com" />
+          </div>
+          <div class="form-group">
+            <label>Wine Experience</label>
+            <select>
+              <option value="">Select your experience</option>
+              <option>Enthusiastic Beginner</option>
+              <option>Intermediate — Regular Fine Wine Drinker</option>
+              <option>Advanced — Collector or Trader</option>
+              <option>Professional Sommelier or Trade</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Favourite Appellation or Producer</label>
+            <input type="text" placeholder="e.g. Burgundy, Barolo, Château Pétrus..." />
+          </div>
+          <div class="form-group">
+            <label>What draws you to Clos Velours?</label>
+            <textarea placeholder="Tell us about your wine journey..."></textarea>
+          </div>
+          <button class="form-submit">Submit Application</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-brand-name"><em><strong>Clos Velours</strong></em> Wine Club</div>
+          <p class="footer-tagline">A private wine appreciation club offering cellar tours, vertical tastings, sommelier education, and the art of the perfect vintage since 1978.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Explore</div>
+          <ul class="footer-links">
+            <li><a href="about.html">About</a></li>
+            <li><a href="collection.html">Cellar</a></li>
+            <li><a href="process.html">Tastings</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Club</div>
+          <ul class="footer-links">
+            <li><a href="#">Membership</a></li>
+            <li><a href="#">Grand Dégustation</a></li>
+            <li><a href="#">Sommelier Programme</a></li>
+            <li><a href="#">Bordeaux Visit</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="#">St James's, London</a></li>
+            <li><a href="#">secretary@closvelours.com</a></li>
+            <li><a href="#">+44 20 7946 0300</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2024 Clos Velours Wine Club. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim(); el.innerHTML = '';
+      text.split(/\s+/).forEach((word, wi, arr) => {
+        const wSpan = document.createElement('span');
+        wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+        if (type.includes('chars')) {
+          [...word].forEach(ch => {
+            const c = document.createElement('span'); c.className = 'split-char';
+            c.style.display = 'inline-block'; c.textContent = ch;
+            wSpan.appendChild(c); this.chars.push(c);
+          });
+        } else { wSpan.textContent = word; }
+        this.words.push(wSpan); el.appendChild(wSpan);
+        if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // PRELOADER
+    const fill = document.getElementById('preloaderFill');
+    gsap.to(fill, {
+      scaleX: 1, duration: 1.8, ease: 'power1.inOut',
+      onComplete: () => {
+        gsap.to('#preloader', {
+          autoAlpha: 0, duration: 0.6, delay: 0.2,
+          onComplete: () => {
+            document.getElementById('preloader').style.display = 'none';
+            gsap.to('#scrollIndicator', { autoAlpha: 1, duration: 0.5 });
+          }
+        });
+      }
+    });
+    setTimeout(() => {
+      const si = document.getElementById('scrollIndicator');
+      if (si) gsap.to(si, { autoAlpha: 1, duration: 0.5 });
+    }, 4000);
+
+    // HERO ENTRANCE
+    const heroTl = gsap.timeline({ delay: 2.2 });
+    heroTl
+      .from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out' })
+      .from('.hero-title', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out' }, '-=0.8')
+      .from('.hero-sub', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out' }, '-=0.8')
+      .from('.hero-stats > *', { immediateRender: false, opacity: 0, y: 14, duration: 1.2, ease: 'power1.out', stagger: 0.06 }, '-=0.8')
+      .from('.hero-content-panel .btn-primary', { immediateRender: false, opacity: 0, y: 14, duration: 1.2, ease: 'power1.out' }, '-=0.8')
+      .from('.portrait-card', { immediateRender: false, opacity: 0, scale: 0.96, duration: 1.4, ease: 'power1.out', stagger: 0.06 }, '-=1.2');
+
+    // STATS
+    gsap.from('.stat-item', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.stats-strip', start: 'top 85%', once: true }
+    });
+
+    // PHILOSOPHY
+    gsap.from('.philosophy-card', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+    });
+
+    // COLLECTION
+    gsap.from('.collection-card', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+    });
+
+    // ATELIER
+    gsap.from('.atelier-image', {
+      immediateRender: false, opacity: 0, x: -40, duration: 1.5, ease: 'power1.out',
+      scrollTrigger: { trigger: '.atelier-inner', start: 'top 85%', once: true }
+    });
+    gsap.from('.atelier-content > *', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.atelier-inner', start: 'top 85%', once: true }
+    });
+
+    // PROCESS
+    gsap.from('.process-step', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.process-timeline', start: 'top 85%', once: true }
+    });
+
+    // HERITAGE
+    gsap.from('.heritage-item', {
+      immediateRender: false, opacity: 0, x: -20, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.heritage-timeline', start: 'top 85%', once: true }
+    });
+
+    // MEMBERSHIP
+    gsap.from('.membership-form', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out',
+      scrollTrigger: { trigger: '.membership-inner', start: 'top 85%', once: true }
+    });
+
+    // SWIPER
+    new Swiper('.swiper-press', {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      breakpoints: { 768: { slidesPerView: 2 }, 1200: { slidesPerView: 3 } },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      loop: false
+    });
+  </script>
+</body>
+</html>

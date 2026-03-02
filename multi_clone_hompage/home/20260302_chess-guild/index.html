@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Grand Chess Guild — The Infinite Game</title>
+<meta name="description" content="The Grand Chess Guild is a competitive chess guild offering tournament organization, grandmaster mentorship, and strategic training for players at every level.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #181818;
+    --surface: #222222;
+    --surface2: #2A2A2A;
+    --accent: #B0B0C0;
+    --accent-light: #D0D0E0;
+    --accent-dark: #808090;
+    --ivory: #EEEEF2;
+    --smoke: #909090;
+    --muted: #606060;
+    --border: #1E1E1E;
+    --font-serif: 'Cinzel', 'Times New Roman', serif;
+    --font-sans: 'Crimson Pro', Georgia, serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* Preloader */
+  #preloader {
+    position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+  }
+  .preloader-chess { font-size: 2.5rem; animation: pulsechess 1.2s ease-in-out infinite; }
+  @keyframes pulsechess { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+  .preloader-text { font-family: var(--font-serif); font-size: 0.8rem; letter-spacing: 0.4em; color: var(--accent); text-transform: uppercase; }
+
+  /* Scroll Indicator */
+  #scroll-indicator {
+    position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+    z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0; transition: opacity 0.6s;
+  }
+  #scroll-indicator.visible { opacity: 1; }
+  .si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .si-line { width: 1px; height: 60px; background: var(--border); position: relative; overflow: hidden; }
+  .si-fill { position: absolute; top: 0; left: 0; right: 0; background: var(--accent); height: 0%; transition: height 0.1s; }
+  .si-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-rl; margin-top: 4px; }
+
+  /* Navbar */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 24px 60px; display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.4s;
+  }
+  #navbar.scrolled { background: rgba(24,24,24,0.9); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: var(--font-serif); font-size: 1rem; letter-spacing: 0.1em; color: var(--ivory); }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 10px 24px; border: 1px solid var(--accent); color: var(--accent); transition: all 0.3s; }
+  .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+  /* Hero — Type G */
+  .hero-text-driven { min-height: 200vh; position: relative; }
+  .hero-bg {
+    position: fixed; inset: 0;
+    background-image: url('images/img-1.webp');
+    background-size: cover; background-position: center;
+    filter: brightness(0.18) saturate(0.7); z-index: -1;
+  }
+  .hero-text-wrap {
+    position: sticky; top: 0; height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: flex-start; padding: 0 80px; overflow: hidden;
+  }
+  .hero-eyebrow { font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 32px; }
+  .hero-word { font-family: var(--font-serif); font-size: clamp(4rem, 12vw, 12rem); line-height: 0.88; font-weight: 700; text-transform: uppercase; color: var(--ivory); }
+  .word-2 { padding-left: 3vw; }
+  .hero-divider { width: 80px; height: 1px; background: var(--accent); margin: 32px 0; }
+  .hero-tagline { font-family: var(--font-sans); color: var(--smoke); letter-spacing: 0.15em; font-style: italic; font-size: 1.1rem; margin-bottom: 40px; }
+  .btn-primary { display: inline-block; padding: 14px 40px; background: var(--accent); color: var(--bg); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; transition: background 0.3s; }
+  .btn-primary:hover { background: var(--accent-light); }
+  .btn-ghost { display: inline-block; padding: 14px 40px; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.3s; }
+  .btn-ghost:hover { background: var(--accent); color: var(--bg); }
+
+  /* Checkered pattern */
+  .chess-pattern {
+    height: 4px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0px, var(--accent) 16px, var(--surface2) 16px, var(--surface2) 32px);
+  }
+
+  /* Stats Strip */
+  .stats-strip { background: var(--surface); border-bottom: 1px solid var(--border); padding: 56px 0; }
+  .stats-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); padding: 0 60px; }
+  .stat-block { text-align: center; padding: 16px; border-right: 1px solid var(--border); }
+  .stat-block:last-child { border-right: none; }
+  .stat-num { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 400; color: var(--accent); display: block; line-height: 1; }
+  .stat-label { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 10px; display: block; }
+
+  /* Sections */
+  .section-eyebrow { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .section-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 600; color: var(--ivory); line-height: 1.1; margin-bottom: 48px; letter-spacing: 0.05em; }
+  .section-title em { color: var(--accent-dark); font-style: italic; font-family: var(--font-sans); }
+
+  /* Philosophy */
+  .philosophy { padding: 110px 60px; max-width: 1200px; margin: 0 auto; }
+  .philosophy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; }
+  .philo-card { padding: 40px 32px; border: 1px solid var(--border); background: var(--surface); border-bottom: 3px solid var(--accent); }
+  .philo-piece { font-size: 2.4rem; margin-bottom: 20px; display: block; color: var(--accent); }
+  .philo-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 600; color: var(--ivory); margin-bottom: 14px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .philo-text { font-family: var(--font-sans); font-size: 1.02rem; line-height: 1.75; color: var(--smoke); }
+
+  /* Collection */
+  .collection { padding: 0 60px 110px; max-width: 1200px; margin: 0 auto; }
+  .collection-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; overflow: visible; }
+  .col-card { position: relative; overflow: hidden; aspect-ratio: 4/3; }
+  .col-card-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.7s ease; filter: brightness(0.8); }
+  .col-card:hover .col-card-img { transform: scale(1.05); filter: brightness(0.9); }
+  .col-card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(16,16,16,0.9) 100%); }
+  .col-card-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; }
+  .col-card-tag { font-family: var(--font-serif); font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+  .col-card-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--ivory); }
+
+  /* Atelier */
+  .atelier { background: var(--surface); padding: 110px 0; }
+  .atelier-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .atelier-img-wrap { position: relative; height: 520px; }
+  .atelier-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .atelier-frame { position: absolute; inset: 16px; border: 1px solid var(--accent); z-index: -1; pointer-events: none; }
+  .atelier-body { font-family: var(--font-sans); font-size: 1.05rem; line-height: 1.85; color: var(--smoke); margin-top: 20px; }
+  .atelier-cta { margin-top: 36px; display: flex; gap: 16px; }
+
+  /* Process / Timeline */
+  .process { padding: 110px 60px; max-width: 900px; margin: 0 auto; }
+  .timeline { margin-top: 56px; }
+  .timeline-item { display: grid; grid-template-columns: 70px 1fr; gap: 32px; padding-bottom: 52px; position: relative; }
+  .timeline-item:not(:last-child)::before { content: ''; position: absolute; left: 34px; top: 36px; bottom: 0; width: 1px; background: var(--border); }
+  .timeline-num { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 700; color: var(--accent); line-height: 1; }
+  .timeline-title { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; color: var(--ivory); margin-bottom: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .timeline-text { font-family: var(--font-sans); font-size: 1rem; line-height: 1.75; color: var(--smoke); }
+
+  /* Heritage */
+  .heritage { background: var(--surface2); padding: 110px 60px; }
+  .heritage-inner { max-width: 1200px; margin: 0 auto; }
+  .milestones { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; margin-top: 56px; }
+  .milestone { border-left: 2px solid var(--accent); padding-left: 20px; }
+  .milestone-year { font-family: var(--font-serif); font-size: 2rem; font-weight: 600; color: var(--accent); display: block; }
+  .milestone-title { font-family: var(--font-serif); font-size: 0.9rem; font-weight: 600; color: var(--ivory); margin: 8px 0 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .milestone-text { font-family: var(--font-sans); font-size: 0.95rem; line-height: 1.65; color: var(--smoke); }
+
+  /* Press */
+  .press { padding: 110px 60px; max-width: 1200px; margin: 0 auto; }
+  .swiper { padding-bottom: 48px !important; }
+  .review-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 40px 36px; }
+  .review-quote { font-family: var(--font-sans); font-size: 1.1rem; font-style: italic; line-height: 1.8; color: var(--ivory); margin-bottom: 24px; }
+  .review-name { font-family: var(--font-serif); font-size: 0.82rem; color: var(--ivory); display: block; text-transform: uppercase; letter-spacing: 0.1em; }
+  .review-role { font-family: var(--font-sans); font-size: 0.88rem; color: var(--smoke); }
+  .swiper-pagination-bullet { background: var(--smoke); opacity: 0.4; }
+  .swiper-pagination-bullet-active { background: var(--accent); opacity: 1; }
+
+  /* Membership */
+  .membership { background: var(--surface); padding: 110px 60px; }
+  .membership-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .membership-perks { list-style: none; margin-top: 24px; }
+  .membership-perks li { padding: 12px 0; border-bottom: 1px solid var(--border); font-family: var(--font-sans); font-size: 0.98rem; color: var(--smoke); display: flex; align-items: center; gap: 10px; }
+  .membership-perks li::before { content: '♟'; color: var(--accent); font-size: 0.7rem; flex-shrink: 0; }
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); margin-bottom: 7px; }
+  .form-input { width: 100%; background: var(--bg); border: 1px solid var(--border); padding: 13px 15px; color: var(--ivory); font-family: var(--font-sans); font-size: 1rem; transition: border-color 0.3s; }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  textarea.form-input { resize: vertical; min-height: 110px; }
+  .form-submit { width: 100%; }
+
+  /* Footer */
+  footer { background: var(--bg); border-top: 1px solid var(--border); padding: 56px 60px; }
+  .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; }
+  .footer-brand p { font-family: var(--font-sans); font-size: 1rem; line-height: 1.75; color: var(--smoke); margin-top: 14px; max-width: 260px; }
+  .footer-col-title { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 9px; }
+  .footer-links a { font-family: var(--font-sans); font-size: 0.95rem; color: var(--smoke); transition: color 0.3s; }
+  .footer-links a:hover { color: var(--ivory); }
+  .footer-bottom { max-width: 1200px; margin: 36px auto 0; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
+  .footer-copy { font-family: var(--font-sans); font-size: 0.88rem; color: var(--muted); }
+
+  @media (max-width: 768px) {
+    #navbar { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .hero-text-wrap { padding: 0 24px; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .collection-grid { grid-template-columns: 1fr; }
+    .atelier-inner { grid-template-columns: 1fr; }
+    .milestones { grid-template-columns: 1fr 1fr; }
+    .membership-inner { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-chess">♚</div>
+  <div class="preloader-text">The Grand Chess Guild</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="si-dot"></div>
+  <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-label">Scroll</div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">The <span>Grand Chess</span> Guild</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Tournaments</a></li>
+    <li><a href="process.html">Membership</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="process.html" class="nav-cta">Join the Guild</a>
+</nav>
+
+<!-- Hero — Type G -->
+<section class="hero-text-driven" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-text-wrap">
+    <div class="hero-eyebrow">Est. 1891 · Competitive Chess · Grandmaster Training</div>
+    <div class="hero-word word-1">GRAND</div>
+    <div class="hero-word word-2">CHESS</div>
+    <div class="hero-divider"></div>
+    <p class="hero-tagline">The Infinite Game</p>
+    <a href="collection.html" class="btn-primary">View Tournaments</a>
+  </div>
+</section>
+
+<div class="chess-pattern"></div>
+
+<!-- Stats Strip -->
+<section class="stats-strip" id="stats">
+  <div class="stats-grid">
+    <div class="stat-block">
+      <span class="stat-num" data-target="560">0</span>
+      <span class="stat-label">Active Members</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="133">0</span>
+      <span class="stat-label">Years Active</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="48">0</span>
+      <span class="stat-label">Annual Tournaments</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="12">0</span>
+      <span class="stat-label">Titled Players</span>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy" id="philosophy">
+  <div class="section-eyebrow">Our Philosophy</div>
+  <h2 class="section-title">The Board as <em>Mirror of the Mind</em></h2>
+  <div class="philosophy-grid">
+    <div class="philo-card">
+      <span class="philo-piece">♛</span>
+      <h3 class="philo-title">Strategic Depth</h3>
+      <p class="philo-text">Chess is the most demanding game the human mind has ever devised. We cultivate players who think deeply, plan carefully, and act with precision — skills that extend far beyond the 64 squares.</p>
+    </div>
+    <div class="philo-card">
+      <span class="philo-piece">♜</span>
+      <h3 class="philo-title">Rigorous Competition</h3>
+      <p class="philo-text">Our tournaments are run under FIDE standards with proper time controls and certified arbiters. Competitive integrity is non-negotiable — every result means something here.</p>
+    </div>
+    <div class="philo-card">
+      <span class="philo-piece">♞</span>
+      <h3 class="philo-title">Lifetime Learning</h3>
+      <p class="philo-text">From beginners finding their first opening to titled players preparing for national championships — we provide structured coaching, analysis sessions, and grandmaster seminars for all levels.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Collection Grid -->
+<section class="collection" id="collection">
+  <div class="section-eyebrow">Competition Calendar</div>
+  <h2 class="section-title">Tournaments and <em>Championships</em></h2>
+  <div class="collection-grid">
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Annual Championship</span>
+        <h3 class="col-card-title">Grand Guild Open</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Training Series</span>
+        <h3 class="col-card-title">Grandmaster Mentorship</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-3.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Junior Programme</span>
+        <h3 class="col-card-title">Youth Championship</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-4.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Rapid & Blitz</span>
+        <h3 class="col-card-title">Lightning Rounds</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Atelier / Story -->
+<section class="atelier" id="about">
+  <div class="atelier-inner">
+    <div class="atelier-img-wrap">
+      <div class="atelier-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="atelier-frame"></div>
+    </div>
+    <div>
+      <div class="section-eyebrow">Our Story</div>
+      <h2 class="section-title">Over a Century of <em>Moves</em></h2>
+      <p class="atelier-body">The Grand Chess Guild was founded in 1891 in the reading room of a private gentlemen's club, where a group of serious players grew tired of casual games and determined to create a club worthy of the game's complexity. Our founding charter declared that chess should be played with "the gravity it deserves and the joy it inspires."</p>
+      <p class="atelier-body" style="margin-top:16px;">Today we serve over 560 members ranging from club-level enthusiasts to internationally rated players. We have produced three national champions and one grandmaster candidate. Our coaching programme, led by titled players, runs year-round across all experience levels.</p>
+      <div class="atelier-cta">
+        <a href="about.html" class="btn-primary">Our History</a>
+        <a href="process.html" class="btn-ghost">Join the Guild</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process / Timeline -->
+<section class="process" id="process">
+  <div class="section-eyebrow">Development Path</div>
+  <h2 class="section-title">Your Path Through <em>the Game</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-num">I</div>
+      <div>
+        <h3 class="timeline-title">Apply and Join</h3>
+        <p class="timeline-text">Submit your application with your current playing strength and tournament history. A brief grading assessment is conducted at your first club night to ensure appropriate placement.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">II</div>
+      <div>
+        <h3 class="timeline-title">Placement Assessment</h3>
+        <p class="timeline-text">Play a series of rated practice games against members of varying strengths. Your provisional club rating is established and you are assigned to a coaching cohort suited to your level.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">III</div>
+      <div>
+        <h3 class="timeline-title">Structured Coaching</h3>
+        <p class="timeline-text">Join one of four weekly coaching groups — Fundamentals, Intermediate, Advanced, or Tournament Preparation — each led by a titled or near-titled coach. Opening theory, endgame technique, and tactical training covered throughout the year.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">IV</div>
+      <div>
+        <h3 class="timeline-title">Club Tournaments</h3>
+        <p class="timeline-text">Compete in our internal tournament calendar: the Monthly Rapid, the Quarterly Classical, and the Annual Grand Guild Open. All events are FIDE-rated where applicable, contributing to your national rating.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">V</div>
+      <div>
+        <h3 class="timeline-title">Represent the Guild</h3>
+        <p class="timeline-text">Top performers are selected for regional and national leagues, representing the Guild in team competitions. Our most accomplished players have access to grandmaster mentorship seminars and international congress entry support.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Heritage Milestones -->
+<section class="heritage">
+  <div class="heritage-inner">
+    <div class="section-eyebrow">Club History</div>
+    <h2 class="section-title">Milestones of <em>the Guild</em></h2>
+    <div class="milestones">
+      <div class="milestone">
+        <span class="milestone-year">1891</span>
+        <h3 class="milestone-title">Founded</h3>
+        <p class="milestone-text">Fourteen founding members establish the Guild in a private reading room with a single regulation board and a handwritten charter.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">1932</span>
+        <h3 class="milestone-title">First National Title</h3>
+        <p class="milestone-text">Guild member William Ashcroft wins the national amateur championship — the first of three national titles produced by Guild players.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">1978</span>
+        <h3 class="milestone-title">Junior Programme</h3>
+        <p class="milestone-text">The Youth Chess Programme launches, now reaching 200 schoolchildren annually through partnerships with local schools.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2024</span>
+        <h3 class="milestone-title">560 Members</h3>
+        <p class="milestone-text">The Guild reaches its highest ever membership with twelve titled players in active roles, including two international masters.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Press / Reviews -->
+<section class="press" id="reviews">
+  <div class="section-eyebrow">Voices</div>
+  <h2 class="section-title">What Our <em>Members</em> Say</h2>
+  <div class="swiper reviews-swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"I joined as a casual player who had learned the rules from my father. Within two years, under the Guild's coaching programme, I had crossed 1800 Elo and qualified for my first regional championship. The coaching here is exceptional."</p>
+          <span class="review-name">Thomas Lindqvist</span>
+          <span class="review-role">Member since 2020 · Rating 1842 FIDE</span>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The Grand Guild Open is one of the most professionally run club tournaments in the country. Four rounds of classical chess with proper time controls, certified arbiters, and a post-tournament analysis with a grandmaster. I come back every year."</p>
+          <span class="review-name">Natasha Voronova</span>
+          <span class="review-role">Member since 2015 · Women's Club Champion 2023</span>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"I brought my twelve-year-old son to the youth programme three years ago. He is now rated 1600 and preparing for the national junior qualifier. What the coaches here have done for his thinking, his patience, and his confidence is remarkable."</p>
+          <span class="review-name">Michael Osei</span>
+          <span class="review-role">Parent · Youth Programme since 2021</span>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- Membership / Contact Form -->
+<section class="membership" id="contact">
+  <div class="membership-inner">
+    <div>
+      <div class="section-eyebrow">Membership</div>
+      <h2 class="section-title">Join the <em>Guild</em></h2>
+      <ul class="membership-perks">
+        <li>Access to all weekly club nights</li>
+        <li>Structured coaching placement</li>
+        <li>Entry to all Guild tournaments</li>
+        <li>FIDE-rated competitive play</li>
+        <li>Grandmaster seminar series</li>
+        <li>Library of games and analysis</li>
+        <li>Youth programme access (under 18)</li>
+      </ul>
+    </div>
+    <form>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Current Playing Strength</label>
+        <select class="form-input">
+          <option>Beginner (learning the rules)</option>
+          <option>Casual (social play only)</option>
+          <option>Club Level (under 1500)</option>
+          <option>Intermediate (1500–1800)</option>
+          <option>Advanced (1800–2100)</option>
+          <option>Expert / Titled (2100+)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message or Questions</label>
+        <textarea class="form-input" placeholder="Tell us about your chess background..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary form-submit">Apply for Membership</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div style="font-family:var(--font-serif);font-size:1rem;color:var(--ivory)">The <span style="color:var(--accent)">Grand Chess</span> Guild</div>
+      <p>A competitive chess guild serving players from beginner to master since 1891. The infinite game, played with infinite care.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About</a></li>
+        <li><a href="collection.html">Tournaments</a></li>
+        <li><a href="process.html">Membership</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Programmes</div>
+      <ul class="footer-links">
+        <li><a href="#">Coaching Groups</a></li>
+        <li><a href="#">Youth Programme</a></li>
+        <li><a href="#">Grandmaster Seminars</a></li>
+        <li><a href="#">Game Analysis</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <ul class="footer-links">
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">Chess.com Club</a></li>
+        <li><a href="#">YouTube</a></li>
+        <li><a href="#">Member Forum</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2024 The Grand Chess Guild. All rights reserved.</span>
+    <span class="footer-copy">The Infinite Game</span>
+  </div>
+</footer>
+
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span');
+      wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+      if (type.includes('chars')) {
+        [...word].forEach(ch => {
+          const c = document.createElement('span');
+          c.className = 'split-char'; c.style.display = 'inline-block'; c.textContent = ch;
+          wSpan.appendChild(c); this.chars.push(c);
+        });
+      } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+window.addEventListener('load', () => {
+  gsap.to('#preloader', {
+    opacity: 0, duration: 0.7, delay: 1.0, ease: 'power3.out',
+    onComplete: () => {
+      document.getElementById('preloader').style.display = 'none';
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }
+  });
+  setTimeout(() => document.getElementById('scroll-indicator').classList.add('visible'), 4000);
+});
+
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('si-fill').style.height = (window.scrollY / scrollable * 100) + '%';
+});
+
+// Hero Type G — scroll transform
+gsap.to('.word-1', {
+  x: '-28vw', scale: 0.4, opacity: 0.05,
+  scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 }
+});
+gsap.to('.word-2', {
+  x: '28vw', scale: 0.4, opacity: 0.05,
+  scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 }
+});
+gsap.to('.hero-tagline, .hero-divider, .hero-text-wrap .btn-primary', {
+  opacity: 0, y: -30,
+  scrollTrigger: { trigger: '.hero-text-driven', start: '20% top', end: '45% top', scrub: 1 }
+});
+
+// Stats counter
+document.querySelectorAll('.stat-num[data-target]').forEach(counter => {
+  ScrollTrigger.create({
+    trigger: counter, start: 'top 85%', once: true,
+    onEnter: () => gsap.to({ val: 0 }, {
+      val: parseInt(counter.dataset.target), duration: 1.6, ease: 'power2.out',
+      onUpdate: function() { counter.textContent = Math.round(this.targets()[0].val); }
+    })
+  });
+});
+
+// Philosophy
+gsap.from('.philo-card', {
+  immediateRender: false, opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.04,
+  scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+});
+
+// Collection
+gsap.from('.col-card', {
+  immediateRender: false, opacity: 0, y: 30, duration: 0.75, ease: 'power3.out', stagger: 0.08,
+  scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+});
+
+// Atelier
+gsap.from('.atelier-img-wrap', {
+  immediateRender: false, opacity: 0, x: -30, duration: 0.8, ease: 'power3.out',
+  scrollTrigger: { trigger: '.atelier-inner', start: 'top 80%', once: true }
+});
+
+// Timeline
+gsap.from('.timeline-item', {
+  immediateRender: false, opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.04,
+  scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true }
+});
+
+// Milestones
+gsap.from('.milestone', {
+  immediateRender: false, opacity: 0, y: 20, duration: 0.75, ease: 'power3.out', stagger: 0.08,
+  scrollTrigger: { trigger: '.milestones', start: 'top 85%', once: true }
+});
+
+// Swiper
+new Swiper('.reviews-swiper', {
+  slidesPerView: 1, spaceBetween: 24,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

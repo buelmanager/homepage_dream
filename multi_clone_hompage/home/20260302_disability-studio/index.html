@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Canvas Studio — Every Voice Has a Shape</title>
+  <meta name="description" content="Open Canvas Studio is an inclusive arts collective for disabled artists, providing adaptive creative expression, art therapy, and community exhibition programs.">
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #130F1A;
+      --surface: #1C1626;
+      --surface2: #231D30;
+      --accent: #9B6EDB;
+      --accent-light: #B894EE;
+      --accent-dark: #6840A8;
+      --ivory: #EAE0F8;
+      --smoke: #907890;
+      --muted: #544860;
+      --border: #181420;
+      --font-serif: 'Spectral', Georgia, serif;
+      --font-sans: 'Mulish', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* ─── PRELOADER ─── */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+    .preloader-mark svg { width: 64px; height: 64px; }
+    .preloader-brand { font-family: var(--font-serif); font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+
+    /* ─── SCROLL INDICATOR ─── */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 100; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 80px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line-fill { position: absolute; top: 0; left: 0; right: 0; height: 0%; background: var(--accent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+
+    /* ─── NAVBAR ─── */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 24px 64px; transition: background 0.4s; }
+    nav.scrolled { background: rgba(19,15,26,0.92); backdrop-filter: blur(14px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.05rem; letter-spacing: 0.1em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── HERO TYPE D (Portraits + Stats) ─── */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; background: var(--bg); }
+    .hero-content-panel { display: flex; flex-direction: column; justify-content: center; padding: 120px 60px 120px 80px; }
+    .hero-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; font-family: var(--font-sans); }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.4rem, 5vw, 4.5rem); font-weight: 300; color: var(--ivory); line-height: 1.1; margin-bottom: 20px; }
+    .hero-sub { font-size: 1.05rem; color: var(--smoke); line-height: 1.8; font-weight: 300; max-width: 440px; margin-bottom: 32px; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 32px 0; }
+    .stat-item { }
+    .stat-num { font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent); display: block; line-height: 1; }
+    .stat-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--smoke); margin-top: 6px; display: block; }
+    .btn-primary { display: inline-block; padding: 14px 40px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-sans); font-size: 0.76rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: background 0.3s, color 0.3s; }
+    .btn-primary:hover { background: var(--accent); color: var(--bg); }
+    .btn-ghost { display: inline-block; padding: 14px 40px; background: transparent; border: 1px solid var(--muted); color: var(--smoke); font-family: var(--font-sans); font-size: 0.76rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-portraits { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 8px; padding: 32px 32px 32px 0; }
+    .portrait-card { background-size: cover; background-position: center; border-radius: 2px; }
+    .pc-main { grid-row: span 2; }
+
+    /* ─── SECTION COMMONS ─── */
+    section { position: relative; z-index: 1; }
+    .section-label { font-size: 0.66rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-family: var(--font-sans); }
+    .section-heading { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; color: var(--ivory); line-height: 1.2; }
+    .section-sub { color: var(--smoke); font-size: 1rem; font-weight: 300; line-height: 1.85; max-width: 580px; }
+
+    /* ─── STATS STRIP ─── */
+    .stats-strip { background: var(--surface); padding: 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .stat-strip-item { text-align: center; }
+    .stat-strip-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); display: block; }
+    .stat-strip-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* ─── PHILOSOPHY ─── */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .philosophy-header { margin-bottom: 64px; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .philosophy-card { padding: 40px 32px; border: 1px solid var(--border); background: var(--surface); transition: border-color 0.3s; }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .philosophy-icon { width: 44px; height: 44px; margin-bottom: 20px; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; }
+    .philosophy-icon svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); margin-bottom: 14px; font-weight: 400; }
+    .philosophy-card p { color: var(--smoke); font-size: 0.92rem; line-height: 1.85; font-weight: 300; }
+
+    /* ─── COLLECTION ─── */
+    .collection { padding: 120px 80px; background: var(--surface); }
+    .collection-header { margin-bottom: 64px; }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; overflow: visible; }
+    .collection-card { position: relative; overflow: hidden; cursor: pointer; }
+    .collection-img { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; transition: transform 0.8s ease; }
+    .collection-card:hover .collection-img { transform: scale(1.04); }
+    .collection-info { padding: 24px 0 0; }
+    .collection-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); }
+    .collection-title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-top: 8px; font-weight: 300; }
+    .collection-desc { color: var(--smoke); font-size: 0.9rem; margin-top: 8px; line-height: 1.7; }
+
+    /* ─── ATELIER ─── */
+    .atelier { padding: 120px 80px; background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img { width: 100%; aspect-ratio: 3/4; background-size: cover; background-position: center; }
+    .atelier-content p { color: var(--smoke); line-height: 1.85; margin-bottom: 16px; font-weight: 300; }
+
+    /* ─── PROCESS ─── */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-header { margin-bottom: 64px; }
+    .process-list { display: flex; flex-direction: column; }
+    .process-item { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 48px 0; border-top: 1px solid var(--border); align-items: start; }
+    .process-item:last-child { border-bottom: 1px solid var(--border); }
+    .process-num { font-family: var(--font-serif); font-size: 2.4rem; color: var(--muted); font-weight: 600; }
+    .process-content h3 { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); font-weight: 400; margin-bottom: 12px; }
+    .process-content p { color: var(--smoke); font-size: 0.95rem; line-height: 1.85; font-weight: 300; }
+
+    /* ─── HERITAGE ─── */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-header { margin-bottom: 64px; }
+    .heritage-timeline { display: flex; flex-direction: column; position: relative; }
+    .heritage-timeline::before { content: ''; position: absolute; left: 100px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .heritage-item { display: grid; grid-template-columns: 100px 1fr; gap: 48px; padding: 36px 0; align-items: start; position: relative; }
+    .heritage-item::before { content: ''; position: absolute; left: 96px; top: 46px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .heritage-year { font-family: var(--font-serif); font-size: 1rem; color: var(--accent); font-weight: 600; padding-top: 8px; }
+    .heritage-content h3 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); font-weight: 400; margin-bottom: 8px; }
+    .heritage-content p { color: var(--smoke); font-size: 0.9rem; line-height: 1.75; font-weight: 300; }
+
+    /* ─── PRESS ─── */
+    .press { padding: 120px 80px; background: var(--surface); }
+    .press-header { margin-bottom: 56px; }
+    .swiper { overflow: hidden; }
+    .press-card { background: var(--bg); padding: 48px 44px; border: 1px solid var(--border); }
+    .press-quote { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); line-height: 1.75; font-style: italic; margin-bottom: 28px; }
+    .press-quote::before { content: '\201C'; font-size: 3rem; color: var(--accent); line-height: 0.5; display: block; margin-bottom: 14px; }
+    .press-source { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ─── COMMISSION ─── */
+    .commission { padding: 120px 80px; background: var(--bg); }
+    .commission-header { margin-bottom: 64px; }
+    .commission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .form-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .form-input, .form-select, .form-textarea { background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 20px; font-family: var(--font-sans); font-size: 0.92rem; outline: none; transition: border-color 0.3s; -webkit-appearance: none; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .commission-info h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); font-weight: 300; margin-bottom: 20px; }
+    .commission-info p { color: var(--smoke); line-height: 1.85; font-weight: 300; margin-bottom: 16px; }
+    .contact-item { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px; }
+    .contact-item-icon { color: var(--accent); }
+    .contact-item-text { color: var(--smoke); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 64px 80px 40px; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; margin-bottom: 48px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.05rem; color: var(--ivory); margin-bottom: 14px; font-weight: 400; }
+    .footer-brand p { color: var(--smoke); font-size: 0.86rem; line-height: 1.7; font-weight: 300; }
+    .footer-col h4 { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.86rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { color: var(--muted); font-size: 0.76rem; }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { color: var(--muted); font-size: 0.76rem; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="20" height="20" rx="2" stroke="#9B6EDB" stroke-width="1.5"/>
+        <rect x="34" y="10" width="20" height="20" rx="10" stroke="#9B6EDB" stroke-width="1.5"/>
+        <rect x="10" y="34" width="20" height="20" rx="10" stroke="#9B6EDB" stroke-width="1.5"/>
+        <rect x="34" y="34" width="20" height="20" rx="2" stroke="#9B6EDB" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="preloader-brand">Open Canvas Studio</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="bar-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"><div class="scroll-line-fill" id="scroll-fill"></div></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Open Canvas Studio</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Programs</a></li>
+      <li><a href="process.html">How to Join</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="#commission" class="btn-primary" style="padding: 10px 20px;">Enrol</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO TYPE D (Portraits + Stats) -->
+  <section class="hero" id="hero">
+    <div class="hero-content-panel">
+      <div class="hero-eyebrow">Disability Arts Collective — Est. 2012</div>
+      <h1 class="hero-title">Every Voice<br>Has a Shape</h1>
+      <p class="hero-sub">An inclusive arts studio where disabled artists create, express, and exhibit on their own terms — fully adaptive, radically welcoming.</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num" data-target="220">0</span>
+          <span class="stat-label">Active Artists</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="12">0</span>
+          <span class="stat-label">Annual Exhibitions</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="94">0</span>
+          <span class="stat-label">% Report Wellbeing Gains</span>
+        </div>
+      </div>
+      <a href="#collection" class="btn-primary" style="width: fit-content;">Explore Our Work</a>
+    </div>
+    <div class="hero-portraits">
+      <div class="portrait-card pc-main" style="background-image: url('images/img-1.webp')"></div>
+      <div class="portrait-card" style="background-image: url('images/img-2.webp')"></div>
+      <div class="portrait-card" style="background-image: url('images/img-3.webp')"></div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="stat-strip-item">
+      <span class="stat-strip-num" data-target="220">0</span>
+      <div class="stat-strip-label">Studio Members</div>
+    </div>
+    <div class="stat-strip-item">
+      <span class="stat-strip-num" data-target="48">0</span>
+      <div class="stat-strip-label">Adaptive Art Workshops Monthly</div>
+    </div>
+    <div class="stat-strip-item">
+      <span class="stat-strip-num" data-target="1400">0</span>
+      <div class="stat-strip-label">Works Created Annually</div>
+    </div>
+    <div class="stat-strip-item">
+      <span class="stat-strip-num" data-target="14">0</span>
+      <div class="stat-strip-label">Years of Inclusive Practice</div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="philosophy-header">
+      <div class="section-label">Our Principles</div>
+      <h2 class="section-heading">Art Without Barriers</h2>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        </div>
+        <h3>Creative Access</h3>
+        <p>Every medium, tool, and technique in our studio is available in adaptive formats. We design creative access into every program from the start — never as an afterthought, always as a foundation.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        </div>
+        <h3>Artist-Led Practice</h3>
+        <p>Disabled artists lead our programs, curate our exhibitions, and set our studio's creative agenda. We reject the therapeutic framing that positions disability as something art can fix; we know it as something art reveals.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        </div>
+        <h3>Community Exhibition</h3>
+        <p>Our work belongs in the world, not just in our studio. We run twelve public exhibitions per year — from gallery shows to community spaces to online platforms — ensuring visibility for artists often unseen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION -->
+  <section class="collection" id="collection">
+    <div class="collection-header">
+      <div class="section-label">Programs</div>
+      <h2 class="section-heading">Creative Pathways</h2>
+    </div>
+    <div class="collection-grid">
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-1.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Open Studio</div>
+          <div class="collection-title">Adaptive Open Studio</div>
+          <div class="collection-desc">Drop-in sessions five days a week with adaptive equipment across painting, drawing, sculpture, printmaking, and mixed media. One support artist per four participants.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-2.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Art Therapy</div>
+          <div class="collection-title">Expressive Art Therapy</div>
+          <div class="collection-desc">Individual and small-group art therapy sessions facilitated by registered art therapists. A structured therapeutic track for members seeking deeper support through creative process.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-3.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Exhibition</div>
+          <div class="collection-title">Public Exhibition Program</div>
+          <div class="collection-desc">Artist-curated exhibitions held throughout the year in gallery, community, and digital spaces. Every member is eligible to exhibit and receives full production support.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-4.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Digital Arts</div>
+          <div class="collection-title">Digital & Accessible Arts</div>
+          <div class="collection-desc">Tablet drawing, digital painting, photography, and motion graphics using fully accessible software and devices. Voice-controlled and switch-access options available.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img" style="background-image: url('images/img-5.webp')"></div>
+      <div class="atelier-content">
+        <div class="section-label">Our Studio</div>
+        <h2 class="section-heading">Built for Every Body</h2>
+        <p>Open Canvas Studio was purpose-designed for full physical and sensory accessibility. Our space features adjustable-height workstations, wheelchair-accessible storage and display systems, sensory-calm quiet areas, and noise-managed workshop zones.</p>
+        <p>We stock adaptive tools including mouth-held brushes, weighted implements, grip aids, ergonomic seating, and specialized grip surfaces. If you use a tool we do not have, we will source it.</p>
+        <p>Every program is offered in in-person, remote, and hybrid formats, with BSL interpretation, audio description, and plain-language materials available on request.</p>
+        <a href="about.html" class="btn-ghost" style="margin-top: 24px;">Our Story</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="process-header">
+      <div class="section-label">How We Work</div>
+      <h2 class="section-heading">From First Visit to Solo Exhibition</h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num">01</div>
+        <div class="process-content">
+          <h3>Initial Welcome Visit</h3>
+          <p>A relaxed, unpressured first visit to meet our studio team, see the space, and discuss access needs, creative interests, and what you are hoping to find. No commitment required.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">02</div>
+        <div class="process-content">
+          <h3>Access Assessment and Studio Plan</h3>
+          <p>We work with you to identify the equipment, support, and scheduling that will make your studio practice genuinely workable. This is a collaborative conversation, not a form to fill in.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">03</div>
+        <div class="process-content">
+          <h3>Joining a Program Stream</h3>
+          <p>Choose your entry point — open studio, art therapy, digital arts, or group workshops. You are always free to change programs, combine streams, or step back and return as your energy allows.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">04</div>
+        <div class="process-content">
+          <h3>Building a Body of Work</h3>
+          <p>Over time, studio members develop coherent bodies of work supported by one-to-one mentorship from practicing artist facilitators. We help you articulate your vision and develop your practice.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">05</div>
+        <div class="process-content">
+          <h3>Exhibition and Public Presence</h3>
+          <p>When you are ready, we support you through the full process of exhibiting publicly — from curation to installation to artist statements. Your work will be seen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage">
+    <div class="heritage-header">
+      <div class="section-label">Our History</div>
+      <h2 class="section-heading">Fourteen Years of Art and Access</h2>
+    </div>
+    <div class="heritage-timeline">
+      <div class="heritage-item">
+        <div class="heritage-year">2012</div>
+        <div class="heritage-content">
+          <h3>Founded in a Community Centre</h3>
+          <p>Twelve disabled artists and two facilitators launched what was then called The Wednesday Studio — a weekly open session in a community centre's accessible ground-floor room.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2015</div>
+        <div class="heritage-content">
+          <h3>First Public Exhibition</h3>
+          <p>A gallery show featuring works by twenty-two studio members ran for three weeks and received coverage in regional arts press. Several artists sold work for the first time.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2018</div>
+        <div class="heritage-content">
+          <h3>Dedicated Studio Space Opens</h3>
+          <p>A purpose-built, fully accessible studio space opened, designed with full input from disabled artist members. The first studio in the region designed entirely around access as the primary brief.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2021</div>
+        <div class="heritage-content">
+          <h3>Digital Arts Program Launches</h3>
+          <p>A fully remote-accessible digital arts program using switch-access and voice-controlled tools extended participation to artists unable to attend in person.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2025</div>
+        <div class="heritage-content">
+          <h3>220 Members, 12 Exhibitions, National Arts Bursary</h3>
+          <p>A national arts bursary award recognized Open Canvas as the leading disability arts collective in the country. Membership stands at 220 artists from fourteen different disability communities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press">
+    <div class="press-header">
+      <div class="section-label">Recognition</div>
+      <h2 class="section-heading">What Others Say</h2>
+    </div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">Open Canvas Studio has transformed what inclusive arts practice means — not by lowering expectations but by refusing to let access be an afterthought. The results speak for themselves in the quality of the work.</div>
+            <div class="press-source">— Arts Council Review, 2024</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">These are artists, full stop. That the collective has to append the word "disabled" at all is a reminder of how much the arts world still has to learn. Open Canvas already knows.</div>
+            <div class="press-source">— Contemporary Art Quarterly, Spring 2024</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">I came to a session because my support worker suggested it. I stayed for three years because I finally found somewhere that took my art seriously — not as therapy, but as art.</div>
+            <div class="press-source">— Studio Member Testimony, 2025</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="margin-top: 32px; position: static;"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION FORM -->
+  <section class="commission" id="commission">
+    <div class="commission-header">
+      <div class="section-label">Get Involved</div>
+      <h2 class="section-heading">Join the Studio</h2>
+    </div>
+    <div class="commission-grid">
+      <form>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-input" placeholder="Mira"></div>
+          <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-input" placeholder="Nkosi"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="you@example.com"></div>
+        <div class="form-group"><label class="form-label">Phone (optional)</label><input type="tel" class="form-input" placeholder="+1 (555) 000-0000"></div>
+        <div class="form-group">
+          <label class="form-label">I Am Interested In</label>
+          <select class="form-select">
+            <option>Joining as a studio artist</option>
+            <option>Art therapy sessions</option>
+            <option>Digital arts program</option>
+            <option>Volunteering as a support artist</option>
+            <option>Donating to support the studio</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Access Needs or Questions</label><textarea class="form-textarea" placeholder="Please share any access requirements or questions — we'll ensure the studio works for you."></textarea></div>
+        <button type="submit" class="btn-primary" style="border: none; cursor: pointer; width: 100%;">Submit Enquiry</button>
+      </form>
+      <div class="commission-info">
+        <h3>The Studio Is for You</h3>
+        <p>There is no prior experience required and no audition. Every artist is welcome regardless of ability, diagnosis, or background. Our studio and all its programs are fully accessible.</p>
+        <p>We will respond within three working days. If you would like to speak with someone before submitting a form, please call us or drop in during any open studio session.</p>
+        <div class="contact-item"><span class="contact-item-icon">✉</span><span class="contact-item-text">hello@opencanvasstudio.org</span></div>
+        <div class="contact-item"><span class="contact-item-icon">☎</span><span class="contact-item-text">+44 20 7234 5678<br>Mon–Fri 9am–5pm (Text/BSL relay available)</span></div>
+        <div class="contact-item"><span class="contact-item-icon">⊕</span><span class="contact-item-text">Open Canvas Studio<br>3 Meridian Arts Quarter, London SE10 8PL</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>Open Canvas Studio</h3>
+        <p>A disability arts collective offering adaptive creative expression, art therapy, and community exhibition programs for disabled artists since 2012.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="collection.html">Open Studio</a></li>
+          <li><a href="collection.html">Art Therapy</a></li>
+          <li><a href="collection.html">Exhibitions</a></li>
+          <li><a href="collection.html">Digital Arts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="process.html">How to Join</a></li>
+          <li><a href="#">Volunteer</a></li>
+          <li><a href="#">Donate</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Accessibility</a></li>
+          <li><a href="#">Newsletter</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 Open Canvas Studio. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Accessibility Statement</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SPLITTEXT POLYFILL -->
+  <script>
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = []; this.lines = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim(); el.innerHTML = '';
+      const wordArr = text.split(/\s+/);
+      wordArr.forEach((word, wi) => {
+        const wSpan = document.createElement('span'); wSpan.className = 'split-word'; wSpan.style.cssText = 'display:inline-block;overflow:hidden;';
+        if (type.includes('chars')) {
+          [...word].forEach(ch => { const cSpan = document.createElement('span'); cSpan.className = 'split-char'; cSpan.style.display = 'inline-block'; cSpan.textContent = ch; wSpan.appendChild(cSpan); this.chars.push(cSpan); });
+        } else { wSpan.style.overflow = 'visible'; wSpan.textContent = word; }
+        this.words.push(wSpan); el.appendChild(wSpan);
+        if (wi < wordArr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => { el.innerHTML = this.originals[i]; }); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // PRELOADER
+    gsap.to('#bar-fill', { scaleX: 1, duration: 1.8, ease: 'power2.inOut', onComplete: () => {
+      gsap.to('#preloader', { autoAlpha: 0, duration: 0.6, onComplete: () => {
+        document.getElementById('preloader').style.display = 'none';
+        gsap.fromTo('#scroll-indicator', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.8 });
+        // Hero entry
+        gsap.from('.hero-eyebrow', { y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false });
+        gsap.from('.hero-title', { y: 40, duration: 1.3, ease: 'power2.inOut', immediateRender: false, delay: 0.15 });
+        gsap.from('.hero-sub', { y: 40, duration: 1.1, ease: 'power2.inOut', immediateRender: false, delay: 0.3 });
+        gsap.from('.hero-stats .stat-item', { y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, stagger: 0.15, delay: 0.4 });
+        gsap.from('.hero-content-panel .btn-primary', { y: 40, duration: 1.1, ease: 'power2.inOut', immediateRender: false, delay: 0.55 });
+        gsap.from('.portrait-card', { y: 40, duration: 1.3, ease: 'power2.inOut', immediateRender: false, stagger: 0.15, delay: 0.2 });
+      }});
+    }});
+    setTimeout(() => { gsap.to('#scroll-indicator', { autoAlpha: 1, duration: 0.6 }); }, 4000);
+
+    // SCROLL
+    window.addEventListener('scroll', () => {
+      const s = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      document.getElementById('scroll-fill').style.height = (s * 100) + '%';
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // HERO STAT COUNTERS
+    document.querySelectorAll('.stat-num, .stat-strip-num').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      if (!target) return;
+      gsap.from(el, {
+        textContent: 0, duration: 2.2, ease: 'power2.out', snap: { textContent: 1 }, immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)); }
+      });
+    });
+
+    // SECTION REVEALS
+    gsap.utils.toArray('.philosophy-card').forEach((card, i) => {
+      gsap.from(card, { y: 40, duration: 1.2, ease: 'power2.inOut', delay: i * 0.15, immediateRender: false, scrollTrigger: { trigger: card, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.collection-card').forEach((card, i) => {
+      gsap.from(card, { y: 40, duration: 1.2, ease: 'power2.inOut', delay: i * 0.15, immediateRender: false, scrollTrigger: { trigger: card, start: 'top 88%', once: true } });
+    });
+    gsap.from('.atelier-img', { y: 40, duration: 1.3, ease: 'power2.inOut', immediateRender: false, scrollTrigger: { trigger: '.atelier', start: 'top 80%', once: true } });
+    gsap.utils.toArray('.process-item').forEach((item, i) => {
+      gsap.from(item, { y: 40, duration: 1.2, ease: 'power2.inOut', delay: i * 0.15, immediateRender: false, scrollTrigger: { trigger: item, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.heritage-item').forEach((item, i) => {
+      gsap.from(item, { y: 40, duration: 1.2, ease: 'power2.inOut', delay: i * 0.15, immediateRender: false, scrollTrigger: { trigger: item, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.section-heading').forEach(el => {
+      gsap.from(el, { y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+    });
+
+    // PRESS
+    new Swiper('.press-swiper', {
+      slidesPerView: 1, spaceBetween: 40, loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 } }
+    });
+  </script>
+</body>
+</html>

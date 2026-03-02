@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bushido Martial Arts School — Discipline is the Only True Strength</title>
+  <meta name="description" content="Bushido Martial Arts School offers expert instruction in kendo, judo, and taekwondo rooted in combat philosophy and traditional discipline. Tokyo tradition, London dojo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #181818;
+      --surface: #222222;
+      --surface2: #2A2A2A;
+      --accent: #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark: #808090;
+      --ivory: #EEEEF2;
+      --smoke: #909090;
+      --muted: #606060;
+      --border: #1E1E1E;
+      --font-serif: "Bebas Neue", Impact, sans-serif;
+      --font-sans: "DM Sans", system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 400; line-height: 1.6; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+    .preloader-logo { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 3.5rem); color: var(--ivory); letter-spacing: 0.12em; }
+    .preloader-bar { width: 200px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-bar::after { content: ""; position: absolute; left: -100%; top: 0; width: 100%; height: 100%; background: var(--accent); animation: preload 1.4s ease forwards; }
+    @keyframes preload { to { left: 100%; } }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.4s; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 60px; background: var(--border); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent); animation: scrollDown 2s ease infinite; }
+    @keyframes scrollDown { 0%{top:-100%} 50%{top:0} 100%{top:100%} }
+    .scroll-text { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.2em; color: var(--smoke); writing-mode: vertical-rl; text-transform: uppercase; }
+
+    /* NAVBAR */
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 22px 48px; transition: background 0.4s, padding 0.4s; }
+    #navbar.scrolled { background: rgba(24,24,24,0.96); backdrop-filter: blur(12px); padding: 14px 48px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); text-decoration: none; letter-spacing: 0.12em; }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent) !important; padding: 8px 20px; transition: background 0.3s, color 0.3s !important; }
+    .nav-cta:hover { background: var(--accent) !important; color: var(--bg) !important; }
+
+    /* HERO TYPE C: Diagonal Split */
+    .hero { display: flex; width: 100%; height: 100vh; overflow: hidden; }
+    .hero-left { width: 48%; background: var(--bg); display: flex; align-items: center; padding: 0 60px; position: relative; z-index: 2; clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%); }
+    .hero-right { flex: 1; position: relative; }
+    .hero-img { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.75); background-image: url("images/img-1.webp"); }
+    .hero-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, rgba(24,24,24,0.7) 0%, transparent 40%); }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-eyebrow { font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: block; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3.5rem, 6vw, 6.5rem); line-height: 0.95; color: var(--ivory); margin-bottom: 24px; letter-spacing: 0.04em; }
+    .hero-sub { font-family: var(--font-sans); font-size: 1rem; color: var(--smoke); font-weight: 300; letter-spacing: 0.04em; margin-bottom: 36px; max-width: 380px; line-height: 1.6; }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary { display: inline-block; background: var(--accent); color: var(--bg); padding: 14px 36px; font-family: var(--font-sans); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; border: 1px solid var(--accent); transition: background 0.3s, color 0.3s; }
+    .btn-primary:hover { background: transparent; color: var(--accent); }
+    .btn-ghost { display: inline-block; background: transparent; color: var(--ivory); padding: 14px 36px; font-family: var(--font-sans); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; border: 1px solid rgba(238,238,242,0.25); transition: border-color 0.3s; }
+    .btn-ghost:hover { border-color: var(--ivory); }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 64px; display: flex; justify-content: space-around; align-items: center; gap: 32px; flex-wrap: wrap; }
+    .stat-item { text-align: center; }
+    .stat-number { font-family: var(--font-serif); font-size: clamp(2.5rem, 4vw, 3.5rem); color: var(--ivory); display: block; line-height: 1; letter-spacing: 0.06em; }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+    /* SECTION SHARED */
+    section { padding: 100px 64px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); color: var(--ivory); line-height: 0.95; margin-bottom: 16px; letter-spacing: 0.04em; }
+    .section-lead { color: var(--smoke); font-weight: 300; font-size: 1.02rem; max-width: 560px; line-height: 1.7; }
+    .section-divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 24px; }
+
+    /* PHILOSOPHY */
+    .philosophy { background: var(--bg); }
+    .philosophy-header { text-align: center; max-width: 640px; margin: 0 auto 72px; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; max-width: 1200px; margin: 0 auto; }
+    .philosophy-card { background: var(--surface); padding: 52px 40px; border: 1px solid var(--border); transition: border-color 0.3s; }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .phil-number { font-family: var(--font-serif); font-size: 3.5rem; color: var(--accent); display: block; line-height: 1; margin-bottom: 20px; letter-spacing: 0.06em; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); margin-bottom: 12px; letter-spacing: 0.04em; }
+    .phil-body { font-size: 0.9rem; color: var(--smoke); line-height: 1.7; }
+
+    /* PROGRAMS / COLLECTION GRID */
+    .programs { background: var(--surface); }
+    .programs-header { max-width: 560px; margin-bottom: 64px; }
+    .programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; overflow: visible; max-width: 1200px; }
+    .program-card { position: relative; background: var(--surface2); overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s, border-color 0.4s; }
+    .program-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .program-img { width: 100%; height: 300px; object-fit: cover; display: block; filter: brightness(0.7) saturate(0.6); transition: filter 0.4s, transform 0.6s; }
+    .program-card:hover .program-img { filter: brightness(0.8) saturate(0.8); transform: scale(1.03); }
+    .program-body { padding: 32px; }
+    .program-tag { font-size: 0.66rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: block; }
+    .program-title { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 12px; letter-spacing: 0.04em; }
+    .program-desc { font-size: 0.88rem; color: var(--smoke); line-height: 1.7; margin-bottom: 20px; }
+    .program-link { font-size: 0.76rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; transition: color 0.3s; }
+
+    /* ATELIER / DOJO */
+    .dojo { background: var(--bg); }
+    .dojo-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1200px; margin: 0 auto; }
+    .dojo-img-wrap { position: relative; }
+    .dojo-img { width: 100%; height: 520px; object-fit: cover; filter: brightness(0.75) saturate(0.5); display: block; }
+    .dojo-accent-box { position: absolute; bottom: -24px; right: -24px; width: 160px; height: 160px; border: 1px solid var(--accent); pointer-events: none; }
+    .dojo-features { margin-top: 36px; display: flex; flex-direction: column; gap: 12px; }
+    .dojo-feature { display: flex; align-items: flex-start; gap: 16px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); }
+    .feature-dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+    .feature-text { font-size: 0.9rem; color: var(--smoke); line-height: 1.6; }
+    .feature-text strong { color: var(--ivory); }
+
+    /* PROCESS */
+    .process { background: var(--surface); }
+    .process-header { text-align: center; max-width: 560px; margin: 0 auto 72px; }
+    .process-timeline { max-width: 900px; margin: 0 auto; position: relative; }
+    .process-timeline::before { content: ""; position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: flex; gap: 36px; align-items: flex-start; padding: 32px 0; position: relative; }
+    .step-number { width: 56px; height: 56px; background: var(--surface2); border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.5rem; color: var(--accent); flex-shrink: 0; position: relative; z-index: 1; letter-spacing: 0.04em; }
+    .step-content { padding-top: 8px; }
+    .step-title { font-family: var(--font-serif); font-size: 1.6rem; color: var(--ivory); margin-bottom: 8px; letter-spacing: 0.04em; }
+    .step-desc { font-size: 0.88rem; color: var(--smoke); line-height: 1.7; }
+
+    /* HERITAGE */
+    .heritage { background: var(--bg); }
+    .heritage-header { text-align: center; max-width: 560px; margin: 0 auto 72px; }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; max-width: 1200px; margin: 0 auto; }
+    .heritage-item { background: var(--surface); padding: 48px 28px; text-align: center; border: 1px solid var(--border); }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); display: block; margin-bottom: 12px; letter-spacing: 0.06em; }
+    .heritage-event { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 10px; letter-spacing: 0.03em; }
+    .heritage-desc { font-size: 0.83rem; color: var(--smoke); line-height: 1.6; }
+
+    /* PRESS */
+    .press { background: var(--surface); }
+    .press-header { text-align: center; max-width: 560px; margin: 0 auto 56px; }
+    .press-swiper { max-width: 1100px; margin: 0 auto; padding: 0 40px 48px; }
+    .press-card { background: var(--surface2); padding: 48px 40px; border: 1px solid var(--border); }
+    .press-quote { font-family: var(--font-sans); font-size: 1.2rem; font-style: italic; color: var(--ivory); line-height: 1.7; margin-bottom: 28px; }
+    .press-source { display: flex; align-items: center; gap: 16px; }
+    .press-logo { font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
+    .press-divider { flex: 1; height: 1px; background: var(--border); }
+    .press-author { font-size: 0.83rem; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--smoke); }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ENROLL FORM */
+    .enroll { background: var(--bg); }
+    .enroll-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1100px; margin: 0 auto; }
+    .form-field { margin-bottom: 18px; }
+    .form-field label { display: block; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-field input, .form-field select, .form-field textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 13px 16px; font-family: var(--font-sans); font-size: 0.95rem; outline: none; transition: border-color 0.3s; appearance: none; }
+    .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
+    .form-field textarea { height: 100px; resize: vertical; }
+    .form-field select option { background: var(--surface2); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-submit { width: 100%; padding: 15px; background: var(--accent); color: var(--bg); border: none; cursor: pointer; font-family: var(--font-sans); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; transition: background 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 72px 64px 40px; }
+    .footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 60px; }
+    .footer-brand .nav-logo { display: block; margin-bottom: 16px; font-size: 1.6rem; }
+    .footer-brand p { font-size: 0.86rem; color: var(--smoke); line-height: 1.7; max-width: 260px; }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ivory); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { font-size: 0.86rem; color: var(--smoke); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { font-size: 0.78rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--smoke); }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+    <div class="preloader-logo">BUSHIDO</div>
+    <div class="preloader-bar"></div>
+  </div>
+
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">BUSHIDO</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Programs</a></li>
+      <li><a href="process.html">Method</a></li>
+      <li><a href="contact.html" class="nav-cta">Enroll</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="hero-left">
+      <div class="hero-content">
+        <div class="hero-eyebrow">Est. 1987 &middot; Tokyo Tradition</div>
+        <h1 class="hero-title">BUSHIDO<br>MARTIAL<br>ARTS</h1>
+        <p class="hero-sub">Discipline is the Only True Strength</p>
+        <div class="hero-ctas">
+          <a href="#programs" class="btn-primary">Our Programs</a>
+          <a href="contact.html" class="btn-ghost">Enroll</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-img"></div>
+    </div>
+  </section>
+
+  <div class="stats-strip">
+    <div class="stat-item"><span class="stat-number">38</span><span class="stat-label">Years of Tradition</span></div>
+    <div class="stat-item"><span class="stat-number">1,200</span><span class="stat-label">Students Trained</span></div>
+    <div class="stat-item"><span class="stat-number">4</span><span class="stat-label">Martial Disciplines</span></div>
+    <div class="stat-item"><span class="stat-number">22</span><span class="stat-label">Black Belt Graduates</span></div>
+    <div class="stat-item"><span class="stat-number">97%</span><span class="stat-label">Instructor Rating</span></div>
+  </div>
+
+  <section class="philosophy" id="philosophy">
+    <div class="philosophy-header">
+      <span class="section-eyebrow">The Code</span>
+      <h2 class="section-title">BUSHIDO<br>PRINCIPLES</h2>
+      <div class="section-divider"></div>
+      <p class="section-lead">The way of the warrior is not violence. It is clarity, respect, and the quiet authority that comes from mastery over oneself.</p>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <span class="phil-number">I</span>
+        <h3 class="phil-title">RECTITUDE</h3>
+        <p class="phil-body">The warrior acts from principle, not emotion. Gi — moral rectitude — means doing what is right even when no one watches. It is the foundation of all the other virtues.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="phil-number">II</span>
+        <h3 class="phil-title">COURAGE</h3>
+        <p class="phil-body">Yu demands action in the face of fear. True courage is not the absence of fear but the judgment to know when fear must be overcome and the will to overcome it.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="phil-number">III</span>
+        <h3 class="phil-title">DISCIPLINE</h3>
+        <p class="phil-body">Jiritsu — self-discipline — is the daily practice of choosing discomfort over ease. The body trained under strict constraint becomes the instrument of a free mind.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="programs" id="programs">
+    <div class="programs-header">
+      <span class="section-eyebrow">Training</span>
+      <h2 class="section-title">OUR<br>PROGRAMS</h2>
+      <div class="section-divider"></div>
+      <p class="section-lead">Four disciplines, one code. Each path demands total commitment and rewards with a mastery that extends far beyond the mat.</p>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card">
+        <img src="images/img-2.webp" alt="Kendo training" class="program-img" loading="lazy">
+        <div class="program-body">
+          <span class="program-tag">Japanese Sword Arts</span>
+          <h3 class="program-title">KENDO</h3>
+          <p class="program-desc">The way of the sword. Kendo develops explosive precision, footwork, and mental presence through shinai sparring and kata. Beginners through to dan grade training available.</p>
+          <a href="collection.html" class="program-link">View Program</a>
+        </div>
+      </div>
+      <div class="program-card">
+        <img src="images/img-3.webp" alt="Judo training" class="program-img" loading="lazy">
+        <div class="program-body">
+          <span class="program-tag">Japanese Grappling</span>
+          <h3 class="program-title">JUDO</h3>
+          <p class="program-desc">The gentle way. Judo teaches balance, leverage, and the art of using an opponent's force against them. Competition and randori training both offered.</p>
+          <a href="collection.html" class="program-link">View Program</a>
+        </div>
+      </div>
+      <div class="program-card">
+        <img src="images/img-4.webp" alt="Taekwondo training" class="program-img" loading="lazy">
+        <div class="program-body">
+          <span class="program-tag">Korean Striking Art</span>
+          <h3 class="program-title">TAEKWONDO</h3>
+          <p class="program-desc">The art of the foot and fist. Taekwondo develops explosive kicks, speed, and tactical awareness. Olympic-style sport and traditional ITF patterns both taught.</p>
+          <a href="collection.html" class="program-link">View Program</a>
+        </div>
+      </div>
+      <div class="program-card">
+        <img src="images/img-5.webp" alt="Combat philosophy dojo" class="program-img" loading="lazy">
+        <div class="program-body">
+          <span class="program-tag">Philosophy &amp; Theory</span>
+          <h3 class="program-title">COMBAT PHILOSOPHY</h3>
+          <p class="program-desc">The mental dimension of martial arts. Study Sun Tzu, Miyamoto Musashi, and Jigoro Kano. Learn to apply strategic thought to both the mat and daily life.</p>
+          <a href="collection.html" class="program-link">View Program</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dojo" id="dojo">
+    <div class="dojo-inner">
+      <div class="dojo-img-wrap">
+        <img src="images/img-6.webp" alt="Bushido dojo interior" class="dojo-img" loading="lazy">
+        <div class="dojo-accent-box"></div>
+      </div>
+      <div class="dojo-content">
+        <span class="section-eyebrow">Training Space</span>
+        <h2 class="section-title">THE DOJO</h2>
+        <div class="section-divider"></div>
+        <p class="section-lead">Our purpose-built dojo spans 4,000 square feet of traditional tatami and sprung hardwood flooring. The space was designed to honour the weight of practice.</p>
+        <div class="dojo-features">
+          <div class="dojo-feature">
+            <div class="feature-dot"></div>
+            <p class="feature-text"><strong>Main Training Hall</strong> — 2,400 sq ft of high-density tatami with 5-metre ceiling height and wall-mounted mirror systems.</p>
+          </div>
+          <div class="dojo-feature">
+            <div class="feature-dot"></div>
+            <p class="feature-text"><strong>Weapons Armoury</strong> — Full selection of training shinai, bokken, naginata, and safety equipment available for all enrolled students.</p>
+          </div>
+          <div class="dojo-feature">
+            <div class="feature-dot"></div>
+            <p class="feature-text"><strong>Philosophy Library</strong> — 200-volume collection of martial arts texts, strategy manuals, and practitioner biographies open to all students.</p>
+          </div>
+          <div class="dojo-feature">
+            <div class="feature-dot"></div>
+            <p class="feature-text"><strong>Meditation Room</strong> — A separate space for pre-training zazen and post-session reflection. Silence is observed at all times.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="process" id="process">
+    <div class="process-header">
+      <span class="section-eyebrow">The Path</span>
+      <h2 class="section-title">HOW WE<br>TRAIN</h2>
+      <div class="section-divider"></div>
+      <p class="section-lead">A structured progression built on the principle that mastery must be earned, not given. Each stage prepares the student for the next challenge.</p>
+    </div>
+    <div class="process-timeline">
+      <div class="process-step">
+        <div class="step-number">01</div>
+        <div class="step-content">
+          <h3 class="step-title">FUNDAMENTALS</h3>
+          <p class="step-desc">Stance, breathing, and falling safely. Every warrior begins with the body. The first stage strips away all ego and builds a foundation that will support years of development.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-number">02</div>
+        <div class="step-content">
+          <h3 class="step-title">KATA</h3>
+          <p class="step-desc">Pre-arranged forms encode centuries of wisdom. Through repetition of kata, the principles of each art enter the body and become reflexive rather than deliberate.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-number">03</div>
+        <div class="step-content">
+          <h3 class="step-title">SPARRING</h3>
+          <p class="step-desc">Controlled contact with partners of varying skill levels tests the kata in dynamic conditions. Students learn that technique only exists if it functions under pressure.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-number">04</div>
+        <div class="step-content">
+          <h3 class="step-title">PHILOSOPHY</h3>
+          <p class="step-desc">Technical mastery without philosophical grounding produces a dangerous but limited practitioner. Study sessions on Bushido code, strategy, and ethics run in parallel with physical training.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-number">05</div>
+        <div class="step-content">
+          <h3 class="step-title">GRADING</h3>
+          <p class="step-desc">Examination is not a test of performance but of character. Students are assessed on composure, consistency, and respect as much as technical execution.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="heritage" id="heritage">
+    <div class="heritage-header">
+      <span class="section-eyebrow">Our History</span>
+      <h2 class="section-title">FOUR DECADES<br>OF DISCIPLINE</h2>
+      <div class="section-divider"></div>
+      <p class="section-lead">A lineage of masters, a tradition of excellence, and a school that has never compromised on the standards it demands.</p>
+    </div>
+    <div class="heritage-grid">
+      <div class="heritage-item">
+        <span class="heritage-year">1987</span>
+        <h4 class="heritage-event">Founded in Tokyo</h4>
+        <p class="heritage-desc">Sensei Haruki Tanaka establishes the Bushido school in Shinjuku, drawing on his lineage of four generations of kendo masters.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">1998</span>
+        <h4 class="heritage-event">London Expansion</h4>
+        <p class="heritage-desc">The school opens its London dojo in Shoreditch, the first Western outpost of the Bushido tradition outside Japan.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2009</span>
+        <h4 class="heritage-event">National Championship</h4>
+        <p class="heritage-desc">Bushido students take gold in kendo and silver in judo at the British Martial Arts National Championships in Manchester.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2022</span>
+        <h4 class="heritage-event">New Dojo Opens</h4>
+        <p class="heritage-desc">The school moves to its purpose-built 4,000 sq ft training facility, the largest traditional martial arts dojo in central London.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="press" id="press">
+    <div class="press-header">
+      <span class="section-eyebrow">Recognition</span>
+      <h2 class="section-title">WHAT THEY<br>SAY</h2>
+    </div>
+    <div class="swiper press-swiper" id="pressSwiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-card">
+            <p class="press-quote">Bushido is not a gym. It is a school of character. The discipline it cultivates extends far beyond what happens on the mat.</p>
+            <div class="press-source">
+              <span class="press-logo">The Guardian Sport</span>
+              <div class="press-divider"></div>
+              <span class="press-author">Martial Arts Feature, 2023</span>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <p class="press-quote">We have sent six of our athletes to Bushido for conditioning and philosophy training. All six returned transformed — not just as fighters but as people.</p>
+            <div class="press-source">
+              <span class="press-logo">British Judo Association</span>
+              <div class="press-divider"></div>
+              <span class="press-author">Coaching Partnership, 2022</span>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <p class="press-quote">I have trained at dojos across Tokyo, Seoul, and London. Bushido is the only school outside Japan that truly understands the spirit that animates these arts.</p>
+            <div class="press-source">
+              <span class="press-logo">Student Testimonial</span>
+              <div class="press-divider"></div>
+              <span class="press-author">Marcus O., 3rd Dan Kendo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <section class="enroll" id="contact">
+    <div class="enroll-inner">
+      <div class="enroll-content">
+        <span class="section-eyebrow">Begin Training</span>
+        <h2 class="section-title">TAKE THE<br>FIRST STEP</h2>
+        <div class="section-divider"></div>
+        <p class="section-lead">Enrolment is open year-round. New cohorts begin each month. Submit your application and our admissions team will arrange a complimentary trial session within five working days.</p>
+        <br>
+        <p class="section-lead" style="font-size:0.85rem;">No prior experience is required for foundational programs. Advanced students must provide evidence of prior grading.</p>
+      </div>
+      <form class="enroll-form">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" name="firstName" placeholder="James">
+          </div>
+          <div class="form-field">
+            <label for="last-name">Last Name</label>
+            <input type="text" id="last-name" name="lastName" placeholder="Chen">
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="james@example.com">
+        </div>
+        <div class="form-field">
+          <label for="program-select">Discipline of Interest</label>
+          <select id="program-select" name="program">
+            <option value="">Select a discipline</option>
+            <option>Kendo</option>
+            <option>Judo</option>
+            <option>Taekwondo</option>
+            <option>Combat Philosophy</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="experience">Prior Experience</label>
+          <select id="experience" name="experience">
+            <option value="">Select your level</option>
+            <option>No prior training</option>
+            <option>Beginner (under 2 years)</option>
+            <option>Intermediate (2-5 years)</option>
+            <option>Advanced (5+ years / graded)</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="message">Why Do You Want to Train?</label>
+          <textarea id="message" name="message" placeholder="Tell us what draws you to martial arts and what you hope to achieve at Bushido..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Submit Application</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">BUSHIDO</a>
+        <p>A school of discipline, respect, and excellence. Founded in Tokyo, practised worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Disciplines</h4>
+        <ul>
+          <li><a href="collection.html">Kendo</a></li>
+          <li><a href="collection.html">Judo</a></li>
+          <li><a href="collection.html">Taekwondo</a></li>
+          <li><a href="collection.html">Combat Philosophy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>School</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="process.html">The Method</a></li>
+          <li><a href="#">Alumni</a></li>
+          <li><a href="#">Events</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="contact.html">Enroll</a></li>
+          <li><a href="#">Timetable</a></li>
+          <li><a href="#">Membership</a></li>
+          <li><a href="#">Partnerships</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 Bushido Martial Arts School. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    class SplitText {
+      constructor(target, options={}) {
+        this.elements = typeof target === "string" ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+        this.chars = []; this.words = [];
+        this.originals = this.elements.map(el => el.innerHTML);
+        this.elements.forEach(el => this._split(el, options.type || "words"));
+      }
+      _split(el, type) {
+        const text = el.textContent.trim(); el.innerHTML = "";
+        text.split(/\s+/).forEach((word, wi, arr) => {
+          const wSpan = document.createElement("span");
+          wSpan.className = "split-word"; wSpan.style.display = "inline-block";
+          if (type.includes("chars")) {
+            [...word].forEach(ch => {
+              const c = document.createElement("span"); c.className = "split-char";
+              c.style.display = "inline-block"; c.textContent = ch;
+              wSpan.appendChild(c); this.chars.push(c);
+            });
+          } else { wSpan.textContent = word; }
+          this.words.push(wSpan); el.appendChild(wSpan);
+          if (wi < arr.length - 1) el.appendChild(document.createTextNode("\u00a0"));
+        });
+      }
+      revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    window.addEventListener("load", function() {
+      setTimeout(function() {
+        gsap.to("#preloader", {
+          duration: 0.7, opacity: 0, ease: "power2.inOut",
+          onComplete: function() {
+            document.getElementById("preloader").style.display = "none";
+            document.getElementById("scroll-indicator").classList.add("visible");
+            gsap.from(".hero-eyebrow", { duration: 0.75, x: -20, opacity: 0, ease: "power3.out", immediateRender: false, delay: 0.05 });
+            gsap.from(".hero-title", { duration: 0.75, x: -20, opacity: 0, ease: "power3.out", immediateRender: false, delay: 0.1 });
+            gsap.from(".hero-sub", { duration: 0.75, x: -20, opacity: 0, ease: "power3.out", immediateRender: false, delay: 0.18 });
+            gsap.from(".hero-ctas", { duration: 0.75, x: -20, opacity: 0, ease: "power3.out", immediateRender: false, delay: 0.26 });
+            gsap.from(".hero-img", { duration: 1.0, opacity: 0, ease: "power2.out", immediateRender: false, delay: 0.1 });
+          }
+        });
+      }, 1600);
+    });
+
+    setTimeout(function() { document.getElementById("scroll-indicator").classList.add("visible"); }, 4000);
+
+    window.addEventListener("scroll", function() {
+      var navbar = document.getElementById("navbar");
+      if (window.scrollY > 60) navbar.classList.add("scrolled");
+      else navbar.classList.remove("scrolled");
+    });
+
+    gsap.from(".stat-item", { scrollTrigger: { trigger: ".stats-strip", start: "top 85%", once: true }, duration: 0.75, x: -20, opacity: 0, stagger: 0.04, ease: "power3.out", immediateRender: false });
+    gsap.from(".philosophy-card", { scrollTrigger: { trigger: ".philosophy-grid", start: "top 85%", once: true }, duration: 0.75, x: -20, opacity: 0, stagger: 0.04, ease: "power3.out", immediateRender: false });
+    gsap.from(".program-card", { scrollTrigger: { trigger: ".programs-grid", start: "top 85%", once: true }, duration: 0.75, x: -20, opacity: 0, stagger: 0.04, ease: "power3.out", immediateRender: false });
+    gsap.from(".dojo-img-wrap", { scrollTrigger: { trigger: ".dojo-inner", start: "top 80%", once: true }, duration: 0.75, x: -20, opacity: 0, ease: "power3.out", immediateRender: false });
+    gsap.from(".dojo-content", { scrollTrigger: { trigger: ".dojo-inner", start: "top 80%", once: true }, duration: 0.75, x: 20, opacity: 0, ease: "power3.out", immediateRender: false, delay: 0.1 });
+    gsap.from(".dojo-feature", { scrollTrigger: { trigger: ".dojo-features", start: "top 85%", once: true }, duration: 0.75, x: -20, opacity: 0, stagger: 0.04, ease: "power3.out", immediateRender: false });
+    gsap.from(".process-step", { scrollTrigger: { trigger: ".process-timeline", start: "top 85%", once: true }, duration: 0.75, x: -20, opacity: 0, stagger: 0.04, ease: "power3.out", immediateRender: false });
+    gsap.from(".heritage-item", { scrollTrigger: { trigger: ".heritage-grid", start: "top 85%", once: true }, duration: 0.75, x: -20, opacity: 0, stagger: 0.04, ease: "power3.out", immediateRender: false });
+    gsap.from(".press-card", { scrollTrigger: { trigger: ".press-swiper", start: "top 85%", once: true }, duration: 0.75, x: -20, opacity: 0, ease: "power3.out", immediateRender: false });
+    gsap.from(".enroll-content", { scrollTrigger: { trigger: ".enroll-inner", start: "top 85%", once: true }, duration: 0.75, x: -20, opacity: 0, ease: "power3.out", immediateRender: false });
+    gsap.from(".enroll-form", { scrollTrigger: { trigger: ".enroll-inner", start: "top 85%", once: true }, duration: 0.75, x: 20, opacity: 0, ease: "power3.out", immediateRender: false, delay: 0.1 });
+
+    new Swiper("#pressSwiper", { slidesPerView: 1, spaceBetween: 0, loop: true, autoplay: { delay: 5000, disableOnInteraction: false }, pagination: { el: ".swiper-pagination", clickable: true } });
+  </script>
+</body>
+</html>

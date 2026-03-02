@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOREAS — Arctic Spa | Glacial Cold Therapy &amp; Mineral Wellness</title>
+  <meta name="description" content="BOREAS Arctic Spa offers transformative glacial cold therapy, mineral immersion rituals, and arctic wellness treatments drawn from the pure power of the polar circle.">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #141820; --surface: #1C2030; --surface2: #222838;
+      --accent: #A0C4D8; --accent-light: #C4DCE8; --accent-dark: #6090B0;
+      --ivory: #DCE8F0; --smoke: #809098; --muted: #505860;
+      --border: #181C28;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+    }
+    .preloader-mark {
+      width: 64px; height: 64px; border: 1px solid var(--accent); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      animation: preloaderPulse 1.5s ease-in-out infinite;
+    }
+    .preloader-mark::after {
+      content: '✦'; color: var(--accent); font-size: 1.2rem;
+    }
+    .preloader-name {
+      font-family: var(--font-serif); font-size: 1rem; letter-spacing: 0.4em;
+      color: var(--accent); text-transform: uppercase; opacity: 0;
+      animation: preloaderFade 1s ease 0.5s forwards;
+    }
+    .preloader-bar {
+      width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden;
+    }
+    .preloader-bar::after {
+      content: ''; position: absolute; inset: 0; background: var(--accent);
+      transform: translateX(-100%); animation: preloaderBar 1.8s ease forwards;
+    }
+    @keyframes preloaderPulse { 0%,100%{opacity:0.6;transform:scale(0.95)} 50%{opacity:1;transform:scale(1)} }
+    @keyframes preloaderFade { to{opacity:1} }
+    @keyframes preloaderBar { to{transform:translateX(0)} }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator {
+      position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      z-index: 100; opacity: 0; transition: opacity 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 40%;
+      background: var(--accent); animation: scrollFill 2s ease-in-out infinite;
+    }
+    .scroll-label {
+      font-family: var(--font-sans); font-size: 0.6rem; letter-spacing: 0.2em;
+      color: var(--smoke); text-transform: uppercase;
+      writing-mode: vertical-lr; transform: rotate(180deg);
+    }
+    @keyframes scrollFill { 0%{top:-40%} 100%{top:100%} }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 28px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+    nav.scrolled { background: rgba(20,24,32,0.94); backdrop-filter: blur(16px); padding: 18px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); text-decoration: none; letter-spacing: 0.08em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 26px; font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO — TYPE B: Parallax */
+    .hero {
+      position: relative; width: 100%; height: 100vh;
+      display: flex; align-items: center; overflow: hidden;
+    }
+    .hero-parallax-bg { position: absolute; inset: -10%; }
+    .parallax-layer {
+      position: absolute; inset: 0; background-size: cover; background-position: center;
+      will-change: transform;
+    }
+    .layer-1 {
+      background-image: url('images/img-6.webp');
+      filter: brightness(0.58);
+    }
+    .layer-2 {
+      background-image: url('images/img-7.webp');
+      mix-blend-mode: screen; opacity: 0.12;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(20,24,32,0.58) 0%, rgba(12,16,24,0.28) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 2; max-width: 680px; padding: 0 80px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: var(--font-serif); font-size: clamp(4.5rem, 9vw, 9rem);
+      font-weight: 400; line-height: 0.9; color: var(--ivory); margin-bottom: 28px;
+      letter-spacing: -0.01em;
+    }
+    .hero-subtitle {
+      font-size: 1.05rem; color: var(--smoke); line-height: 1.6; margin-bottom: 44px;
+      max-width: 480px; font-weight: 300;
+    }
+    .hero-ctas { display: flex; gap: 20px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: var(--bg); border: none; padding: 16px 36px;
+      font-family: var(--font-sans); font-size: 0.82rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none;
+      cursor: pointer; transition: all 0.3s; display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .btn-secondary {
+      background: transparent; color: var(--ivory); border: 1px solid rgba(160,196,216,0.4);
+      padding: 16px 36px; font-family: var(--font-sans); font-size: 0.82rem;
+      letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none;
+      cursor: pointer; transition: all 0.3s; display: inline-block;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-floating {
+      position: absolute; right: 80px; bottom: 80px; z-index: 3;
+    }
+    .float-badge {
+      border: 1px solid var(--accent); color: var(--accent);
+      padding: 14px 22px; font-size: 0.7rem; letter-spacing: 0.18em;
+      font-family: var(--font-sans); text-transform: uppercase;
+      animation: floatBadge 3s ease-in-out infinite;
+    }
+    @keyframes floatBadge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    /* INTRO */
+    .intro { padding: 120px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .intro-text .section-label {
+      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px;
+    }
+    .intro-text h2 { font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 400; color: var(--ivory); line-height: 1.2; margin-bottom: 28px; }
+    .intro-text p { color: var(--smoke); line-height: 1.8; font-size: 0.98rem; margin-bottom: 16px; }
+    .intro-img { position: relative; height: 480px; overflow: hidden; }
+    .intro-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.75); }
+    .intro-img-tag {
+      position: absolute; bottom: 24px; left: 24px;
+      background: rgba(20,24,32,0.82); padding: 12px 20px;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+    }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 100px 80px; background: var(--surface); }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header .label { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-header h2 { font-family: var(--font-serif); font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400; color: var(--ivory); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .phil-card { background: var(--surface2); padding: 48px 40px; border-top: 2px solid transparent; transition: border-color 0.3s; }
+    .phil-card:hover { border-top-color: var(--accent); }
+    .phil-icon { font-size: 1.6rem; margin-bottom: 24px; color: var(--accent); }
+    .phil-card h3 { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-bottom: 16px; }
+    .phil-card p { font-size: 0.9rem; color: var(--smoke); line-height: 1.7; }
+
+    /* COLLECTION — TREATMENTS */
+    .collection { padding: 100px 80px; }
+    .collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; overflow: visible; }
+    .collection-item { position: relative; overflow: hidden; cursor: pointer; }
+    .col-img { height: 380px; overflow: hidden; }
+    .col-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); transition: transform 0.6s ease; }
+    .collection-item:hover .col-img img { transform: scale(1.05); }
+    .col-info { padding: 24px 0; }
+    .col-info .col-tag { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .col-info h3 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 8px; }
+    .col-info p { font-size: 0.88rem; color: var(--smoke); line-height: 1.6; }
+    .col-duration { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.75rem; color: var(--muted); letter-spacing: 0.1em; }
+
+    /* STATS BAND */
+    .stats-band { background: var(--accent); padding: 60px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center; }
+    .stats-item { }
+    .stats-num { font-family: var(--font-serif); font-size: 3.5rem; color: var(--bg); display: block; line-height: 1; }
+    .stats-label { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg); opacity: 0.75; margin-top: 8px; display: block; }
+
+    /* PROCESS */
+    .process { padding: 100px 80px; background: var(--surface); }
+    .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+    .process-steps::before { content: ''; position: absolute; top: 32px; left: 10%; right: 10%; height: 1px; background: var(--border); z-index: 0; }
+    .process-step { padding: 0 30px 0 0; position: relative; z-index: 1; }
+    .step-num { width: 64px; height: 64px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); margin-bottom: 28px; background: var(--surface); }
+    .step h4 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 12px; }
+    .step p { font-size: 0.88rem; color: var(--smoke); line-height: 1.7; }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 100px 80px; overflow: hidden; }
+    .swiper-testimonial { overflow: visible; }
+    .swiper-testimonial .swiper-slide { background: var(--surface); padding: 48px; border-top: 1px solid var(--border); }
+    .testimonial-quote { font-family: var(--font-serif); font-size: 1.25rem; font-style: italic; color: var(--ivory); line-height: 1.6; margin-bottom: 28px; }
+    .testimonial-author { display: flex; align-items: center; gap: 16px; }
+    .author-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .author-info { }
+    .author-name { font-size: 0.9rem; color: var(--ivory); font-weight: 500; }
+    .author-title { font-size: 0.78rem; color: var(--smoke); margin-top: 2px; }
+
+    /* GALLERY */
+    .gallery { padding: 0 80px 100px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+    .gallery-item { overflow: hidden; aspect-ratio: 3/4; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); transition: transform 0.5s ease, filter 0.5s ease; }
+    .gallery-item:hover img { transform: scale(1.06); filter: brightness(0.85); }
+
+    /* PRESS */
+    .press { padding: 80px; background: var(--surface); border-top: 1px solid var(--border); }
+    .press-label { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--smoke); text-align: center; margin-bottom: 48px; }
+    .press-logos { display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; align-items: center; }
+    .press-logo { font-family: var(--font-serif); font-size: 1.1rem; color: var(--muted); letter-spacing: 0.08em; transition: color 0.3s; font-style: italic; }
+    .press-logo:hover { color: var(--accent); }
+
+    /* CTA BAND */
+    .cta-band {
+      padding: 120px 80px; text-align: center;
+      background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+      position: relative; overflow: hidden;
+    }
+    .cta-band::before {
+      content: 'BOREAS'; position: absolute; font-family: var(--font-serif);
+      font-size: 18rem; color: var(--border); top: 50%; left: 50%;
+      transform: translate(-50%,-50%); white-space: nowrap; z-index: 0; pointer-events: none;
+    }
+    .cta-band > * { position: relative; z-index: 1; }
+    .cta-band h2 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); color: var(--ivory); margin-bottom: 20px; }
+    .cta-band p { font-size: 1rem; color: var(--smoke); max-width: 500px; margin: 0 auto 40px; line-height: 1.7; }
+
+    /* NEWSLETTER */
+    .newsletter { padding: 80px; background: var(--surface2); text-align: center; }
+    .newsletter h3 { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); margin-bottom: 12px; }
+    .newsletter p { color: var(--smoke); font-size: 0.92rem; margin-bottom: 36px; }
+    .newsletter-form { display: flex; gap: 0; max-width: 460px; margin: 0 auto; }
+    .newsletter-form input {
+      flex: 1; background: var(--bg); border: 1px solid var(--border); border-right: none;
+      padding: 14px 20px; color: var(--ivory); font-family: var(--font-sans); font-size: 0.88rem;
+      outline: none;
+    }
+    .newsletter-form input::placeholder { color: var(--muted); }
+    .newsletter-form button {
+      background: var(--accent); border: none; color: var(--bg);
+      padding: 14px 28px; font-family: var(--font-sans); font-size: 0.78rem;
+      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.3s;
+    }
+    .newsletter-form button:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg); padding: 80px; border-top: 1px solid var(--border);
+    }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; }
+    .footer-col h4 { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 20px; }
+    .footer-col p { font-size: 0.85rem; color: var(--smoke); line-height: 1.7; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { font-size: 0.85rem; color: var(--smoke); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--accent); }
+    .footer-bottom { margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .footer-bottom p { font-size: 0.78rem; color: var(--muted); }
+    .footer-logo { font-family: var(--font-serif); font-size: 1.4rem; color: var(--accent); }
+
+    /* UTILS */
+    .section-divider { width: 60px; height: 1px; background: var(--accent); margin: 24px 0; }
+    .section-divider.centered { margin: 24px auto; }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="preloader-mark"></div>
+  <div class="preloader-name">Boreas</div>
+  <div class="preloader-bar"></div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div id="scroll-indicator">
+  <div class="scroll-dot"></div>
+  <div class="scroll-line"></div>
+  <div class="scroll-label">Scroll</div>
+</div>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">B<span>OREA</span>S</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#collection">Treatments</a></li>
+    <li><a href="#process">Rituals</a></li>
+    <li><a href="about.html">Our Story</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="#collection" class="nav-cta">Book Ritual</a>
+</nav>
+
+<!-- HERO — Type B Parallax -->
+<section class="hero" id="hero">
+  <div class="hero-parallax-bg">
+    <div class="parallax-layer layer-1"></div>
+    <div class="parallax-layer layer-2"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Est. 1987 · Arctic Circle, Norway</div>
+    <h1 class="hero-title">BOREAS</h1>
+    <p class="hero-subtitle">Glacial cold therapy — where the arctic heals the body, stills the mind, and restores the soul</p>
+    <div class="hero-ctas">
+      <a href="#collection" class="btn-primary">Book Ritual</a>
+      <a href="#process" class="btn-secondary">Arctic Therapies</a>
+    </div>
+  </div>
+  <div class="hero-floating">
+    <div class="float-badge">★ Arctic Wellness ★</div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro" id="about">
+  <div class="intro-text">
+    <div class="section-label">Our Philosophy</div>
+    <h2>The Healing Power of Ice and Stone</h2>
+    <div class="section-divider"></div>
+    <p>Nestled at the edge of the Arctic Circle, BOREAS was founded on the ancient Nordic belief that cold purifies — that submersion in glacial waters awakens the body's deepest healing mechanisms.</p>
+    <p>Our mineral-rich springs rise from beneath the glacial bedrock, filtered over centuries through layers of crystalline stone, emerging perfectly balanced in mineral composition and temperature.</p>
+    <p>Each ritual at BOREAS is a journey through contrasts: the searing warmth of geothermal steam, the electric shock of arctic immersion, and the profound stillness that follows.</p>
+    <a href="about.html" class="btn-secondary" style="margin-top:32px; display:inline-block;">Discover Our Heritage</a>
+  </div>
+  <div class="intro-img">
+    <img src="images/img-8.webp" alt="Arctic glacial waters">
+    <div class="intro-img-tag">Glacial Mineral Waters</div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy" id="philosophy">
+  <div class="section-header">
+    <div class="label">Core Principles</div>
+    <h2>The Arctic Method</h2>
+  </div>
+  <div class="philosophy-grid">
+    <div class="phil-card">
+      <div class="phil-icon">❄</div>
+      <h3>Glacial Cold Therapy</h3>
+      <p>Controlled immersion in near-freezing glacial waters triggers the body's adaptive response — reducing inflammation, accelerating recovery, and elevating mood through endorphin release.</p>
+    </div>
+    <div class="phil-card">
+      <div class="phil-icon">◈</div>
+      <h3>Mineral Immersion</h3>
+      <p>Our geothermal pools contain 82 naturally occurring minerals — magnesium, silica, sulphur — each absorbed through the skin during extended soaking at precise thermal gradients.</p>
+    </div>
+    <div class="phil-card">
+      <div class="phil-icon">✦</div>
+      <h3>Thermal Contrast</h3>
+      <p>The ancient Norse practice of alternating extreme heat and cold — expanding and contracting blood vessels — creates a powerful cardiovascular and lymphatic flush unlike any other wellness modality.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION — TREATMENTS -->
+<section class="collection" id="collection">
+  <div class="section-header">
+    <div class="label">Signature Rituals</div>
+    <h2>Arctic Wellness Treatments</h2>
+  </div>
+  <div class="collection-grid">
+    <div class="collection-item">
+      <div class="col-img">
+        <img src="images/img-2.webp" alt="Arctic immersion ritual">
+      </div>
+      <div class="col-info">
+        <div class="col-tag">Signature</div>
+        <h3>Glacial Immersion</h3>
+        <p>A guided three-phase cold therapy ritual beginning with 20 minutes in our geothermal steam grotto, followed by full arctic immersion, then recovery in heated mineral pools.</p>
+        <div class="col-duration">↗ 2 Hours · From NOK 2,800</div>
+      </div>
+    </div>
+    <div class="collection-item">
+      <div class="col-img">
+        <img src="images/img-3.webp" alt="Nordic stone therapy">
+      </div>
+      <div class="col-info">
+        <div class="col-tag">Restorative</div>
+        <h3>Arctic Stone Ritual</h3>
+        <p>Heated volcanic basalt stones drawn from Iceland's lava fields are alternated with ice-cold glacial stones across the body's meridians — an ancient technique of deep tissue restoration.</p>
+        <div class="col-duration">↗ 90 Minutes · From NOK 3,400</div>
+      </div>
+    </div>
+    <div class="collection-item">
+      <div class="col-img">
+        <img src="images/img-4.webp" alt="Mineral spring soak">
+      </div>
+      <div class="col-info">
+        <div class="col-tag">Immersive</div>
+        <h3>Mineral Spring Soak</h3>
+        <p>Extended private soaking sessions in our deepest geothermal mineral pool — 38°C, rich with dissolved silica and sulphur compounds — drawing toxins out and sealing luminous skin.</p>
+        <div class="col-duration">↗ 60 Minutes · From NOK 1,600</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<section class="stats-band">
+  <div class="stats-item">
+    <span class="stats-num" data-target="37">0</span>
+    <span class="stats-label">Years Established</span>
+  </div>
+  <div class="stats-item">
+    <span class="stats-num" data-target="82">0</span>
+    <span class="stats-label">Minerals in Springs</span>
+  </div>
+  <div class="stats-item">
+    <span class="stats-num" data-target="4">0</span>
+    <span class="stats-label">Geothermal Pools</span>
+  </div>
+  <div class="stats-item">
+    <span class="stats-num" data-target="6000">0</span>
+    <span class="stats-label">Annual Guests</span>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-header">
+    <div class="label">The Arctic Method</div>
+    <h2>Your Ritual Journey</h2>
+  </div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <div class="step">
+        <h4>Arrival &amp; Orientation</h4>
+        <p>Upon arrival your dedicated guide introduces you to the BOREAS philosophy, assesses your wellness goals, and tailors your arctic journey accordingly.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <div class="step">
+        <h4>Thermal Preparation</h4>
+        <p>Begin in the geothermal steam grotto — 48°C — where volcanic minerals open pores and prepare the vascular system for cold exposure.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <div class="step">
+        <h4>Arctic Immersion</h4>
+        <p>Guided submersion in glacial waters at 3°C. Our therapists coach breathing techniques that make the cold an ally rather than an adversary.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">04</div>
+      <div class="step">
+        <h4>Mineral Recovery</h4>
+        <p>Extended restoration in heated mineral pools with herbal infusions, followed by a private resting room draped in arctic wool blankets.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-header">
+    <div class="label">Guest Experiences</div>
+    <h2>From Those Who Have Returned</h2>
+  </div>
+  <div class="swiper swiper-testimonial">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <p class="testimonial-quote">"Three days at BOREAS reset something fundamental in my nervous system. The glacial immersion on the first morning was terrifying — by the third, it was the most alive I have ever felt."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">◈</div>
+          <div class="author-info">
+            <div class="author-name">Ingrid V.</div>
+            <div class="author-title">Wellness Retreat Guest, Stockholm</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <p class="testimonial-quote">"The mineral composition of the BOREAS springs is unlike anything I've encountered in 20 years of spa work. My skin stayed luminous for three weeks after returning. Extraordinary."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">❄</div>
+          <div class="author-info">
+            <div class="author-name">Dr. Maren K.</div>
+            <div class="author-title">Dermatologist &amp; Wellness Physician, Oslo</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <p class="testimonial-quote">"I've visited Reykjavik's geothermal pools, Japan's onsen, and the Dead Sea. BOREAS transcends them all — it is not just a spa, it is a philosophy of renewal made physical."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">✦</div>
+          <div class="author-info">
+            <div class="author-name">Thomas B.</div>
+            <div class="author-title">Travel Journalist, Condé Nast Traveller</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery">
+  <div class="section-header">
+    <div class="label">The Space</div>
+    <h2>BOREAS in Winter Light</h2>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <img src="images/img-9.webp" alt="Arctic landscape">
+    </div>
+    <div class="gallery-item">
+      <img src="images/img-10.webp" alt="Nordic winter scene">
+    </div>
+    <div class="gallery-item">
+      <img src="images/img-11.webp" alt="Glacial forest">
+    </div>
+    <div class="gallery-item">
+      <img src="images/img-5.webp" alt="Mountain vista">
+    </div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="press">
+  <div class="press-label">As Featured In</div>
+  <div class="press-logos">
+    <span class="press-logo">Condé Nast Traveller</span>
+    <span class="press-logo">Vogue Living</span>
+    <span class="press-logo">Harper's Bazaar</span>
+    <span class="press-logo">The Guardian</span>
+    <span class="press-logo">Monocle</span>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <h2>Reserve Your Arctic Ritual</h2>
+  <p>Availability is strictly limited to preserve the intimate nature of each BOREAS experience. Seasonal retreats book six months in advance.</p>
+  <a href="contact.html" class="btn-primary">Begin Your Journey</a>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <h3>The Arctic Dispatch</h3>
+  <p>Seasonal letters on cold therapy, mineral wellness, and the art of intentional stillness.</p>
+  <form class="newsletter-form" onsubmit="return false;">
+    <input type="email" placeholder="Your email address">
+    <button type="submit">Subscribe</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-logo">BOREAS</div>
+      <p style="margin-top:20px;">Arctic cold therapy and glacial mineral spa at the edge of the Norwegian Arctic Circle. Est. 1987.</p>
+      <div style="margin-top:24px; display:flex; gap:16px;">
+        <a href="#" style="color:var(--smoke); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.1em; text-decoration:none;">Instagram</a>
+        <a href="#" style="color:var(--smoke); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.1em; text-decoration:none;">Journal</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Rituals</h4>
+      <ul>
+        <li><a href="collection.html">Glacial Immersion</a></li>
+        <li><a href="collection.html">Stone Ritual</a></li>
+        <li><a href="collection.html">Mineral Soak</a></li>
+        <li><a href="collection.html">Group Ceremonies</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="about.html">Our Story</a></li>
+        <li><a href="process.html">The Method</a></li>
+        <li><a href="contact.html">Visit Us</a></li>
+        <li><a href="contact.html">Gift Ritual</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Arctic Circle</h4>
+      <p style="font-size:0.85rem; color:var(--smoke); line-height:1.7;">Svolvær, Lofoten Islands<br>Norway, 8300<br><br>Open: June — February<br>By appointment only</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 BOREAS Arctic Spa. All rights reserved.</p>
+    <p>Privacy Policy · Terms of Service</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+// SplitText Polyfill
+class SplitText {
+  constructor(target, opts = {}) {
+    const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+    this.chars = []; this.words = []; this.lines = [];
+    if (!el) return; this._el = el;
+    const type = (opts.type || 'chars,words').toLowerCase();
+    const original = el.textContent;
+    el.setAttribute('data-split-orig', original);
+    if (type.includes('chars')) {
+      el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+      this.chars = Array.from(el.querySelectorAll('.char'));
+    } else if (type.includes('words')) {
+      el.innerHTML = original.split(/\s+/).filter(Boolean).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+      this.words = Array.from(el.querySelectorAll('.word'));
+    }
+    this.lines = [el];
+  }
+  revert() { if (this._el) { const orig = this._el.getAttribute('data-split-orig'); if (orig) this._el.textContent = orig; } }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+// preHideBelowFold
+;(function preHideBelowFold() {
+  const VH = window.innerHeight;
+  const selectors = ['.stats-item','.stat-item','.phil-card','.collection-item','.col-item','.process-step','.step','.testimonial-quote','.gallery-item','.press-logo','.footer-col','[data-animate]'];
+  document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+    if (el.getBoundingClientRect().top > VH * 0.95) {
+      el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; el.style.willChange = 'opacity, transform';
+    }
+  });
+})();
+
+// PRELOADER
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    const preloader = document.getElementById('preloader');
+    gsap.to(preloader, { opacity: 0, duration: 0.8, ease: 'power2.out', onComplete: function() {
+      preloader.style.display = 'none';
+      // Show scroll indicator after preloader
+      document.getElementById('scroll-indicator').classList.add('visible');
+      initAnimations();
+    }});
+  }, 1800);
+});
+
+// Show scroll indicator fallback
+setTimeout(function() {
+  document.getElementById('scroll-indicator').classList.add('visible');
+}, 4000);
+
+// NAV scroll
+const __captureNav = document.getElementById('main-nav');
+window.addEventListener('scroll', function() {
+  if (window.scrollY > 60) __captureNav.classList.add('scrolled');
+  else __captureNav.classList.remove('scrolled');
+});
+
+// HERO Parallax mousemove
+document.querySelector('.hero').addEventListener('mousemove', function(e) {
+  const x = (e.clientX / window.innerWidth - 0.5) * 30;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
+  gsap.to('.layer-1', { x: x * 0.5, y: y * 0.5, duration: 1, ease: 'power2.out' });
+  gsap.to('.layer-2', { x: x * 1.2, y: y * 1.0, duration: 1, ease: 'power2.out' });
+});
+
+// ANIMATIONS — A2 Whisper
+function initAnimations() {
+  // Hero entrance
+  gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 14, duration: 1.6, ease: 'power1.out', delay: 0.2 });
+  gsap.from('.hero-title', { immediateRender: false, opacity: 0, y: 20, duration: 1.6, ease: 'power1.out', delay: 0.4 });
+  gsap.from('.hero-subtitle', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', delay: 0.6 });
+  gsap.from('.hero-ctas', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 0.8 });
+  gsap.from('.hero-floating', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 1.0 });
+
+  // Scroll animations — A2 Whisper
+  gsap.utils.toArray('.phil-card').forEach(function(el, i) {
+    gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.5, ease: 'power1.out', delay: i * 0.06,
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    });
+  });
+
+  gsap.utils.toArray('.collection-item').forEach(function(el, i) {
+    gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.5, ease: 'power1.out', delay: i * 0.06,
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    });
+  });
+
+  gsap.utils.toArray('.stats-item').forEach(function(el, i) {
+    gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.4, ease: 'power1.out', delay: i * 0.06,
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    });
+  });
+
+  gsap.utils.toArray('.process-step').forEach(function(el, i) {
+    gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.5, ease: 'power1.out', delay: i * 0.06,
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    });
+  });
+
+  gsap.utils.toArray('.gallery-item').forEach(function(el, i) {
+    gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.4, ease: 'power1.out', delay: i * 0.06,
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    });
+  });
+
+  gsap.utils.toArray('.press-logo').forEach(function(el, i) {
+    gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.3, ease: 'power1.out', delay: i * 0.06,
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    });
+  });
+
+  gsap.utils.toArray('.footer-col').forEach(function(el, i) {
+    gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.4, ease: 'power1.out', delay: i * 0.06,
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    });
+  });
+
+  // Intro section
+  gsap.from('.intro-text', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out',
+    scrollTrigger: { trigger: '.intro', start: 'top 80%' }
+  });
+  gsap.from('.intro-img', { immediateRender: false, opacity: 0, y: 14, duration: 1.6, ease: 'power1.out', delay: 0.12,
+    scrollTrigger: { trigger: '.intro', start: 'top 80%' }
+  });
+
+  // Counter animation
+  document.querySelectorAll('.stats-num[data-target]').forEach(function(el) {
+    const target = parseInt(el.getAttribute('data-target'));
+    ScrollTrigger.create({
+      trigger: el, start: 'top 80%', once: true,
+      onEnter: function() {
+        gsap.to({ val: 0 }, { val: target, duration: 1.8, ease: 'power2.out',
+          onUpdate: function() { el.textContent = Math.round(this.targets()[0].val); }
+        });
+      }
+    });
+  });
+}
+
+// Swiper
+new Swiper('.swiper-testimonial', {
+  slidesPerView: 1.1, spaceBetween: 24, loop: false,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2.2 }, 1200: { slidesPerView: 2.8 } }
+});
+</script>
+</body>
+</html>

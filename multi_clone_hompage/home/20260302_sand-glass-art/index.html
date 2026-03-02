@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FULGURITE — Sand Glass Studio</title>
+  <meta name="description" content="Saharan desert fulgurite and glass art studio. Where lightning meets sand — nature's finest glass art.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #181818; --surface: #222222; --surface2: #2A2A2A;
+      --accent: #B0B0C0; --accent-light: #D0D0E0; --accent-dark: #808090;
+      --ivory: #EEEEF2; --smoke: #909090; --muted: #606060;
+      --border: #1E1E1E;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 32px; }
+    .preloader-symbol { width: 80px; height: 80px; position: relative; }
+    .preloader-symbol svg { width: 100%; height: 100%; }
+    .preloader-text { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0.5em; color: var(--accent); text-transform: uppercase; }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar::after { content: ''; position: absolute; left: -100%; top: 0; width: 100%; height: 100%; background: var(--accent); animation: barFill 2.2s ease forwards; }
+    @keyframes barFill { to { left: 0; } }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: all 0.4s ease; }
+    nav.scrolled { background: rgba(24,24,24,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.8rem; letter-spacing: 0.1em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta { border: 1px solid var(--accent); color: var(--accent); padding: 10px 24px; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* SCROLL INDICATOR */
+    .scroll-indicator { position: fixed; left: 30px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.5s; }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--accent)); }
+    .scroll-text { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; writing-mode: vertical-rl; }
+
+    /* HERO — Type E Grid/Pattern */
+    .hero { position: relative; height: 100vh; display: flex; align-items: center; background: var(--bg); overflow: hidden; }
+    .hero-grid-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.12; z-index: 1; }
+    .hero-bg { position: absolute; inset: 0; background-image: url('images/img-2.webp'); background-size: cover; background-position: center; filter: brightness(0.50); z-index: 0; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(24,24,24,0.65) 0%, rgba(12,12,12,0.35) 100%); z-index: 2; }
+    .hero-content { position: relative; z-index: 3; max-width: 800px; padding: 0 80px; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.4em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; font-family: var(--font-sans); }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(5rem, 12vw, 12rem); line-height: 0.9; color: var(--ivory); margin-bottom: 24px; letter-spacing: 0.02em; }
+    .hero-subtitle { font-size: 1rem; color: var(--smoke); line-height: 1.7; margin-bottom: 40px; max-width: 480px; font-weight: 300; }
+    .hero-ctas { display: flex; gap: 16px; }
+    .btn-primary { background: var(--accent); color: var(--bg); padding: 14px 32px; text-decoration: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; transition: background 0.3s; display: inline-block; font-weight: 500; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { border: 1px solid var(--accent); color: var(--accent); padding: 14px 32px; text-decoration: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.3s; display: inline-block; }
+    .btn-secondary:hover { background: var(--accent); color: var(--bg); }
+    .corner { position: absolute; width: 60px; height: 60px; border-color: var(--accent); border-style: solid; z-index: 4; }
+    .corner.tl { top: 30px; left: 30px; border-width: 2px 0 0 2px; }
+    .corner.tr { top: 30px; right: 30px; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: 30px; left: 30px; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: 30px; right: 30px; border-width: 0 2px 2px 0; }
+
+    /* MANIFESTO */
+    .section-manifesto { background: var(--surface); padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; display: block; font-family: var(--font-sans); }
+    .manifesto-headline { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 6rem); line-height: 0.95; color: var(--ivory); letter-spacing: 0.02em; }
+    .manifesto-body p { color: var(--smoke); margin-bottom: 20px; font-size: 0.95rem; }
+    .manifesto-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 48px; border-top: 1px solid var(--border); padding-top: 48px; }
+    .stat-num { font-family: var(--font-serif); font-size: 3.5rem; color: var(--accent); display: block; line-height: 1; }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.15em; color: var(--smoke); text-transform: uppercase; }
+
+    /* COLLECTION */
+    .section-collection { background: var(--bg); padding: 100px 80px; }
+    .section-header { margin-bottom: 60px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 6rem); color: var(--ivory); letter-spacing: 0.02em; line-height: 0.95; }
+    .collection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; overflow: visible; }
+    .col-item { background: var(--surface); position: relative; overflow: hidden; }
+    .col-img { width: 100%; height: 360px; object-fit: cover; display: block; filter: brightness(0.65); transition: filter 0.5s, transform 0.5s; }
+    .col-item:hover .col-img { filter: brightness(0.9); transform: scale(1.04); }
+    .col-info { padding: 32px; }
+    .col-tag { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: block; font-family: var(--font-sans); }
+    .col-name { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 10px; letter-spacing: 0.02em; }
+    .col-desc { font-size: 0.85rem; color: var(--smoke); line-height: 1.6; margin-bottom: 16px; }
+    .col-price { font-size: 0.75rem; letter-spacing: 0.12em; color: var(--accent-light); text-transform: uppercase; border-top: 1px solid var(--border); padding-top: 14px; }
+
+    /* PHILOSOPHY */
+    .section-philosophy { background: var(--surface); padding: 100px 80px; }
+    .phil-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+    .phil-card { padding: 44px 36px; background: var(--surface2); position: relative; border-top: 2px solid transparent; transition: border-color 0.3s; }
+    .phil-card:hover { border-color: var(--accent); }
+    .phil-num { font-family: var(--font-serif); font-size: 5rem; color: var(--border); position: absolute; top: 20px; right: 24px; line-height: 1; }
+    .phil-title { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 14px; letter-spacing: 0.02em; }
+    .phil-text { font-size: 0.88rem; color: var(--smoke); line-height: 1.7; }
+
+    /* PROCESS */
+    .section-process { background: var(--bg); padding: 100px 80px; }
+    .process-timeline { margin-top: 60px; display: flex; flex-direction: column; gap: 0; }
+    .process-step { display: grid; grid-template-columns: 80px 1fr; gap: 48px; align-items: start; padding: 48px 0; border-bottom: 1px solid var(--border); }
+    .step-num { font-family: var(--font-serif); font-size: 4rem; color: var(--accent); line-height: 1; }
+    .step-title { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 12px; letter-spacing: 0.02em; }
+    .step-text { font-size: 0.9rem; color: var(--smoke); line-height: 1.7; }
+    .step-tag { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: block; }
+
+    /* ATELIER */
+    .section-atelier { background: var(--surface); padding: 100px 80px; }
+    .atelier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 60px; }
+    .atelier-img img { width: 100%; height: 540px; object-fit: cover; display: block; filter: brightness(0.65); transition: filter 0.5s; }
+    .atelier-img:hover img { filter: brightness(0.85); }
+    .atelier-content { }
+    .atelier-list { list-style: none; margin-top: 32px; }
+    .atelier-list li { display: flex; gap: 20px; align-items: flex-start; padding: 20px 0; border-bottom: 1px solid var(--border); }
+    .atelier-num { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); min-width: 40px; line-height: 1.2; }
+    .atelier-info-title { font-family: var(--font-sans); font-size: 0.9rem; color: var(--ivory); font-weight: 500; margin-bottom: 4px; }
+    .atelier-info-text { font-size: 0.82rem; color: var(--smoke); }
+
+    /* TESTIMONIALS */
+    .section-testimonials { background: var(--bg); padding: 100px 80px; }
+    .testimonial-slide { padding: 56px; background: var(--surface); }
+    .testimonial-quote { font-family: var(--font-serif); font-size: clamp(1.6rem, 3vw, 2.4rem); color: var(--ivory); line-height: 1.2; margin-bottom: 32px; letter-spacing: 0.02em; }
+    .testimonial-author { display: flex; align-items: center; gap: 16px; }
+    .author-name { font-size: 0.9rem; color: var(--ivory); font-weight: 500; }
+    .author-title { font-size: 0.78rem; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--smoke); opacity: 0.6; }
+    .swiper-pagination-bullet-active { background: var(--accent); opacity: 1; }
+
+    /* BOOKING */
+    .section-booking { background: var(--surface); padding: 100px 80px; }
+    .booking-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .booking-title { font-family: var(--font-serif); font-size: clamp(3rem, 5vw, 5rem); color: var(--ivory); margin-bottom: 24px; line-height: 0.95; letter-spacing: 0.02em; }
+    .booking-text { color: var(--smoke); font-size: 0.95rem; margin-bottom: 32px; }
+    .booking-form { background: var(--surface2); padding: 48px; }
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; font-size: 0.72rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; margin-bottom: 10px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group select option { background: var(--bg); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; padding: 16px; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; font-weight: 500; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* PRESS */
+    .section-press { background: var(--bg); padding: 60px 80px; }
+    .press-row { display: flex; gap: 60px; align-items: center; justify-content: center; flex-wrap: wrap; }
+    .press-card { font-family: var(--font-serif); font-size: 1.4rem; color: var(--muted); letter-spacing: 0.05em; transition: color 0.3s; }
+    .press-card:hover { color: var(--smoke); }
+
+    /* NEWSLETTER */
+    .section-newsletter { background: var(--surface); padding: 80px; }
+    .newsletter-inner { display: flex; align-items: center; justify-content: space-between; gap: 60px; flex-wrap: wrap; }
+    .newsletter-text h3 { font-family: var(--font-serif); font-size: 2.5rem; color: var(--ivory); margin-bottom: 10px; letter-spacing: 0.02em; }
+    .newsletter-text p { color: var(--smoke); font-size: 0.9rem; }
+    .newsletter-form { display: flex; gap: 0; flex: 1; max-width: 480px; }
+    .newsletter-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; border-right: none; }
+    .newsletter-input:focus { border-color: var(--accent); }
+    .newsletter-btn { background: var(--accent); color: var(--bg); border: none; padding: 14px 28px; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; font-weight: 500; }
+    .newsletter-btn:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); letter-spacing: 0.05em; margin-bottom: 20px; }
+    .footer-tagline { font-size: 0.88rem; color: var(--smoke); line-height: 1.7; max-width: 280px; }
+    .footer-heading { font-size: 0.7rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 24px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a { color: var(--smoke); text-decoration: none; font-size: 0.88rem; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { font-size: 0.78rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--smoke); }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="preloader-symbol">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="60" height="60" stroke="#B0B0C0" stroke-width="1" stroke-dasharray="4 4"/>
+      <rect x="22" y="22" width="36" height="36" stroke="#B0B0C0" stroke-width="0.5" transform="rotate(45 40 40)"/>
+      <circle cx="40" cy="40" r="4" fill="#B0B0C0"/>
+      <line x1="40" y1="10" x2="40" y2="22" stroke="#B0B0C0" stroke-width="1"/>
+      <line x1="40" y1="58" x2="40" y2="70" stroke="#B0B0C0" stroke-width="1"/>
+      <line x1="10" y1="40" x2="22" y2="40" stroke="#B0B0C0" stroke-width="1"/>
+      <line x1="58" y1="40" x2="70" y2="40" stroke="#B0B0C0" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="preloader-text">FULGURITE</div>
+  <div class="preloader-bar"></div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div class="scroll-indicator" id="scrollIndicator">
+  <div class="scroll-line"></div>
+  <div class="scroll-text">Scroll</div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">FULGURITE</a>
+  <ul class="nav-links">
+    <li><a href="#collection">Works</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#atelier">Atelier</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Commission</a></li>
+  </ul>
+  <a href="#booking" class="nav-cta">Commission Work</a>
+</nav>
+
+<!-- HERO — Type E Grid Canvas -->
+<section class="hero" id="hero">
+  <canvas class="hero-grid-canvas" id="heroCanvas"></canvas>
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Est. 2008 · Saharan Studio</div>
+    <h1 class="hero-title">FULGURITE</h1>
+    <p class="hero-subtitle">Where lightning meets sand — nature's finest glass art, harvested from the Saharan desert</p>
+    <div class="hero-ctas">
+      <a href="#collection" class="btn-primary">Explore Glass Art</a>
+      <a href="#process" class="btn-secondary">How It's Made</a>
+    </div>
+  </div>
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="section-manifesto" id="manifesto">
+  <div>
+    <span class="section-label">The Studio</span>
+    <h2 class="manifesto-headline">Lightning<br>Made<br>Permanent</h2>
+    <div class="manifesto-stats">
+      <div>
+        <span class="stat-num" data-target="340">0</span>
+        <span class="stat-label">Works Created</span>
+      </div>
+      <div>
+        <span class="stat-num" data-target="28">0</span>
+        <span class="stat-label">Countries Collected</span>
+      </div>
+      <div>
+        <span class="stat-num" data-target="16">0</span>
+        <span class="stat-label">Years Active</span>
+      </div>
+    </div>
+  </div>
+  <div class="manifesto-body">
+    <p>Fulgurite is a material formed in a single instant — when lightning strikes desert sand at 1,800°C, the silica fuses into hollow glass tubes, each one unique, irreplicable. Our studio in the Algerian Sahara has spent 16 years learning to work with this extraordinary material.</p>
+    <p>We do not manufacture glass. We find it. We excavate it from the desert after electrical storms. We clean, study, and then work with each specimen to determine what it wants to become — a sculpture, a vessel, a wall installation. The lightning makes the form. We reveal it.</p>
+    <a href="about.html" class="btn-secondary" style="margin-top:24px;display:inline-block;">Our Philosophy &rarr;</a>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section class="section-collection" id="collection">
+  <div class="section-header">
+    <span class="section-label">Available Works</span>
+    <h2 class="section-title">Glass Art Collection</h2>
+  </div>
+  <div class="collection-grid">
+    <div class="col-item">
+      <img class="col-img" src="images/img-3.webp" alt="Lightning Vessel" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Limited Edition · 2026</span>
+        <div class="col-name">Lightning Vessel No.47</div>
+        <p class="col-desc">A hollow fulgurite tube, 340mm length, found 12km south of In Salah. Displayed vertically on a polished obsidian base. Unique — there is only one.</p>
+        <div class="col-price">$8,400 · Unique Work</div>
+      </div>
+    </div>
+    <div class="col-item">
+      <img class="col-img" src="images/img-4.webp" alt="Sand Memory" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Sculpture · 2025</span>
+        <div class="col-name">Sand Memory Series</div>
+        <p class="col-desc">Three fulgurite specimens arranged with Libyan desert glass fragments on a matte aluminium tray. Each tray documents a specific storm event and GPS location.</p>
+        <div class="col-price">$4,200 · Edition of 3</div>
+      </div>
+    </div>
+    <div class="col-item">
+      <img class="col-img" src="images/img-5.webp" alt="Desert Glass Wall" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Installation · 2025</span>
+        <div class="col-name">Desert Glass Wall Panel</div>
+        <p class="col-desc">2.4m × 1.2m wall-mounted panel embedding 180 fulgurite specimens in museum-quality resin. Each specimen dated and mapped. A cartography of lightning.</p>
+        <div class="col-price">$28,000 · Bespoke</div>
+      </div>
+    </div>
+    <div class="col-item">
+      <img class="col-img" src="images/img-6.webp" alt="Sahara Light" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Lamp · 2026</span>
+        <div class="col-name">Sahara Light</div>
+        <p class="col-desc">Fulgurite glass tubes used as diffusers for hand-wound LED filaments. The light passes through the natural glass of the tube, refracting sand grain inclusions into amber geometry.</p>
+        <div class="col-price">$3,600 · Edition of 8</div>
+      </div>
+    </div>
+    <div class="col-item">
+      <img class="col-img" src="images/img-7.webp" alt="Fulgurite Study" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Study · 2024</span>
+        <div class="col-name">Fulgurite Study in Obsidian</div>
+        <p class="col-desc">A glass specimen embedded in a polished obsidian matrix — the contrast of volcanic and lightning-formed silica. A meditation on the two ways earth makes glass.</p>
+        <div class="col-price">$6,800 · Unique Work</div>
+      </div>
+    </div>
+    <div class="col-item">
+      <img class="col-img" src="images/img-8.webp" alt="Commission" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Commission · Ongoing</span>
+        <div class="col-name">Bespoke Commission</div>
+        <p class="col-desc">Commission a work to your specifications — dimensions, material pairing, display format. We allocate three specimens from our next storm collection to your commission.</p>
+        <div class="col-price">From $5,000 · 12–18 Month Lead Time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="section-philosophy" id="philosophy">
+  <div class="section-header">
+    <span class="section-label">Our Approach</span>
+    <h2 class="section-title">Studio Values</h2>
+  </div>
+  <div class="phil-grid">
+    <div class="phil-card">
+      <span class="phil-num">01</span>
+      <div class="phil-title">Found Not Made</div>
+      <p class="phil-text">We do not manufacture. Every gram of glass in our studio was created by a lightning event in the Algerian or Libyan Sahara. We are custodians, not producers.</p>
+    </div>
+    <div class="phil-card">
+      <span class="phil-num">02</span>
+      <div class="phil-title">Documented Origin</div>
+      <p class="phil-text">Every work comes with a provenance certificate including GPS coordinates, date of storm event, geological assay, and collection report. The story is part of the art.</p>
+    </div>
+    <div class="phil-card">
+      <span class="phil-num">03</span>
+      <div class="phil-title">No Two Alike</div>
+      <p class="phil-text">Every fulgurite is unique. Our editions are constrained by what the storms produce. We have declined commissions rather than source inferior specimens to fill an order.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section-process" id="process">
+  <div class="section-header">
+    <span class="section-label">How It Happens</span>
+    <h2 class="section-title">From Desert to Gallery</h2>
+  </div>
+  <div class="process-timeline">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <div>
+        <span class="step-tag">Natural Event</span>
+        <div class="step-title">The Storm</div>
+        <p class="step-text">Lightning strikes desert sand at temperatures exceeding 1,800°C. The silica fuses instantly, forming a hollow glass tube that follows the path of the current through the sand — sometimes branching, always unique.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <div>
+        <span class="step-tag">Months Later</span>
+        <div class="step-title">Collection</div>
+        <p class="step-text">Our desert team surveys the impact site after storm season. Each specimen is hand-excavated, photographed in situ, GPS-tagged, and wrapped in cotton. We find perhaps 40 viable specimens per collection season.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <div>
+        <span class="step-tag">The Studio</span>
+        <div class="step-title">Study & Classification</div>
+        <p class="step-text">Each specimen is cleaned, measured, and studied under magnification. We photograph the interior glass surface, document the sand grain inclusions, assess the structural integrity, and assign a classification code.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">04</div>
+      <div>
+        <span class="step-tag">Collaboration</span>
+        <div class="step-title">The Work</div>
+        <p class="step-text">We work with the specimen rather than imposing form on it. Sometimes a tube becomes a standalone sculpture. Sometimes it joins others. Sometimes it waits for the right commission. The glass decides. We enable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATELIER -->
+<section class="section-atelier" id="atelier">
+  <div class="section-header">
+    <span class="section-label">Our Space</span>
+    <h2 class="section-title">The Saharan Atelier</h2>
+  </div>
+  <div class="atelier-grid">
+    <div class="atelier-img">
+      <img src="images/img-9.webp" alt="Desert atelier" loading="lazy">
+    </div>
+    <div class="atelier-content">
+      <p style="color:var(--smoke);font-size:0.95rem;margin-bottom:24px;">Our studio is located in the Tassili n'Ajjer region of the Algerian Sahara — 600km from Tamanrasset, accessible only by 4x4. We are surrounded by the most electrically active desert terrain in the world, and by 8,000-year-old rock paintings that remind us how long humans have been making art from this landscape.</p>
+      <ul class="atelier-list">
+        <li>
+          <span class="atelier-num">01</span>
+          <div><div class="atelier-info-title">Storm Laboratory</div><p class="atelier-info-text">A meteorological monitoring station that tracks approaching electrical storms and estimates impact zones for our collection team.</p></div>
+        </li>
+        <li>
+          <span class="atelier-num">02</span>
+          <div><div class="atelier-info-title">Specimen Archive</div><p class="atelier-info-text">A climate-controlled archive housing 1,200+ fulgurite specimens, each catalogued and photographed at 3× magnification.</p></div>
+        </li>
+        <li>
+          <span class="atelier-num">03</span>
+          <div><div class="atelier-info-title">Artist Residency</div><p class="atelier-info-text">We host two artists per year in a residency programme — one glass artist, one geologist. Applications open in March.</p></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section-testimonials" id="testimonials">
+  <div class="section-header">
+    <span class="section-label">Collectors & Press</span>
+    <h2 class="section-title">What They Say</h2>
+  </div>
+  <div style="margin-top:48px;">
+    <div class="swiper swiper-testimonials">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonial-slide">
+            <p class="testimonial-quote">"The most conceptually rigorous object art I have encountered in a decade. Fulgurite works with the irreducible fact of the lightning strike — there is no artifice, no imposed narrative. Just the truth of the event, made visible."</p>
+            <div class="testimonial-author">
+              <div>
+                <div class="author-name">Dr. Petra Vogt</div>
+                <div class="author-title">Director, Kunsthaus Zürich · Collector</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-slide">
+            <p class="testimonial-quote">"We commissioned a wall panel for our Amsterdam headquarters. Six months later, it is still the first thing visitors stop in front of. They always ask the same question: 'What is it?' That question is the work."</p>
+            <div class="testimonial-author">
+              <div>
+                <div class="author-name">Lars Andersen</div>
+                <div class="author-title">CEO, Nordvest Capital · Corporate Collector</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="position:relative;margin-top:32px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="section-booking" id="booking">
+  <div class="booking-inner">
+    <div class="booking-content">
+      <span class="section-label">Acquire or Commission</span>
+      <h2 class="booking-title">Own a Piece of Desert Lightning</h2>
+      <p class="booking-text">We take a limited number of commissions per year. All works come with a full provenance certificate, geological assay report, and documentation of the storm event from which the specimen was recovered.</p>
+      <a href="contact.html" class="btn-primary" style="margin-top:8px;">Send Enquiry</a>
+    </div>
+    <div class="booking-form">
+      <form>
+        <div class="form-group"><label>Name</label><input type="text" placeholder="Your name"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+        <div class="form-group"><label>Interest</label>
+          <select>
+            <option>Available Works (Collection)</option>
+            <option>Bespoke Commission</option>
+            <option>Corporate / Institutional Collection</option>
+            <option>Artist Residency</option>
+            <option>General Enquiry</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Budget Range</label>
+          <select>
+            <option>Under $5,000</option>
+            <option>$5,000 – $15,000</option>
+            <option>$15,000 – $50,000</option>
+            <option>Over $50,000</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Tell Us More</label><textarea placeholder="Describe the space, the work you're imagining, or ask us anything..."></textarea></div>
+        <button type="submit" class="form-submit">Send Enquiry</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="section-press">
+  <div class="press-row">
+    <div class="press-card">Artforum</div>
+    <div class="press-card">Frieze</div>
+    <div class="press-card">The Guardian</div>
+    <div class="press-card">Wallpaper*</div>
+    <div class="press-card">Dezeen</div>
+    <div class="press-card">Monocle</div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="section-newsletter">
+  <div class="newsletter-inner">
+    <div class="newsletter-text">
+      <h3>Studio Dispatches</h3>
+      <p>New works, storm collection updates, and artist residency announcements.</p>
+    </div>
+    <div class="newsletter-form">
+      <input class="newsletter-input" type="email" placeholder="your@email.com">
+      <button class="newsletter-btn">Subscribe</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-brand">FULGURITE</div>
+      <p class="footer-tagline">Saharan desert glass art studio. Fulgurite sculptures, installations, and bespoke commissions. Tassili n'Ajjer, Algeria.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Collection</div>
+      <ul class="footer-links">
+        <li><a href="#collection">Available Works</a></li>
+        <li><a href="#collection">Installations</a></li>
+        <li><a href="#collection">Editions</a></li>
+        <li><a href="contact.html">Commission</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Studio</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About Fulgurite</a></li>
+        <li><a href="#process">The Process</a></li>
+        <li><a href="#atelier">The Atelier</a></li>
+        <li><a href="about.html">Residency</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Contact</div>
+      <ul class="footer-links">
+        <li><a href="#">Tassili n'Ajjer, Algeria</a></li>
+        <li><a href="#">studio@fulgurite.art</a></li>
+        <li><a href="contact.html">Commission Enquiry</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">&copy; 2026 FULGURITE Studio. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Provenance Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* GRID CANVAS */
+const canvas = document.getElementById('heroCanvas');
+const ctx = canvas.getContext('2d');
+function drawGrid() {
+  canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+  const size = 60;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#B0B0C0';
+  ctx.lineWidth = 0.5;
+  ctx.globalAlpha = 0.3;
+  ctx.beginPath();
+  for (let x = 0; x <= canvas.width; x += size) { ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); }
+  for (let y = 0; y <= canvas.height; y += size) { ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); }
+  ctx.stroke();
+}
+drawGrid();
+window.addEventListener('resize', drawGrid);
+
+/* PRE-HIDE BELOW FOLD */
+;(function preHideBelowFold() {
+  const VH = window.innerHeight;
+  const selectors = ['.col-item','.phil-card','.process-step','.atelier-img','.atelier-content','.booking-content','.booking-form','.press-card'];
+  document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+    if (el.getBoundingClientRect().top > VH * 0.95) {
+      el.style.opacity = '0'; el.style.transform = 'translateX(-20px)'; el.style.willChange = 'opacity, transform';
+    }
+  });
+})();
+
+/* PRELOADER */
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    gsap.to('#preloader', {
+      opacity: 0, duration: 0.8, ease: 'power3.out',
+      onComplete: function() {
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('scrollIndicator').classList.add('visible');
+        initHero();
+      }
+    });
+  }, 2400);
+  setTimeout(function() { document.getElementById('scrollIndicator').classList.add('visible'); }, 4000);
+});
+
+function initHero() {
+  gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', delay: 0.05 });
+  gsap.from('.hero-title', { immediateRender: false, opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.15 });
+  gsap.from('.hero-subtitle', { immediateRender: false, opacity: 0, x: -20, duration: 0.7, ease: 'power3.out', delay: 0.3 });
+  gsap.from('.hero-ctas', { immediateRender: false, opacity: 0, x: -20, duration: 0.7, ease: 'power3.out', delay: 0.45 });
+  gsap.from('.corner', { immediateRender: false, opacity: 0, scale: 0.5, duration: 0.8, ease: 'power3.out', stagger: 0.04, delay: 0.1 });
+}
+
+ScrollTrigger.create({
+  start: 'top -80',
+  onUpdate: function(self) {
+    document.getElementById('navbar').classList.toggle('scrolled', self.progress > 0);
+  }
+});
+
+/* COUNTER */
+document.querySelectorAll('[data-target]').forEach(function(el) {
+  const target = parseInt(el.getAttribute('data-target'));
+  ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+    onEnter: function() {
+      gsap.fromTo(el, { textContent: 0 }, {
+        textContent: target, duration: 0.8, ease: 'power3.out', snap: { textContent: 1 },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)); }
+      });
+    }
+  });
+});
+
+/* SCROLL ANIMATIONS — A3 Precise: x:-20px, duration:0.7-0.8s, stagger:0.04 */
+['.col-item', '.phil-card', '.press-card'].forEach(function(selector) {
+  document.querySelectorAll(selector).forEach(function(el, i) {
+    ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+      onEnter: function() { gsap.to(el, { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out', delay: (i % 3) * 0.04 }); }
+    });
+  });
+});
+
+document.querySelectorAll('.process-step').forEach(function(el, i) {
+  ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+    onEnter: function() { gsap.to(el, { opacity: 1, x: 0, duration: 0.75, ease: 'power3.out', delay: i * 0.04 }); }
+  });
+});
+
+['.atelier-img', '.atelier-content', '.booking-content', '.booking-form'].forEach(function(sel) {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+    onEnter: function() { gsap.to(el, { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }); }
+  });
+});
+
+/* SWIPER */
+new Swiper('.swiper-testimonials', {
+  slidesPerView: 1,
+  spaceBetween: 24,
+  loop: true,
+  autoplay: { delay: 5500, disableOnInteraction: false },
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 } }
+});
+</script>
+</body>
+</html>

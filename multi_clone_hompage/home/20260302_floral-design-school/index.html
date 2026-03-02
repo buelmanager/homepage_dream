@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloom &amp; Form Floral School — Nature, Arranged with Intention</title>
+<meta name="description" content="Bloom &amp; Form Floral School offers professional education in Ikebana, European floristry, event design and botanical installation art. Develop your artistic language through hands-on mastery.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0F1A10;
+  --surface: #162016;
+  --surface2: #1A2A1A;
+  --accent: #4DAF6A;
+  --accent-light: #7ACC8A;
+  --accent-dark: #2E7A46;
+  --ivory: #DCF0DC;
+  --smoke: #809080;
+  --muted: #4A6050;
+  --border: #182018;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Karla', system-ui, sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Preloader — spinning bloom petals */
+#preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.bloom-ring { width: 56px; height: 56px; position: relative; animation: bloomSpin 3s linear infinite; }
+.bloom-petal {
+  position: absolute; width: 10px; height: 22px; border-radius: 50%;
+  background: var(--accent); opacity: 0.5; left: 50%; top: 50%;
+  transform-origin: 50% 100%;
+}
+.bloom-petal:nth-child(1) { transform: translateX(-50%) rotate(0deg) translateY(-100%); opacity: 1; }
+.bloom-petal:nth-child(2) { transform: translateX(-50%) rotate(60deg) translateY(-100%); opacity: 0.75; }
+.bloom-petal:nth-child(3) { transform: translateX(-50%) rotate(120deg) translateY(-100%); opacity: 0.55; }
+.bloom-petal:nth-child(4) { transform: translateX(-50%) rotate(180deg) translateY(-100%); opacity: 0.4; }
+.bloom-petal:nth-child(5) { transform: translateX(-50%) rotate(240deg) translateY(-100%); opacity: 0.55; }
+.bloom-petal:nth-child(6) { transform: translateX(-50%) rotate(300deg) translateY(-100%); opacity: 0.75; }
+@keyframes bloomSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.preloader-text { font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--smoke); margin-top: 28px; }
+
+/* Scroll Indicator */
+#scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.6s; }
+#scroll-indicator.visible { opacity: 1; }
+.scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--accent)); }
+.scroll-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); animation: dotPulse 2s ease-in-out infinite; }
+@keyframes dotPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+.scroll-label { font-family: var(--font-sans); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-lr; }
+
+/* Nav */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 28px 60px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to bottom, rgba(15,26,16,0.95), transparent); }
+.nav-logo { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.05em; color: var(--ivory); }
+.nav-links { display: flex; gap: 36px; }
+.nav-links a { font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+.nav-links a:hover { color: var(--accent); }
+.nav-cta { font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; border: 1px solid var(--accent); color: var(--accent); padding: 9px 22px; border-radius: 2px; transition: background 0.3s, color 0.3s; }
+.nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+/* Hero — Type E: Grid/Pattern Canvas */
+.hero { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+#heroCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-img-layer {
+  position: absolute; inset: 0;
+  background-image: url('images/img-6.webp');
+  background-size: cover; background-position: center;
+  filter: brightness(0.22);
+}
+.hero-content { position: relative; z-index: 10; text-align: center; max-width: 760px; padding: 0 40px; }
+.hero-eyebrow { font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; }
+.hero-title { font-family: var(--font-serif); font-size: clamp(3.2rem, 8vw, 7rem); line-height: 1.0; color: var(--ivory); margin-bottom: 24px; }
+.hero-title em { font-style: italic; color: var(--accent-light); }
+.hero-tagline { font-family: var(--font-sans); font-size: clamp(0.95rem, 1.8vw, 1.2rem); font-weight: 300; color: var(--smoke); letter-spacing: 0.06em; margin-bottom: 44px; max-width: 480px; margin-left: auto; margin-right: auto; }
+.hero-actions { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+.btn-primary { font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; background: var(--accent); color: var(--bg); padding: 14px 34px; border-radius: 2px; transition: background 0.3s; }
+.btn-primary:hover { background: var(--accent-light); }
+.btn-ghost { font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; border: 1px solid rgba(77,175,106,0.4); color: var(--ivory); padding: 14px 34px; border-radius: 2px; transition: border-color 0.3s, color 0.3s; }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.hero-scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--smoke); font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; z-index: 10; animation: hintFade 3s ease-in-out 2s infinite; }
+.hero-scroll-arrow { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); }
+@keyframes hintFade { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+/* Section base */
+section { padding: 120px 60px; }
+.section-label { font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+.section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.1; color: var(--ivory); margin-bottom: 20px; }
+.section-lead { font-family: var(--font-sans); font-size: clamp(1rem, 1.6vw, 1.15rem); font-weight: 300; color: var(--smoke); line-height: 1.8; max-width: 620px; }
+.divider { width: 48px; height: 1px; background: var(--accent); margin: 28px 0; }
+
+/* About Strip */
+.about-strip { background: var(--surface); padding: 80px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.about-text .founding-year { font-family: var(--font-serif); font-size: clamp(4rem, 8vw, 6rem); color: var(--accent); opacity: 0.15; line-height: 1; margin-bottom: -20px; }
+.about-image { aspect-ratio: 4/3; overflow: hidden; border-radius: 2px; }
+.about-image img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.85); transition: transform 0.8s ease; }
+.about-image:hover img { transform: scale(1.03); }
+
+/* Disciplines */
+.disciplines { background: var(--bg); }
+.disciplines-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+.discipline-card { background: var(--surface); padding: 48px 36px; position: relative; overflow: hidden; }
+.discipline-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease; }
+.discipline-card:hover::before { transform: scaleX(1); }
+.discipline-number { font-family: var(--font-serif); font-size: 2.5rem; color: var(--accent); opacity: 0.2; margin-bottom: 16px; }
+.discipline-name { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); margin-bottom: 12px; }
+.discipline-desc { font-family: var(--font-sans); font-size: 0.9rem; font-weight: 300; color: var(--smoke); line-height: 1.7; }
+
+/* Programmes */
+.programmes { background: var(--surface); }
+.programmes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; overflow: visible; }
+.programme-card { background: var(--bg); border: 1px solid var(--border); padding: 40px 32px; border-radius: 2px; display: flex; flex-direction: column; transition: border-color 0.3s, transform 0.3s; }
+.programme-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+.prog-level { font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.prog-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 12px; }
+.prog-desc { font-family: var(--font-sans); font-size: 0.88rem; font-weight: 300; color: var(--smoke); line-height: 1.7; margin-bottom: 24px; flex: 1; }
+.prog-meta { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border); padding-top: 20px; }
+.prog-meta span { font-family: var(--font-sans); font-size: 0.75rem; color: var(--smoke); }
+.prog-meta strong { color: var(--ivory); }
+.prog-cta { display: inline-block; margin-top: 20px; font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid rgba(77,175,106,0.4); padding-bottom: 4px; transition: border-color 0.3s; }
+.prog-cta:hover { border-color: var(--accent); }
+
+/* Philosophy */
+.philosophy { background: var(--bg); }
+.philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+.philosophy-item { background: var(--surface2); padding: 48px 36px; }
+.philosophy-icon { font-size: 1.4rem; margin-bottom: 20px; color: var(--accent); }
+.philosophy-title { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 12px; }
+.philosophy-text { font-family: var(--font-sans); font-size: 0.88rem; font-weight: 300; color: var(--smoke); line-height: 1.7; }
+
+/* Gallery */
+.gallery { background: var(--surface); padding-top: 80px; padding-bottom: 80px; }
+.gallery-masonry { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: auto; gap: 4px; margin-top: 48px; }
+.gallery-item { overflow: hidden; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.85); transition: transform 0.7s ease, filter 0.5s; }
+.gallery-item:hover img { transform: scale(1.04); filter: brightness(0.95); }
+.gallery-item.tall { grid-row: span 2; }
+.gallery-item:nth-child(1) { grid-column: 1; grid-row: 1; min-height: 260px; }
+.gallery-item:nth-child(2) { grid-column: 2; grid-row: 1 / 3; }
+.gallery-item:nth-child(3) { grid-column: 3; grid-row: 1; min-height: 260px; }
+.gallery-item:nth-child(4) { grid-column: 4; grid-row: 1 / 3; }
+.gallery-item:nth-child(5) { grid-column: 1; grid-row: 2; min-height: 260px; }
+.gallery-item:nth-child(6) { grid-column: 3; grid-row: 2; min-height: 260px; }
+
+/* Faculty */
+.faculty { background: var(--bg); }
+.faculty-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; }
+.faculty-card { }
+.faculty-portrait { aspect-ratio: 3/4; overflow: hidden; border-radius: 2px; margin-bottom: 24px; }
+.faculty-portrait img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8) saturate(0.7); transition: filter 0.5s; }
+.faculty-card:hover .faculty-portrait img { filter: brightness(0.88) saturate(0.9); }
+.faculty-name { font-family: var(--font-serif); font-size: 1.15rem; color: var(--ivory); margin-bottom: 6px; }
+.faculty-title { font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.faculty-bio { font-family: var(--font-sans); font-size: 0.86rem; font-weight: 300; color: var(--smoke); line-height: 1.7; }
+
+/* Process Teaser */
+.process-teaser { background: var(--surface); }
+.process-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; margin-top: 60px; }
+.step-card { background: var(--bg); padding: 36px 28px; }
+.step-num { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); opacity: 0.35; margin-bottom: 16px; }
+.step-name { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 10px; }
+.step-desc { font-family: var(--font-sans); font-size: 0.82rem; font-weight: 300; color: var(--smoke); line-height: 1.6; }
+
+/* Testimonials */
+.testimonials { background: var(--bg); }
+.swiper-testimonials { margin-top: 60px; padding-bottom: 50px; }
+.testimonial-card { background: var(--surface); padding: 48px 40px; border-left: 2px solid var(--accent); }
+.testimonial-quote { font-family: var(--font-serif); font-size: clamp(1.05rem, 2vw, 1.3rem); font-style: italic; color: var(--ivory); line-height: 1.65; margin-bottom: 28px; }
+.testimonial-author { font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+.swiper-pagination-bullet { background: var(--smoke); opacity: 0.5; }
+.swiper-pagination-bullet-active { background: var(--accent); opacity: 1; }
+
+/* Stats Band */
+.stats-band { background: var(--surface2); padding: 70px 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center; }
+.stat-num { font-family: var(--font-serif); font-size: clamp(2.4rem, 5vw, 3.8rem); color: var(--accent); margin-bottom: 8px; }
+.stat-label { font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+
+/* Enrolment CTA */
+.enrolment { background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; padding: 120px 60px; }
+.enrolment-text .section-title { margin-bottom: 16px; }
+.enrolment-form { background: var(--surface); padding: 48px; border-radius: 2px; }
+.form-group { margin-bottom: 24px; }
+.form-label { display: block; font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+.form-input, .form-select { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--ivory); font-family: var(--font-sans); font-size: 0.9rem; padding: 12px 16px; border-radius: 2px; outline: none; transition: border-color 0.3s; }
+.form-input:focus, .form-select:focus { border-color: var(--accent); }
+.form-select option { background: var(--surface2); }
+.form-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 16px; border-radius: 2px; cursor: pointer; transition: background 0.3s; }
+.form-submit:hover { background: var(--accent-light); }
+
+/* Press */
+.press { background: var(--surface); padding: 70px 60px; }
+.press-logos { display: flex; gap: 60px; align-items: center; flex-wrap: wrap; margin-top: 36px; }
+.press-logo { font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; color: var(--smoke); opacity: 0.6; letter-spacing: 0.05em; }
+
+/* Footer */
+footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 60px 40px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+.footer-brand .footer-logo { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 16px; }
+.footer-brand p { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 300; color: var(--smoke); line-height: 1.7; max-width: 280px; }
+.footer-col h4 { font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul a { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 300; color: var(--smoke); transition: color 0.3s; }
+.footer-col ul a:hover { color: var(--accent); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-family: var(--font-sans); font-size: 0.78rem; color: var(--muted); }
+.footer-social { display: flex; gap: 20px; }
+.footer-social a { font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+.footer-social a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div id="preloader">
+  <div class="bloom-ring">
+    <div class="bloom-petal"></div>
+    <div class="bloom-petal"></div>
+    <div class="bloom-petal"></div>
+    <div class="bloom-petal"></div>
+    <div class="bloom-petal"></div>
+    <div class="bloom-petal"></div>
+  </div>
+  <p class="preloader-text">Bloom &amp; Form</p>
+</div>
+
+<div id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <div class="scroll-dot"></div>
+  <span class="scroll-label">Scroll</span>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">Bloom &amp; Form</a>
+  <div class="nav-links">
+    <a href="collection.html">Programmes</a>
+    <a href="about.html">About</a>
+    <a href="process.html">Method</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <a href="contact.html" class="nav-cta">Enrol Now</a>
+</nav>
+
+<!-- 01. Hero — Type E: Grid/Pattern Canvas -->
+<section class="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-img-layer"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow reveal-organic">Floral Design School — Founded 2009</p>
+    <h1 class="hero-title reveal-organic">Nature, <em>Arranged</em><br>with Intention</h1>
+    <p class="hero-tagline reveal-organic">Professional education in Ikebana, European floristry, event design and botanical installation art.</p>
+    <div class="hero-actions reveal-organic">
+      <a href="collection.html" class="btn-primary">Explore Programmes</a>
+      <a href="about.html" class="btn-ghost">Our Philosophy</a>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="hero-scroll-arrow"></div>
+    <span>Discover</span>
+  </div>
+</section>
+
+<!-- 02. About Strip -->
+<div class="about-strip">
+  <div class="about-text">
+    <div class="founding-year reveal-organic">2009</div>
+    <p class="section-label reveal-organic">Our Story</p>
+    <h2 class="section-title reveal-organic">Where Nature Becomes Art</h2>
+    <div class="divider reveal-organic"></div>
+    <p class="section-lead reveal-organic">Founded by master florist Mira Sato in Kyoto, Bloom &amp; Form bridges the meditative discipline of Ikebana with the expressive abundance of European floristry. Fifteen years on, our graduates shape bouquets, installations and landscapes across four continents.</p>
+    <br>
+    <a href="about.html" class="btn-ghost reveal-organic" style="display:inline-block; margin-top:20px;">Read Our Story</a>
+  </div>
+  <div class="about-image reveal-organic">
+    <img src="images/img-7.webp" alt="Floral arrangement in studio" loading="lazy">
+  </div>
+</div>
+
+<!-- 03. Disciplines -->
+<section class="disciplines">
+  <p class="section-label reveal-organic">What We Teach</p>
+  <h2 class="section-title reveal-organic">Three Disciplines, One Language</h2>
+  <div class="divider reveal-organic"></div>
+  <div class="disciplines-grid">
+    <div class="discipline-card reveal-organic">
+      <div class="discipline-number">01</div>
+      <h3 class="discipline-name">Ikebana</h3>
+      <p class="discipline-desc">The ancient Japanese art of flower arrangement — studying line, space and the living tension between nature and form. We practise Sogetsu, Ohara and Ikenobo schools.</p>
+    </div>
+    <div class="discipline-card reveal-organic">
+      <div class="discipline-number">02</div>
+      <h3 class="discipline-name">European Floristry</h3>
+      <p class="discipline-desc">From structured French bouquets to organic Dutch countryside arrangements, students develop technical fluency across the full spectrum of Western floral traditions.</p>
+    </div>
+    <div class="discipline-card reveal-organic">
+      <div class="discipline-number">03</div>
+      <h3 class="discipline-name">Botanical Installation</h3>
+      <p class="discipline-desc">Large-scale environmental work — arches, ceilings, living walls — where floristry becomes spatial design. Combines botany, architecture and event production.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04. Programmes -->
+<section class="programmes">
+  <p class="section-label reveal-organic">Courses &amp; Workshops</p>
+  <h2 class="section-title reveal-organic">Find Your Path</h2>
+  <div class="divider reveal-organic"></div>
+  <div class="programmes-grid">
+    <div class="programme-card reveal-organic">
+      <p class="prog-level">Foundation</p>
+      <h3 class="prog-title">Botanical Foundations</h3>
+      <p class="prog-desc">A 10-week immersion into plant anatomy, seasonal botany and the fundamentals of composition. Designed for those beginning their floral journey with intention.</p>
+      <div class="prog-meta">
+        <span><strong>Duration:</strong> 10 Weeks</span>
+        <span><strong>Level:</strong> Beginner</span>
+        <span><strong>Intake:</strong> Spring &amp; Autumn</span>
+      </div>
+      <a href="collection.html" class="prog-cta">Programme Details</a>
+    </div>
+    <div class="programme-card reveal-organic">
+      <p class="prog-level">Diploma</p>
+      <h3 class="prog-title">Diploma in Floral Design</h3>
+      <p class="prog-desc">Our flagship one-year programme. Students master all three disciplines alongside business of floristry, client management and portfolio development.</p>
+      <div class="prog-meta">
+        <span><strong>Duration:</strong> 12 Months</span>
+        <span><strong>Level:</strong> Intermediate–Advanced</span>
+        <span><strong>Intake:</strong> September</span>
+      </div>
+      <a href="collection.html" class="prog-cta">Programme Details</a>
+    </div>
+    <div class="programme-card reveal-organic">
+      <p class="prog-level">Masterclass</p>
+      <h3 class="prog-title">Botanical Installation Art</h3>
+      <p class="prog-desc">A 5-day intensive for working florists ready to expand into spatial installation work. Led by Mira Sato and visiting architects.</p>
+      <div class="prog-meta">
+        <span><strong>Duration:</strong> 5 Days</span>
+        <span><strong>Level:</strong> Advanced</span>
+        <span><strong>Intake:</strong> Quarterly</span>
+      </div>
+      <a href="collection.html" class="prog-cta">Programme Details</a>
+    </div>
+  </div>
+</section>
+
+<!-- 05. Philosophy -->
+<section class="philosophy">
+  <p class="section-label reveal-organic">Our Philosophy</p>
+  <h2 class="section-title reveal-organic">Principles We Arrange By</h2>
+  <div class="divider reveal-organic"></div>
+  <div class="philosophy-grid">
+    <div class="philosophy-item reveal-organic">
+      <div class="philosophy-icon">◈</div>
+      <h3 class="philosophy-title">Slow Looking</h3>
+      <p class="philosophy-text">Before the first stem is cut, students spend hours observing — watching how light changes colour, how petals move, how negative space breathes. Perception precedes composition.</p>
+    </div>
+    <div class="philosophy-item reveal-organic">
+      <div class="philosophy-icon">◈</div>
+      <h3 class="philosophy-title">Seasonal Intelligence</h3>
+      <p class="philosophy-text">We design only with what grows. Our curriculum follows the harvest calendar, teaching students to read seasons not as limitations but as the grammar of their art.</p>
+    </div>
+    <div class="philosophy-item reveal-organic">
+      <div class="philosophy-icon">◈</div>
+      <h3 class="philosophy-title">Material Honesty</h3>
+      <p class="philosophy-text">Dyed blooms and artificial stems have no place in our studio. We work with real textures, real fragrances and real impermanence — the truths that make floral art alive.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06. Gallery -->
+<section class="gallery">
+  <p class="section-label reveal-organic">Studio Work</p>
+  <h2 class="section-title reveal-organic">Arrangements from Our Classes</h2>
+  <div class="gallery-masonry">
+    <div class="gallery-item reveal-organic">
+      <img src="images/img-6.webp" alt="Floral arrangement studio" loading="lazy">
+    </div>
+    <div class="gallery-item reveal-organic">
+      <img src="images/img-7.webp" alt="Botanical composition" loading="lazy">
+    </div>
+    <div class="gallery-item reveal-organic">
+      <img src="images/img-8.webp" alt="Weaving and botanical" loading="lazy">
+    </div>
+    <div class="gallery-item reveal-organic">
+      <img src="images/img-9.webp" alt="Craft studio" loading="lazy">
+    </div>
+    <div class="gallery-item reveal-organic">
+      <img src="images/img-10.webp" alt="Botanical perfume study" loading="lazy">
+    </div>
+    <div class="gallery-item reveal-organic">
+      <img src="images/img-11.webp" alt="Floral installation" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- 07. Faculty -->
+<section class="faculty">
+  <p class="section-label reveal-organic">Our Teachers</p>
+  <h2 class="section-title reveal-organic">Master Florists &amp; Botanists</h2>
+  <div class="divider reveal-organic"></div>
+  <div class="faculty-grid">
+    <div class="faculty-card reveal-organic">
+      <div class="faculty-portrait">
+        <img src="images/img-12.webp" alt="Mira Sato" loading="lazy">
+      </div>
+      <h3 class="faculty-name">Mira Sato</h3>
+      <p class="faculty-title">Founder &amp; Head of Ikebana</p>
+      <p class="faculty-bio">Trained under Teshigahara Hiroshi in Tokyo and later at the Royal Horticultural Society, London. Mira founded Bloom &amp; Form after a decade of international exhibition work.</p>
+    </div>
+    <div class="faculty-card reveal-organic">
+      <div class="faculty-portrait">
+        <img src="images/img-13.webp" alt="Elise Moreau" loading="lazy">
+      </div>
+      <h3 class="faculty-name">Elise Moreau</h3>
+      <p class="faculty-title">Lead — European Floristry</p>
+      <p class="faculty-bio">Formerly head florist at Caviar House, Geneva, Elise brings Parisian precision and Dutch seasonal abundance into her teaching. Author of <em>The Grammar of Petals</em>.</p>
+    </div>
+    <div class="faculty-card reveal-organic">
+      <div class="faculty-portrait">
+        <img src="images/img-14.webp" alt="Theo Lindqvist" loading="lazy">
+      </div>
+      <h3 class="faculty-name">Theo Lindqvist</h3>
+      <p class="faculty-title">Botanical Installation Lead</p>
+      <p class="faculty-bio">Swedish landscape architect and event designer. Theo's large-scale botanical installations have been exhibited at the Copenhagen Cultural Capital Festival and Milan Design Week.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08. Process Teaser -->
+<section class="process-teaser">
+  <p class="section-label reveal-organic">The Bloom &amp; Form Method</p>
+  <h2 class="section-title reveal-organic">Five Stages of Mastery</h2>
+  <div class="divider reveal-organic"></div>
+  <div class="process-steps">
+    <div class="step-card reveal-organic">
+      <div class="step-num">01</div>
+      <h3 class="step-name">Botanical Foundation</h3>
+      <p class="step-desc">Plant anatomy, growth cycles and the language of living material.</p>
+    </div>
+    <div class="step-card reveal-organic">
+      <div class="step-num">02</div>
+      <h3 class="step-name">Structure</h3>
+      <p class="step-desc">Line, mass, form — the architecture beneath every arrangement.</p>
+    </div>
+    <div class="step-card reveal-organic">
+      <div class="step-num">03</div>
+      <h3 class="step-name">Colour</h3>
+      <p class="step-desc">Seasonal palettes, dye work and the cultural meanings of hue.</p>
+    </div>
+    <div class="step-card reveal-organic">
+      <div class="step-num">04</div>
+      <h3 class="step-name">Context</h3>
+      <p class="step-desc">Space, occasion and client — designing arrangements that serve a world.</p>
+    </div>
+    <div class="step-card reveal-organic">
+      <div class="step-num">05</div>
+      <h3 class="step-name">Signature Work</h3>
+      <p class="step-desc">Final thesis project — a personal body of work submitted for exhibition.</p>
+    </div>
+  </div>
+  <div style="margin-top:48px;" class="reveal-organic">
+    <a href="process.html" class="btn-primary">Explore the Method</a>
+  </div>
+</section>
+
+<!-- 09. Testimonials -->
+<section class="testimonials">
+  <p class="section-label reveal-organic">Graduate Voices</p>
+  <h2 class="section-title reveal-organic">What Our Students Say</h2>
+  <div class="swiper swiper-testimonials reveal-organic">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"Before Bloom &amp; Form I arranged flowers. Afterwards, I understood them. The Ikebana modules changed the way I see negative space — not just in floristry, but in everything."</p>
+          <span class="testimonial-author">— Yuki Tanaka, Diploma 2021 / Now: Head Florist, Four Seasons Tokyo</span>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"The botanical installation masterclass opened a door I didn't know existed. Six months later I was installing a 12-metre floral canopy for a fashion week afterparty in Paris."</p>
+          <span class="testimonial-author">— Clara Osei, Masterclass 2023 / Now: Founder, Verte Studio Paris</span>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"Elise's approach to European floristry is transformative. She doesn't teach styles — she teaches you to see the conversation between stem and vessel, between colour and light."</p>
+          <span class="testimonial-author">— Marco Ferraris, Diploma 2022 / Now: Event Floristry Director, Milan</span>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- 10. Stats Band -->
+<div class="stats-band">
+  <div class="reveal-organic">
+    <div class="stat-num">15+</div>
+    <div class="stat-label">Years of Teaching</div>
+  </div>
+  <div class="reveal-organic">
+    <div class="stat-num">840</div>
+    <div class="stat-label">Graduates Worldwide</div>
+  </div>
+  <div class="reveal-organic">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Disciplines Taught</div>
+  </div>
+  <div class="reveal-organic">
+    <div class="stat-num">28</div>
+    <div class="stat-label">Countries Represented</div>
+  </div>
+</div>
+
+<!-- 11. Enrolment CTA -->
+<section class="enrolment">
+  <div class="enrolment-text">
+    <p class="section-label reveal-organic">Begin Your Journey</p>
+    <h2 class="section-title reveal-organic">Apply for Autumn 2026</h2>
+    <div class="divider reveal-organic"></div>
+    <p class="section-lead reveal-organic">Our next intake opens September 2026. Places are limited to 12 students per cohort, ensuring a deeply personal learning environment.</p>
+    <br>
+    <p class="section-lead reveal-organic" style="font-size:0.9rem; margin-top:16px;">Scholarship opportunities available for students demonstrating exceptional artistic potential. Contact our admissions team to learn more.</p>
+  </div>
+  <div class="enrolment-form reveal-organic">
+    <form>
+      <div class="form-group">
+        <label class="form-label" for="name">Full Name</label>
+        <input class="form-input" type="text" id="name" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input class="form-input" type="email" id="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="prog">Programme of Interest</label>
+        <select class="form-select" id="prog">
+          <option>Botanical Foundations (10 Weeks)</option>
+          <option>Diploma in Floral Design (12 Months)</option>
+          <option>Botanical Installation Masterclass (5 Days)</option>
+          <option>Ikebana Intensive (6 Weeks)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="background">Your Background</label>
+        <input class="form-input" type="text" id="background" placeholder="Brief experience summary">
+      </div>
+      <button type="submit" class="form-submit">Request a Prospectus</button>
+    </form>
+  </div>
+</section>
+
+<!-- 12. Press -->
+<div class="press">
+  <p class="section-label reveal-organic">As Seen In</p>
+  <div class="press-logos">
+    <span class="press-logo reveal-organic">Vogue Living</span>
+    <span class="press-logo reveal-organic">The Garden Magazine</span>
+    <span class="press-logo reveal-organic">Wallpaper*</span>
+    <span class="press-logo reveal-organic">Elle Decoration</span>
+    <span class="press-logo reveal-organic">The World of Interiors</span>
+  </div>
+</div>
+
+<!-- 13. Footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">Bloom &amp; Form</div>
+      <p>A school for those who believe that arranging flowers is a way of attending to the world with care.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Programmes</h4>
+      <ul>
+        <li><a href="collection.html">Botanical Foundations</a></li>
+        <li><a href="collection.html">Diploma in Floral Design</a></li>
+        <li><a href="collection.html">Botanical Installation</a></li>
+        <li><a href="collection.html">Ikebana Intensive</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>School</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="about.html">Our Faculty</a></li>
+        <li><a href="process.html">Method</a></li>
+        <li><a href="contact.html">Admissions</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="contact.html">Enquiries</a></li>
+        <li><a href="contact.html">Visit the Studio</a></li>
+        <li><a href="contact.html">Press &amp; Media</a></li>
+        <li><a href="contact.html">Partnerships</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">&copy; 2026 Bloom &amp; Form Floral School. All rights reserved.</p>
+    <div class="footer-social">
+      <a href="#">Instagram</a>
+      <a href="#">Pinterest</a>
+      <a href="#">Newsletter</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Preloader
+window.addEventListener('load', () => {
+  const pre = document.getElementById('preloader');
+  gsap.to(pre, { opacity: 0, duration: 0.9, delay: 0.8, ease: 'power2.inOut', onComplete: () => {
+    pre.style.display = 'none';
+    const si = document.getElementById('scroll-indicator');
+    if (si) si.classList.add('visible');
+  }});
+});
+setTimeout(() => {
+  const si = document.getElementById('scroll-indicator');
+  if (si) si.classList.add('visible');
+}, 4000);
+
+// Hero Canvas — Type E: Grid/Pattern with diamond markers
+const canvas = document.getElementById('heroCanvas');
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawCanvas();
+  }
+  function drawCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const gridSize = 60;
+    // Grid lines
+    ctx.strokeStyle = 'rgba(77,175,106,0.10)';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x <= canvas.width; x += gridSize) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y <= canvas.height; y += gridSize) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+    // Diamond markers at every other grid intersection
+    ctx.fillStyle = 'rgba(77,175,106,0.08)';
+    for (let x = gridSize; x < canvas.width; x += gridSize * 2) {
+      for (let y = gridSize; y < canvas.height; y += gridSize * 2) {
+        ctx.beginPath();
+        ctx.moveTo(x, y - 4);
+        ctx.lineTo(x + 4, y);
+        ctx.lineTo(x, y + 4);
+        ctx.lineTo(x - 4, y);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+    // Corner accent lines in 4 corners
+    const sz = 60;
+    ctx.strokeStyle = 'rgba(77,175,106,0.3)';
+    ctx.lineWidth = 1;
+    // Top-left
+    ctx.beginPath(); ctx.moveTo(0, sz); ctx.lineTo(0, 0); ctx.lineTo(sz, 0); ctx.stroke();
+    // Top-right
+    ctx.beginPath(); ctx.moveTo(canvas.width - sz, 0); ctx.lineTo(canvas.width, 0); ctx.lineTo(canvas.width, sz); ctx.stroke();
+    // Bottom-left
+    ctx.beginPath(); ctx.moveTo(0, canvas.height - sz); ctx.lineTo(0, canvas.height); ctx.lineTo(sz, canvas.height); ctx.stroke();
+    // Bottom-right
+    ctx.beginPath(); ctx.moveTo(canvas.width - sz, canvas.height); ctx.lineTo(canvas.width, canvas.height); ctx.lineTo(canvas.width, canvas.height - sz); ctx.stroke();
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+}
+
+// A5 Organic scroll animations
+document.querySelectorAll('.reveal-organic').forEach(el => {
+  gsap.from(el, {
+    opacity: 0,
+    y: gsap.utils.random(20, 28),
+    duration: gsap.utils.random(1.0, 1.4),
+    ease: 'power2.out',
+    immediateRender: false,
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 88%',
+      once: true
+    }
+  });
+});
+
+// Swiper testimonials
+new Swiper('.swiper-testimonials', {
+  slidesPerView: 1,
+  spaceBetween: 32,
+  loop: true,
+  autoplay: { delay: 5000, disableOnInteraction: false },
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: {
+    768: { slidesPerView: 2 }
+  }
+});
+</script>
+</body>
+</html>

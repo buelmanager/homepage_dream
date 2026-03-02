@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Aperture Society — Every Frame, a Frozen Truth</title>
+<meta name="description" content="The Aperture Society is a fine art photography club devoted to visual storytelling, darkroom mastery, and gallery exhibitions for photographers at every stage of their practice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #181818;
+    --surface: #222222;
+    --surface2: #2A2A2A;
+    --accent: #B0B0C0;
+    --accent-light: #D0D0E0;
+    --accent-dark: #808090;
+    --ivory: #EEEEF2;
+    --smoke: #909090;
+    --muted: #606060;
+    --border: #1E1E1E;
+    --font-serif: 'Spectral', Georgia, serif;
+    --font-sans: 'Mulish', system-ui, sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* Preloader */
+  #preloader {
+    position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+  }
+  .preloader-aperture {
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 2px solid var(--border); position: relative;
+    animation: aperture 1.2s ease-in-out infinite;
+  }
+  .preloader-aperture::after {
+    content: ''; position: absolute; inset: 6px;
+    border-radius: 50%; background: var(--accent);
+    animation: aperture-inner 1.2s ease-in-out infinite;
+  }
+  @keyframes aperture { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.15); opacity: 1; } }
+  @keyframes aperture-inner { 0%,100% { transform: scale(0.4); } 50% { transform: scale(0.8); } }
+  .preloader-text { font-family: var(--font-sans); font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--smoke); }
+
+  /* Scroll Indicator */
+  #scroll-indicator {
+    position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+    z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0; transition: opacity 0.6s;
+  }
+  #scroll-indicator.visible { opacity: 1; }
+  .si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .si-line { width: 1px; height: 60px; background: var(--border); position: relative; overflow: hidden; }
+  .si-fill { position: absolute; top: 0; left: 0; right: 0; background: var(--accent); height: 0%; transition: height 0.1s; }
+  .si-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-rl; margin-top: 4px; }
+
+  /* Navbar */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 24px 60px; display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.4s;
+  }
+  #navbar.scrolled { background: rgba(24,24,24,0.9); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; color: var(--ivory); letter-spacing: 0.04em; }
+  .nav-logo span { color: var(--accent); font-style: italic; }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { font-size: 0.73rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 10px 24px; border: 1px solid var(--accent); color: var(--accent); transition: all 0.3s; }
+  .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+  /* Hero — Type D: Portraits + Stats */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; background: var(--bg); overflow: hidden; }
+  .hero-content-panel { display: flex; flex-direction: column; justify-content: center; padding: 120px 60px 120px 80px; }
+  .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .hero-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 300; line-height: 1.1; color: var(--ivory); margin-bottom: 20px; }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-sub { font-size: 0.9rem; line-height: 1.8; color: var(--smoke); margin-bottom: 40px; max-width: 400px; }
+  .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px; }
+  .stat-item { }
+  .stat-num { font-family: var(--font-serif); font-size: 2.8rem; font-weight: 300; color: var(--accent); display: block; line-height: 1; }
+  .stat-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 6px; display: block; }
+  .hero-ctas { display: flex; gap: 16px; }
+  .btn-primary { display: inline-block; padding: 14px 36px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 0.73rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; transition: background 0.3s, transform 0.3s; }
+  .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+  .btn-ghost { display: inline-block; padding: 14px 36px; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-sans); font-size: 0.73rem; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.3s; }
+  .btn-ghost:hover { background: var(--accent); color: var(--bg); }
+
+  /* Portrait grid */
+  .hero-portraits { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 8px; padding: 40px; min-height: 100vh; }
+  .portrait-card { background-size: cover; background-position: center; border-radius: 2px; transition: transform 0.5s ease; }
+  .portrait-card:hover { transform: scale(1.02); }
+  .pc-large { grid-row: span 2; }
+
+  /* Film strip accent */
+  .film-strip { height: 40px; background: var(--surface2); display: flex; align-items: center; padding: 0 20px; gap: 16px; overflow: hidden; }
+  .film-hole { width: 16px; height: 24px; border-radius: 2px; border: 1px solid var(--border); background: var(--bg); flex-shrink: 0; }
+  .film-frame { width: 48px; height: 32px; background: var(--border); flex-shrink: 0; border-radius: 1px; }
+
+  /* Stats Strip */
+  .stats-strip { background: var(--surface); border-bottom: 1px solid var(--border); padding: 56px 0; }
+  .stats-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); padding: 0 60px; }
+  .stat-block { text-align: center; padding: 16px; border-right: 1px solid var(--border); }
+  .stat-block:last-child { border-right: none; }
+  .stat-block .stat-num { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 300; color: var(--accent); display: block; line-height: 1; }
+  .stat-block .stat-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+  /* Sections */
+  .section-eyebrow { font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 300; color: var(--ivory); line-height: 1.15; margin-bottom: 48px; }
+  .section-title em { color: var(--accent); font-style: italic; }
+
+  /* Philosophy */
+  .philosophy { padding: 110px 60px; max-width: 1200px; margin: 0 auto; }
+  .philosophy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; }
+  .philo-card { padding: 40px 32px; border: 1px solid var(--border); background: var(--surface); }
+  .philo-aperture { font-size: 1.5rem; margin-bottom: 20px; color: var(--accent); }
+  .philo-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; color: var(--ivory); margin-bottom: 14px; }
+  .philo-text { font-size: 0.87rem; line-height: 1.75; color: var(--smoke); }
+
+  /* Collection / Gallery */
+  .collection { padding: 0 60px 110px; max-width: 1200px; margin: 0 auto; }
+  .collection-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; overflow: visible; }
+  .col-card { position: relative; overflow: hidden; aspect-ratio: 4/3; }
+  .col-card-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s ease; filter: grayscale(40%); }
+  .col-card:hover .col-card-img { transform: scale(1.05); filter: grayscale(0%); }
+  .col-card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(18,18,18,0.9) 100%); }
+  .col-card-content { position: absolute; bottom: 0; left: 0; padding: 28px; }
+  .col-card-tag { font-size: 0.63rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+  .col-card-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 300; color: var(--ivory); }
+
+  /* Atelier */
+  .atelier { background: var(--surface); padding: 110px 0; }
+  .atelier-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .atelier-img-wrap { position: relative; height: 520px; }
+  .atelier-img { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(30%); }
+  .atelier-darkroom { position: absolute; bottom: -20px; left: -20px; width: 80px; height: 80px; border: 2px solid var(--accent); z-index: -1; }
+  .atelier-body { font-size: 0.91rem; line-height: 1.85; color: var(--smoke); margin-top: 20px; }
+  .atelier-cta { margin-top: 36px; display: flex; gap: 16px; }
+
+  /* Process Timeline */
+  .process { padding: 110px 60px; max-width: 900px; margin: 0 auto; }
+  .timeline { margin-top: 56px; }
+  .timeline-item { display: grid; grid-template-columns: 70px 1fr; gap: 28px; padding-bottom: 52px; position: relative; }
+  .timeline-item:not(:last-child)::before { content: ''; position: absolute; left: 34px; top: 36px; bottom: 0; width: 1px; background: var(--border); }
+  .timeline-num { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 300; color: var(--accent); line-height: 1; }
+  .timeline-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; color: var(--ivory); margin-bottom: 10px; }
+  .timeline-text { font-size: 0.87rem; line-height: 1.75; color: var(--smoke); }
+
+  /* Heritage */
+  .heritage { background: var(--surface2); padding: 110px 60px; }
+  .heritage-inner { max-width: 1200px; margin: 0 auto; }
+  .milestones { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; margin-top: 56px; }
+  .milestone { border-left: 2px solid var(--accent); padding-left: 20px; }
+  .milestone-year { font-family: var(--font-serif); font-size: 2rem; font-weight: 300; color: var(--accent); display: block; }
+  .milestone-title { font-family: var(--font-serif); font-size: 0.92rem; color: var(--ivory); margin: 8px 0 6px; }
+  .milestone-text { font-size: 0.82rem; line-height: 1.65; color: var(--smoke); }
+
+  /* Press */
+  .press { padding: 110px 60px; max-width: 1200px; margin: 0 auto; }
+  .swiper { padding-bottom: 48px !important; }
+  .review-card { background: var(--surface); border: 1px solid var(--border); padding: 40px 36px; }
+  .review-quote { font-size: 0.95rem; font-style: italic; line-height: 1.8; color: var(--ivory); margin-bottom: 24px; font-family: var(--font-serif); }
+  .review-name { font-size: 0.82rem; font-weight: 500; color: var(--ivory); display: block; }
+  .review-role { font-size: 0.73rem; color: var(--smoke); letter-spacing: 0.08em; }
+  .swiper-pagination-bullet { background: var(--smoke); opacity: 0.4; }
+  .swiper-pagination-bullet-active { background: var(--accent); opacity: 1; }
+
+  /* Membership */
+  .membership { background: var(--surface); padding: 110px 60px; }
+  .membership-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .membership-perks { list-style: none; margin-top: 24px; }
+  .membership-perks li { padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.87rem; color: var(--smoke); display: flex; align-items: center; gap: 10px; }
+  .membership-perks li::before { content: '○'; color: var(--accent); font-size: 0.6rem; flex-shrink: 0; }
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-bottom: 7px; }
+  .form-input { width: 100%; background: var(--bg); border: 1px solid var(--border); padding: 13px 15px; color: var(--ivory); font-family: var(--font-sans); font-size: 0.88rem; transition: border-color 0.3s; }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  textarea.form-input { resize: vertical; min-height: 110px; }
+  .form-submit { width: 100%; }
+
+  /* Footer */
+  footer { background: var(--bg); border-top: 1px solid var(--border); padding: 56px 60px; }
+  .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; }
+  .footer-brand p { font-size: 0.83rem; line-height: 1.75; color: var(--smoke); margin-top: 14px; max-width: 260px; }
+  .footer-col-title { font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 9px; }
+  .footer-links a { font-size: 0.83rem; color: var(--smoke); transition: color 0.3s; }
+  .footer-links a:hover { color: var(--ivory); }
+  .footer-bottom { max-width: 1200px; margin: 36px auto 0; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
+  .footer-copy { font-size: 0.76rem; color: var(--muted); }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-portraits { display: none; }
+    .hero-content-panel { padding: 120px 24px 60px; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .collection-grid { grid-template-columns: 1fr; }
+    .atelier-inner { grid-template-columns: 1fr; }
+    .milestones { grid-template-columns: 1fr 1fr; }
+    .membership-inner { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-aperture"></div>
+  <div class="preloader-text">The Aperture Society</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="si-dot"></div>
+  <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-label">Scroll</div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">The <span>Aperture</span> Society</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Gallery</a></li>
+    <li><a href="process.html">Membership</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="process.html" class="nav-cta">Join Us</a>
+</nav>
+
+<!-- Hero — Type D: Portraits + Stats -->
+<section class="hero" id="hero">
+  <div class="hero-content-panel">
+    <div class="hero-eyebrow">Est. 1996 · Fine Art Photography · Darkroom &amp; Digital</div>
+    <h1 class="hero-title">The<br><em>Aperture</em><br>Society</h1>
+    <p class="hero-sub">Every frame, a frozen truth. We are a photography club for those who see the world through a lens and feel compelled to show others what they find.</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" data-target="320">0</span>
+        <span class="stat-label">Members</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="15">0</span>
+        <span class="stat-label">Exhibitions</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="28">0</span>
+        <span class="stat-label">Years Active</span>
+      </div>
+    </div>
+    <div class="hero-ctas">
+      <a href="collection.html" class="btn-primary">View Gallery</a>
+      <a href="process.html" class="btn-ghost">Join</a>
+    </div>
+  </div>
+  <div class="hero-portraits">
+    <div class="portrait-card pc-large" style="background-image: url('images/img-1.webp')"></div>
+    <div class="portrait-card" style="background-image: url('images/img-2.webp')"></div>
+    <div class="portrait-card" style="background-image: url('images/img-3.webp')"></div>
+  </div>
+</section>
+
+<!-- Film Strip -->
+<div class="film-strip">
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div><div class="film-frame"></div>
+  <div class="film-hole"></div>
+</div>
+
+<!-- Stats Strip -->
+<section class="stats-strip" id="stats">
+  <div class="stats-grid">
+    <div class="stat-block">
+      <span class="stat-num" data-target="320">0</span>
+      <span class="stat-label">Active Members</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="28">0</span>
+      <span class="stat-label">Years Active</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="15">0</span>
+      <span class="stat-label">Exhibitions Held</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="4000">0</span>
+      <span class="stat-label">Images in Archive</span>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy" id="philosophy">
+  <div class="section-eyebrow">Our Approach</div>
+  <h2 class="section-title">Photography as<br><em>Fine Art Practice</em></h2>
+  <div class="philosophy-grid">
+    <div class="philo-card">
+      <div class="philo-aperture">◎</div>
+      <h3 class="philo-title">Intentional Vision</h3>
+      <p class="philo-text">Every photograph begins before the shutter fires. We teach our members to observe, to compose, and to wait. The photograph that moves a viewer is never an accident — it is the result of genuine visual intention.</p>
+    </div>
+    <div class="philo-card">
+      <div class="philo-aperture">⊞</div>
+      <h3 class="philo-title">Craft Over Technology</h3>
+      <p class="philo-text">We embrace both analogue and digital processes. Our darkroom is available to all members for silver gelatin printing and traditional development. The tools matter less than the maker's understanding of light, shadow, and time.</p>
+    </div>
+    <div class="philo-card">
+      <div class="philo-aperture">▣</div>
+      <h3 class="philo-title">Critical Community</h3>
+      <p class="philo-text">We conduct regular print reviews and critique sessions in the tradition of the great photographic schools. Honest, generous criticism — delivered with respect — is how we all improve. We do not offer empty praise.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Collection / Gallery Grid -->
+<section class="collection" id="collection">
+  <div class="section-eyebrow">Current Exhibition</div>
+  <h2 class="section-title">Society <em>Gallery</em></h2>
+  <div class="collection-grid">
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Annual Exhibition</span>
+        <h3 class="col-card-title">Light &amp; Grain</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Member Works</span>
+        <h3 class="col-card-title">Documentary Series</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-3.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Darkroom Print Show</span>
+        <h3 class="col-card-title">Silver &amp; Shadow</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-4.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Street Photography</span>
+        <h3 class="col-card-title">The Decisive Moment</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Atelier / Story -->
+<section class="atelier" id="about">
+  <div class="atelier-inner">
+    <div class="atelier-img-wrap">
+      <div class="atelier-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="atelier-darkroom"></div>
+    </div>
+    <div>
+      <div class="section-eyebrow">Our Story</div>
+      <h2 class="section-title">Born in a <em>Darkroom</em>,<br>1996</h2>
+      <p class="atelier-body">The Aperture Society was founded in 1996 by six photographers who met in the queue for the same darkroom at the local art college. They had almost nothing in common except a conviction that photography mattered — that it was a serious art form deserving serious study, practice, and critique.</p>
+      <p class="atelier-body" style="margin-top:16px;">Today we serve over 320 members across digital, film, and alternative process photography. Our annual exhibition, first held in a borrowed gallery in 2001, now attracts over 2,000 visitors across its two-week run. We remain committed to the principle that a photograph becomes art when someone compels you to stand in front of it and look.</p>
+      <div class="atelier-cta">
+        <a href="about.html" class="btn-primary">Our Story</a>
+        <a href="process.html" class="btn-ghost">Join the Society</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process / Timeline -->
+<section class="process" id="process">
+  <div class="section-eyebrow">Member Journey</div>
+  <h2 class="section-title">Your Path as a<br><em>Society Member</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-num">01</div>
+      <div>
+        <h3 class="timeline-title">Apply and Attend</h3>
+        <p class="timeline-text">Submit your application and attend your first print evening. No portfolio is required — we welcome photographers at every stage. Just bring a print or a phone with some of your work.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">02</div>
+      <div>
+        <h3 class="timeline-title">Portfolio Review</h3>
+        <p class="timeline-text">New members meet with a senior member for an informal portfolio review session. This helps us understand your practice and match you with the right workshops and critique groups.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">03</div>
+      <div>
+        <h3 class="timeline-title">Workshops and Darkroom Access</h3>
+        <p class="timeline-text">Join our programme of monthly workshops covering everything from large format film loading to advanced digital post-processing. Darkroom sessions — silver gelatin printing, C-41 and E-6 development — are available to all members.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">04</div>
+      <div>
+        <h3 class="timeline-title">Monthly Print Reviews</h3>
+        <p class="timeline-text">Bring prints or projections to our monthly critique evening. Work is reviewed by peers and a guest critic. This is the heart of what the Society does — it is where most members say their practice genuinely transformed.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">05</div>
+      <div>
+        <h3 class="timeline-title">Exhibition Submission</h3>
+        <p class="timeline-text">After two months of membership, you become eligible to submit work to the annual exhibition, curated group shows, and our online member gallery. Exhibition is not automatic — selection is by a curatorial panel, which is what makes it meaningful.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Heritage Milestones -->
+<section class="heritage">
+  <div class="heritage-inner">
+    <div class="section-eyebrow">Society History</div>
+    <h2 class="section-title">Milestones of Our <em>Practice</em></h2>
+    <div class="milestones">
+      <div class="milestone">
+        <span class="milestone-year">1996</span>
+        <h3 class="milestone-title">Society Founded</h3>
+        <p class="milestone-text">Six photographers from the art college darkroom queue establish a weekly critique group that becomes the Aperture Society.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2001</span>
+        <h3 class="milestone-title">First Exhibition</h3>
+        <p class="milestone-text">The inaugural annual exhibition runs in a borrowed gallery space — 24 prints, 6 members. 140 people attend over two weeks.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2011</span>
+        <h3 class="milestone-title">Permanent Darkroom</h3>
+        <p class="milestone-text">Society opens a purpose-built darkroom with four enlarger stations, a wet print area, and a drying room available to all members.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2024</span>
+        <h3 class="milestone-title">320 Members</h3>
+        <p class="milestone-text">Society reaches 320 members across film, digital, and alternative processes. The 2024 annual exhibition is our largest ever, with 78 prints shown.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Press / Reviews -->
+<section class="press" id="reviews">
+  <div class="section-eyebrow">Member Voices</div>
+  <h2 class="section-title">What Our <em>Members</em> Say</h2>
+  <div class="swiper reviews-swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The print critique sessions here are the most valuable thing I have done for my photography. Having experienced photographers look at your work with genuine attention and real honesty is a gift. It is humbling and transformative in equal measure."</p>
+          <span class="review-name">Sophie Laurent</span>
+          <span class="review-role">Member since 2019 · Street and documentary photography</span>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"I had been digital-only for twelve years. In my first year as a member I learned to develop 35mm film, print in the darkroom on fibre-based paper, and produce a body of work coherent enough to be selected for the annual exhibition. This place changed everything."</p>
+          <span class="review-name">Marcus Oyelaran</span>
+          <span class="review-role">Member since 2022 · Darkroom and film photography</span>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The annual exhibition is genuinely excellent. Seeing your prints on a gallery wall alongside the work of serious photographers is the experience every photographer should have. The curatorial rigour makes acceptance meaningful — not everyone gets in, and that is exactly right."</p>
+          <span class="review-name">Keiko Yamamoto</span>
+          <span class="review-role">Member since 2016 · Large format and alternative process</span>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- Membership / Contact Form -->
+<section class="membership" id="contact">
+  <div class="membership-inner">
+    <div>
+      <div class="section-eyebrow">Membership</div>
+      <h2 class="section-title">Join the <em>Society</em></h2>
+      <ul class="membership-perks">
+        <li>Monthly print critique evenings</li>
+        <li>Full darkroom access (film + darkroom printing)</li>
+        <li>Workshop programme (12 per year)</li>
+        <li>Annual exhibition eligibility</li>
+        <li>Online member gallery</li>
+        <li>Equipment loan library</li>
+        <li>Portfolio review with senior member</li>
+      </ul>
+    </div>
+    <form>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Photography Practice</label>
+        <select class="form-input">
+          <option>Beginner / Enthusiast</option>
+          <option>Digital photography</option>
+          <option>Film photography</option>
+          <option>Darkroom printing</option>
+          <option>Alternative processes</option>
+          <option>Multiple / Professional</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tell us about your photography</label>
+        <textarea class="form-input" placeholder="What do you photograph? What are you working on?"></textarea>
+      </div>
+      <button type="submit" class="btn-primary form-submit">Apply for Membership</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div style="font-family:var(--font-serif);font-size:1.1rem;font-weight:400;color:var(--ivory)">The <span style="color:var(--accent);font-style:italic">Aperture</span> Society</div>
+      <p>Fine art photography — darkroom to gallery — since 1996. Every frame, a frozen truth.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About</a></li>
+        <li><a href="collection.html">Gallery</a></li>
+        <li><a href="process.html">Membership</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Resources</div>
+      <ul class="footer-links">
+        <li><a href="#">Darkroom Access</a></li>
+        <li><a href="#">Equipment Library</a></li>
+        <li><a href="#">Workshop Calendar</a></li>
+        <li><a href="#">Member Archive</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <ul class="footer-links">
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Flickr Group</a></li>
+        <li><a href="#">Member Forum</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2024 The Aperture Society. All rights reserved.</span>
+    <span class="footer-copy">Every Frame, a Frozen Truth</span>
+  </div>
+</footer>
+
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span');
+      wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+      if (type.includes('chars')) {
+        [...word].forEach(ch => {
+          const c = document.createElement('span');
+          c.className = 'split-char'; c.style.display = 'inline-block'; c.textContent = ch;
+          wSpan.appendChild(c); this.chars.push(c);
+        });
+      } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+window.addEventListener('load', () => {
+  gsap.to('#preloader', {
+    opacity: 0, duration: 0.8, delay: 0.9, ease: 'power2.inOut',
+    onComplete: () => {
+      document.getElementById('preloader').style.display = 'none';
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }
+  });
+  setTimeout(() => document.getElementById('scroll-indicator').classList.add('visible'), 4000);
+});
+
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('si-fill').style.height = (window.scrollY / scrollable * 100) + '%';
+});
+
+// Hero Type D — portrait grid entrance
+gsap.from('.hero-content-panel > *', {
+  immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, delay: 1.0
+});
+gsap.from('.portrait-card', {
+  immediateRender: false, opacity: 0, scale: 1.04, duration: 1.3, ease: 'power2.inOut', stagger: 0.15, delay: 1.1
+});
+
+// Hero stats counter (immediate)
+document.querySelectorAll('.stat-item .stat-num[data-target]').forEach(counter => {
+  const target = parseInt(counter.dataset.target);
+  setTimeout(() => {
+    gsap.to({ val: 0 }, {
+      val: target, duration: 2.2, ease: 'power2.out', delay: 1.3,
+      onUpdate: function() { counter.textContent = Math.round(this.targets()[0].val); }
+    });
+  }, 100);
+});
+
+// Stats strip counter
+document.querySelectorAll('.stats-strip .stat-num[data-target]').forEach(counter => {
+  ScrollTrigger.create({
+    trigger: counter, start: 'top 85%', once: true,
+    onEnter: () => gsap.to({ val: 0 }, {
+      val: parseInt(counter.dataset.target), duration: 1.8, ease: 'power2.out',
+      onUpdate: function() { counter.textContent = Math.round(this.targets()[0].val); }
+    })
+  });
+});
+
+// Philosophy
+gsap.from('.philo-card', {
+  immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15,
+  scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+});
+
+// Collection (grayscale cards)
+gsap.from('.col-card', {
+  immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15,
+  scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+});
+
+// Atelier
+gsap.from('.atelier-img-wrap', {
+  immediateRender: false, opacity: 0, x: -40, duration: 1.3, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.atelier-inner', start: 'top 80%', once: true }
+});
+gsap.from('.atelier-inner > div:last-child', {
+  immediateRender: false, opacity: 0, x: 40, duration: 1.3, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.atelier-inner', start: 'top 80%', once: true }
+});
+
+// Timeline
+gsap.from('.timeline-item', {
+  immediateRender: false, opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15,
+  scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true }
+});
+
+// Milestones
+gsap.from('.milestone', {
+  immediateRender: false, opacity: 0, y: 30, duration: 1.1, ease: 'power2.inOut', stagger: 0.15,
+  scrollTrigger: { trigger: '.milestones', start: 'top 85%', once: true }
+});
+
+// Swiper
+new Swiper('.reviews-swiper', {
+  slidesPerView: 1, spaceBetween: 24,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

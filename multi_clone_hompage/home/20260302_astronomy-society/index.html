@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celestial Society — Looking Up, Together</title>
+<meta name="description" content="Celestial Society is an amateur astronomy community dedicated to stargazing, telescope observation, and celebrating celestial events together under open skies.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #101420;
+    --surface: #181E2A;
+    --surface2: #1E2438;
+    --accent: #4EE8FF;
+    --accent-light: #8AF3FF;
+    --accent-dark: #22B8CC;
+    --ivory: #DCE8F0;
+    --smoke: #8090A0;
+    --muted: #506070;
+    --border: #1A2234;
+    --font-serif: 'Spectral', Georgia, serif;
+    --font-sans: 'Mulish', system-ui, sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* Preloader */
+  #preloader {
+    position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+  }
+  .preloader-ring {
+    width: 60px; height: 60px; border-radius: 50%;
+    border: 1px solid var(--border);
+    border-top-color: var(--accent);
+    animation: spin 1.2s linear infinite;
+  }
+  .preloader-text {
+    font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 0.35em;
+    text-transform: uppercase; color: var(--smoke); margin-top: 20px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Scroll Indicator */
+  #scroll-indicator {
+    position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+    z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0; transition: opacity 0.6s;
+  }
+  #scroll-indicator.visible { opacity: 1; }
+  .si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .si-line { width: 1px; height: 60px; background: var(--border); position: relative; overflow: hidden; }
+  .si-fill { position: absolute; top: 0; left: 0; right: 0; background: var(--accent); height: 0%; transition: height 0.1s; }
+  .si-label {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--smoke); writing-mode: vertical-rl; margin-top: 4px;
+  }
+
+  /* Navbar */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 24px 60px; display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s, padding 0.4s, backdrop-filter 0.4s;
+  }
+  #navbar.scrolled {
+    background: rgba(16,20,32,0.85); backdrop-filter: blur(12px);
+    padding: 16px 60px; border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; color: var(--ivory); letter-spacing: 0.05em; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 10px 24px; border: 1px solid var(--accent); color: var(--accent); transition: all 0.3s; }
+  .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+  /* Hero — Type G: Scroll-Driven Text Transform */
+  .hero-text-driven { min-height: 200vh; position: relative; }
+  .hero-bg {
+    position: fixed; inset: 0;
+    background-image: url('images/img-1.webp');
+    background-size: cover; background-position: center;
+    filter: brightness(0.22); z-index: -1;
+  }
+  .hero-text-wrap {
+    position: sticky; top: 0; height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 80px; overflow: hidden;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.35em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+  }
+  .hero-word {
+    font-family: var(--font-serif); font-size: clamp(4rem, 13vw, 13rem);
+    line-height: 0.85; font-weight: 600; text-transform: uppercase; color: var(--ivory);
+  }
+  .word-2 { color: var(--accent); padding-left: 2vw; }
+  .hero-tagline {
+    color: var(--smoke); letter-spacing: 0.2em; text-transform: uppercase;
+    font-size: 0.85rem; margin: 28px 0 44px; font-weight: 300;
+  }
+  .btn-primary {
+    display: inline-block; padding: 14px 36px; background: var(--accent);
+    color: var(--bg); font-family: var(--font-sans); font-size: 0.75rem;
+    letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+  .btn-ghost {
+    display: inline-block; padding: 14px 36px; border: 1px solid var(--accent);
+    color: var(--accent); font-family: var(--font-sans); font-size: 0.75rem;
+    letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
+    transition: all 0.3s;
+  }
+  .btn-ghost:hover { background: var(--accent); color: var(--bg); }
+
+  /* Stats Strip */
+  .stats-strip {
+    background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 60px 0;
+  }
+  .stats-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; padding: 0 60px; }
+  .stat-block { text-align: center; padding: 20px; border-right: 1px solid var(--border); }
+  .stat-block:last-child { border-right: none; }
+  .stat-num { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 300; color: var(--accent); display: block; line-height: 1; }
+  .stat-unit { font-size: 1.2rem; color: var(--accent-dark); }
+  .stat-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+  /* Philosophy */
+  .philosophy { padding: 120px 60px; max-width: 1200px; margin: 0 auto; }
+  .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; color: var(--ivory); line-height: 1.15; margin-bottom: 60px; }
+  .section-title em { color: var(--accent); font-style: italic; }
+  .philosophy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; }
+  .philo-card { padding: 40px 32px; border: 1px solid var(--border); background: var(--surface); }
+  .philo-icon { font-size: 2rem; margin-bottom: 20px; }
+  .philo-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; color: var(--ivory); margin-bottom: 12px; }
+  .philo-text { font-size: 0.88rem; line-height: 1.75; color: var(--smoke); }
+
+  /* Collection Grid */
+  .collection { padding: 0 60px 120px; max-width: 1200px; margin: 0 auto; }
+  .collection-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; overflow: visible; }
+  .col-card { position: relative; overflow: hidden; aspect-ratio: 4/3; }
+  .col-card-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.7s ease; }
+  .col-card:hover .col-card-img { transform: scale(1.06); }
+  .col-card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(10,14,25,0.9) 100%); }
+  .col-card-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 32px; }
+  .col-card-tag { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 8px; }
+  .col-card-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300; color: var(--ivory); }
+
+  /* Atelier / Story */
+  .atelier { background: var(--surface); padding: 120px 0; }
+  .atelier-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .atelier-img-wrap { position: relative; height: 560px; }
+  .atelier-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .atelier-img-accent { position: absolute; bottom: -24px; right: -24px; width: 120px; height: 120px; border: 2px solid var(--accent); z-index: -1; }
+  .atelier-text { }
+  .atelier-body { font-size: 0.93rem; line-height: 1.85; color: var(--smoke); margin-top: 24px; }
+  .atelier-cta { margin-top: 40px; display: flex; gap: 16px; }
+
+  /* Process Timeline */
+  .process { padding: 120px 60px; max-width: 900px; margin: 0 auto; }
+  .timeline { margin-top: 60px; }
+  .timeline-item { display: grid; grid-template-columns: 80px 1fr; gap: 32px; padding-bottom: 60px; position: relative; }
+  .timeline-item:not(:last-child)::before {
+    content: ''; position: absolute; left: 39px; top: 40px; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+  .timeline-num { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 300; color: var(--accent); line-height: 1; }
+  .timeline-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 400; color: var(--ivory); margin-bottom: 10px; }
+  .timeline-text { font-size: 0.88rem; line-height: 1.75; color: var(--smoke); }
+
+  /* Heritage Milestones */
+  .heritage { background: var(--surface2); padding: 120px 60px; }
+  .heritage-inner { max-width: 1200px; margin: 0 auto; }
+  .milestones { margin-top: 60px; display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; }
+  .milestone { border-left: 2px solid var(--accent); padding-left: 24px; }
+  .milestone-year { font-family: var(--font-serif); font-size: 2rem; font-weight: 300; color: var(--accent); display: block; }
+  .milestone-title { font-family: var(--font-serif); font-size: 0.95rem; color: var(--ivory); margin: 8px 0 6px; }
+  .milestone-text { font-size: 0.82rem; line-height: 1.6; color: var(--smoke); }
+
+  /* Press / Reviews */
+  .press { padding: 120px 60px; max-width: 1200px; margin: 0 auto; }
+  .swiper { padding-bottom: 48px !important; }
+  .review-card { background: var(--surface); border: 1px solid var(--border); padding: 48px 44px; }
+  .review-quote { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; line-height: 1.75; color: var(--ivory); margin-bottom: 28px; }
+  .review-author { display: flex; align-items: center; gap: 16px; }
+  .review-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--surface2); overflow: hidden; }
+  .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .review-name { font-size: 0.85rem; font-weight: 500; color: var(--ivory); display: block; }
+  .review-role { font-size: 0.75rem; color: var(--smoke); letter-spacing: 0.1em; }
+  .swiper-pagination-bullet { background: var(--smoke); opacity: 0.4; }
+  .swiper-pagination-bullet-active { background: var(--accent); opacity: 1; }
+
+  /* Membership / Contact */
+  .membership { background: var(--surface); padding: 120px 60px; }
+  .membership-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .membership-info { }
+  .membership-perks { margin-top: 32px; list-style: none; }
+  .membership-perks li { padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--smoke); display: flex; align-items: center; gap: 12px; }
+  .membership-perks li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .contact-form { }
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+  .form-input {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    padding: 14px 16px; color: var(--ivory); font-family: var(--font-sans);
+    font-size: 0.9rem; transition: border-color 0.3s;
+  }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  textarea.form-input { resize: vertical; min-height: 120px; }
+  .form-submit { width: 100%; }
+
+  /* Footer */
+  footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px; }
+  .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; }
+  .footer-brand p { font-size: 0.85rem; line-height: 1.75; color: var(--smoke); margin-top: 16px; max-width: 280px; }
+  .footer-col-title { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 10px; }
+  .footer-links a { font-size: 0.85rem; color: var(--smoke); transition: color 0.3s; }
+  .footer-links a:hover { color: var(--ivory); }
+  .footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 28px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .footer-copy { font-size: 0.78rem; color: var(--muted); }
+
+  /* Stars background effect */
+  .stars-overlay {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(78,232,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 15%, rgba(78,232,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 70%, rgba(220,232,240,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 85%, rgba(78,232,255,0.25) 0%, transparent 100%),
+      radial-gradient(1px 1px at 65% 45%, rgba(220,232,240,0.3) 0%, transparent 100%);
+  }
+
+  @media (max-width: 768px) {
+    #navbar { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero-text-wrap { padding: 0 24px; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .collection-grid { grid-template-columns: 1fr; }
+    .atelier-inner { grid-template-columns: 1fr; }
+    .milestones { grid-template-columns: 1fr 1fr; }
+    .membership-inner { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-ring"></div>
+  <div class="preloader-text">Celestial Society</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="si-dot"></div>
+  <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-label">Scroll</div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Celestial <span>Society</span></a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Events</a></li>
+    <li><a href="process.html">Membership</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="process.html" class="nav-cta">Join Us</a>
+</nav>
+
+<!-- Hero — Type G -->
+<section class="hero-text-driven" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-text-wrap">
+    <div class="hero-eyebrow">Est. 1987 · Amateur Astronomy · Global Community</div>
+    <div class="hero-word word-1">CELESTIAL</div>
+    <div class="hero-word word-2">SOCIETY</div>
+    <p class="hero-tagline">Looking Up, Together</p>
+    <a href="collection.html" class="btn-primary">Explore Events</a>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section class="stats-strip" id="stats">
+  <div class="stats-grid">
+    <div class="stat-block">
+      <span class="stat-num" data-target="480">0</span>
+      <span class="stat-label">Active Members</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="37">0</span>
+      <span class="stat-label">Years Active</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="120">0</span>
+      <span class="stat-label">Annual Events</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="14">0</span>
+      <span class="stat-label">Observatories</span>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy" id="philosophy">
+  <div class="section-eyebrow">Our Philosophy</div>
+  <h2 class="section-title">Where Science Meets <em>Wonder</em></h2>
+  <div class="philosophy-grid">
+    <div class="philo-card">
+      <div class="philo-icon">✦</div>
+      <h3 class="philo-title">Dark Sky Preservation</h3>
+      <p class="philo-text">We advocate for protecting natural darkness, working with local governments and communities to reduce light pollution and restore the night sky for future generations.</p>
+    </div>
+    <div class="philo-card">
+      <div class="philo-icon">◎</div>
+      <h3 class="philo-title">Citizen Science</h3>
+      <p class="philo-text">Our members contribute real observational data to global astronomy projects, from meteor counts and variable star monitoring to exoplanet transit detection programs.</p>
+    </div>
+    <div class="philo-card">
+      <div class="philo-icon">⌘</div>
+      <h3 class="philo-title">Open Knowledge</h3>
+      <p class="philo-text">Every technique, equipment review, and astrophotography guide we produce is shared freely. Knowledge of the cosmos belongs to everyone who looks up in curiosity.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Collection Grid (Events) -->
+<section class="collection" id="collection">
+  <div class="section-eyebrow">Featured Events</div>
+  <h2 class="section-title">What Awaits <em>Above</em></h2>
+  <div class="collection-grid">
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Annual Gathering</span>
+        <h3 class="col-card-title">Dark Sky Weekend</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Monthly Session</span>
+        <h3 class="col-card-title">Telescope Nights</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-6.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Workshop</span>
+        <h3 class="col-card-title">Astrophotography Masterclass</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-7.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Special Event</span>
+        <h3 class="col-card-title">Meteor Shower Watch</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Atelier / Story -->
+<section class="atelier" id="about">
+  <div class="atelier-inner">
+    <div class="atelier-img-wrap">
+      <div class="atelier-img" style="background-image: url('images/img-8.webp')"></div>
+      <div class="atelier-img-accent"></div>
+    </div>
+    <div class="atelier-text">
+      <div class="section-eyebrow">Our Story</div>
+      <h2 class="section-title">Founded Under <em>Open Skies</em></h2>
+      <p class="atelier-body">The Celestial Society was born in 1987 when a small group of stargazers gathered on a hilltop with nothing but curiosity and borrowed telescopes. Today we are a thriving community of amateur astronomers, astrophotographers, and space enthusiasts united by a single shared impulse: to understand our place in the universe.</p>
+      <p class="atelier-body" style="margin-top:16px;">Our monthly observation nights, annual dark-sky retreats, and hands-on workshops have introduced thousands of people to the quiet wonder of the cosmos. We believe the universe is best experienced together.</p>
+      <div class="atelier-cta">
+        <a href="about.html" class="btn-primary">Read Our Story</a>
+        <a href="process.html" class="btn-ghost">Join the Club</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process / Timeline (Membership Steps) -->
+<section class="process" id="process">
+  <div class="section-eyebrow">How It Works</div>
+  <h2 class="section-title">Your Journey to <em>the Stars</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-num">01</div>
+      <div>
+        <h3 class="timeline-title">Apply for Membership</h3>
+        <p class="timeline-text">Complete our brief application. Tell us your experience level and what celestial objects fascinate you most. All backgrounds and skill levels are warmly welcome.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">02</div>
+      <div>
+        <h3 class="timeline-title">Attend an Orientation Night</h3>
+        <p class="timeline-text">Join us for an introduction evening at our primary observatory. Meet fellow members, learn club protocols, and get a guided tour of the equipment available to you.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">03</div>
+      <div>
+        <h3 class="timeline-title">Choose Your Path</h3>
+        <p class="timeline-text">Whether you want to learn visual observation, dive into astrophotography, or contribute to citizen science projects — we have a structured learning path for you.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">04</div>
+      <div>
+        <h3 class="timeline-title">Participate in Events</h3>
+        <p class="timeline-text">Access our full calendar of observation nights, meteor watch parties, solar events, public outreach activities, and international star party excursions.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">05</div>
+      <div>
+        <h3 class="timeline-title">Share and Contribute</h3>
+        <p class="timeline-text">Present your findings at monthly meetings, publish astrophotography in our journal, and mentor newcomers. Your observations become part of a collective legacy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Heritage / Milestones -->
+<section class="heritage">
+  <div class="heritage-inner">
+    <div class="section-eyebrow">Our Heritage</div>
+    <h2 class="section-title">Decades of <em>Discovery</em></h2>
+    <div class="milestones">
+      <div class="milestone">
+        <span class="milestone-year">1987</span>
+        <h3 class="milestone-title">Society Founded</h3>
+        <p class="milestone-text">Twelve enthusiasts establish the club on the outskirts of the city, pooling resources to purchase the first shared telescope.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">1998</span>
+        <h3 class="milestone-title">First Observatory</h3>
+        <p class="milestone-text">Permanent dome observatory completed, housing a 12-inch Cassegrain reflector and a library of astronomical charts.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2008</span>
+        <h3 class="milestone-title">Dark Sky Reserve</h3>
+        <p class="milestone-text">Successfully campaigned for the designation of 40 square miles of rural land as a protected dark sky reserve.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2024</span>
+        <h3 class="milestone-title">450+ Members</h3>
+        <p class="milestone-text">Membership surpasses 450 across three regional chapters, with an active youth programme reaching 800 schoolchildren annually.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Press / Reviews -->
+<section class="press" id="reviews">
+  <div class="section-eyebrow">Member Voices</div>
+  <h2 class="section-title">What Our <em>Community</em> Says</h2>
+  <div class="swiper reviews-swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"Joining the Celestial Society changed the way I see the world — literally. I had never looked through a proper telescope before. Now I spend three nights a week at the observatory and I have made lifelong friends who share the same wonder."</p>
+          <div class="review-author">
+            <div class="review-avatar"></div>
+            <div>
+              <span class="review-name">Margaret Chen</span>
+              <span class="review-role">Member since 2019 · Astrophotography Division</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The mentorship programme is extraordinary. A retired astrophysicist spent four evenings teaching me how to calibrate tracking mounts and process deep-sky images. That level of knowledge sharing is rare and genuinely priceless."</p>
+          <div class="review-author">
+            <div class="review-avatar"></div>
+            <div>
+              <span class="review-name">David Okonkwo</span>
+              <span class="review-role">Member since 2021 · Citizen Science Programme</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The annual Dark Sky Weekend is genuinely one of the best experiences of my year. No light pollution, brilliant company, and on a clear night you can see the Milky Way arch overhead in a way that makes every problem feel small and every possibility feel vast."</p>
+          <div class="review-author">
+            <div class="review-avatar"></div>
+            <div>
+              <span class="review-name">Sarah Lindström</span>
+              <span class="review-role">Member since 2016 · Chapter Coordinator</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- Membership / Contact Form -->
+<section class="membership" id="contact">
+  <div class="membership-inner">
+    <div class="membership-info">
+      <div class="section-eyebrow">Join the Society</div>
+      <h2 class="section-title">Become Part of <em>Something Infinite</em></h2>
+      <ul class="membership-perks">
+        <li>Unlimited access to all observatory facilities</li>
+        <li>Monthly newsletter with observation guides</li>
+        <li>Access to our equipment loan library</li>
+        <li>Discounts on workshops and star party travel</li>
+        <li>Member-only astrophotography competitions</li>
+        <li>Mentorship from experienced astronomers</li>
+        <li>Voting rights and club governance participation</li>
+      </ul>
+    </div>
+    <div class="contact-form">
+      <form>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Experience Level</label>
+          <select class="form-input">
+            <option value="">Select your level</option>
+            <option>Complete Beginner</option>
+            <option>Some Experience</option>
+            <option>Intermediate Observer</option>
+            <option>Advanced Amateur</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">What interests you most?</label>
+          <textarea class="form-input" placeholder="Visual observation, astrophotography, citizen science..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary form-submit">Apply for Membership</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo">Celestial <span style="color:var(--accent)">Society</span></div>
+      <p>A community of amateur astronomers dedicated to stargazing, telescope observation, and celebrating the wonder of the cosmos together.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Explore</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="collection.html">Events</a></li>
+        <li><a href="process.html">Membership</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Resources</div>
+      <ul class="footer-links">
+        <li><a href="#">Observation Guides</a></li>
+        <li><a href="#">Equipment Library</a></li>
+        <li><a href="#">Photo Gallery</a></li>
+        <li><a href="#">Club Journal</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <ul class="footer-links">
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">YouTube</a></li>
+        <li><a href="#">Forum</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2024 Celestial Society. All rights reserved.</span>
+    <span class="footer-copy">Looking Up, Together</span>
+  </div>
+</footer>
+
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span');
+      wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+      if (type.includes('chars')) {
+        [...word].forEach(ch => {
+          const c = document.createElement('span');
+          c.className = 'split-char'; c.style.display = 'inline-block'; c.textContent = ch;
+          wSpan.appendChild(c); this.chars.push(c);
+        });
+      } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+// Preloader
+window.addEventListener('load', () => {
+  gsap.to('#preloader', {
+    opacity: 0, duration: 0.8, delay: 0.8, ease: 'power2.out',
+    onComplete: () => {
+      document.getElementById('preloader').style.display = 'none';
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }
+  });
+  setTimeout(() => {
+    document.getElementById('scroll-indicator').classList.add('visible');
+  }, 4000);
+});
+
+// Navbar scroll
+window.addEventListener('scroll', () => {
+  const navbar = document.getElementById('navbar');
+  if (window.scrollY > 80) navbar.classList.add('scrolled');
+  else navbar.classList.remove('scrolled');
+
+  // Scroll indicator fill
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (window.scrollY / scrollable) * 100;
+  document.getElementById('si-fill').style.height = progress + '%';
+});
+
+// Hero Type G — scroll transform
+gsap.to('.word-1', {
+  x: '-25vw', scale: 0.5, opacity: 0.08,
+  scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 }
+});
+gsap.to('.word-2', {
+  x: '25vw', scale: 0.5, opacity: 0.08,
+  scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 }
+});
+gsap.to('.hero-tagline', {
+  opacity: 0, y: -30,
+  scrollTrigger: { trigger: '.hero-text-driven', start: '20% top', end: '50% top', scrub: 1 }
+});
+gsap.to('.hero-text-wrap .btn-primary', {
+  opacity: 0, y: -20,
+  scrollTrigger: { trigger: '.hero-text-driven', start: '25% top', end: '55% top', scrub: 1 }
+});
+
+// Stats counter
+const counters = document.querySelectorAll('.stat-num[data-target]');
+counters.forEach(counter => {
+  ScrollTrigger.create({
+    trigger: counter,
+    start: 'top 85%',
+    once: true,
+    onEnter: () => {
+      const target = parseInt(counter.dataset.target);
+      gsap.to({ val: 0 }, {
+        val: target, duration: 1.8, ease: 'power2.out',
+        onUpdate: function() { counter.textContent = Math.round(this.targets()[0].val); }
+      });
+    }
+  });
+});
+
+// Philosophy grid
+gsap.from('.philo-card', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15,
+  scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+});
+
+// Collection cards
+gsap.from('.col-card', {
+  immediateRender: false,
+  opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15,
+  scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+});
+
+// Atelier
+gsap.from('.atelier-img-wrap', {
+  immediateRender: false,
+  opacity: 0, x: -40, duration: 1.3, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.atelier-inner', start: 'top 80%', once: true }
+});
+gsap.from('.atelier-text', {
+  immediateRender: false,
+  opacity: 0, x: 40, duration: 1.3, ease: 'power2.inOut',
+  scrollTrigger: { trigger: '.atelier-inner', start: 'top 80%', once: true }
+});
+
+// Timeline
+gsap.from('.timeline-item', {
+  immediateRender: false,
+  opacity: 0, x: -30, duration: 1.1, ease: 'power2.inOut', stagger: 0.15,
+  scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true }
+});
+
+// Milestones
+gsap.from('.milestone', {
+  immediateRender: false,
+  opacity: 0, y: 30, duration: 1.1, ease: 'power2.inOut', stagger: 0.15,
+  scrollTrigger: { trigger: '.milestones', start: 'top 85%', once: true }
+});
+
+// Section titles
+document.querySelectorAll('.section-title').forEach(el => {
+  gsap.from(el, {
+    immediateRender: false,
+    opacity: 0, y: 40, duration: 1.3, ease: 'power2.inOut',
+    scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+  });
+});
+
+// Reviews Swiper
+new Swiper('.reviews-swiper', {
+  slidesPerView: 1,
+  spaceBetween: 24,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

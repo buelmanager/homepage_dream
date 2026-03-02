@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QARMID — Oasis Retreat</title>
+  <meta name="description" content="Desert oasis luxury wellness retreat. 24 private villas, 1,200 acres of Saharan wilderness. Where the desert meets paradise.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1A0A0E; --surface: #241016; --surface2: #2C1420;
+      --accent: #C96A8A; --accent-light: #E090A8; --accent-dark: #8A3A5C;
+      --ivory: #F0DCE4; --smoke: #A08088; --muted: #604A52;
+      --border: #200C12;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Lato', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+    .preloader-ring { width: 72px; height: 72px; border: 1px solid var(--muted); border-top-color: var(--accent); border-radius: 50%; animation: spin 1.2s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .preloader-text { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.4em; color: var(--accent); text-transform: uppercase; }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar::after { content: ''; position: absolute; left: -100%; top: 0; width: 100%; height: 100%; background: var(--accent); animation: barFill 2.2s ease forwards; }
+    @keyframes barFill { to { left: 0; } }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 28px 60px; display: flex; align-items: center; justify-content: space-between; transition: all 0.4s ease; }
+    nav.scrolled { background: rgba(26,10,14,0.92); backdrop-filter: blur(12px); padding: 18px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 0.1em; color: var(--ivory); text-decoration: none; font-weight: 700; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; font-weight: 400; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta { background: var(--accent); color: var(--ivory); padding: 10px 24px; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background 0.3s; font-weight: 700; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* SCROLL INDICATOR */
+    .scroll-indicator { position: fixed; left: 30px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.5s; }
+    .scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--accent)); }
+    .scroll-text { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; writing-mode: vertical-rl; }
+
+    /* HERO — Type D Portraits + Stats */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; align-items: center; background: var(--bg); }
+    .hero-content-panel { padding: 120px 60px 120px 80px; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; font-weight: 400; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3.5rem, 7vw, 6.5rem); font-weight: 700; line-height: 0.95; color: var(--ivory); margin-bottom: 24px; }
+    .hero-subtitle { font-size: 1rem; color: var(--smoke); line-height: 1.7; margin-bottom: 40px; max-width: 380px; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 40px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 0; }
+    .stat-item { }
+    .stat-num { font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent); display: block; line-height: 1; margin-bottom: 6px; font-weight: 700; }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.15em; color: var(--smoke); text-transform: uppercase; }
+    .hero-cta { margin-top: 40px; }
+    .btn-primary { background: var(--accent); color: var(--ivory); padding: 14px 36px; text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; transition: background 0.3s; display: inline-block; font-weight: 700; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { border: 1px solid var(--accent); color: var(--accent); padding: 14px 36px; text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.3s; display: inline-block; margin-left: 16px; font-weight: 400; }
+    .btn-secondary:hover { background: var(--accent); color: var(--ivory); }
+    .hero-portraits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 80px 40px; height: 100vh; }
+    .portrait-card { background-size: cover; background-position: center; position: relative; overflow: hidden; }
+    .portrait-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(26,10,14,0.4) 100%); }
+    .card-1 { background-image: url('images/img-1.webp'); }
+    .card-2 { background-image: url('images/img-8.webp'); }
+    .card-3 { grid-column: span 2; background-image: url('images/img-9.webp'); max-height: 180px; background-position: center 40%; }
+
+    /* INTRO */
+    .section-intro { background: var(--surface); padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .intro-img img { width: 100%; height: 500px; object-fit: cover; display: block; filter: brightness(0.75); }
+    .intro-content .section-label { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; display: block; }
+    .intro-headline { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); color: var(--ivory); margin-bottom: 24px; font-style: italic; font-weight: 400; }
+    .intro-text { color: var(--smoke); font-size: 0.95rem; margin-bottom: 20px; }
+
+    /* VILLAS */
+    .section-villas { background: var(--bg); padding: 100px 80px; }
+    .section-header { margin-bottom: 60px; }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); color: var(--ivory); font-weight: 700; }
+    .villas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; overflow: visible; }
+    .col-item { background: var(--surface); position: relative; overflow: hidden; }
+    .col-img { width: 100%; height: 340px; object-fit: cover; display: block; filter: brightness(0.75); transition: filter 0.5s, transform 0.5s; }
+    .col-item:hover .col-img { filter: brightness(0.9); transform: scale(1.03); }
+    .col-info { padding: 32px; }
+    .col-tag { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: block; }
+    .col-name { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 12px; }
+    .col-desc { font-size: 0.85rem; color: var(--smoke); line-height: 1.6; margin-bottom: 18px; }
+    .col-price { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accent-light); text-transform: uppercase; }
+
+    /* PHILOSOPHY */
+    .section-philosophy { background: var(--surface); padding: 100px 80px; }
+    .phil-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; }
+    .phil-card { padding: 44px 36px; border: 1px solid var(--border); position: relative; transition: border-color 0.3s; }
+    .phil-card:hover { border-color: var(--accent); }
+    .phil-num { font-family: var(--font-serif); font-size: 4rem; color: var(--border); position: absolute; top: 20px; right: 28px; line-height: 1; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-bottom: 14px; }
+    .phil-text { font-size: 0.88rem; color: var(--smoke); line-height: 1.7; }
+
+    /* EXPERIENCES */
+    .section-experiences { background: var(--bg); padding: 100px 80px; }
+    .exp-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 60px; margin-top: 60px; }
+    .exp-main img { width: 100%; height: 540px; object-fit: cover; display: block; filter: brightness(0.75); }
+    .exp-list { display: flex; flex-direction: column; gap: 0; }
+    .exp-item { padding: 28px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: all 0.3s; }
+    .exp-item:hover { padding-left: 16px; }
+    .exp-item:first-child { padding-top: 0; }
+    .exp-num { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 8px; display: block; }
+    .exp-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 6px; }
+    .exp-desc { font-size: 0.82rem; color: var(--smoke); }
+
+    /* PROCESS */
+    .section-process { background: var(--surface); padding: 100px 80px; }
+    .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .process-step { padding: 40px 32px; background: var(--surface2); border-top: 2px solid var(--border); transition: border-color 0.3s; }
+    .process-step:hover { border-color: var(--accent); }
+    .step-num { font-family: var(--font-serif); font-size: 3rem; color: var(--muted); line-height: 1; margin-bottom: 20px; }
+    .step-title { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 10px; }
+    .step-text { font-size: 0.85rem; color: var(--smoke); line-height: 1.6; }
+
+    /* TESTIMONIALS */
+    .section-testimonials { background: var(--bg); padding: 100px 80px; }
+    .testimonial-slide { padding: 56px; background: var(--surface); }
+    .testimonial-stars { color: var(--accent); font-size: 0.85rem; margin-bottom: 20px; letter-spacing: 0.1em; }
+    .testimonial-quote { font-family: var(--font-serif); font-size: clamp(1.1rem, 2vw, 1.5rem); font-style: italic; color: var(--ivory); line-height: 1.55; margin-bottom: 32px; font-weight: 400; }
+    .testimonial-author { display: flex; align-items: center; gap: 18px; }
+    .author-img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; filter: brightness(0.85); }
+    .author-name { font-size: 0.9rem; color: var(--ivory); font-weight: 700; }
+    .author-title { font-size: 0.78rem; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--smoke); opacity: 0.6; }
+    .swiper-pagination-bullet-active { background: var(--accent); opacity: 1; }
+
+    /* CTA / BOOKING */
+    .section-booking { background: var(--surface); padding: 100px 80px; }
+    .booking-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .booking-img img { width: 100%; height: 520px; object-fit: cover; display: block; filter: brightness(0.7); }
+    .booking-content .section-label { margin-bottom: 16px; }
+    .booking-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); color: var(--ivory); margin-bottom: 24px; }
+    .booking-text { color: var(--smoke); font-size: 0.95rem; margin-bottom: 32px; }
+    .booking-features { list-style: none; margin-bottom: 40px; }
+    .booking-features li { color: var(--smoke); font-size: 0.88rem; padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+    .booking-features li::before { content: '◆'; color: var(--accent); font-size: 0.5rem; }
+
+    /* PRESS */
+    .section-press { background: var(--bg); padding: 60px 80px; }
+    .press-row { display: flex; gap: 60px; align-items: center; justify-content: center; flex-wrap: wrap; }
+    .press-card { font-family: var(--font-serif); font-size: 1.2rem; color: var(--muted); letter-spacing: 0.05em; font-style: italic; transition: color 0.3s; }
+    .press-card:hover { color: var(--smoke); }
+
+    /* NEWSLETTER */
+    .section-newsletter { background: var(--surface); padding: 80px; }
+    .newsletter-inner { display: flex; align-items: center; justify-content: space-between; gap: 60px; flex-wrap: wrap; }
+    .newsletter-text h3 { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); margin-bottom: 10px; }
+    .newsletter-text p { color: var(--smoke); font-size: 0.9rem; }
+    .newsletter-form { display: flex; gap: 0; flex: 1; max-width: 480px; }
+    .newsletter-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; border-right: none; }
+    .newsletter-input:focus { border-color: var(--accent); }
+    .newsletter-btn { background: var(--accent); color: var(--ivory); border: none; padding: 14px 28px; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; white-space: nowrap; font-weight: 700; }
+    .newsletter-btn:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.6rem; color: var(--ivory); letter-spacing: 0.1em; margin-bottom: 20px; font-weight: 700; }
+    .footer-tagline { font-size: 0.88rem; color: var(--smoke); line-height: 1.7; max-width: 280px; }
+    .footer-heading { font-size: 0.7rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 24px; font-weight: 400; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a { color: var(--smoke); text-decoration: none; font-size: 0.88rem; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { font-size: 0.78rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--smoke); }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="preloader-ring"></div>
+  <div class="preloader-text">QARMID</div>
+  <div class="preloader-bar"></div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div class="scroll-indicator" id="scrollIndicator">
+  <div class="scroll-line"></div>
+  <div class="scroll-text">Scroll</div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">QARMID</a>
+  <ul class="nav-links">
+    <li><a href="#villas">Villas</a></li>
+    <li><a href="#experiences">Experiences</a></li>
+    <li><a href="#process">Journey</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="#booking" class="nav-cta">Reserve</a>
+</nav>
+
+<!-- HERO — Type D Portraits + Stats -->
+<section class="hero" id="hero">
+  <div class="hero-content-panel">
+    <div class="hero-eyebrow">Est. 2004 · Desert Oasis</div>
+    <h1 class="hero-title">QARMID</h1>
+    <p class="hero-subtitle">An oasis of absolute luxury in the ancient Saharan wilderness — 24 private villas, 1,200 acres of desert paradise</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" data-target="24">0</span>
+        <span class="stat-label">Private Villas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="1200">0</span>
+        <span class="stat-label">Acres of Desert</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="5">0</span>
+        <span class="stat-label">Star Rating</span>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="#booking" class="btn-primary">Reserve Retreat</a>
+      <a href="#villas" class="btn-secondary">View Villas</a>
+    </div>
+  </div>
+  <div class="hero-portraits">
+    <div class="portrait-card card-1"></div>
+    <div class="portrait-card card-2"></div>
+    <div class="portrait-card card-3"></div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="section-intro" id="intro">
+  <div class="intro-img">
+    <img src="images/img-10.webp" alt="Desert oasis architecture">
+  </div>
+  <div class="intro-content">
+    <span class="section-label">The Retreat</span>
+    <h2 class="intro-headline">"Where the desert becomes a garden of extraordinary luxury"</h2>
+    <p class="intro-text">Qarmid was conceived to answer a single question: what would an oasis look like if it were designed for the most discerning traveller alive? The answer — 24 private villas, each facing a different compass point of the desert, each with its own infinity pool fed by an ancient underground spring.</p>
+    <p class="intro-text">We are located 80km from Zagora in southern Morocco, accessible only by private 4x4 or our own helicopter transfer from Marrakech. The isolation is intentional. The stillness is the point.</p>
+    <a href="about.html" class="btn-primary" style="margin-top:16px;">Our Story</a>
+  </div>
+</section>
+
+<!-- VILLAS -->
+<section class="section-villas" id="villas">
+  <div class="section-header">
+    <span class="section-label">Accommodation</span>
+    <h2 class="section-title">Private Villas</h2>
+  </div>
+  <div class="villas-grid" id="collection">
+    <div class="col-item">
+      <img class="col-img" src="images/img-6.webp" alt="Dune Villa" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Desert Facing</span>
+        <div class="col-name">Dune Villa</div>
+        <p class="col-desc">Facing the great sand sea to the east. A single-storey rammed earth villa with a 12-metre infinity pool that catches the first desert light each morning.</p>
+        <div class="col-price">From $1,800 / night · 1 Bedroom</div>
+      </div>
+    </div>
+    <div class="col-item">
+      <img class="col-img" src="images/img-7.webp" alt="Palm Villa" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Oasis Facing</span>
+        <div class="col-name">Palm Villa</div>
+        <p class="col-desc">Nestled within our ancient date palm grove. Cooler, shadowed, fragrant with jasmine and frangipani. Plunge pool fed directly by the underground spring.</p>
+        <div class="col-price">From $2,200 / night · 2 Bedrooms</div>
+      </div>
+    </div>
+    <div class="col-item">
+      <img class="col-img" src="images/img-2.webp" alt="Star Villa" loading="lazy">
+      <div class="col-info">
+        <span class="col-tag">Sky Terrace</span>
+        <div class="col-name">Star Villa</div>
+        <p class="col-desc">Open-roofed, designed for total sky immersion. The roof retracts to reveal a glass ceiling for stargazing from bed. Our darkest, most remote villa.</p>
+        <div class="col-price">From $3,200 / night · 3 Bedrooms</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="section-philosophy" id="philosophy">
+  <div class="section-header">
+    <span class="section-label">Our Principles</span>
+    <h2 class="section-title">The Qarmid Way</h2>
+  </div>
+  <div class="phil-grid">
+    <div class="phil-card">
+      <span class="phil-num">01</span>
+      <div class="phil-title">Absolute Privacy</div>
+      <p class="phil-text">No two villas share a line of sight. No communal dining rooms. No lobby. No other guests unless you choose to meet them. Qarmid is yours and yours alone.</p>
+    </div>
+    <div class="phil-card">
+      <span class="phil-num">02</span>
+      <div class="phil-title">Desert First</div>
+      <p class="phil-text">Every design decision defers to the landscape. Rammed earth walls, local stone, date palm timber, local artisan textiles. Nothing shipped from outside Morocco.</p>
+    </div>
+    <div class="phil-card">
+      <span class="phil-num">03</span>
+      <div class="phil-title">Uncurated Stillness</div>
+      <p class="phil-text">We do not programme your stay. There are no scheduled activities, no wellness itineraries. You may do nothing for five days, and we will celebrate that choice.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCES -->
+<section class="section-experiences" id="experiences">
+  <div class="section-header">
+    <span class="section-label">Desert Life</span>
+    <h2 class="section-title">Desert Experiences</h2>
+  </div>
+  <div class="exp-grid">
+    <div class="exp-main">
+      <img src="images/img-11.webp" alt="Desert experience" loading="lazy">
+    </div>
+    <div class="exp-list">
+      <div class="exp-item">
+        <span class="exp-num">01</span>
+        <div class="exp-title">Dawn Dune Trek</div>
+        <p class="exp-desc">Rise at 4am with our desert guide. Witness the first light hit the sand sea from its highest ridge.</p>
+      </div>
+      <div class="exp-item">
+        <span class="exp-num">02</span>
+        <div class="exp-title">Astronomy Evening</div>
+        <p class="exp-desc">A private astronomy session with a Moroccan astrophysicist. The Saharan sky is among the world's darkest.</p>
+      </div>
+      <div class="exp-item">
+        <span class="exp-num">03</span>
+        <div class="exp-title">Camel Caravan</div>
+        <p class="exp-desc">A half-day camel journey to a remote oasis spring, with a traditional Berber lunch prepared at the destination.</p>
+      </div>
+      <div class="exp-item">
+        <span class="exp-num">04</span>
+        <div class="exp-title">Desert Hammam</div>
+        <p class="exp-desc">A full Moroccan hammam ceremony in our subterranean spa, using mineral water from our own spring.</p>
+      </div>
+      <div class="exp-item">
+        <span class="exp-num">05</span>
+        <div class="exp-title">Private Chef</div>
+        <p class="exp-desc">Your villa chef prepares Moroccan and international dishes from the desert larder, served where you wish.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section-process" id="process">
+  <div class="section-header">
+    <span class="section-label">Planning Your Stay</span>
+    <h2 class="section-title">The Arrival Journey</h2>
+  </div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <div class="step-title">Private Enquiry</div>
+      <p class="step-text">Contact our concierge team. No online booking system — every reservation is handled personally by our guest relations director.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <div class="step-title">Transfer Arrangement</div>
+      <p class="step-text">Helicopter from Marrakech or Fez. Private 4x4 convoy from Zagora. We coordinate every element of your arrival.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <div class="step-title">Villa Arrival</div>
+      <p class="step-text">Your villa is prepared to your specifications — temperature, flowers, welcome drinks, your preferred music. No check-in desk.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">04</div>
+      <div class="step-title">Your Desert Days</div>
+      <p class="step-text">Days structured only by the rhythm of the desert. Your villa team anticipates needs. The landscape does the rest.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section-testimonials" id="testimonials">
+  <div class="section-header">
+    <span class="section-label">Guest Words</span>
+    <h2 class="section-title">Reflections</h2>
+  </div>
+  <div style="margin-top:48px;">
+    <div class="swiper swiper-testimonials">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonial-slide">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">"Qarmid exists in a category beyond luxury. The concept of having 1,200 acres of Saharan desert as your personal garden, with every comfort imaginable, is something no amount of money can replicate elsewhere."</p>
+            <div class="testimonial-author">
+              <img class="author-img" src="images/img-12.webp" alt="Guest">
+              <div>
+                <div class="author-name">Henri de Beaumont</div>
+                <div class="author-title">Paris · Three-time Guest</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-slide">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">"We came for our anniversary and stayed eleven days. On the third day, we stopped reaching for our phones entirely. On the seventh, we stopped tracking time. Qarmid restored something I thought was permanently lost."</p>
+            <div class="testimonial-author">
+              <img class="author-img" src="images/img-13.webp" alt="Guest">
+              <div>
+                <div class="author-name">Isabella & Marco Ferretti</div>
+                <div class="author-title">Milan · Anniversary Stay</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="position:relative;margin-top:32px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="section-booking" id="booking">
+  <div class="booking-wrap">
+    <div class="booking-img">
+      <img src="images/img-14.webp" alt="Desert sunset pool">
+    </div>
+    <div class="booking-content">
+      <span class="section-label">Reserve Your Villa</span>
+      <h2 class="booking-title">Begin Your Desert Escape</h2>
+      <p class="booking-text">All reservations are handled personally by our guest relations director. Minimum stay 3 nights. Maximum 24 villas, 24 families at any one time.</p>
+      <ul class="booking-features">
+        <li>Private helicopter transfer from Marrakech</li>
+        <li>Dedicated villa concierge around the clock</li>
+        <li>Personal chef — meals served anywhere on the estate</li>
+        <li>Full access to desert spa and infinity pools</li>
+        <li>Daily astronomical session (weather permitting)</li>
+        <li>Complimentary camel caravan expedition</li>
+      </ul>
+      <a href="contact.html" class="btn-primary">Send Reservation Enquiry</a>
+    </div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="section-press">
+  <div class="press-row">
+    <div class="press-card">Condé Nast Traveller</div>
+    <div class="press-card">Forbes Travel Guide</div>
+    <div class="press-card">The Telegraph</div>
+    <div class="press-card">Financial Times</div>
+    <div class="press-card">Town & Country</div>
+    <div class="press-card">Wallpaper*</div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="section-newsletter">
+  <div class="newsletter-inner">
+    <div class="newsletter-text">
+      <h3>Desert Dispatches</h3>
+      <p>Seasonal updates, new villa releases, and private event invitations from the Qarmid estate.</p>
+    </div>
+    <div class="newsletter-form">
+      <input class="newsletter-input" type="email" placeholder="your@email.com">
+      <button class="newsletter-btn">Subscribe</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-brand">QARMID</div>
+      <p class="footer-tagline">Desert oasis luxury wellness retreat. 24 private villas, 1,200 acres of Saharan wilderness, Morocco.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Villas</div>
+      <ul class="footer-links">
+        <li><a href="#villas">Dune Villa</a></li>
+        <li><a href="#villas">Palm Villa</a></li>
+        <li><a href="#villas">Star Villa</a></li>
+        <li><a href="collection.html">Full Villa Guide</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Navigate</div>
+      <ul class="footer-links">
+        <li><a href="about.html">Our Story</a></li>
+        <li><a href="#experiences">Experiences</a></li>
+        <li><a href="process.html">Planning Guide</a></li>
+        <li><a href="contact.html">Reserve</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Contact</div>
+      <ul class="footer-links">
+        <li><a href="#">Zagora Region, Morocco</a></li>
+        <li><a href="#">+212 5 28 000 000</a></li>
+        <li><a href="#">reserve@qarmid.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">&copy; 2026 QARMID Retreat. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Booking Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* PRE-HIDE BELOW FOLD */
+;(function preHideBelowFold() {
+  const VH = window.innerHeight;
+  const selectors = ['.col-item','.phil-card','.exp-item','.process-step','.booking-img','.booking-content','.press-card','.stat-item'];
+  document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+    if (el.getBoundingClientRect().top > VH * 0.95) {
+      el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; el.style.willChange = 'opacity, transform';
+    }
+  });
+})();
+
+/* PRELOADER */
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    gsap.to('#preloader', {
+      opacity: 0, duration: 0.8, ease: 'power2.out',
+      onComplete: function() {
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('scrollIndicator').classList.add('visible');
+        initHero();
+      }
+    });
+  }, 2400);
+  setTimeout(function() {
+    document.getElementById('scrollIndicator').classList.add('visible');
+  }, 4000);
+});
+
+function initHero() {
+  gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 24, duration: 1.1, ease: 'power2.out', delay: 0.1 });
+  gsap.from('.hero-title', { immediateRender: false, opacity: 0, y: 24, duration: 1.2, ease: 'power2.out', delay: 0.25 });
+  gsap.from('.hero-subtitle', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', delay: 0.45 });
+  gsap.from('.hero-stats .stat-item', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', delay: 0.6, stagger: 0.10 });
+  gsap.from('.hero-cta', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', delay: 0.9 });
+  gsap.from('.portrait-card', { immediateRender: false, opacity: 0, y: 24, duration: 1.1, ease: 'power2.out', delay: 0.2, stagger: 0.10 });
+}
+
+/* NAVBAR */
+ScrollTrigger.create({
+  start: 'top -80',
+  onUpdate: function(self) {
+    document.getElementById('navbar').classList.toggle('scrolled', self.progress > 0);
+  }
+});
+
+/* COUNTER */
+document.querySelectorAll('[data-target]').forEach(function(el) {
+  const target = parseInt(el.getAttribute('data-target'));
+  ScrollTrigger.create({
+    trigger: el, start: 'top 85%', once: true,
+    onEnter: function() {
+      gsap.fromTo(el, { textContent: 0 }, {
+        textContent: target, duration: 1.2, ease: 'power2.out', snap: { textContent: 1 },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)); }
+      });
+    }
+  });
+});
+
+/* SCROLL ANIMATIONS — A1 Standard */
+['.col-item', '.phil-card', '.process-step', '.press-card', '.stat-item'].forEach(function(selector) {
+  document.querySelectorAll(selector).forEach(function(el, i) {
+    ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+      onEnter: function() { gsap.to(el, { opacity: 1, y: 0, duration: 1.1, ease: 'power2.out', delay: (i % 4) * 0.10 }); }
+    });
+  });
+});
+
+['.exp-item'].forEach(function(selector) {
+  document.querySelectorAll(selector).forEach(function(el, i) {
+    ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+      onEnter: function() { gsap.to(el, { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out', delay: i * 0.10 }); }
+    });
+  });
+});
+
+['.booking-img', '.booking-content', '.intro-img', '.intro-content'].forEach(function(sel) {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+    onEnter: function() { gsap.to(el, { opacity: 1, y: 0, duration: 1.1, ease: 'power2.out' }); }
+  });
+});
+
+/* SWIPER */
+new Swiper('.swiper-testimonials', {
+  slidesPerView: 1,
+  spaceBetween: 24,
+  loop: true,
+  autoplay: { delay: 5500, disableOnInteraction: false },
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 } }
+});
+</script>
+</body>
+</html>

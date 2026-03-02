@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Literacy Guild — Words Open Every Door</title>
+  <meta name="description" content="The Literacy Guild empowers adults through reading programs, community learning, and education access initiatives that transform lives through the written word.">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141820;
+      --surface: #1C2030;
+      --surface2: #222838;
+      --accent: #A0C4D8;
+      --accent-light: #C4DCE8;
+      --accent-dark: #6090B0;
+      --ivory: #DCE8F0;
+      --smoke: #809098;
+      --muted: #505860;
+      --border: #181C28;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* ─── PRELOADER ─── */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 24px;
+    }
+    .preloader-mark {
+      width: 64px; height: 64px;
+    }
+    .preloader-mark svg { width: 100%; height: 100%; }
+    .preloader-brand {
+      font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--smoke);
+    }
+    .preloader-bar {
+      width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden;
+    }
+    .preloader-bar-fill {
+      position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left;
+    }
+
+    /* ─── SCROLL INDICATOR ─── */
+    #scroll-indicator {
+      position: fixed; left: 32px; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      z-index: 100;
+    }
+    .scroll-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.8;
+    }
+    .scroll-line {
+      width: 1px; height: 80px; background: var(--muted); position: relative; overflow: hidden;
+    }
+    .scroll-line-fill {
+      position: absolute; top: 0; left: 0; right: 0; height: 0%; background: var(--accent);
+      transition: height 0.1s;
+    }
+    .scroll-label {
+      writing-mode: vertical-rl; font-size: 0.62rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--smoke); font-family: var(--font-sans);
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 64px; transition: background 0.4s, backdrop-filter 0.4s;
+    }
+    nav.scrolled { background: rgba(20, 24, 32, 0.92); backdrop-filter: blur(14px); }
+    .nav-logo {
+      font-family: var(--font-serif); font-size: 1.05rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--ivory); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.82rem;
+      letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── HERO TYPE G ─── */
+    .hero { min-height: 200vh; position: relative; }
+    .hero-bg {
+      position: fixed; inset: 0;
+      background-image: url('images/img-4.webp');
+      background-size: cover; background-position: center;
+      filter: brightness(0.30); z-index: -1;
+    }
+    .hero-text-wrap {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 80px; overflow: hidden;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 28px;
+    }
+    .hero-word {
+      font-family: var(--font-serif); font-size: clamp(4rem, 13vw, 13rem);
+      line-height: 0.88; font-weight: 700; text-transform: uppercase; color: var(--ivory);
+    }
+    .hero-word.word-2 { color: var(--accent-light); }
+    .hero-tagline {
+      font-family: var(--font-sans); font-size: clamp(1rem, 1.8vw, 1.4rem);
+      font-weight: 300; color: var(--smoke); letter-spacing: 0.08em;
+      margin-top: 32px; max-width: 480px;
+    }
+    .btn-primary {
+      display: inline-block; margin-top: 40px; padding: 14px 44px;
+      background: transparent; border: 1px solid var(--accent); color: var(--accent);
+      font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.25em;
+      text-transform: uppercase; text-decoration: none; transition: background 0.3s, color 0.3s;
+    }
+    .btn-primary:hover { background: var(--accent); color: var(--bg); }
+    .btn-ghost {
+      display: inline-block; padding: 14px 44px;
+      background: transparent; border: 1px solid var(--muted); color: var(--smoke);
+      font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.25em;
+      text-transform: uppercase; text-decoration: none; transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── SECTION COMMONS ─── */
+    section { position: relative; z-index: 1; }
+    .section-label {
+      font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px; font-family: var(--font-sans);
+    }
+    .section-heading {
+      font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 400; color: var(--ivory); line-height: 1.2;
+    }
+    .section-sub {
+      color: var(--smoke); font-size: 1.05rem; font-weight: 300; line-height: 1.8;
+      max-width: 600px;
+    }
+
+    /* ─── STATS STRIP ─── */
+    .stats-strip {
+      background: var(--surface); padding: 64px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: var(--font-serif); font-size: 3.2rem; color: var(--accent); display: block;
+    }
+    .stat-suffix { font-size: 1.8rem; }
+    .stat-label {
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--smoke); margin-top: 8px; font-family: var(--font-sans);
+    }
+
+    /* ─── PHILOSOPHY ─── */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .philosophy-header { margin-bottom: 72px; }
+    .philosophy-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px;
+    }
+    .philosophy-card {
+      padding: 40px 32px; border: 1px solid var(--border);
+      background: var(--surface); transition: border-color 0.3s;
+    }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .philosophy-icon {
+      width: 48px; height: 48px; margin-bottom: 24px;
+      border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center;
+    }
+    .philosophy-icon svg { width: 24px; height: 24px; stroke: var(--accent); fill: none; }
+    .philosophy-card h3 {
+      font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory);
+      margin-bottom: 16px; font-weight: 400;
+    }
+    .philosophy-card p { color: var(--smoke); font-size: 0.95rem; line-height: 1.8; font-weight: 300; }
+
+    /* ─── COLLECTION GRID ─── */
+    .collection { padding: 120px 80px; background: var(--surface); }
+    .collection-header { margin-bottom: 64px; }
+    .collection-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; overflow: visible;
+    }
+    .collection-card {
+      position: relative; overflow: hidden; cursor: pointer;
+    }
+    .collection-img {
+      width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center;
+      transition: transform 0.8s ease;
+    }
+    .collection-card:hover .collection-img { transform: scale(1.04); }
+    .collection-info {
+      padding: 28px 0 0;
+    }
+    .collection-tag {
+      font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); font-family: var(--font-sans);
+    }
+    .collection-title {
+      font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory);
+      margin-top: 8px; font-weight: 400;
+    }
+    .collection-desc { color: var(--smoke); font-size: 0.9rem; margin-top: 8px; line-height: 1.7; }
+
+    /* ─── ATELIER ─── */
+    .atelier { padding: 120px 80px; background: var(--bg); }
+    .atelier-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .atelier-img {
+      width: 100%; aspect-ratio: 3/4; background-size: cover; background-position: center;
+    }
+    .atelier-content { padding: 40px 0; }
+    .atelier-content .section-heading { margin-bottom: 24px; }
+    .atelier-content p { color: var(--smoke); line-height: 1.85; margin-bottom: 16px; font-weight: 300; }
+
+    /* ─── PROCESS ─── */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-header { margin-bottom: 72px; }
+    .process-list { display: flex; flex-direction: column; gap: 0; }
+    .process-item {
+      display: grid; grid-template-columns: 80px 1fr; gap: 40px;
+      padding: 48px 0; border-top: 1px solid var(--border);
+      align-items: start;
+    }
+    .process-item:last-child { border-bottom: 1px solid var(--border); }
+    .process-num {
+      font-family: var(--font-serif); font-size: 2.4rem; color: var(--muted);
+      font-weight: 700; line-height: 1;
+    }
+    .process-content h3 {
+      font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory);
+      font-weight: 400; margin-bottom: 12px;
+    }
+    .process-content p { color: var(--smoke); font-size: 0.95rem; line-height: 1.8; font-weight: 300; }
+
+    /* ─── HERITAGE ─── */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-header { margin-bottom: 72px; }
+    .heritage-timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+    .heritage-timeline::before {
+      content: ''; position: absolute; left: 120px; top: 0; bottom: 0; width: 1px;
+      background: var(--border);
+    }
+    .heritage-item {
+      display: grid; grid-template-columns: 120px 1fr; gap: 48px;
+      padding: 40px 0; align-items: start; position: relative;
+    }
+    .heritage-item::before {
+      content: ''; position: absolute; left: 116px; top: 52px;
+      width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
+    }
+    .heritage-year {
+      font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); font-weight: 700;
+      padding-top: 12px;
+    }
+    .heritage-content h3 {
+      font-family: var(--font-serif); font-size: 1.15rem; color: var(--ivory); font-weight: 400;
+      margin-bottom: 10px;
+    }
+    .heritage-content p { color: var(--smoke); font-size: 0.9rem; line-height: 1.75; font-weight: 300; }
+
+    /* ─── PRESS ─── */
+    .press { padding: 120px 80px; background: var(--surface); }
+    .press-header { margin-bottom: 64px; }
+    .swiper { overflow: hidden; }
+    .press-card {
+      background: var(--bg); padding: 52px 48px; border: 1px solid var(--border);
+    }
+    .press-quote {
+      font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory);
+      line-height: 1.7; font-style: italic; margin-bottom: 32px;
+    }
+    .press-quote::before { content: '\201C'; font-size: 3rem; color: var(--accent); line-height: 0.5; display: block; margin-bottom: 16px; }
+    .press-source { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ─── COMMISSION FORM ─── */
+    .commission { padding: 120px 80px; background: var(--bg); }
+    .commission-header { margin-bottom: 64px; }
+    .commission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+    .form-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .form-input, .form-select, .form-textarea {
+      background: var(--surface); border: 1px solid var(--border); color: var(--ivory);
+      padding: 14px 20px; font-family: var(--font-sans); font-size: 0.95rem;
+      outline: none; transition: border-color 0.3s;
+      -webkit-appearance: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .commission-info h3 {
+      font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); font-weight: 400; margin-bottom: 24px;
+    }
+    .commission-info p { color: var(--smoke); line-height: 1.8; font-weight: 300; margin-bottom: 16px; }
+    .contact-item { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+    .contact-item-icon { color: var(--accent); font-size: 1rem; margin-top: 2px; }
+    .contact-item-text { color: var(--smoke); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border);
+      padding: 64px 80px 40px;
+    }
+    .footer-inner {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 64px; margin-bottom: 48px;
+    }
+    .footer-brand h3 {
+      font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 16px;
+    }
+    .footer-brand p { color: var(--smoke); font-size: 0.88rem; line-height: 1.7; font-weight: 300; }
+    .footer-col h4 {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.88rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 28px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { color: var(--muted); font-size: 0.78rem; }
+    .footer-legal { display: flex; gap: 28px; }
+    .footer-legal a { color: var(--muted); font-size: 0.78rem; text-decoration: none; transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--smoke); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="16" width="30" height="38" rx="1" stroke="#A0C4D8" stroke-width="1.5"/>
+        <rect x="14" y="12" width="30" height="38" rx="1" stroke="#A0C4D8" stroke-width="1" stroke-dasharray="3 3"/>
+        <line x1="15" y1="26" x2="31" y2="26" stroke="#A0C4D8" stroke-width="1"/>
+        <line x1="15" y1="32" x2="31" y2="32" stroke="#A0C4D8" stroke-width="1"/>
+        <line x1="15" y1="38" x2="25" y2="38" stroke="#A0C4D8" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="preloader-brand">The Literacy Guild</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="bar-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"><div class="scroll-line-fill" id="scroll-fill"></div></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">The Literacy Guild</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Programs</a></li>
+      <li><a href="process.html">How It Works</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="#commission" class="btn-primary" style="padding: 10px 24px;">Enroll</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO TYPE G -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow">Est. 2009 — Adult Literacy Foundation</div>
+      <div class="hero-word word-1">Words</div>
+      <div class="hero-word word-2">Open</div>
+      <div class="hero-tagline">Every Door</div>
+      <a href="#collection" class="btn-primary" style="width: fit-content;">Discover Our Programs</a>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="stat-item">
+      <span class="stat-num" data-target="4800">0</span>
+      <div class="stat-label">Adults Reached Annually</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="96">0</span>
+      <div class="stat-label">% Complete Their First Book</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="140">0</span>
+      <div class="stat-label">Community Volunteers</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="17">0</span>
+      <div class="stat-label">Years of Service</div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="philosophy-header">
+      <div class="section-label">Our Values</div>
+      <h2 class="section-heading">Literacy as Liberation</h2>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        </div>
+        <h3>Access for All</h3>
+        <p>Literacy is a fundamental right, not a privilege. We remove barriers to education for adults of every background, age, and circumstance, meeting people where they are.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+        </div>
+        <h3>Community-Centered</h3>
+        <p>Lasting change grows in community. Our learners are supported by trained volunteers, peer circles, and local partnerships that create belonging alongside skill-building.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        </div>
+        <h3>Lifelong Empowerment</h3>
+        <p>Reading opens doors that stay open. Beyond literacy, we build confidence, independence, and economic opportunity — transforming not just individuals but entire families.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="collection">
+    <div class="collection-header">
+      <div class="section-label">Programs</div>
+      <h2 class="section-heading">Learning Pathways</h2>
+    </div>
+    <div class="collection-grid">
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-2.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Foundation</div>
+          <div class="collection-title">Beginning Readers Circle</div>
+          <div class="collection-desc">A welcoming first step for adults reading below a sixth-grade level. Small groups of four meet twice weekly with dedicated volunteer tutors.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-3.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Intermediate</div>
+          <div class="collection-title">Fluency & Comprehension</div>
+          <div class="collection-desc">For those who can read basic texts but need to build speed, vocabulary, and deeper understanding to navigate workplace and civic life.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-4.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Advanced</div>
+          <div class="collection-title">Critical Reading & Writing</div>
+          <div class="collection-desc">Essays, journalism, and professional correspondence. Learners in this track gain the literary tools to advocate, create, and lead in their communities.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-5.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Digital</div>
+          <div class="collection-title">Digital Literacy Track</div>
+          <div class="collection-desc">Reading in the modern world means navigating screens. This program bridges print literacy with digital fluency for the contemporary workplace.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="atelier-content">
+        <div class="section-label">Our Approach</div>
+        <h2 class="section-heading">Learning at Every Stage of Life</h2>
+        <p>The Literacy Guild was founded on a simple conviction: it is never too late to read. Our tutors are trained in adult learning theory, trauma-informed practice, and cultural humility — skills that matter as much as phonics.</p>
+        <p>Each learner receives an individualized reading plan, curated materials in their areas of interest, and the unhurried support needed to build genuine confidence over time.</p>
+        <p>We partner with public libraries, community health centers, and workforce development programs to ensure that literacy gains translate into real-life outcomes.</p>
+        <a href="about.html" class="btn-ghost" style="margin-top: 24px;">Learn Our Story</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="process-header">
+      <div class="section-label">How We Work</div>
+      <h2 class="section-heading">From First Contact to Fluency</h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num">01</div>
+        <div class="process-content">
+          <h3>Confidential Intake Assessment</h3>
+          <p>A private, no-pressure conversation with a trained literacy coordinator. We assess current reading level, personal goals, schedule, and language background in a welcoming environment.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">02</div>
+        <div class="process-content">
+          <h3>Program Matching</h3>
+          <p>Based on your assessment, we match you with the right learning track and a volunteer tutor whose background and availability suit your needs. Matching takes one to two weeks.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">03</div>
+        <div class="process-content">
+          <h3>Personalized Learning Plan</h3>
+          <p>Together with your tutor, you set milestones, choose reading materials that interest you, and establish a schedule that fits your life — not the other way around.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">04</div>
+        <div class="process-content">
+          <h3>Ongoing Sessions and Support</h3>
+          <p>Two to three sessions per week at a library, community center, or via video call. Monthly check-ins with staff ensure progress and address any challenges early.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">05</div>
+        <div class="process-content">
+          <h3>Graduation and Transition</h3>
+          <p>Completing a track is celebrated with the community. Graduates can progress to advanced programs, become peer mentors, or transition to further education and employment support.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage">
+    <div class="heritage-header">
+      <div class="section-label">Our History</div>
+      <h2 class="section-heading">Seventeen Years of Words</h2>
+    </div>
+    <div class="heritage-timeline">
+      <div class="heritage-item">
+        <div class="heritage-year">2009</div>
+        <div class="heritage-content">
+          <h3>Founded in a Public Library Reading Room</h3>
+          <p>Three volunteers and eleven adult learners gathered in the basement of the Millhaven Public Library. The program was built on handshakes and a shared photocopier.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2013</div>
+        <div class="heritage-content">
+          <h3>First Grant and City Partnership</h3>
+          <p>A state literacy grant funded the guild's first paid coordinator. A partnership with the city workforce office doubled enrollment within twelve months.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2017</div>
+        <div class="heritage-content">
+          <h3>Digital Literacy Program Launched</h3>
+          <p>Recognizing that reading now lives on screens, the guild introduced tablet-based learning and digital navigation modules — the first program of its kind in the region.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2021</div>
+        <div class="heritage-content">
+          <h3>Virtual Learning Expansion During Pandemic</h3>
+          <p>When in-person sessions paused, the guild pivoted fully online within three weeks, maintaining 94% of its active caseload through video tutoring and mailed materials.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2025</div>
+        <div class="heritage-content">
+          <h3>Literacy Leadership Academy Opens</h3>
+          <p>Our advanced track graduates now train as certified literacy tutors themselves, completing a circle that turns students into community leaders and stewards of the mission.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press">
+    <div class="press-header">
+      <div class="section-label">Recognition</div>
+      <h2 class="section-heading">What Others Say</h2>
+    </div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">The Literacy Guild has achieved what many programs only aspire to — genuine transformation, measured not in test scores but in lives rebuilt with confidence and capability.</div>
+            <div class="press-source">— Annual Nonprofit Excellence Awards, 2024</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">In a region where one in four adults struggles with basic literacy, the Guild's model of volunteer tutoring and community support stands as the gold standard of accessible education.</div>
+            <div class="press-source">— Regional Education Review, Winter 2023</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">What sets the Guild apart is the relationship. It is not a class — it is a sustained human connection that allows learning to happen on the learner's terms.</div>
+            <div class="press-source">— Journal of Adult Learning, Vol. 18</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION FORM -->
+  <section class="commission" id="commission">
+    <div class="commission-header">
+      <div class="section-label">Get Involved</div>
+      <h2 class="section-heading">Begin Your Reading Journey</h2>
+    </div>
+    <div class="commission-grid">
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" placeholder="Margaret">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" placeholder="Chen">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone (optional)</label>
+          <input type="tel" class="form-input" placeholder="+1 (555) 000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">I am interested in</label>
+          <select class="form-select">
+            <option>Enrolling as a learner</option>
+            <option>Volunteering as a tutor</option>
+            <option>Corporate or foundation partnership</option>
+            <option>Donating to the guild</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tell Us About Yourself</label>
+          <textarea class="form-textarea" placeholder="A few words about your goals or how you'd like to be involved..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="border: none; cursor: pointer; width: 100%;">Submit Inquiry</button>
+      </form>
+      <div class="commission-info">
+        <h3>Every Conversation Begins Here</h3>
+        <p>There is no wrong reason to reach out. Whether you want to learn, teach, or support, we will find the right path together. All inquiries are completely confidential.</p>
+        <p>Our team responds within two business days. Intake assessments can be scheduled in person, by phone, or by video call.</p>
+        <div class="contact-item">
+          <span class="contact-item-icon">✉</span>
+          <span class="contact-item-text">hello@theliteracyguild.org</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-icon">☎</span>
+          <span class="contact-item-text">+1 (603) 448-2200<br>Monday–Friday, 9am–5pm</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-icon">⊕</span>
+          <span class="contact-item-text">44 Millhaven Library Row<br>Millhaven, NH 03766</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>The Literacy Guild</h3>
+        <p>Empowering adults through reading since 2009. A nonprofit organization dedicated to education access, volunteer tutoring, and lifelong learning in New England.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="collection.html">Beginning Readers</a></li>
+          <li><a href="collection.html">Fluency Circle</a></li>
+          <li><a href="collection.html">Critical Reading</a></li>
+          <li><a href="collection.html">Digital Literacy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Organization</h4>
+        <ul>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="process.html">How It Works</a></li>
+          <li><a href="#">Volunteer</a></li>
+          <li><a href="#">Donate</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="#">Newsletter</a></li>
+          <li><a href="#">Annual Report</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 The Literacy Guild. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SPLITTEXT POLYFILL -->
+  <script>
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = []; this.lines = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim();
+      el.innerHTML = '';
+      const wordArr = text.split(/\s+/);
+      wordArr.forEach((word, wi) => {
+        const wSpan = document.createElement('span');
+        wSpan.className = 'split-word';
+        wSpan.style.cssText = 'display:inline-block;overflow:hidden;';
+        if (type.includes('chars')) {
+          [...word].forEach(ch => {
+            const cSpan = document.createElement('span');
+            cSpan.className = 'split-char';
+            cSpan.style.display = 'inline-block';
+            cSpan.textContent = ch;
+            wSpan.appendChild(cSpan);
+            this.chars.push(cSpan);
+          });
+        } else {
+          wSpan.style.overflow = 'visible';
+          wSpan.textContent = word;
+        }
+        this.words.push(wSpan);
+        el.appendChild(wSpan);
+        if (wi < wordArr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => { el.innerHTML = this.originals[i]; }); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // PRELOADER
+    const barFill = document.getElementById('bar-fill');
+    gsap.to(barFill, { scaleX: 1, duration: 1.8, ease: 'power2.inOut', onComplete: () => {
+      gsap.to('#preloader', { autoAlpha: 0, duration: 0.6, onComplete: () => {
+        document.getElementById('preloader').style.display = 'none';
+        // Show scroll indicator after preloader
+        gsap.fromTo('#scroll-indicator', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.8 });
+      }});
+    }});
+
+    // Fallback show scroll indicator
+    setTimeout(() => {
+      gsap.to('#scroll-indicator', { autoAlpha: 1, duration: 0.6 });
+    }, 4000);
+
+    // SCROLL PROGRESS
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      document.getElementById('scroll-fill').style.height = (scrolled * 100) + '%';
+    });
+
+    // NAVBAR
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // HERO TYPE G — Scroll-driven text transform
+    gsap.to('.word-1', {
+      x: '-25vw', scale: 0.5, opacity: 0.12,
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: '55% top', scrub: 1.5 }
+    });
+    gsap.to('.word-2', {
+      x: '25vw', scale: 0.5, opacity: 0.12,
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: '55% top', scrub: 1.5 }
+    });
+    gsap.to('.hero-tagline', {
+      y: '30vh', opacity: 0,
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: '40% top', scrub: 1 }
+    });
+
+    // STATS COUNTERS
+    document.querySelectorAll('.stat-num').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      gsap.from(el, {
+        textContent: 0, duration: 2.2, ease: 'power2.out',
+        snap: { textContent: 1 },
+        immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)); }
+      });
+    });
+
+    // SECTION REVEALS
+    gsap.utils.toArray('.philosophy-card').forEach((card, i) => {
+      gsap.from(card, {
+        x: -20, duration: 0.8, ease: 'power3.out',
+        delay: i * 0.04, immediateRender: false,
+        scrollTrigger: { trigger: card, start: 'top 88%', once: true }
+      });
+    });
+
+    gsap.utils.toArray('.collection-card').forEach((card, i) => {
+      gsap.from(card, {
+        x: -20, duration: 0.8, ease: 'power3.out',
+        delay: i * 0.04, immediateRender: false,
+        scrollTrigger: { trigger: card, start: 'top 88%', once: true }
+      });
+    });
+
+    gsap.from('.atelier-img', {
+      x: -30, duration: 1.0, ease: 'power3.out', immediateRender: false,
+      scrollTrigger: { trigger: '.atelier', start: 'top 80%', once: true }
+    });
+
+    gsap.utils.toArray('.process-item').forEach((item, i) => {
+      gsap.from(item, {
+        x: -20, duration: 0.75, ease: 'power3.out',
+        delay: i * 0.04, immediateRender: false,
+        scrollTrigger: { trigger: item, start: 'top 88%', once: true }
+      });
+    });
+
+    gsap.utils.toArray('.heritage-item').forEach((item, i) => {
+      gsap.from(item, {
+        x: -20, duration: 0.75, ease: 'power3.out',
+        delay: i * 0.04, immediateRender: false,
+        scrollTrigger: { trigger: item, start: 'top 88%', once: true }
+      });
+    });
+
+    // SECTION HEADINGS
+    gsap.utils.toArray('.section-heading').forEach(el => {
+      gsap.from(el, {
+        x: -20, duration: 0.8, ease: 'power3.out', immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+      });
+    });
+
+    // PRESS SWIPER
+    new Swiper('.press-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 40,
+      loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 } }
+    });
+  </script>
+</body>
+</html>

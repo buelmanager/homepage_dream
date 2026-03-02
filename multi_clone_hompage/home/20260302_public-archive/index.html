@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The National Archive — Every Record, Every Story, Preserved</title>
+  <meta name="description" content="The National Archive safeguards millions of historical documents, records, and digital assets — preserving the nation's memory for every generation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #181818;
+      --surface: #222222;
+      --surface2: #2A2A2A;
+      --accent: #B0B0C0;
+      --accent-light: #D0D0E0;
+      --accent-dark: #808090;
+      --ivory: #EEEEF2;
+      --smoke: #909090;
+      --muted: #606060;
+      --border: #1E1E1E;
+      --font-serif: 'Cinzel', 'Times New Roman', serif;
+      --font-sans: 'Crimson Pro', Georgia, serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 1rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; text-align: center; }
+    .preloader-svg { width: 56px; height: 56px; }
+    .preloader-circle { fill: none; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 150; stroke-dashoffset: 150; animation: drawCircle 1.6s ease forwards; }
+    @keyframes drawCircle { to { stroke-dashoffset: 0; } }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 28px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.6s; }
+    #scroll-indicator.visible { opacity: 1; }
+    .si-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .si-line-wrap { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .si-fill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: var(--accent); transition: height 0.1s; }
+    .si-label { writing-mode: vertical-rl; font-family: var(--font-sans); font-size: 0.62rem; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase; }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 20px 60px; transition: background 0.4s; }
+    nav.scrolled { background: rgba(24,24,24,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 0.9rem; color: var(--ivory); text-decoration: none; letter-spacing: 0.2em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-family: var(--font-sans); font-size: 0.9rem; color: var(--smoke); text-decoration: none; letter-spacing: 0.06em; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { font-family: var(--font-sans); font-size: 0.85rem; letter-spacing: 0.08em; color: var(--bg); background: var(--accent); padding: 10px 24px; text-decoration: none; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* HERO TYPE G — SCROLL-DRIVEN TEXT TRANSFORM */
+    .hero-text-driven { min-height: 200vh; position: relative; }
+    .hero-bg { position: sticky; top: 0; height: 100vh; overflow: hidden; background-image: url('images/img-2.webp'); background-size: cover; background-position: center; }
+    .hero-bg-overlay { position: absolute; inset: 0; background: rgba(24,24,24,0.76); }
+    .hero-text-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 80px; overflow: hidden; }
+    .hero-word { font-family: var(--font-serif); font-size: clamp(4.5rem, 12vw, 12rem); line-height: 0.85; font-weight: 700; text-transform: uppercase; color: var(--ivory); will-change: transform; letter-spacing: 0.05em; }
+    .hero-tagline { font-family: var(--font-sans); color: var(--smoke); letter-spacing: 0.08em; font-size: 1.1rem; font-style: italic; margin: 28px 0 44px; }
+    .btn-primary { display: inline-block; font-family: var(--font-sans); font-size: 0.92rem; letter-spacing: 0.08em; color: var(--bg); background: var(--accent); padding: 14px 36px; text-decoration: none; transition: background 0.3s; align-self: flex-start; }
+    .btn-primary:hover { background: var(--accent-light); }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .strip-stat { text-align: center; }
+    .strip-num { font-family: var(--font-serif); font-size: 2.6rem; color: var(--accent); display: block; }
+    .strip-label { font-family: var(--font-sans); font-size: 0.85rem; color: var(--smoke); margin-top: 6px; display: block; letter-spacing: 0.04em; font-style: italic; }
+
+    /* SECTIONS */
+    section { padding: 100px 80px; }
+    .section-eyebrow { font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 2.8vw, 2.8rem); color: var(--ivory); font-weight: 600; line-height: 1.15; margin-bottom: 20px; letter-spacing: 0.04em; }
+    .section-sub { font-family: var(--font-sans); font-size: 1rem; color: var(--smoke); line-height: 1.8; max-width: 560px; font-style: italic; }
+
+    /* PHILOSOPHY */
+    .philosophy { background: var(--bg); }
+    .philosophy-header { text-align: center; margin-bottom: 64px; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+    .phil-card { background: var(--bg); padding: 52px 36px; }
+    .phil-icon { font-family: var(--font-serif); font-size: 1.4rem; color: var(--accent); margin-bottom: 22px; letter-spacing: 0.2em; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 14px; letter-spacing: 0.06em; }
+    .phil-text { font-family: var(--font-sans); font-size: 0.95rem; color: var(--smoke); line-height: 1.8; }
+
+    /* COLLECTION GRID (Archive Collections) */
+    .collections { background: var(--surface); overflow: visible; }
+    .collections-header { margin-bottom: 56px; }
+    .collections-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; overflow: visible; }
+    .coll-card { position: relative; overflow: hidden; cursor: pointer; }
+    .coll-img { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; transition: transform 0.8s; filter: brightness(0.72); }
+    .coll-card:hover .coll-img { transform: scale(1.05); }
+    .coll-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(24,24,24,0.95) 0%, transparent 55%); display: flex; flex-direction: column; justify-content: flex-end; padding: 36px; }
+    .coll-period { font-family: var(--font-serif); font-size: 0.62rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .coll-name { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); letter-spacing: 0.04em; margin-bottom: 8px; }
+    .coll-count { font-family: var(--font-sans); font-size: 0.82rem; color: var(--smoke); font-style: italic; }
+
+    /* ABOUT */
+    .about-section { background: var(--bg); }
+    .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-img-wrap { position: relative; }
+    .about-img { width: 100%; aspect-ratio: 3/4; background-size: cover; background-position: center; filter: brightness(0.78); }
+    .about-img-accent { position: absolute; bottom: -24px; right: -24px; width: 52%; aspect-ratio: 1; background-size: cover; background-position: center; border: 4px solid var(--bg); }
+    .about-title { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 24px; line-height: 1.2; letter-spacing: 0.04em; }
+    .about-body { font-family: var(--font-sans); font-size: 0.98rem; color: var(--smoke); line-height: 1.8; margin-bottom: 20px; }
+    .about-link { font-family: var(--font-sans); font-size: 0.85rem; color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; font-style: italic; }
+
+    /* PROCESS — ANIMATION A3: x-slide */
+    .process { background: var(--surface); }
+    .process-header { text-align: center; margin-bottom: 64px; }
+    .process-timeline { display: flex; }
+    .process-step { flex: 1; padding: 40px 28px; border-left: 1px solid var(--border); }
+    .process-step:first-child { border-left: none; }
+    .step-num { font-family: var(--font-serif); font-size: 2.6rem; color: var(--border); line-height: 1; margin-bottom: 18px; letter-spacing: 0.1em; }
+    .step-accent { width: 28px; height: 1px; background: var(--accent); margin-bottom: 18px; }
+    .step-title { font-family: var(--font-serif); font-size: 0.95rem; color: var(--ivory); margin-bottom: 12px; letter-spacing: 0.08em; }
+    .step-text { font-family: var(--font-sans); font-size: 0.9rem; color: var(--smoke); line-height: 1.75; }
+
+    /* MILESTONES */
+    .milestones { background: var(--bg); }
+    .milestones-header { text-align: center; margin-bottom: 64px; }
+    .milestone-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); }
+    .milestone-item { background: var(--bg); padding: 52px 28px; }
+    .milestone-year { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); display: block; margin-bottom: 16px; letter-spacing: 0.1em; }
+    .milestone-title { font-family: var(--font-serif); font-size: 0.92rem; color: var(--ivory); margin-bottom: 10px; letter-spacing: 0.06em; }
+    .milestone-text { font-family: var(--font-sans); font-size: 0.88rem; color: var(--smoke); line-height: 1.7; }
+
+    /* PRESS */
+    .press { background: var(--surface); }
+    .press-header { text-align: center; margin-bottom: 56px; }
+    .swiper-press .swiper-slide { padding: 0 16px; }
+    .review-card { background: var(--surface2); padding: 44px 36px; border-left: 1px solid var(--accent); }
+    .review-quote { font-family: var(--font-sans); font-size: 1.1rem; color: var(--ivory); line-height: 1.8; font-style: italic; margin-bottom: 28px; }
+    .review-source { font-family: var(--font-serif); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); }
+    .review-name { font-family: var(--font-sans); font-size: 0.85rem; color: var(--smoke); margin-top: 4px; }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* CONTACT */
+    .contact-section { background: var(--bg); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .contact-title { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); margin-bottom: 24px; letter-spacing: 0.06em; }
+    .contact-body { font-family: var(--font-sans); font-size: 0.95rem; color: var(--smoke); line-height: 1.8; margin-bottom: 32px; font-style: italic; }
+    .c-detail-item { font-family: var(--font-sans); font-size: 0.9rem; color: var(--smoke); margin-bottom: 10px; }
+    .c-detail-item span { color: var(--accent); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; margin-right: 10px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-family: var(--font-serif); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); font-family: var(--font-sans); font-size: 0.92rem; padding: 13px 16px; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea { height: 110px; resize: vertical; }
+    .form-group select option { background: var(--surface); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .btn-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; font-family: var(--font-sans); font-size: 0.88rem; letter-spacing: 0.06em; padding: 16px; cursor: pointer; transition: background 0.3s; }
+    .btn-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 80px 40px; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 48px; }
+    .footer-logo { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 16px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .footer-tagline { font-family: var(--font-sans); font-size: 0.9rem; color: var(--smoke); line-height: 1.7; max-width: 280px; font-style: italic; }
+    .footer-col h4 { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-family: var(--font-sans); font-size: 0.88rem; color: var(--smoke); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--ivory); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 24px; }
+    .footer-copy { font-family: var(--font-sans); font-size: 0.8rem; color: var(--muted); }
+    .footer-links-bottom { display: flex; gap: 24px; }
+    .footer-links-bottom a { font-family: var(--font-sans); font-size: 0.8rem; color: var(--muted); text-decoration: none; }
+
+    @media (max-width: 900px) {
+      nav { padding: 16px 32px; } .nav-links { display: none; }
+      .hero-text-wrap { padding: 0 32px; }
+      .hero-word { font-size: 4rem; }
+      section { padding: 60px 32px; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 40px 32px; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collections-grid { grid-template-columns: 1fr; }
+      .about-inner { grid-template-columns: 1fr; }
+      .process-timeline { flex-direction: column; }
+      .milestone-list { grid-template-columns: repeat(2, 1fr); }
+      .contact-inner { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <svg class="preloader-svg" viewBox="0 0 56 56"><circle class="preloader-circle" cx="28" cy="28" r="24"/></svg>
+  <div class="preloader-logo">The National Archive</div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div id="scroll-indicator">
+  <div class="si-dot"></div>
+  <div class="si-line-wrap"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-label">Scroll</div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">National Archive</a>
+  <ul class="nav-links">
+    <li><a href="collection.html">Collections</a></li>
+    <li><a href="process.html">Preservation</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Visit</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Research Access</a>
+</nav>
+
+<!-- HERO TYPE G — SCROLL-DRIVEN -->
+<section class="hero-text-driven" id="hero">
+  <div class="hero-bg">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-word word-1">EVERY</div>
+      <div class="hero-word word-2">RECORD</div>
+      <p class="hero-tagline">Every Record, Every Story, Preserved</p>
+      <a href="collection.html" class="btn-primary">Explore the Archive</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="strip-stat">
+    <span class="strip-num counter" data-target="11">0</span><span style="font-family:var(--font-serif);font-size:1.6rem;color:var(--accent);">M+</span>
+    <span class="strip-label">Documents Held</span>
+  </div>
+  <div class="strip-stat">
+    <span class="strip-num counter" data-target="900">0</span>
+    <span class="strip-label">Years of Records</span>
+  </div>
+  <div class="strip-stat">
+    <span class="strip-num counter" data-target="60">0</span>
+    <span class="strip-label">Reading Rooms</span>
+  </div>
+  <div class="strip-stat">
+    <span class="strip-num counter" data-target="45000">0</span>
+    <span class="strip-label">Daily Online Users</span>
+  </div>
+</div>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy" id="philosophy">
+  <div class="philosophy-header">
+    <div class="section-eyebrow">Our Mandate</div>
+    <h2 class="section-title">Why Records Matter</h2>
+    <p class="section-sub" style="margin: 0 auto; text-align: center;">Every document is an act of accountability. Every record is a story. The archive exists to ensure that no story can be silenced, no action erased, no life forgotten.</p>
+  </div>
+  <div class="philosophy-grid">
+    <div class="phil-card">
+      <div class="phil-icon">I</div>
+      <h3 class="phil-title">Preservation</h3>
+      <p class="phil-text">We safeguard 11 million documents — from 12th-century royal charters to born-digital government files — applying world-leading conservation and digital preservation techniques to ensure their survival.</p>
+    </div>
+    <div class="phil-card">
+      <div class="phil-icon">II</div>
+      <h3 class="phil-title">Access</h3>
+      <p class="phil-text">The archive is a public resource. Our reading rooms are free to use, our online catalogue is freely searchable, and 25 million records are available as free digital downloads.</p>
+    </div>
+    <div class="phil-card">
+      <div class="phil-icon">III</div>
+      <h3 class="phil-title">Accountability</h3>
+      <p class="phil-text">We are the official repository for government records — an independent institution charged with ensuring that the actions of public authorities are permanently, transparently documented.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHIVE COLLECTIONS GRID -->
+<section class="collections" id="collections">
+  <div class="collections-header">
+    <div class="section-eyebrow">Holdings</div>
+    <h2 class="section-title">900 Years of National Memory</h2>
+  </div>
+  <div class="collections-grid">
+    <div class="coll-card">
+      <div class="coll-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="coll-overlay">
+        <div class="coll-period">1086 — 1600</div>
+        <div class="coll-name">Medieval Records</div>
+        <div class="coll-count">Domesday Book, royal charters, parliamentary rolls · 1.2M documents</div>
+      </div>
+    </div>
+    <div class="coll-card">
+      <div class="coll-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="coll-overlay">
+        <div class="coll-period">1600 — 1900</div>
+        <div class="coll-name">Early Modern State Papers</div>
+        <div class="coll-count">Colonial records, census, military dispatches · 3.8M documents</div>
+      </div>
+    </div>
+    <div class="coll-card">
+      <div class="coll-img" style="background-image: url('images/img-4.webp')"></div>
+      <div class="coll-overlay">
+        <div class="coll-period">1900 — 2000</div>
+        <div class="coll-name">Modern Government Records</div>
+        <div class="coll-count">Cabinet papers, war records, social policy · 4.5M documents</div>
+      </div>
+    </div>
+    <div class="coll-card">
+      <div class="coll-img" style="background-image: url('images/img-5.webp')"></div>
+      <div class="coll-overlay">
+        <div class="coll-period">2000 — Present</div>
+        <div class="coll-name">Digital Archive</div>
+        <div class="coll-count">Born-digital government files, email, datasets · 1.5M+ files</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section class="about-section" id="about">
+  <div class="about-inner">
+    <div class="about-img-wrap">
+      <div class="about-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="about-img-accent" style="background-image: url('images/img-1.webp')"></div>
+    </div>
+    <div>
+      <div class="section-eyebrow">Our Institution</div>
+      <h2 class="about-title">The Nation's Memory, Kept in Trust</h2>
+      <p class="about-body">Founded by Act of Parliament in 1838, The National Archive was established to bring order to centuries of government records held in scattered repositories across the country. From the beginning, our mandate was clear: to preserve the evidence of government action and make it freely available to citizens.</p>
+      <p class="about-body">Today, our holdings span 11 million items — from the Domesday Book of 1086 to yesterday's Cabinet minutes. Our reading rooms serve researchers from across the world, while 25 million digitised records are freely available online, consulted by 45,000 users daily.</p>
+      <a href="about.html" class="about-link">Our History</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS TIMELINE — A3: x-slide animation -->
+<section class="process" id="preservation">
+  <div class="process-header">
+    <div class="section-eyebrow">Preservation Practice</div>
+    <h2 class="section-title">How We Keep the Record</h2>
+  </div>
+  <div class="process-timeline">
+    <div class="process-step">
+      <div class="step-num">I</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Appraisal</h3>
+      <p class="step-text">We assess every government record for permanent preservation — selecting those of lasting historical, legal, or evidential significance from the millions produced each year.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">II</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Transfer</h3>
+      <p class="step-text">Selected records are formally transferred from government departments, catalogued, and made available to the public — typically within 20 years of creation under the Freedom of Information Act.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">III</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Conservation</h3>
+      <p class="step-text">Paper documents are housed in acid-free storage at controlled temperature and humidity. Our conservation team repairs damaged items and creates preservation copies before they deteriorate beyond recovery.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">IV</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Digitisation</h3>
+      <p class="step-text">Our digitisation programme creates high-resolution digital surrogates of priority collections — reducing handling of originals while making records freely accessible worldwide.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">V</div>
+      <div class="step-accent"></div>
+      <h3 class="step-title">Access</h3>
+      <p class="step-text">Records are made available in our reading rooms and online catalogue. Every document is free to consult. Digital downloads are free for personal research.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MILESTONES -->
+<section class="milestones" id="milestones">
+  <div class="milestones-header">
+    <div class="section-eyebrow">Timeline</div>
+    <h2 class="section-title">186 Years of Custodianship</h2>
+  </div>
+  <div class="milestone-list">
+    <div class="milestone-item">
+      <span class="milestone-year">1838</span>
+      <h3 class="milestone-title">Foundation</h3>
+      <p class="milestone-text">Established by Act of Parliament as the first national repository for government records, unifying centuries of scattered departmental archives under one roof.</p>
+    </div>
+    <div class="milestone-item">
+      <span class="milestone-year">1958</span>
+      <h3 class="milestone-title">Public Records Act</h3>
+      <p class="milestone-text">Landmark legislation establishes the 30-year rule, guaranteeing public access to government records after three decades — a foundational right of democratic accountability.</p>
+    </div>
+    <div class="milestone-item">
+      <span class="milestone-year">2003</span>
+      <h3 class="milestone-title">Digital Launch</h3>
+      <p class="milestone-text">DocumentsOnline makes 1 million records available free online for the first time — beginning our transformation into the world's leading digital archive.</p>
+    </div>
+    <div class="milestone-item">
+      <span class="milestone-year">2024</span>
+      <h3 class="milestone-title">25 Million Records</h3>
+      <p class="milestone-text">Reach of 25 million freely downloadable digital records, consulted by 45,000 users daily from 180 countries — the most-accessed national archive in the world.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="press" id="press">
+  <div class="press-header">
+    <div class="section-eyebrow">Voices</div>
+    <h2 class="section-title">On the Archive</h2>
+  </div>
+  <div class="swiper swiper-press">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The National Archive is the foundation on which all serious historical scholarship in this country is built. Without it, we would be writing fiction. With it, we can tell the truth."</p>
+          <div class="review-source">Journal of Historical Studies</div>
+          <div class="review-name">Professor Ruth Blackwood, Oxford</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"I traced my great-grandmother's entire life through these records — her birth certificate, her marriage lines, the census return, her will. The Archive gave me my family's story."</p>
+          <div class="review-source">Reader Testimonial</div>
+          <div class="review-name">Michael Fernandez, Genealogist</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The digitisation programme has been transformative. Documents that were once only accessible by travelling to London can now be read by researchers in Lagos, Seoul, or Buenos Aires."</p>
+          <div class="review-source">Digital Heritage Quarterly</div>
+          <div class="review-name">Dr. Yemi Adeyemi, Archivist</div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination" style="margin-top: 32px; position: relative;"></div>
+  </div>
+</section>
+
+<!-- CONTACT FORM -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div>
+      <div class="section-eyebrow">Plan Your Visit</div>
+      <h2 class="contact-title">Access the Archive</h2>
+      <p class="contact-body">Our reading rooms are free to use. A Reader's Ticket is required — register online or in person at the Registration Desk. No prior appointment is needed for general research.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="c-detail-item"><span>Address</span>Archive House, Chancery Lane, Capital</div>
+        <div class="c-detail-item"><span>Hours</span>Mon, Wed 09:00–17:00 · Tue, Thu 09:00–19:00 · Fri 09:00–16:00 · Sat 09:30–17:00</div>
+        <div class="c-detail-item"><span>Phone</span>+1 (555) 600-0100</div>
+        <div class="c-detail-item"><span>Email</span>enquiry@nationalarchive.gov</div>
+        <div class="c-detail-item"><span>Admission</span>Free to all</div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" placeholder="Jane"></div>
+        <div class="form-group"><label>Last Name</label><input type="text" placeholder="Smith"></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="jane@example.com"></div>
+      <div class="form-group">
+        <label>Enquiry</label>
+        <select>
+          <option>General Research Visit</option>
+          <option>Reader's Ticket Application</option>
+          <option>Group / School Visit</option>
+          <option>Document Access Request</option>
+          <option>Digitisation Request</option>
+          <option>Press &amp; Media</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Message</label><textarea placeholder="How can we help?"></textarea></div>
+      <button type="submit" class="btn-submit">Send Enquiry</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">The National Archive</div>
+      <p class="footer-tagline">Every Record, Every Story, Preserved. Free access. 900 years of national memory. The foundation of an informed and accountable society.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Discover</h4>
+      <ul>
+        <li><a href="collection.html">Collections</a></li>
+        <li><a href="#">Online Catalogue</a></li>
+        <li><a href="#">Digital Downloads</a></li>
+        <li><a href="contact.html">Reading Rooms</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Research</h4>
+      <ul>
+        <li><a href="process.html">Preservation</a></li>
+        <li><a href="#">Family History</a></li>
+        <li><a href="#">Education</a></li>
+        <li><a href="#">Guides</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>About</h4>
+      <ul>
+        <li><a href="about.html">Our Story</a></li>
+        <li><a href="#">Leadership</a></li>
+        <li><a href="#">Publications</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2026 The National Archive. A Government Institution.</div>
+    <div class="footer-links-bottom">
+      <a href="#">Privacy</a>
+      <a href="#">Accessibility</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span');
+      wSpan.className = 'split-word'; wSpan.style.cssText = 'display:inline-block;';
+      if (type.includes('chars')) {
+        [...word].forEach(ch => {
+          const c = document.createElement('span');
+          c.className = 'split-char'; c.style.display = 'inline-block'; c.textContent = ch;
+          wSpan.appendChild(c); this.chars.push(c);
+        });
+      } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    gsap.to('#preloader', { opacity: 0, duration: 0.8, ease: 'power3.out', onComplete: () => {
+      document.getElementById('preloader').style.display = 'none';
+      showScrollIndicator();
+      initHeroAnim();
+    }});
+  }, 1400);
+});
+
+function showScrollIndicator() { document.getElementById('scroll-indicator').classList.add('visible'); }
+setTimeout(showScrollIndicator, 4000);
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  document.getElementById('si-fill').style.height = (scrolled * 100) + '%';
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+});
+
+function initHeroAnim() {
+  gsap.from('.hero-tagline', { opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', immediateRender: false, delay: 0.4 });
+  gsap.from('.btn-primary', { opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', immediateRender: false, delay: 0.6 });
+}
+
+// HERO SCROLL-DRIVEN (Type G)
+gsap.to('.word-1', { x: '-25vw', scale: 0.5, opacity: 0.1, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 } });
+gsap.to('.word-2', { x: '25vw', scale: 0.5, opacity: 0.1, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 } });
+gsap.to('.hero-tagline', { opacity: 0, scrollTrigger: { trigger: '.hero-text-driven', start: '20% top', end: '50% top', scrub: 1 } });
+gsap.to('.btn-primary', { opacity: 0, scrollTrigger: { trigger: '.hero-text-driven', start: '20% top', end: '50% top', scrub: 1 } });
+
+// STATS COUNTERS
+document.querySelectorAll('.counter').forEach(el => {
+  const target = parseInt(el.dataset.target);
+  gsap.from(el, { textContent: 0, duration: 2.0, ease: 'power3.out', snap: { textContent: 1 }, immediateRender: false,
+    scrollTrigger: { trigger: el, start: 'top 80%', once: true },
+    onUpdate: function() { el.textContent = Math.round(gsap.getProperty(el, 'textContent')).toLocaleString(); }
+  });
+});
+
+// SCROLL ANIMATIONS — A3 style: x-slide
+gsap.utils.toArray('.phil-card').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', immediateRender: false, delay: i * 0.04, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+gsap.utils.toArray('.coll-card').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', immediateRender: false, delay: i * 0.04, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+gsap.from('.about-img-wrap', { opacity: 0, x: -20, duration: 0.78, ease: 'power3.out', immediateRender: false, scrollTrigger: { trigger: '.about-section', start: 'top 80%', once: true } });
+gsap.utils.toArray('.process-step').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', immediateRender: false, delay: i * 0.04, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+gsap.utils.toArray('.milestone-item').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', immediateRender: false, delay: i * 0.04, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+gsap.utils.toArray('.strip-stat').forEach((el, i) => {
+  gsap.from(el, { opacity: 0, x: -20, duration: 0.75, ease: 'power3.out', immediateRender: false, delay: i * 0.04, scrollTrigger: { trigger: '.stats-strip', start: 'top 85%', once: true } });
+});
+
+new Swiper('.swiper-press', {
+  slidesPerView: 1, spaceBetween: 24,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1200: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

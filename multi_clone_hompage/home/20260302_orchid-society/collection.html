@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collection — Orchidea Rare Society</title>
+  <meta name="description" content="Browse the Orchidea Rare Society's collection of 340+ registered orchid species, from tropical epiphytes to terrestrial rarities from across the globe." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg: #1A0A0E; --surface: #241016; --surface2: #2C1420;
+      --accent: #C96A8A; --accent-light: #E090A8; --accent-dark: #8A3A5C;
+      --ivory: #F0DCE4; --smoke: #A08088; --muted: #604A52; --border: #200C12;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+      --max-w: 1400px; --nav-h: 80px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 60px; background: rgba(26,10,14,0.96); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 20px; letter-spacing: 0.1em; }
+    .nav-logo em { color: var(--accent); font-style: italic; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 12px 28px; border-radius: 1px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 60px; }
+    .section-tag { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .section-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+    .section-tag-text { font-size: 10px; font-weight: 500; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); }
+    .section-heading { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); color: var(--ivory); line-height: 1.1; margin-bottom: 16px; }
+
+    .page-hero {
+      padding: calc(var(--nav-h) + 100px) 0 80px;
+      background: var(--bg); text-align: center;
+    }
+    .page-hero h1 { font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 6rem); color: var(--ivory); margin-bottom: 20px; }
+    .page-hero h1 em { color: var(--accent); font-style: italic; }
+    .page-hero p { font-size: 16px; color: var(--smoke); max-width: 560px; margin: 0 auto; line-height: 1.8; }
+
+    .collection-filter { padding: 48px 0 0; background: var(--bg); }
+    .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-tab {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 10px 24px; border: 1px solid var(--border); border-radius: 1px;
+      color: var(--smoke); cursor: pointer; transition: all 0.3s;
+    }
+    .filter-tab.active, .filter-tab:hover { border-color: var(--accent); color: var(--accent); }
+
+    .collection-main { padding: 60px 0 120px; background: var(--bg); }
+    .collection-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px; overflow: visible;
+    }
+    .species-card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; transition: border-color 0.4s; }
+    .species-card:hover { border-color: var(--accent); }
+    .species-img { aspect-ratio: 4/3; overflow: hidden; }
+    .species-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+    .species-card:hover .species-img img { transform: scale(1.05); }
+    .species-info { padding: 24px 28px; }
+    .species-family { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .species-name { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 4px; }
+    .species-origin { font-size: 12px; color: var(--smoke); margin-bottom: 12px; }
+    .species-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .species-tag { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 10px; border: 1px solid var(--border); border-radius: 1px; color: var(--muted); }
+
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 0 40px; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+    .footer-nav { display: flex; gap: 32px; }
+    .footer-nav a { font-size: 12px; color: var(--smoke); transition: color 0.3s; }
+    .footer-nav a:hover { color: var(--ivory); }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-logo"><em>Orchidea</em> Rare Society</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html" class="active">Collection</a></li>
+      <li><a href="process.html">Cultivation</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Join Society</a>
+  </nav>
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="section-tag" style="justify-content:center"><span class="section-tag-text">Our Collection</span></div>
+      <h1>Species <em>Collection</em></h1>
+      <p>340+ registered orchid species spanning 80 genera from 47 countries — the most significant private collection in the Northern Hemisphere.</p>
+    </div>
+  </section>
+
+  <section class="collection-filter">
+    <div class="container">
+      <div class="filter-tabs">
+        <div class="filter-tab active">All Species</div>
+        <div class="filter-tab">Epiphytes</div>
+        <div class="filter-tab">Terrestrials</div>
+        <div class="filter-tab">Lithophytes</div>
+        <div class="filter-tab">Endangered</div>
+        <div class="filter-tab">Award Winners</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-main">
+    <div class="container">
+      <div class="collection-grid">
+        <div class="species-card">
+          <div class="species-img"><img src="images/img-1.webp" alt="Blue Orchid" loading="lazy" /></div>
+          <div class="species-info">
+            <div class="species-family">Orchidaceae / Vanda</div>
+            <div class="species-name">Vanda Coerulea</div>
+            <div class="species-origin">Northern Thailand & Northeast India</div>
+            <div class="species-tags">
+              <span class="species-tag">Endangered</span>
+              <span class="species-tag">Epiphyte</span>
+              <span class="species-tag">Award Winner</span>
+            </div>
+          </div>
+        </div>
+        <div class="species-card">
+          <div class="species-img"><img src="images/img-2.webp" alt="Tropical orchid" loading="lazy" /></div>
+          <div class="species-info">
+            <div class="species-family">Orchidaceae / Dracula</div>
+            <div class="species-name">Dracula Simia</div>
+            <div class="species-origin">Cloud Forests of Ecuador and Peru</div>
+            <div class="species-tags">
+              <span class="species-tag">Rare</span>
+              <span class="species-tag">Epiphyte</span>
+            </div>
+          </div>
+        </div>
+        <div class="species-card">
+          <div class="species-img"><img src="images/img-1.webp" alt="Ghost Orchid" loading="lazy" /></div>
+          <div class="species-info">
+            <div class="species-family">Orchidaceae / Dendrophylax</div>
+            <div class="species-name">Dendrophylax Lindenii</div>
+            <div class="species-origin">Florida & Cuba</div>
+            <div class="species-tags">
+              <span class="species-tag">Critically Endangered</span>
+              <span class="species-tag">Epiphyte</span>
+            </div>
+          </div>
+        </div>
+        <div class="species-card">
+          <div class="species-img"><img src="images/img-2.webp" alt="Rothschild's Slipper Orchid" loading="lazy" /></div>
+          <div class="species-info">
+            <div class="species-family">Orchidaceae / Paphiopedilum</div>
+            <div class="species-name">Paphiopedilum Rothschildianum</div>
+            <div class="species-origin">Mount Kinabalu, Borneo</div>
+            <div class="species-tags">
+              <span class="species-tag">Endangered</span>
+              <span class="species-tag">Terrestrial</span>
+              <span class="species-tag">CITES I</span>
+            </div>
+          </div>
+        </div>
+        <div class="species-card">
+          <div class="species-img"><img src="images/img-1.webp" alt="Black Orchid" loading="lazy" /></div>
+          <div class="species-info">
+            <div class="species-family">Orchidaceae / Coelogyne</div>
+            <div class="species-name">Coelogyne Pandurata</div>
+            <div class="species-origin">Borneo & Sumatra</div>
+            <div class="species-tags">
+              <span class="species-tag">Epiphyte</span>
+              <span class="species-tag">Fragrant</span>
+            </div>
+          </div>
+        </div>
+        <div class="species-card">
+          <div class="species-img"><img src="images/img-2.webp" alt="Lady's Slipper Orchid" loading="lazy" /></div>
+          <div class="species-info">
+            <div class="species-family">Orchidaceae / Cypripedium</div>
+            <div class="species-name">Cypripedium Calceolus</div>
+            <div class="species-origin">Europe & Northern Asia</div>
+            <div class="species-tags">
+              <span class="species-tag">Endangered</span>
+              <span class="species-tag">Terrestrial</span>
+              <span class="species-tag">Award Winner</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2024 Orchidea Rare Society. All rights reserved.</div>
+        <div class="footer-nav">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="process.html">Cultivation</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.page-hero h1, .page-hero p', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06, delay: 0.3
+    });
+    gsap.from('.species-card', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+    });
+  </script>
+</body>
+</html>

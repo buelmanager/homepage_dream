@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAULTTEC — Energy Storage Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Nunito:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+/* ─────────────────────────────────────────────────────────
+   VAULTTEC — Energy Storage Vault
+   Palette: P8 Onyx Stone | Font: F10 EB Garamond + Nunito
+   Hero: C Diagonal Split | Animation: A1 Standard
+───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #141416;
+  --surface: #1C1C1F;
+  --surface2: #222226;
+  --accent: #B0B0C0;
+  --accent-bright: #D0D0E0;
+  --text: #E8E8F0;
+  --muted: #7A7A8A;
+  --border: rgba(176,176,192,0.12);
+  --ff-head: 'EB Garamond', serif;
+  --ff-body: 'Nunito', sans-serif;
+}
+
+body { background: var(--bg); color: var(--text); font-family: var(--ff-body); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+/* ── PRELOADER ── */
+#preloader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.8s ease;
+}
+#preloader.hidden { opacity: 0; pointer-events: none; }
+.pre-logo {
+  font-family: var(--ff-head); font-size: 1.6rem; font-weight: 400;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--accent-bright);
+  animation: pulseLogo 1.5s ease-in-out infinite alternate;
+}
+@keyframes pulseLogo { from { opacity: 0.4; } to { opacity: 1; } }
+
+/* ── SCROLL INDICATOR ── */
+#scroll-indicator {
+  position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  z-index: 200; display: flex; flex-direction: column; align-items: center;
+  gap: 0.5rem; opacity: 0; transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+#scroll-indicator.visible { opacity: 1; }
+.scroll-line {
+  width: 1px; height: 50px; background: var(--accent);
+  animation: scrollDrop 1.5s ease-in-out infinite;
+}
+@keyframes scrollDrop {
+  0% { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.scroll-text { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.8rem 5rem;
+  transition: background 0.4s ease, padding 0.4s ease;
+}
+nav.scrolled {
+  background: rgba(20,20,22,0.95); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border); padding: 1.2rem 5rem;
+}
+.nav-logo {
+  font-family: var(--ff-head); font-size: 1.5rem; font-weight: 400;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text); text-decoration: none;
+}
+.nav-links { display: flex; gap: 3rem; list-style: none; }
+.nav-links a {
+  color: var(--muted); text-decoration: none;
+  font-size: 0.8rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--accent-bright); }
+.nav-cta {
+  background: transparent; border: 1px solid var(--accent);
+  color: var(--accent-bright); padding: 0.6rem 1.8rem;
+  font-family: var(--ff-body); font-size: 0.75rem; font-weight: 400;
+  letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+.nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+/* ── HERO C — DIAGONAL SPLIT ── */
+.hero {
+  position: relative; height: 100vh; display: flex; overflow: hidden;
+}
+.hero-left {
+  position: absolute; inset: 0;
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+  overflow: hidden; z-index: 1;
+}
+.hero-left img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(0.55) saturate(0.7);
+  transform: scale(1.05);
+  transition: transform 8s ease;
+}
+.hero-left.loaded img { transform: scale(1); }
+.hero-right {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 45%;
+  background: var(--surface); z-index: 2;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 6rem 4rem 4rem 6rem;
+}
+.hero-eyebrow {
+  font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 2rem;
+}
+.hero-title {
+  font-family: var(--ff-head); font-size: clamp(2.8rem, 4vw, 4.5rem);
+  font-weight: 400; line-height: 1.1; margin-bottom: 2rem;
+}
+.hero-title em { font-style: italic; color: var(--accent); }
+.hero-desc {
+  color: var(--muted); font-size: 1rem; max-width: 380px;
+  margin-bottom: 3rem; line-height: 1.8;
+}
+.hero-actions { display: flex; gap: 1.5rem; align-items: center; }
+.btn-primary {
+  background: var(--accent); color: var(--bg);
+  padding: 0.9rem 2.4rem; border: none; cursor: pointer;
+  font-family: var(--ff-body); font-size: 0.8rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase; transition: opacity 0.3s;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-ghost {
+  color: var(--muted); background: none; border: none; cursor: pointer;
+  font-family: var(--ff-body); font-size: 0.8rem; letter-spacing: 0.1em;
+  text-transform: uppercase; transition: color 0.3s;
+}
+.btn-ghost:hover { color: var(--text); }
+
+/* ── STATS BAND ── */
+.stats-band {
+  background: var(--surface2); padding: 4rem 5rem;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--ff-head); font-size: 3rem; font-weight: 400;
+  color: var(--accent-bright); line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.stat-label { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+/* ── PHILOSOPHY ── */
+.philosophy {
+  padding: 8rem 5rem;
+  background: var(--bg);
+}
+.section-label {
+  font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--ff-head); font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 400; line-height: 1.2; max-width: 700px; margin-bottom: 5rem;
+}
+.philosophy-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem;
+}
+.phil-card { border-top: 1px solid var(--border); padding-top: 2rem; }
+.phil-num {
+  font-family: var(--ff-head); font-size: 2rem; color: var(--accent);
+  opacity: 0.5; margin-bottom: 1.2rem;
+}
+.phil-card h3 { font-family: var(--ff-head); font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; }
+.phil-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.8; }
+
+/* ── PRODUCTS ── */
+.products { padding: 8rem 5rem; background: var(--surface); }
+.products .section-title { color: var(--text); }
+.products-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
+  overflow: visible;
+}
+.product-card { position: relative; overflow: hidden; cursor: pointer; }
+.product-card img {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover;
+  transition: transform 0.7s ease;
+  filter: brightness(0.7) saturate(0.8);
+}
+.product-card:hover img { transform: scale(1.04); filter: brightness(0.85) saturate(1); }
+.product-info {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 2.5rem;
+  background: linear-gradient(to top, rgba(20,20,22,0.95), transparent);
+}
+.product-info h3 {
+  font-family: var(--ff-head); font-size: 1.5rem; font-weight: 400;
+  margin-bottom: 0.4rem;
+}
+.product-info span { color: var(--accent); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ── VAULT FEATURE ── */
+.vault-feature {
+  padding: 0; background: var(--bg);
+  display: grid; grid-template-columns: 1fr 1fr; min-height: 70vh;
+}
+.vault-img { overflow: hidden; }
+.vault-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6) saturate(0.7); }
+.vault-content {
+  padding: 7rem 5rem; display: flex; flex-direction: column; justify-content: center;
+  background: var(--surface2);
+}
+.vault-content .section-label { margin-bottom: 2rem; }
+.vault-content h2 {
+  font-family: var(--ff-head); font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 400; line-height: 1.2; margin-bottom: 2rem;
+}
+.vault-content p { color: var(--muted); max-width: 480px; margin-bottom: 1.5rem; }
+.vault-specs { margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.spec { border-left: 2px solid var(--accent); padding-left: 1.2rem; }
+.spec .s-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+.spec .s-val { font-family: var(--ff-head); font-size: 1.3rem; }
+
+/* ── PROCESS ── */
+.process-section { padding: 8rem 5rem; background: var(--bg); }
+.process-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2rem; margin-top: 5rem; }
+.proc-step { position: relative; }
+.proc-step::after {
+  content: ''; position: absolute; top: 1.5rem; left: calc(100% + 0.5rem);
+  width: calc(2rem - 1rem); height: 1px; background: var(--border);
+}
+.proc-step:last-child::after { display: none; }
+.proc-num {
+  width: 3rem; height: 3rem; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-head); font-size: 1.1rem; color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+.proc-step h4 { font-family: var(--ff-head); font-size: 1rem; font-weight: 400; margin-bottom: 0.7rem; }
+.proc-step p { color: var(--muted); font-size: 0.82rem; line-height: 1.7; }
+
+/* ── HERITAGE ── */
+.heritage { padding: 8rem 5rem; background: var(--surface); overflow: hidden; }
+.timeline { position: relative; margin-top: 5rem; }
+.timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--border); }
+.tl-entry { display: grid; grid-template-columns: 140px 1fr; gap: 3rem; margin-bottom: 3.5rem; padding-left: 2rem; position: relative; }
+.tl-entry::before {
+  content: ''; position: absolute; left: -4px; top: 0.5rem;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent); opacity: 0.7;
+}
+.tl-year { font-family: var(--ff-head); font-size: 1.2rem; color: var(--accent); padding-top: 0.2rem; }
+.tl-content h4 { font-family: var(--ff-head); font-size: 1rem; font-weight: 400; margin-bottom: 0.4rem; }
+.tl-content p { color: var(--muted); font-size: 0.85rem; }
+
+/* ── PRESS ── */
+.press-section { padding: 8rem 5rem; background: var(--bg); }
+.swiper-press { overflow: hidden; margin-top: 4rem; }
+.press-card {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 2.5rem; display: flex; flex-direction: column; gap: 1.2rem;
+  height: auto;
+}
+.press-source { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.press-quote { font-family: var(--ff-head); font-size: 1.15rem; font-weight: 400; line-height: 1.6; font-style: italic; }
+.press-date { color: var(--muted); font-size: 0.8rem; margin-top: auto; }
+
+/* ── COMMISSION ── */
+.commission { padding: 8rem 5rem; background: var(--surface2); }
+.commission-inner { display: grid; grid-template-columns: 1fr 1.2fr; gap: 6rem; max-width: 1100px; }
+.commission h2 { font-family: var(--ff-head); font-size: clamp(2rem, 3vw, 3rem); font-weight: 400; margin-bottom: 2rem; }
+.commission p { color: var(--muted); max-width: 400px; line-height: 1.8; }
+.comm-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.comm-form input, .comm-form textarea, .comm-form select {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); padding: 0.9rem 1.2rem;
+  font-family: var(--ff-body); font-size: 0.9rem; font-weight: 300;
+  outline: none; transition: border-color 0.3s;
+  width: 100%;
+}
+.comm-form input:focus, .comm-form textarea:focus, .comm-form select:focus { border-color: var(--accent); }
+.comm-form textarea { min-height: 120px; resize: vertical; }
+.comm-form select option { background: var(--surface); }
+.form-submit {
+  background: var(--accent); color: var(--bg);
+  padding: 1rem 2.5rem; border: none; cursor: pointer;
+  font-family: var(--ff-body); font-size: 0.8rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: opacity 0.3s; width: fit-content;
+}
+.form-submit:hover { opacity: 0.85; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg); border-top: 1px solid var(--border);
+  padding: 4rem 5rem 3rem;
+}
+.footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 3rem; }
+.footer-brand { font-family: var(--ff-head); font-size: 1.4rem; margin-bottom: 1rem; }
+.footer-brand p { font-family: var(--ff-body); font-size: 0.85rem; color: var(--muted); font-weight: 300; }
+.footer-col h5 { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+.footer-col ul a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+.footer-col ul a:hover { color: var(--text); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 2rem; display: flex; justify-content: space-between; color: var(--muted); font-size: 0.8rem; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero { flex-direction: column; height: auto; }
+  .hero-left { position: relative; height: 50vh; clip-path: none; }
+  .hero-right { position: relative; width: 100%; padding: 4rem 2rem; }
+  nav { padding: 1.2rem 2rem; }
+  nav.scrolled { padding: 1rem 2rem; }
+  .nav-links { display: none; }
+  .stats-band { grid-template-columns: repeat(2, 1fr); padding: 3rem 2rem; }
+  .philosophy, .products, .process-section, .heritage, .press-section, .commission { padding: 5rem 2rem; }
+  .process-steps { grid-template-columns: 1fr; }
+  .vault-feature { grid-template-columns: 1fr; }
+  .commission-inner { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  .products-grid { grid-template-columns: 1fr; }
+  .philosophy-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="pre-logo">VAULTTEC</div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <span class="scroll-text">Scroll</span>
+</div>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">VAULTTEC</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="projects.html">Solutions</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <button class="nav-cta">Commission</button>
+</nav>
+
+<!-- HERO C — DIAGONAL SPLIT -->
+<section class="hero" id="hero">
+  <div class="hero-left" id="heroLeft">
+    <img src="images/hero-1.webp" alt="Energy storage installation" id="heroImg">
+  </div>
+  <div class="hero-right" id="heroRight">
+    <p class="hero-eyebrow">Grid-Scale Energy Storage</p>
+    <h1 class="hero-title" id="heroTitle">
+      Power When the<br><em>World Needs</em><br>It Most
+    </h1>
+    <p class="hero-desc">VAULTTEC engineers bespoke grid-scale battery and compressed-air storage systems that turn intermittent renewable generation into reliable, dispatchable power.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Explore Solutions</button>
+      <button class="btn-ghost">Download Spec Sheet →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<div class="stats-band" id="stats">
+  <div class="stat-item">
+    <div class="stat-num" data-target="4200">0</div>
+    <div class="stat-label">MWh Installed Capacity</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" data-target="32">0</div>
+    <div class="stat-label">Grid Projects</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" data-target="14">0</div>
+    <div class="stat-label">Countries Active</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" data-target="98">0</div>
+    <div class="stat-label">% Uptime SLA</div>
+  </div>
+</div>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy" id="philosophy">
+  <p class="section-label">Our Principles</p>
+  <h2 class="section-title">Storage is the bridge from intermittent to inevitable.</h2>
+  <div class="philosophy-grid">
+    <div class="phil-card">
+      <div class="phil-num">I</div>
+      <h3>Absolute Reliability</h3>
+      <p>Every VAULTTEC system is engineered to 98% uptime SLA with redundant battery management systems, real-time thermal monitoring, and instant failover capability across all grid configurations.</p>
+    </div>
+    <div class="phil-card">
+      <div class="phil-num">II</div>
+      <h3>Technology Agnostic</h3>
+      <p>We integrate the optimal chemistry for each application — lithium iron phosphate for daily cycling, vanadium flow for long-duration storage, compressed air for multi-day resilience. Performance over ideology.</p>
+    </div>
+    <div class="phil-card">
+      <div class="phil-num">III</div>
+      <h3>Whole-Life Value</h3>
+      <p>Our lifecycle analysis considers 25-year total cost of ownership, degradation curves, second-life repurposing, and responsible decommissioning. We engineer for the full arc of the asset.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <p class="section-label">Storage Systems</p>
+  <h2 class="section-title">Four platforms. One grid.</h2>
+  <div class="products-grid">
+    <div class="product-card">
+      <img src="images/product-1.webp" alt="VaultCore LFP">
+      <div class="product-info">
+        <h3>VaultCore LFP</h3>
+        <span>Lithium Iron Phosphate — 1–100 MWh</span>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="images/product-2.webp" alt="VaultFlow VRB">
+      <div class="product-info">
+        <h3>VaultFlow VRB</h3>
+        <span>Vanadium Redox Flow — 10–500 MWh</span>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="images/product-3.webp" alt="VaultAir CAES">
+      <div class="product-info">
+        <h3>VaultAir CAES</h3>
+        <span>Compressed Air — 100 MWh–10 GWh</span>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="images/product-4.webp" alt="VaultHydro PHES">
+      <div class="product-info">
+        <h3>VaultHydro PHES</h3>
+        <span>Pumped Hydro — 500 MWh–50 GWh</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VAULT FEATURE -->
+<div class="vault-feature" id="vaultFeature">
+  <div class="vault-img">
+    <img src="images/workspace-1.webp" alt="VAULTTEC control room">
+  </div>
+  <div class="vault-content">
+    <p class="section-label">Intelligent Management</p>
+    <h2>The VAULT Operating System</h2>
+    <p>Every VAULTTEC installation runs our proprietary VAULT OS — an AI-driven energy management platform that forecasts demand, optimises charge/discharge cycles, and participates autonomously in wholesale electricity markets.</p>
+    <p>VAULT OS integrates with all major SCADA systems and provides real-time telemetry, predictive maintenance alerts, and revenue optimisation analytics through a single dashboard.</p>
+    <div class="vault-specs">
+      <div class="spec">
+        <div class="s-label">Response Time</div>
+        <div class="s-val">&lt; 20ms</div>
+      </div>
+      <div class="spec">
+        <div class="s-label">Round-Trip Efficiency</div>
+        <div class="s-val">92–96%</div>
+      </div>
+      <div class="spec">
+        <div class="s-label">Cycle Life</div>
+        <div class="s-val">6,000+ cycles</div>
+      </div>
+      <div class="spec">
+        <div class="s-label">Warranty</div>
+        <div class="s-val">15 years</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESS -->
+<section class="process-section" id="process">
+  <p class="section-label">Development Process</p>
+  <h2 class="section-title">From grid study to full operation in five phases.</h2>
+  <div class="process-steps">
+    <div class="proc-step">
+      <div class="proc-num">01</div>
+      <h4>Grid Needs Assessment</h4>
+      <p>Modelling of grid constraints, renewable penetration, and ancillary service opportunities to define storage capacity and dispatch profile.</p>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">02</div>
+      <h4>Technology Selection</h4>
+      <p>Matching storage chemistry and configuration to the site's operational requirements, land footprint, and 25-year economic model.</p>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">03</div>
+      <h4>Engineering Design</h4>
+      <p>Detailed electrical, civil, and control system engineering with safety analysis and grid interconnection studies.</p>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">04</div>
+      <h4>Construction &amp; Commissioning</h4>
+      <p>Factory acceptance testing, site installation, system integration, and full capacity testing before grid connection.</p>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">05</div>
+      <h4>Operations &amp; O&amp;M</h4>
+      <p>24/7 remote monitoring, scheduled maintenance, performance reporting, and market participation optimisation via VAULT OS.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HERITAGE TIMELINE -->
+<section class="heritage" id="heritage">
+  <p class="section-label">Company Heritage</p>
+  <h2 class="section-title">A decade of scaling stored energy.</h2>
+  <div class="timeline">
+    <div class="tl-entry">
+      <div class="tl-year">2015</div>
+      <div class="tl-content">
+        <h4>Company Founded</h4>
+        <p>VAULTTEC established in Zurich by Dr. Petra Hahn and a team of electrochemical engineers from ETH Zurich.</p>
+      </div>
+    </div>
+    <div class="tl-entry">
+      <div class="tl-year">2016</div>
+      <div class="tl-content">
+        <h4>First Commercial Installation</h4>
+        <p>48 MWh LFP system commissioned in the Bavarian grid — Germany's largest battery storage project at the time.</p>
+      </div>
+    </div>
+    <div class="tl-entry">
+      <div class="tl-year">2018</div>
+      <div class="tl-content">
+        <h4>VaultFlow Platform Launch</h4>
+        <p>Proprietary vanadium flow battery platform introduced for long-duration applications. First 200 MWh deployment in Australia.</p>
+      </div>
+    </div>
+    <div class="tl-entry">
+      <div class="tl-year">2020</div>
+      <div class="tl-content">
+        <h4>VAULT OS Version 2</h4>
+        <p>AI-driven energy management system deployed across all projects, enabling automated market participation and predictive maintenance.</p>
+      </div>
+    </div>
+    <div class="tl-entry">
+      <div class="tl-year">2022</div>
+      <div class="tl-content">
+        <h4>1 GWh Milestone</h4>
+        <p>Cumulative installed capacity surpassed 1 GWh across 18 projects in 9 countries. Series B funding of €280 million closed.</p>
+      </div>
+    </div>
+    <div class="tl-entry">
+      <div class="tl-year">2024</div>
+      <div class="tl-content">
+        <h4>VaultHydro Launch</h4>
+        <p>Entry into pumped hydroelectric storage with 2.4 GWh project in the Swiss Alps. First GWh-scale compressed air system breaks ground in Texas.</p>
+      </div>
+    </div>
+    <div class="tl-entry">
+      <div class="tl-year">2026</div>
+      <div class="tl-content">
+        <h4>4.2 GWh Portfolio</h4>
+        <p>Thirty-two operational projects across 14 countries. Engineering team of 340 specialists. Series C round announced.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="press-section" id="press">
+  <p class="section-label">Recognition</p>
+  <h2 class="section-title">What the world is saying.</h2>
+  <div class="swiper swiper-press">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="press-card">
+          <div class="press-source">Financial Times</div>
+          <p class="press-quote">"VAULTTEC has redefined what grid-scale storage can mean for European energy security. Their technology-agnostic approach is setting the standard."</p>
+          <div class="press-date">November 2025</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="press-card">
+          <div class="press-source">Bloomberg Green</div>
+          <p class="press-quote">"The Swiss startup that quietly became the backbone of the global energy transition — 4 gigawatt-hours of proof that storage has arrived."</p>
+          <div class="press-date">September 2025</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="press-card">
+          <div class="press-source">Energy Monitor</div>
+          <p class="press-quote">"VAULT OS represents a genuine leap forward in how storage assets interact with electricity markets — the response times are extraordinary."</p>
+          <div class="press-date">August 2025</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="press-card">
+          <div class="press-source">The Economist</div>
+          <p class="press-quote">"If renewable energy is the generation story of this decade, VAULTTEC is writing the storage chapter. Grid operators are taking notice."</p>
+          <div class="press-date">June 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMISSION -->
+<section class="commission" id="commission">
+  <div class="commission-inner">
+    <div>
+      <p class="section-label">Commission a Project</p>
+      <h2>Begin your storage journey</h2>
+      <p>Our engineering team conducts a complimentary grid assessment to identify the optimal storage configuration for your project. Complete the form to arrange a discovery session.</p>
+    </div>
+    <form class="comm-form">
+      <div class="form-row">
+        <input type="text" placeholder="Your name">
+        <input type="text" placeholder="Organisation">
+      </div>
+      <input type="email" placeholder="Email address">
+      <select>
+        <option value="">Project type</option>
+        <option>Utility-scale battery storage</option>
+        <option>Long-duration storage</option>
+        <option>Compressed air storage</option>
+        <option>Pumped hydroelectric</option>
+        <option>Hybrid storage system</option>
+      </select>
+      <input type="text" placeholder="Target capacity (MWh)">
+      <textarea placeholder="Tell us about your grid constraints and project timeline..."></textarea>
+      <button type="submit" class="form-submit">Request Assessment</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">VAULTTEC</div>
+      <p class="footer-brand">Grid-scale energy storage engineering.<br>Zurich · London · Sydney · Houston</p>
+    </div>
+    <div class="footer-col">
+      <h5>Solutions</h5>
+      <ul>
+        <li><a href="#">VaultCore LFP</a></li>
+        <li><a href="#">VaultFlow VRB</a></li>
+        <li><a href="#">VaultAir CAES</a></li>
+        <li><a href="#">VaultHydro PHES</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="process.html">Process</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Legal</h5>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Use</a></li>
+        <li><a href="#">Cookie Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 VAULTTEC AG. All rights reserved.</span>
+    <span>Designed with care for a carbon-neutral grid.</span>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// ── PRELOADER ──
+window.addEventListener('load', () => {
+  gsap.to('#preloader', {
+    opacity: 0, duration: 0.8, delay: 1.0,
+    onComplete: () => {
+      document.getElementById('preloader').classList.add('hidden');
+      // [1] scroll indicator visible after preloader
+      document.getElementById('scroll-indicator').classList.add('visible');
+      animateHero();
+    }
+  });
+});
+
+// [2] Fallback scroll indicator
+setTimeout(() => {
+  document.getElementById('scroll-indicator')?.classList.add('visible');
+}, 4000);
+
+// ── HERO ANIMATION ──
+function animateHero() {
+  // hero-left image reveal
+  document.getElementById('heroLeft').classList.add('loaded');
+
+  // hero-right content A1 Standard
+  gsap.from('#heroRight .hero-eyebrow', {
+    immediateRender: false,
+    opacity: 0, x: -20, duration: 1.0, ease: 'power3.out', delay: 0.1
+  });
+  gsap.from('#heroTitle', {
+    immediateRender: false,
+    opacity: 0, y: 24, duration: 1.1, ease: 'power3.out', delay: 0.25
+  });
+  gsap.from('#heroRight .hero-desc', {
+    immediateRender: false,
+    opacity: 0, y: 24, duration: 1.0, ease: 'power3.out', delay: 0.4
+  });
+  gsap.from('#heroRight .hero-actions', {
+    immediateRender: false,
+    opacity: 0, y: 20, duration: 1.0, ease: 'power3.out', delay: 0.55
+  });
+}
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('main-nav');
+  if (window.scrollY > 60) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+// ── STATS COUNTER ──
+const statNums = document.querySelectorAll('.stat-num[data-target]');
+statNums.forEach(el => {
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 85%',
+    once: true,
+    onEnter: () => {
+      const target = +el.getAttribute('data-target');
+      const suffix = target >= 1000 ? '' : (el.closest('.stat-item').querySelector('.stat-label').textContent.includes('%') ? '' : '');
+      gsap.to({ val: 0 }, {
+        val: target, duration: 1.8, ease: 'power2.out',
+        onUpdate: function() { el.textContent = Math.round(this.targets()[0].val).toLocaleString(); },
+        onComplete: () => {
+          if (target >= 1000) el.textContent = target.toLocaleString();
+          else el.textContent = target;
+        }
+      });
+    }
+  });
+});
+
+// ── PHILOSOPHY GRID — A1 ──
+gsap.from('.phil-card', {
+  immediateRender: false,
+  opacity: 0, y: 24, duration: 1.0, ease: 'power3.out', stagger: 0.10,
+  scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%' }
+});
+
+// ── PRODUCTS ──
+gsap.from('.product-card', {
+  immediateRender: false,
+  opacity: 0, y: 24, duration: 1.0, ease: 'power3.out', stagger: 0.10,
+  scrollTrigger: { trigger: '.products-grid', start: 'top 85%' }
+});
+
+// ── VAULT FEATURE ──
+gsap.from('.vault-img', {
+  immediateRender: false,
+  opacity: 0, x: -30, duration: 1.2, ease: 'power3.out',
+  scrollTrigger: { trigger: '.vault-feature', start: 'top 80%' }
+});
+gsap.from('.vault-content > *', {
+  immediateRender: false,
+  opacity: 0, y: 20, duration: 1.0, ease: 'power3.out', stagger: 0.10,
+  scrollTrigger: { trigger: '.vault-content', start: 'top 80%' }
+});
+
+// ── PROCESS STEPS ──
+gsap.from('.proc-step', {
+  immediateRender: false,
+  opacity: 0, y: 24, duration: 1.0, ease: 'power3.out', stagger: 0.10,
+  scrollTrigger: { trigger: '.process-steps', start: 'top 85%' }
+});
+
+// ── TIMELINE ──
+gsap.from('.tl-entry', {
+  immediateRender: false,
+  opacity: 0, x: 20, duration: 1.0, ease: 'power3.out', stagger: 0.10,
+  scrollTrigger: { trigger: '.timeline', start: 'top 85%' }
+});
+
+// ── SECTION TITLES ──
+document.querySelectorAll('.section-title, .section-label').forEach(el => {
+  gsap.from(el, {
+    immediateRender: false,
+    opacity: 0, y: 20, duration: 1.0, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 88%' }
+  });
+});
+
+// ── SWIPER ──
+new Swiper('.swiper-press', {
+  slidesPerView: 1.2,
+  spaceBetween: 20,
+  grabCursor: true,
+  breakpoints: {
+    768: { slidesPerView: 2.2 },
+    1200: { slidesPerView: 3.2 }
+  }
+});
+</script>
+</body>
+</html>

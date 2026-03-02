@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collections — The National Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #181818;
+    --bg-alt: #202020;
+    --bg-card: #242424;
+    --accent: #B0B0C0;
+    --accent-dim: rgba(176,176,192,0.18);
+    --accent-line: rgba(176,176,192,0.3);
+    --text: #E8E8EC;
+    --text-dim: rgba(232,232,236,0.55);
+    --font-serif: 'Cinzel', 'Times New Roman', serif;
+    --font-body: 'Crimson Pro', Georgia, serif;
+    --nav-h: 72px;
+    --max: 1280px;
+    --gutter: clamp(24px, 5vw, 80px);
+    --r: 3px;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 18px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--gutter); z-index: 100; background: rgba(24,24,24,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--accent-line); }
+  .nav-logo { font-family: var(--font-serif); font-size: 1rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; color: var(--accent); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a { font-family: var(--font-serif); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none; color: var(--text-dim); transition: color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+  .nav-cta { font-family: var(--font-serif); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; color: var(--bg); background: var(--accent); padding: 10px 22px; transition: opacity 0.3s; }
+  .nav-cta:hover { opacity: 0.82; }
+
+  /* PAGE HERO */
+  .page-hero { padding-top: calc(var(--nav-h) + 80px); padding-bottom: 80px; padding-left: var(--gutter); padding-right: var(--gutter); background: var(--bg); }
+  .page-hero-inner { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+  .page-eyebrow { font-family: var(--font-serif); font-size: 0.62rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+  .page-title { font-family: var(--font-serif); font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 700; line-height: 1.05; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); }
+  .page-title em { display: block; font-style: normal; color: var(--accent); }
+  .page-desc { font-size: 1.15rem; line-height: 1.8; color: var(--text-dim); }
+  .page-desc strong { color: var(--text); font-weight: 600; }
+  .page-stats { display: flex; gap: 40px; margin-top: 32px; }
+  .page-stat-val { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--accent); letter-spacing: 0.04em; display: block; }
+  .page-stat-lbl { font-size: 0.82rem; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* ERA FILTER */
+  .era-filter { background: var(--bg-alt); border-top: 1px solid var(--accent-line); border-bottom: 1px solid var(--accent-line); padding: 0 var(--gutter); position: sticky; top: var(--nav-h); z-index: 50; }
+  .era-filter-inner { max-width: var(--max); margin: 0 auto; display: flex; gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .era-btn { font-family: var(--font-serif); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; color: var(--text-dim); background: none; border: none; padding: 20px 28px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.3s, border-color 0.3s; }
+  .era-btn:hover { color: var(--accent); }
+  .era-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* FEATURED COLLECTION */
+  .featured { padding: 80px var(--gutter); background: var(--bg); }
+  .featured-inner { max-width: var(--max); margin: 0 auto; }
+  .section-label { font-family: var(--font-serif); font-size: 0.6rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 40px; display: flex; align-items: center; gap: 16px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--accent-line); }
+  .featured-card { display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: var(--bg-card); border: 1px solid var(--accent-line); overflow: hidden; }
+  .featured-img { aspect-ratio: 4/3; overflow: hidden; }
+  .featured-img img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.8) sepia(0.15); transition: transform 0.8s ease; }
+  .featured-card:hover .featured-img img { transform: scale(1.04); }
+  .featured-body { padding: 60px 52px; display: flex; flex-direction: column; justify-content: center; }
+  .featured-tag { font-family: var(--font-serif); font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .featured-title { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; line-height: 1.15; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 20px; }
+  .featured-text { font-size: 1rem; line-height: 1.8; color: var(--text-dim); margin-bottom: 28px; }
+  .featured-items { display: flex; gap: 24px; margin-bottom: 36px; }
+  .fi-val { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; color: var(--accent); display: block; }
+  .fi-lbl { font-size: 0.78rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+  .btn-primary { display: inline-block; font-family: var(--font-serif); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; color: var(--bg); background: var(--accent); padding: 14px 30px; text-decoration: none; transition: opacity 0.3s; }
+  .btn-primary:hover { opacity: 0.82; }
+  .btn-outline { display: inline-block; font-family: var(--font-serif); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; color: var(--accent); border: 1px solid var(--accent); padding: 13px 30px; text-decoration: none; transition: background 0.3s, color 0.3s; margin-left: 14px; }
+  .btn-outline:hover { background: var(--accent); color: var(--bg); }
+
+  /* COLLECTIONS GRID */
+  .collections { padding: 80px var(--gutter); background: var(--bg-alt); }
+  .collections-inner { max-width: var(--max); margin: 0 auto; }
+  .collections-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 0; }
+  .coll-card { background: var(--bg-card); overflow: hidden; position: relative; cursor: pointer; }
+  .coll-card-img { aspect-ratio: 3/2; overflow: hidden; }
+  .coll-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.72) sepia(0.1); transition: transform 0.7s ease, filter 0.5s ease; }
+  .coll-card:hover .coll-card-img img { transform: scale(1.05); filter: brightness(0.82) sepia(0.08); }
+  .coll-card-body { padding: 28px 32px 36px; }
+  .coll-era { font-family: var(--font-serif); font-size: 0.56rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .coll-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2; margin-bottom: 12px; }
+  .coll-text { font-size: 0.92rem; line-height: 1.75; color: var(--text-dim); margin-bottom: 18px; }
+  .coll-count { font-family: var(--font-serif); font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); border-top: 1px solid var(--accent-line); padding-top: 14px; }
+  .coll-count span { color: var(--accent); font-weight: 600; }
+
+  /* RECORD TYPES */
+  .record-types { padding: 80px var(--gutter); background: var(--bg); }
+  .record-types-inner { max-width: var(--max); margin: 0 auto; }
+  .rt-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--accent-line); margin-top: 40px; }
+  .rt-cell { background: var(--bg); padding: 36px 28px; }
+  .rt-icon { font-family: var(--font-serif); font-size: 1.6rem; color: var(--accent); margin-bottom: 16px; opacity: 0.7; }
+  .rt-name { font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+  .rt-desc { font-size: 0.88rem; line-height: 1.7; color: var(--text-dim); }
+  .rt-count { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-top: 14px; }
+
+  /* ACCESS BANNER */
+  .access-banner { padding: 80px var(--gutter); background: var(--bg-alt); border-top: 1px solid var(--accent-line); }
+  .access-banner-inner { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; }
+  .access-title { font-family: var(--font-serif); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 16px; }
+  .access-desc { font-size: 1.05rem; color: var(--text-dim); line-height: 1.8; max-width: 540px; }
+  .access-actions { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; white-space: nowrap; }
+
+  /* FOOTER */
+  footer { background: var(--bg); border-top: 1px solid var(--accent-line); padding: 60px var(--gutter) 36px; }
+  .footer-inner { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--accent-line); margin-bottom: 28px; }
+  .footer-brand-name { font-family: var(--font-serif); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .footer-brand-text { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
+  .footer-col-title { font-family: var(--font-serif); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; color: var(--accent); margin-bottom: 18px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { font-size: 0.88rem; color: var(--text-dim); text-decoration: none; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .footer-copy { font-size: 0.82rem; color: var(--text-dim); }
+  .footer-reg { font-family: var(--font-serif); font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">The National Archive</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="collection.html" class="active">Collections</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="process.html">Preservation</a></li>
+    <li><a href="contact.html">Visit</a></li>
+  </ul>
+  <a class="nav-cta" href="contact.html">Research Access</a>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div>
+      <p class="page-eyebrow">Holdings</p>
+      <h1 class="page-title">Our<br><em>Collections</em></h1>
+    </div>
+    <div>
+      <p class="page-desc">The National Archive holds <strong>over eleven million individual documents</strong>, spanning nine centuries of recorded history. From Domesday surveys to digital government records, every collection is preserved with the same rigour and care.</p>
+      <div class="page-stats">
+        <div>
+          <span class="page-stat-val">11M+</span>
+          <span class="page-stat-lbl">Documents</span>
+        </div>
+        <div>
+          <span class="page-stat-val">900+</span>
+          <span class="page-stat-lbl">Years of Record</span>
+        </div>
+        <div>
+          <span class="page-stat-val">4 Eras</span>
+          <span class="page-stat-lbl">Catalogued</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ERA FILTER -->
+<div class="era-filter">
+  <div class="era-filter-inner">
+    <button class="era-btn active">All Collections</button>
+    <button class="era-btn">Medieval (1086–1485)</button>
+    <button class="era-btn">Early Modern (1485–1714)</button>
+    <button class="era-btn">Modern (1714–1945)</button>
+    <button class="era-btn">Contemporary (1945–)</button>
+    <button class="era-btn">Digital Archive</button>
+  </div>
+</div>
+
+<!-- FEATURED COLLECTION -->
+<section class="featured">
+  <div class="featured-inner">
+    <p class="section-label">Featured Collection</p>
+    <div class="featured-card">
+      <div class="featured-img">
+        <img src="images/img-3.webp" alt="Domesday Book — medieval manuscript">
+      </div>
+      <div class="featured-body">
+        <p class="featured-tag">Medieval — 1086</p>
+        <h2 class="featured-title">The Domesday Survey</h2>
+        <p class="featured-text">Commissioned by William I in 1085, the Domesday Book is one of the earliest comprehensive surveys of landholding in England. Its two volumes — Great Domesday and Little Domesday — document over thirteen thousand settlements and remain essential to understanding feudal society.</p>
+        <div class="featured-items">
+          <div>
+            <span class="fi-val">2</span>
+            <span class="fi-lbl">Volumes</span>
+          </div>
+          <div>
+            <span class="fi-val">13,000+</span>
+            <span class="fi-lbl">Settlements</span>
+          </div>
+          <div>
+            <span class="fi-val">1085–86</span>
+            <span class="fi-lbl">Compiled</span>
+          </div>
+        </div>
+        <a href="contact.html" class="btn-primary">Request Access</a>
+        <a href="process.html" class="btn-outline">How We Preserve It</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTIONS GRID -->
+<section class="collections">
+  <div class="collections-inner">
+    <p class="section-label">By Era</p>
+    <div class="collections-grid">
+
+      <div class="coll-card">
+        <div class="coll-card-img">
+          <img src="images/img-1.webp" alt="Medieval parchment scrolls">
+        </div>
+        <div class="coll-card-body">
+          <p class="coll-era">1086 – 1485</p>
+          <h3 class="coll-title">Medieval Records</h3>
+          <p class="coll-text">Royal charters, pipe rolls, plea rolls, and the earliest judicial records of the English Crown. Includes the Domesday Book and a thousand years of chancery proceedings.</p>
+          <p class="coll-count"><span>1.4 million</span> items catalogued</p>
+        </div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-card-img">
+          <img src="images/img-4.webp" alt="Tudor-era documents and maps">
+        </div>
+        <div class="coll-card-body">
+          <p class="coll-era">1485 – 1714</p>
+          <h3 class="coll-title">Early Modern State Papers</h3>
+          <p class="coll-text">Foreign and domestic state papers of the Tudor and Stuart monarchs, including the letters of Henry VIII, Elizabeth I, and Cromwell's Commonwealth. Diplomatic dispatches and privy council minutes.</p>
+          <p class="coll-count"><span>2.1 million</span> items catalogued</p>
+        </div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-card-img">
+          <img src="images/img-5.webp" alt="Georgian-era archives and ledgers">
+        </div>
+        <div class="coll-card-body">
+          <p class="coll-era">1714 – 1945</p>
+          <h3 class="coll-title">Modern Government Records</h3>
+          <p class="coll-text">Cabinet papers, census returns, military records from two world wars, Colonial Office files, and the comprehensive bureaucratic record of the British state during its most expansive era.</p>
+          <p class="coll-count"><span>5.2 million</span> items catalogued</p>
+        </div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-card-img">
+          <img src="images/img-3.webp" alt="Contemporary files and folders">
+        </div>
+        <div class="coll-card-body">
+          <p class="coll-era">1945 – Present</p>
+          <h3 class="coll-title">Contemporary Holdings</h3>
+          <p class="coll-text">Post-war cabinet papers, declassified intelligence files, welfare state records, and materials tracing Britain's evolving relationship with Europe and the Commonwealth. Thirty-year rule releases.</p>
+          <p class="coll-count"><span>1.9 million</span> items catalogued</p>
+        </div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-card-img">
+          <img src="images/img-6.webp" alt="Digital archive screens">
+        </div>
+        <div class="coll-card-body">
+          <p class="coll-era">Digital Collection</p>
+          <h3 class="coll-title">Born-Digital Archive</h3>
+          <p class="coll-text">Government emails, digital records, websites, and datasets transferred to the Archive since 2000. Represents the fastest-growing part of our holdings, requiring new preservation methodologies.</p>
+          <p class="coll-count"><span>420,000</span> digital objects preserved</p>
+        </div>
+      </div>
+
+      <div class="coll-card">
+        <div class="coll-card-img">
+          <img src="images/img-7.webp" alt="Maps and cartographic records">
+        </div>
+        <div class="coll-card-body">
+          <p class="coll-era">Special Collections</p>
+          <h3 class="coll-title">Maps &amp; Visual Records</h3>
+          <p class="coll-text">Over 100,000 maps, charts, plans, and architectural drawings spanning five centuries. Includes Ordnance Survey originals, county maps, and military cartography from Waterloo to the Falklands.</p>
+          <p class="coll-count"><span>100,000+</span> cartographic items</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- RECORD TYPES -->
+<section class="record-types">
+  <div class="record-types-inner">
+    <p class="section-label">Record Types</p>
+    <div class="rt-grid">
+      <div class="rt-cell">
+        <div class="rt-icon">I</div>
+        <p class="rt-name">Textual Records</p>
+        <p class="rt-desc">Handwritten and printed documents: letters, minutes, reports, legislation, and legal instruments.</p>
+        <p class="rt-count">8.4M items</p>
+      </div>
+      <div class="rt-cell">
+        <div class="rt-icon">II</div>
+        <p class="rt-name">Maps &amp; Plans</p>
+        <p class="rt-desc">Cartographic records including historical maps, estate plans, and architectural drawings.</p>
+        <p class="rt-count">100K+ items</p>
+      </div>
+      <div class="rt-cell">
+        <div class="rt-icon">III</div>
+        <p class="rt-name">Photographs</p>
+        <p class="rt-desc">Official government photography, aerial surveys, and photographic evidence from inquiries.</p>
+        <p class="rt-count">650K items</p>
+      </div>
+      <div class="rt-cell">
+        <div class="rt-icon">IV</div>
+        <p class="rt-name">Digital Objects</p>
+        <p class="rt-desc">Born-digital records, datasets, websites, and migrated legacy digital formats from government departments.</p>
+        <p class="rt-count">420K items</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCESS BANNER -->
+<section class="access-banner">
+  <div class="access-banner-inner">
+    <div>
+      <h2 class="access-title">Access Any Collection</h2>
+      <p class="access-desc">Registered researchers may access any of our holdings in the reading rooms at Archive House. Online ordering allows documents to be requested in advance for same-day delivery to your reading room seat.</p>
+    </div>
+    <div class="access-actions">
+      <a href="contact.html" class="btn-primary">Apply for a Reader's Ticket</a>
+      <a href="process.html" class="btn-outline">Preservation Science</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <p class="footer-brand-name">The National Archive</p>
+      <p class="footer-brand-text">Archive House, Chancery Lane, London<br>Preserving the documentary heritage of the nation since 1838.</p>
+    </div>
+    <div>
+      <p class="footer-col-title">Collections</p>
+      <ul class="footer-links">
+        <li><a href="collection.html">All Holdings</a></li>
+        <li><a href="collection.html">Medieval Records</a></li>
+        <li><a href="collection.html">State Papers</a></li>
+        <li><a href="collection.html">Digital Archive</a></li>
+        <li><a href="collection.html">Maps &amp; Plans</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Research</p>
+      <ul class="footer-links">
+        <li><a href="contact.html">Reader's Ticket</a></li>
+        <li><a href="process.html">Preservation</a></li>
+        <li><a href="contact.html">Reading Rooms</a></li>
+        <li><a href="contact.html">Online Ordering</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Institution</p>
+      <ul class="footer-links">
+        <li><a href="about.html">Our History</a></li>
+        <li><a href="about.html">Leadership</a></li>
+        <li><a href="process.html">Conservation</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">&copy; 2026 The National Archive. All rights reserved.</p>
+    <p class="footer-reg">Established by Royal Charter, 1838</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Era filter tabs
+document.querySelectorAll('.era-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.era-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Page hero
+gsap.from('.page-eyebrow', { immediateRender: false, scrollTrigger: { trigger: '.page-hero', start: 'top 88%' }, x: -20, opacity: 0, duration: 0.75, ease: 'power3.out' });
+gsap.from('.page-title', { immediateRender: false, scrollTrigger: { trigger: '.page-hero', start: 'top 85%' }, x: -20, opacity: 0, duration: 0.75, delay: 0.08, ease: 'power3.out' });
+gsap.from('.page-desc', { immediateRender: false, scrollTrigger: { trigger: '.page-hero', start: 'top 82%' }, x: -20, opacity: 0, duration: 0.75, delay: 0.16, ease: 'power3.out' });
+gsap.from('.page-stats', { immediateRender: false, scrollTrigger: { trigger: '.page-hero', start: 'top 82%' }, x: -20, opacity: 0, duration: 0.75, delay: 0.24, ease: 'power3.out' });
+
+// Featured
+gsap.from('.featured-card', { immediateRender: false, scrollTrigger: { trigger: '.featured', start: 'top 82%' }, x: -20, opacity: 0, duration: 0.8, ease: 'power3.out' });
+
+// Collection cards
+document.querySelectorAll('.coll-card').forEach((card, i) => {
+  gsap.from(card, { immediateRender: false, scrollTrigger: { trigger: card, start: 'top 88%' }, x: -20, opacity: 0, duration: 0.75, delay: i * 0.04, ease: 'power3.out' });
+});
+
+// Record types
+document.querySelectorAll('.rt-cell').forEach((cell, i) => {
+  gsap.from(cell, { immediateRender: false, scrollTrigger: { trigger: '.rt-grid', start: 'top 85%' }, x: -20, opacity: 0, duration: 0.72, delay: i * 0.04, ease: 'power3.out' });
+});
+
+// Access banner
+gsap.from('.access-title', { immediateRender: false, scrollTrigger: { trigger: '.access-banner', start: 'top 85%' }, x: -20, opacity: 0, duration: 0.75, ease: 'power3.out' });
+gsap.from('.access-desc', { immediateRender: false, scrollTrigger: { trigger: '.access-banner', start: 'top 85%' }, x: -20, opacity: 0, duration: 0.75, delay: 0.08, ease: 'power3.out' });
+gsap.from('.access-actions', { immediateRender: false, scrollTrigger: { trigger: '.access-banner', start: 'top 85%' }, x: -20, opacity: 0, duration: 0.75, delay: 0.16, ease: 'power3.out' });
+</script>
+</body>
+</html>

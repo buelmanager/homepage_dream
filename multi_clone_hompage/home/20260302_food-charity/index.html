@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Harvest Commons — Nourishing Every Table</title>
+  <meta name="description" content="The Harvest Commons connects surplus harvests with communities in need, running artisan nutrition programmes and advocating for food sovereignty.">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141810;
+      --surface: #1C2018;
+      --surface2: #222A1E;
+      --accent: #8AB56A;
+      --accent-light: #AACE8A;
+      --accent-dark: #5A8040;
+      --ivory: #E4EEE0;
+      --smoke: #889880;
+      --muted: #4E5E48;
+      --border: #181E14;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+    .preloader-mark svg { width: 80px; height: 80px; }
+    .preloader-mark svg path { stroke: var(--accent); stroke-width: 1.5; fill: none; stroke-dasharray: 400; stroke-dashoffset: 400; }
+    .preloader-name { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); letter-spacing: 0.08em; }
+    .preloader-line { width: 120px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-line::after { content: ''; position: absolute; left: -100%; top: 0; height: 100%; width: 100%; background: var(--accent); animation: lineLoad 1.8s ease forwards 0.5s; }
+    @keyframes lineLoad { to { left: 100%; } }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.6s ease; }
+    #scroll-indicator.visible { opacity: 1; }
+    .si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .si-line { width: 1px; height: 80px; background: var(--border); position: relative; overflow: hidden; }
+    .si-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); height: 0%; transition: height 0.1s linear; }
+    .si-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.3s, padding 0.3s; }
+    nav.scrolled { background: rgba(20,24,16,0.88); backdrop-filter: blur(20px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-brand { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { background: var(--accent); color: var(--bg); padding: 10px 24px; border-radius: 2px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* HERO — TYPE D: PORTRAITS + STATS */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; align-items: center; background: var(--bg); }
+    .hero-content-panel { padding: 120px 60px 120px 80px; }
+    .hero-eyebrow { font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.8rem, 5vw, 4.5rem); line-height: 1.05; color: var(--ivory); margin-bottom: 20px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-sub { font-size: 1.05rem; font-weight: 300; color: var(--smoke); line-height: 1.7; margin-bottom: 40px; max-width: 420px; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 40px 0; }
+    .stat-item { border-top: 1px solid var(--border); padding-top: 16px; }
+    .stat-num { font-size: 2.8rem; font-family: var(--font-serif); color: var(--accent); display: block; line-height: 1; }
+    .stat-label { display: block; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--smoke); margin-top: 6px; }
+    .hero-portraits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 40px 40px 40px 0; height: 100vh; }
+    .portrait-card { background-size: cover; background-position: center; border-radius: 2px; position: relative; overflow: hidden; }
+    .portrait-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(20,24,16,0.6) 100%); }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary { display: inline-block; background: var(--accent); color: var(--bg); padding: 14px 36px; border-radius: 2px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-ghost { display: inline-block; border: 1px solid rgba(228,238,224,0.3); color: var(--ivory); padding: 14px 36px; border-radius: 2px; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; margin-left: 0; transition: all 0.2s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stats-inner { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .strip-stat { padding: 40px; text-align: center; border-right: 1px solid var(--border); }
+    .strip-stat:last-child { border-right: none; }
+    .strip-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); display: block; line-height: 1; }
+    .strip-label { display: block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* SECTION COMMONS */
+    section { padding: 120px 80px; }
+    .section-eyebrow { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.15; color: var(--ivory); margin-bottom: 24px; }
+    .section-body { font-size: 1rem; font-weight: 300; line-height: 1.8; color: var(--smoke); max-width: 640px; }
+
+    /* PHILOSOPHY */
+    .philosophy { background: var(--bg); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 72px; }
+    .phil-card { border-top: 1px solid var(--border); padding-top: 32px; }
+    .phil-number { font-family: var(--font-serif); font-size: 3.5rem; color: var(--surface2); line-height: 1; margin-bottom: 16px; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-bottom: 12px; }
+    .phil-body { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--smoke); }
+
+    /* COLLECTION GRID */
+    .collection { background: var(--surface); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 72px; overflow: visible; }
+    .coll-card { position: relative; height: 440px; overflow: hidden; border-radius: 2px; }
+    .coll-card:nth-child(2) { transform: translateY(40px); }
+    .coll-card:nth-child(4) { transform: translateY(-40px); }
+    .coll-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s ease; }
+    .coll-card:hover .coll-img { transform: scale(1.05); }
+    .coll-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,24,16,0.9) 0%, transparent 55%); }
+    .coll-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 32px; }
+    .coll-tag { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .coll-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 8px; }
+    .coll-desc { font-size: 0.85rem; color: var(--smoke); line-height: 1.6; }
+
+    /* ATELIER */
+    .atelier { background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img-wrap { position: relative; height: 560px; overflow: hidden; border-radius: 2px; }
+    .atelier-img { width: 100%; height: 115%; object-fit: cover; object-position: center; will-change: transform; }
+    .atelier-text { padding: 40px 0; }
+    .atelier-quote { font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; color: var(--ivory); line-height: 1.6; margin-bottom: 28px; border-left: 2px solid var(--accent); padding-left: 24px; }
+    .atelier-body { font-size: 0.95rem; font-weight: 300; line-height: 1.85; color: var(--smoke); margin-bottom: 28px; }
+
+    /* PROCESS */
+    .process { background: var(--surface); }
+    .process-list { margin-top: 72px; position: relative; }
+    .process-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: flex; gap: 48px; padding: 40px 0; position: relative; }
+    .process-step:not(:last-child) { border-bottom: 1px solid var(--border); }
+    .step-marker { flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; background: var(--surface2); position: relative; z-index: 2; }
+    .step-num { font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); }
+    .step-content { flex: 1; padding-top: 12px; }
+    .step-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 12px; }
+    .step-body { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--smoke); }
+
+    /* HERITAGE */
+    .heritage { background: var(--bg); }
+    .heritage-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 72px; border-top: 1px solid var(--border); }
+    .heritage-item { padding: 40px 32px; border-right: 1px solid var(--border); }
+    .heritage-item:last-child { border-right: none; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.5rem; color: var(--accent); margin-bottom: 12px; }
+    .heritage-title { font-size: 0.9rem; font-weight: 500; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-body { font-size: 0.85rem; font-weight: 300; color: var(--smoke); line-height: 1.7; }
+
+    /* PRESS */
+    .press { background: var(--surface); overflow: hidden; }
+    .swiper { width: 100%; margin-top: 60px; }
+    .swiper-slide { padding: 0 40px; }
+    .press-quote { border-left: 2px solid var(--accent); padding: 32px 40px; background: var(--surface2); border-radius: 2px; }
+    .press-text { font-family: var(--font-serif); font-size: 1.2rem; font-style: italic; color: var(--ivory); line-height: 1.7; margin-bottom: 24px; }
+    .press-source { font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+
+    /* CONTACT */
+    .contact-section { background: var(--bg); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .contact-form .form-group { margin-bottom: 24px; }
+    .contact-form label { display: block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .contact-form input, .contact-form textarea, .contact-form select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 20px; font-family: var(--font-sans); font-size: 0.95rem; outline: none; border-radius: 2px; transition: border-color 0.2s; }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: var(--accent); }
+    .contact-form textarea { resize: vertical; min-height: 140px; }
+    .contact-form button { background: var(--accent); color: var(--bg); padding: 16px 48px; border: none; border-radius: 2px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .contact-form button:hover { background: var(--accent-light); }
+    .contact-info-title { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); margin-bottom: 32px; line-height: 1.3; }
+    .contact-detail { margin-bottom: 24px; }
+    .contact-detail-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .contact-detail-value { font-size: 0.95rem; color: var(--smoke); line-height: 1.6; }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 16px; }
+    .footer-tagline { font-size: 0.9rem; font-weight: 300; color: var(--smoke); line-height: 1.7; max-width: 300px; }
+    .footer-col-title { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--smoke); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 80 80">
+        <path d="M40 12 Q56 20 56 36 Q56 54 40 68 Q24 54 24 36 Q24 20 40 12 Z M32 40 Q40 32 48 40" id="preloader-path"/>
+      </svg>
+    </div>
+    <div class="preloader-name">The Harvest Commons</div>
+    <div class="preloader-line"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="si-dot"></div>
+    <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+    <div class="si-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-brand">The Harvest Commons</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Programmes</a></li>
+      <li><a href="process.html">Our Work</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Donate</a>
+  </nav>
+
+  <!-- HERO — TYPE D: PORTRAITS + STATS -->
+  <section class="hero" id="hero">
+    <div class="hero-content-panel">
+      <div class="hero-eyebrow">Est. 2007 · Community Food Sovereignty</div>
+      <h1 class="hero-title">Nourishing<br><em>Every Table</em></h1>
+      <p class="hero-sub">The Harvest Commons connects surplus harvests with communities in need, running artisan nutrition programmes that honour food as culture, not commodity.</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num" data-target="2400">0</span>
+          <span class="stat-label">Families Served Weekly</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="86">0</span>
+          <span class="stat-label">Farm Partners</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="19">0</span>
+          <span class="stat-label">Years Active</span>
+        </div>
+      </div>
+      <div class="hero-ctas">
+        <a href="#collection" class="btn-primary">Our Programmes</a>
+        <a href="#contact" class="btn-ghost">Volunteer</a>
+      </div>
+    </div>
+    <div class="hero-portraits">
+      <div class="portrait-card" style="background-image: url('images/img-1.webp'); grid-row: span 2;"></div>
+      <div class="portrait-card" style="background-image: url('images/img-3.webp')"></div>
+      <div class="portrait-card" style="background-image: url('images/img-2.webp')"></div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="strip-stat">
+        <span class="strip-num" data-target="420">0</span>
+        <span class="strip-label">Tonnes Food Redistributed/Year</span>
+      </div>
+      <div class="strip-stat">
+        <span class="strip-num" data-target="32">0</span>
+        <span class="strip-label">Community Kitchens</span>
+      </div>
+      <div class="strip-stat">
+        <span class="strip-num" data-target="1200">0</span>
+        <span class="strip-label">Volunteers</span>
+      </div>
+      <div class="strip-stat">
+        <span class="strip-num" data-target="24">0</span>
+        <span class="strip-label">Cities Reached</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-eyebrow">What We Believe</div>
+    <h2 class="section-title">Food is a Right,<br>Not a Privilege</h2>
+    <p class="section-body">The Harvest Commons operates from a simple conviction: in a world of agricultural abundance, no table should be bare. Our work connects supply with need — and insists that the connection is made with dignity.</p>
+    <div class="philosophy-grid">
+      <div class="phil-card">
+        <div class="phil-number">01</div>
+        <div class="phil-title">Dignity in Every Plate</div>
+        <div class="phil-body">Food distribution must preserve the dignity of those who receive it. We reject the model of charity hand-outs in favour of community tables where everyone is a guest and everyone contributes.</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-number">02</div>
+        <div class="phil-title">Local Sovereignty</div>
+        <div class="phil-body">Communities should control their food systems. We support local farmers, urban growers, and neighbourhood cooperatives — building food networks that are resilient, local, and self-sufficient.</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-number">03</div>
+        <div class="phil-title">Zero Waste Philosophy</div>
+        <div class="phil-body">Every edible item that goes to landfill is a failure of distribution, not production. The Harvest Commons intervenes at the point of surplus, ensuring that good food reaches good people.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="collection">
+    <div class="section-eyebrow">Our Programmes</div>
+    <h2 class="section-title">From Field<br>to Table</h2>
+    <div class="collection-grid">
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-1.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Distribution</div>
+          <div class="coll-title">Harvest Box Programme</div>
+          <div class="coll-desc">Weekly fresh produce boxes delivered to 2,400 families across 24 cities using our farm surplus network.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-3.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Training</div>
+          <div class="coll-title">Community Kitchen Academy</div>
+          <div class="coll-desc">Culinary skills and nutrition education programmes running across 32 community kitchen spaces.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-2.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Farming</div>
+          <div class="coll-title">Urban Growing Initiative</div>
+          <div class="coll-desc">Community allotments, rooftop gardens, and micro-farms producing food at neighbourhood scale.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-1.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Artisan</div>
+          <div class="coll-title">Fermentation &amp; Preservation Guild</div>
+          <div class="coll-desc">Teaching traditional food preservation: fermentation, pickling, milling, and seasonal canning.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img-wrap">
+        <img class="atelier-img" src="images/img-3.webp" alt="Community kitchen">
+      </div>
+      <div class="atelier-text">
+        <div class="section-eyebrow">Community Kitchens</div>
+        <h2 class="section-title">Where Food<br>Becomes Culture</h2>
+        <div class="atelier-quote">"A shared table is the oldest democracy. We are simply restoring it."</div>
+        <p class="atelier-body">Our 32 community kitchens are more than distribution points — they are cultural spaces where traditional recipes are shared across generations, where children learn to cook seasonal produce, and where neighbours become communities.</p>
+        <p class="atelier-body">Every kitchen is locally managed, locally staffed, and locally owned. The Harvest Commons provides training, equipment, and surplus food — the community provides the life.</p>
+        <a href="process.html" class="btn-primary">How We Work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-eyebrow">From Surplus to Table</div>
+    <h2 class="section-title">Five Steps to<br>Food Security</h2>
+    <div class="process-list">
+      <div class="process-line"></div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">01</span></div>
+        <div class="step-content">
+          <div class="step-title">Surplus Mapping &amp; Farm Partnerships</div>
+          <div class="step-body">We work with 86 farm partners to identify and pre-commit surplus harvest before it reaches waste. Real-time digital maps show where food is available and where it is needed.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">02</span></div>
+        <div class="step-content">
+          <div class="step-title">Collection &amp; Quality Sorting</div>
+          <div class="step-body">Volunteer teams collect surplus produce daily. All food is sorted, graded, and prepared for distribution — ensuring that every recipient receives quality produce, not leftovers.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">03</span></div>
+        <div class="step-content">
+          <div class="step-title">Community Kitchen Processing</div>
+          <div class="step-body">Surplus is transformed in our kitchens: preserved, prepared into ready meals, or packed as fresh boxes. Nothing edible is wasted; everything has a use and a destination.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">04</span></div>
+        <div class="step-content">
+          <div class="step-title">Dignified Distribution</div>
+          <div class="step-body">Food reaches families through neighbourhood box collection, community table events, and our partner food network — always in formats that preserve dignity and celebrate food culture.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">05</span></div>
+        <div class="step-content">
+          <div class="step-title">Nutrition Education &amp; Skills</div>
+          <div class="step-body">Every distribution touchpoint is an education moment. Kitchen Academy classes, recipe cards, growing workshops, and preservation guides ensure that food knowledge travels alongside food itself.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-eyebrow">Our Journey</div>
+    <h2 class="section-title">Nineteen Years<br>of Shared Tables</h2>
+    <div class="heritage-list">
+      <div class="heritage-item">
+        <div class="heritage-year">2007</div>
+        <div class="heritage-title">Founded</div>
+        <div class="heritage-body">The Harvest Commons began with a single allotment, one kitchen, and a conviction that surplus food should never go to waste while neighbours go hungry.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2012</div>
+        <div class="heritage-title">10 Kitchens</div>
+        <div class="heritage-body">Expansion to 10 community kitchen spaces across four cities. First farm partnership network established with 20 regional growers.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2018</div>
+        <div class="heritage-title">100 Tonnes</div>
+        <div class="heritage-body">Annual food redistribution exceeded 100 tonnes for the first time. Urban growing initiative launched in six cities.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2024</div>
+        <div class="heritage-title">National Reach</div>
+        <div class="heritage-body">32 kitchens, 86 farm partners, 1,200 volunteers, 2,400 families served weekly across 24 cities.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press" id="press">
+    <div class="section-eyebrow">Recognition</div>
+    <h2 class="section-title">Voices of Change</h2>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"The Harvest Commons has reframed the charity food model entirely. This is food justice, not food charity — and the difference is profound."</div>
+            <div class="press-source">— Food Policy Journal, Annual Impact Review</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"Their community kitchen model is the most dignified and effective food security intervention we have seen in a generation."</div>
+            <div class="press-source">— National Nutrition Council, Commendation 2024</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"By linking farm surplus with community kitchens, the Harvest Commons has created a circular food economy that the market alone could never build."</div>
+            <div class="press-source">— The Guardian, Social Enterprise Awards</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <div class="contact-inner">
+      <div>
+        <div class="section-eyebrow">Join the Commons</div>
+        <div class="contact-info-title">Help Set<br>Every Table</div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Headquarters</div>
+          <div class="contact-detail-value">Commons House, 14 Harvest Lane<br>Bristol, BS1 4TW, England</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">General Enquiries</div>
+          <div class="contact-detail-value">hello@harvestcommons.org</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Volunteer Coordination</div>
+          <div class="contact-detail-value">+44 117 322 4900</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Farm Partnerships</div>
+          <div class="contact-detail-value">farms@harvestcommons.org</div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="section-eyebrow">Send a Message</div>
+        <form>
+          <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your name"></div>
+          <div class="form-group"><label>Email Address</label><input type="email" placeholder="your@email.com"></div>
+          <div class="form-group"><label>How Would You Like to Help?</label><select><option>Donate</option><option>Volunteer</option><option>Farm Partnership</option><option>Corporate Support</option><option>General Enquiry</option></select></div>
+          <div class="form-group"><label>Message</label><textarea placeholder="Tell us about yourself..."></textarea></div>
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">The Harvest Commons</div>
+        <div class="footer-tagline">Connecting surplus harvests with communities in need since 2007. Nourishing bodies, building communities, honouring food.</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Commons</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="about.html#governance">Governance</a></li>
+          <li><a href="about.html#team">Our Team</a></li>
+          <li><a href="about.html#reports">Reports</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Programmes</div>
+        <ul class="footer-links">
+          <li><a href="collection.html">All Programmes</a></li>
+          <li><a href="collection.html#harvest-box">Harvest Box</a></li>
+          <li><a href="collection.html#kitchens">Kitchens</a></li>
+          <li><a href="process.html">How It Works</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Get Involved</div>
+        <ul class="footer-links">
+          <li><a href="contact.html">Donate</a></li>
+          <li><a href="contact.html#volunteer">Volunteer</a></li>
+          <li><a href="contact.html#farm">Farm Partner</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 The Harvest Commons. Registered Charity No. 1158420.</div>
+      <div class="footer-copy">Privacy · Terms · Accessibility</div>
+    </div>
+  </footer>
+
+  <script>
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = []; this.lines = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim(); el.innerHTML = '';
+      const wordArr = text.split(/\s+/);
+      wordArr.forEach((word, wi) => {
+        const wSpan = document.createElement('span');
+        wSpan.className = 'split-word'; wSpan.style.cssText = 'display:inline-block;overflow:hidden;';
+        if (type.includes('chars')) { [...word].forEach(ch => { const cSpan = document.createElement('span'); cSpan.className = 'split-char'; cSpan.style.display = 'inline-block'; cSpan.textContent = ch; wSpan.appendChild(cSpan); this.chars.push(cSpan); }); }
+        else { wSpan.style.overflow = 'visible'; wSpan.textContent = word; }
+        this.words.push(wSpan); el.appendChild(wSpan);
+        if (wi < wordArr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => { el.innerHTML = this.originals[i]; }); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const preloader = document.getElementById('preloader');
+    gsap.to('#preloader-path', {
+      strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut',
+      onComplete: () => {
+        gsap.to(preloader, { opacity: 0, duration: 0.6, delay: 0.3,
+          onComplete: () => {
+            preloader.style.display = 'none';
+            document.getElementById('scroll-indicator').classList.add('visible');
+            initAnimations();
+          }
+        });
+      }
+    });
+
+    setTimeout(() => document.getElementById('scroll-indicator')?.classList.add('visible'), 4000);
+
+    const __captureNav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      __captureNav.classList.toggle('scrolled', window.scrollY > 60);
+      const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      const fill = document.getElementById('si-fill');
+      if (fill) fill.style.height = pct + '%';
+    });
+
+    function initAnimations() {
+      // Hero
+      gsap.from('.hero-eyebrow', { opacity: 0, y: 28, duration: 1.0, ease: 'power2.out', immediateRender: false });
+      gsap.from('.hero-title', { opacity: 0, y: 24, duration: 1.2, ease: 'power2.out', immediateRender: false, delay: 0.2 });
+      gsap.from('.hero-sub', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', immediateRender: false, delay: 0.4 });
+      gsap.from('.stat-item', { opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09, immediateRender: false, delay: 0.5 });
+      gsap.from('.hero-ctas', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', immediateRender: false, delay: 0.7 });
+      gsap.from('.portrait-card', { opacity: 0, scale: 0.97, duration: 1.2, ease: 'power2.out', stagger: 0.09, immediateRender: false, delay: 0.3 });
+
+      // Stats strip
+      document.querySelectorAll('.strip-num').forEach(el => {
+        gsap.from(el, { textContent: 0, duration: 2, ease: 'power2.out', snap: { textContent: 1 }, immediateRender: false, scrollTrigger: { trigger: el, start: 'top 80%', once: true } });
+      });
+
+      // Hero stat counters (Type D)
+      document.querySelectorAll('.stat-num').forEach(el => {
+        gsap.from(el, { textContent: 0, duration: 2, ease: 'power2.out', snap: { textContent: 1 }, immediateRender: false, scrollTrigger: { trigger: el, start: 'top 80%', once: true } });
+      });
+
+      // Philosophy
+      gsap.from('.phil-card', { opacity: 0, y: 28, duration: 1.1, ease: 'power2.out', stagger: 0.09, immediateRender: false, scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true } });
+
+      // Collection
+      gsap.from('.coll-card', { opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09, immediateRender: false, scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true } });
+
+      // Atelier parallax
+      gsap.to('.atelier-img', { y: '-15%', ease: 'none', scrollTrigger: { trigger: '.atelier-img-wrap', start: 'top bottom', end: 'bottom top', scrub: true } });
+      gsap.from('.atelier-text > *', { opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09, immediateRender: false, scrollTrigger: { trigger: '.atelier-text', start: 'top 85%', once: true } });
+
+      // Process
+      gsap.from('.process-step', { opacity: 0, x: -20, duration: 1.1, ease: 'power2.out', stagger: 0.09, immediateRender: false, scrollTrigger: { trigger: '.process-list', start: 'top 85%', once: true } });
+
+      // Heritage
+      gsap.from('.heritage-item', { opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09, immediateRender: false, scrollTrigger: { trigger: '.heritage-list', start: 'top 85%', once: true } });
+
+      // Generic
+      gsap.utils.toArray('.section-eyebrow, .section-title, .section-body').forEach(el => {
+        gsap.from(el, { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+      });
+    }
+
+    new Swiper('.press-swiper', {
+      slidesPerView: 1, spaceBetween: 40, loop: true, autoplay: { delay: 5000 },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 } }
+    });
+  </script>
+</body>
+</html>

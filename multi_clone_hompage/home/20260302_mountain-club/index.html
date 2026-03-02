@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpine Meridian Club — The Summit Waits for the Patient</title>
+<meta name="description" content="Alpine Meridian Club is a high-altitude mountaineering club offering technical climbing expeditions, mountain safety training, and an exceptional community of alpine enthusiasts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0F1A10;
+    --surface: #162016;
+    --surface2: #1A2A1A;
+    --accent: #4DAF6A;
+    --accent-light: #7ACC8A;
+    --accent-dark: #2E7A46;
+    --ivory: #DCF0DC;
+    --smoke: #809080;
+    --muted: #4A6050;
+    --border: #182018;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* Preloader */
+  #preloader {
+    position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px;
+  }
+  .preloader-symbol { font-size: 3rem; color: var(--accent); animation: peak 1.4s ease-in-out infinite; }
+  @keyframes peak { 0%,100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-8px); opacity: 1; } }
+  .preloader-text { font-family: var(--font-sans); font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--smoke); }
+
+  /* Scroll Indicator */
+  #scroll-indicator {
+    position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+    z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0; transition: opacity 0.6s;
+  }
+  #scroll-indicator.visible { opacity: 1; }
+  .si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .si-line { width: 1px; height: 60px; background: var(--border); position: relative; overflow: hidden; }
+  .si-fill { position: absolute; top: 0; left: 0; right: 0; background: var(--accent); height: 0%; transition: height 0.1s; }
+  .si-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-rl; margin-top: 4px; }
+
+  /* Navbar */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 24px 60px; display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.4s;
+  }
+  #navbar.scrolled { background: rgba(15,26,16,0.9); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 300; color: var(--ivory); letter-spacing: 0.04em; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { font-size: 0.73rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 10px 24px; border: 1px solid var(--accent); color: var(--accent); transition: all 0.3s; }
+  .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+  /* Hero — Type B: Parallax */
+  .hero { position: relative; width: 100%; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+  .hero-parallax-bg { position: absolute; inset: -10%; }
+  .parallax-layer { position: absolute; inset: 0; background-size: cover; background-position: center; will-change: transform; }
+  .layer-1 { filter: brightness(0.55); }
+  .layer-2 { mix-blend-mode: overlay; opacity: 0.2; }
+  .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(15,26,16,0.7) 100%); }
+  .hero-content { position: relative; z-index: 2; max-width: 700px; padding: 0 80px; }
+  .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+  .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 6.5rem); font-weight: 300; line-height: 1.0; color: var(--ivory); }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-sub { font-size: 0.9rem; line-height: 1.8; color: var(--ivory); margin: 24px 0 40px; max-width: 480px; opacity: 0.85; }
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary { display: inline-block; padding: 14px 36px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 0.73rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; transition: background 0.3s, transform 0.3s; }
+  .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+  .btn-ghost { display: inline-block; padding: 14px 36px; border: 1px solid rgba(220,240,220,0.4); color: var(--ivory); font-family: var(--font-sans); font-size: 0.73rem; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.3s; }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Altitude indicator */
+  .altitude-bar { position: absolute; right: 60px; bottom: 60px; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .alt-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+  .alt-num { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 300; color: var(--accent); }
+  .alt-unit { font-size: 0.62rem; color: var(--smoke); }
+
+  /* Stats Strip */
+  .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 56px 0; }
+  .stats-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); padding: 0 60px; }
+  .stat-block { text-align: center; padding: 16px; border-right: 1px solid var(--border); }
+  .stat-block:last-child { border-right: none; }
+  .stat-num { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 300; color: var(--accent); display: block; line-height: 1; }
+  .stat-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+  /* Sections */
+  .section-eyebrow { font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 300; color: var(--ivory); line-height: 1.15; margin-bottom: 48px; }
+  .section-title em { color: var(--accent); font-style: italic; }
+
+  /* Philosophy */
+  .philosophy { padding: 110px 60px; max-width: 1200px; margin: 0 auto; }
+  .philosophy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; }
+  .philo-card { padding: 40px 32px; border: 1px solid var(--border); background: var(--surface); border-top: 2px solid var(--accent); }
+  .philo-icon { font-size: 1.6rem; margin-bottom: 20px; color: var(--accent); }
+  .philo-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 300; color: var(--ivory); margin-bottom: 12px; }
+  .philo-text { font-size: 0.87rem; line-height: 1.75; color: var(--smoke); }
+
+  /* Collection */
+  .collection { padding: 0 60px 110px; max-width: 1200px; margin: 0 auto; }
+  .collection-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; overflow: visible; }
+  .col-card { position: relative; overflow: hidden; aspect-ratio: 4/3; }
+  .col-card-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s ease; }
+  .col-card:hover .col-card-img { transform: scale(1.06); }
+  .col-card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(10,20,10,0.9) 100%); }
+  .col-card-content { position: absolute; bottom: 0; left: 0; padding: 28px; }
+  .col-card-tag { font-size: 0.63rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+  .col-card-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300; color: var(--ivory); }
+
+  /* Atelier */
+  .atelier { background: var(--surface); padding: 110px 0; }
+  .atelier-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .atelier-img-wrap { position: relative; height: 520px; }
+  .atelier-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .atelier-accent { position: absolute; bottom: -20px; right: -20px; width: 100px; height: 100px; border: 2px solid var(--accent); z-index: -1; }
+  .atelier-body { font-size: 0.91rem; line-height: 1.85; color: var(--smoke); margin-top: 20px; }
+  .atelier-cta { margin-top: 36px; display: flex; gap: 16px; }
+  .btn-ghost-dark { display: inline-block; padding: 14px 36px; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-sans); font-size: 0.73rem; letter-spacing: 0.2em; text-transform: uppercase; transition: all 0.3s; }
+  .btn-ghost-dark:hover { background: var(--accent); color: var(--bg); }
+
+  /* Process Timeline */
+  .process { padding: 110px 60px; max-width: 900px; margin: 0 auto; }
+  .timeline { margin-top: 56px; }
+  .timeline-item { display: grid; grid-template-columns: 70px 1fr; gap: 28px; padding-bottom: 52px; position: relative; }
+  .timeline-item:not(:last-child)::before { content: ''; position: absolute; left: 34px; top: 36px; bottom: 0; width: 1px; background: var(--border); }
+  .timeline-num { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 300; color: var(--accent); line-height: 1; }
+  .timeline-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 300; color: var(--ivory); margin-bottom: 10px; }
+  .timeline-text { font-size: 0.87rem; line-height: 1.75; color: var(--smoke); }
+
+  /* Heritage */
+  .heritage { background: var(--surface2); padding: 110px 60px; }
+  .heritage-inner { max-width: 1200px; margin: 0 auto; }
+  .milestones { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; margin-top: 56px; }
+  .milestone { border-left: 2px solid var(--accent); padding-left: 20px; }
+  .milestone-year { font-family: var(--font-serif); font-size: 2rem; font-weight: 300; color: var(--accent); display: block; }
+  .milestone-title { font-family: var(--font-serif); font-size: 0.92rem; color: var(--ivory); margin: 8px 0 6px; }
+  .milestone-text { font-size: 0.82rem; line-height: 1.65; color: var(--smoke); }
+
+  /* Press */
+  .press { padding: 110px 60px; max-width: 1200px; margin: 0 auto; }
+  .swiper { padding-bottom: 48px !important; }
+  .review-card { background: var(--surface); border: 1px solid var(--border); padding: 40px 36px; }
+  .review-quote { font-size: 0.95rem; font-style: italic; line-height: 1.8; color: var(--ivory); margin-bottom: 24px; }
+  .review-name { font-family: var(--font-serif); font-size: 0.82rem; color: var(--ivory); display: block; font-weight: 300; }
+  .review-role { font-size: 0.75rem; color: var(--smoke); letter-spacing: 0.08em; }
+  .swiper-pagination-bullet { background: var(--smoke); opacity: 0.4; }
+  .swiper-pagination-bullet-active { background: var(--accent); opacity: 1; }
+
+  /* Membership */
+  .membership { background: var(--surface); padding: 110px 60px; }
+  .membership-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .membership-perks { list-style: none; margin-top: 24px; }
+  .membership-perks li { padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.87rem; color: var(--smoke); display: flex; align-items: center; gap: 10px; }
+  .membership-perks li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-bottom: 7px; }
+  .form-input { width: 100%; background: var(--bg); border: 1px solid var(--border); padding: 13px 15px; color: var(--ivory); font-family: var(--font-sans); font-size: 0.88rem; transition: border-color 0.3s; }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  textarea.form-input { resize: vertical; min-height: 110px; }
+  .form-submit { width: 100%; }
+
+  /* Footer */
+  footer { background: var(--bg); border-top: 1px solid var(--border); padding: 56px 60px; }
+  .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; }
+  .footer-brand p { font-size: 0.83rem; line-height: 1.75; color: var(--smoke); margin-top: 14px; max-width: 260px; }
+  .footer-col-title { font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 9px; }
+  .footer-links a { font-size: 0.83rem; color: var(--smoke); transition: color 0.3s; }
+  .footer-links a:hover { color: var(--ivory); }
+  .footer-bottom { max-width: 1200px; margin: 36px auto 0; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
+  .footer-copy { font-size: 0.76rem; color: var(--muted); }
+
+  @media (max-width: 768px) {
+    .hero-content { padding: 0 24px; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .collection-grid { grid-template-columns: 1fr; }
+    .atelier-inner { grid-template-columns: 1fr; }
+    .milestones { grid-template-columns: 1fr 1fr; }
+    .membership-inner { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-symbol">▲</div>
+  <div class="preloader-text">Alpine Meridian Club</div>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="si-dot"></div>
+  <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+  <div class="si-label">Scroll</div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Alpine <span>Meridian</span></a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Expeditions</a></li>
+    <li><a href="process.html">Membership</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="process.html" class="nav-cta">Join the Club</a>
+</nav>
+
+<!-- Hero — Type B: Parallax -->
+<section class="hero" id="hero">
+  <div class="hero-parallax-bg">
+    <div class="parallax-layer layer-1" style="background-image: url('images/img-1.webp')"></div>
+    <div class="parallax-layer layer-2" style="background-image: url('images/img-2.webp')"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Est. 1948 · Alpine Mountaineering · High-Altitude Expeditions</div>
+    <h1 class="hero-title">Alpine<br><em>Meridian</em><br>Club</h1>
+    <p class="hero-sub">The summit waits for the patient. We train, climb, and explore the world's most demanding alpine terrain together.</p>
+    <div class="hero-ctas">
+      <a href="collection.html" class="btn-primary">Expeditions</a>
+      <a href="process.html" class="btn-ghost">Membership</a>
+    </div>
+  </div>
+  <div class="altitude-bar">
+    <span class="alt-label">Max Altitude</span>
+    <span class="alt-num">8,200</span>
+    <span class="alt-unit">m asl</span>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section class="stats-strip" id="stats">
+  <div class="stats-grid">
+    <div class="stat-block">
+      <span class="stat-num" data-target="280">0</span>
+      <span class="stat-label">Active Members</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="76">0</span>
+      <span class="stat-label">Years Active</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="340">0</span>
+      <span class="stat-label">Summits Reached</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num" data-target="24">0</span>
+      <span class="stat-label">Annual Expeditions</span>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy" id="philosophy">
+  <div class="section-eyebrow">Our Principles</div>
+  <h2 class="section-title">The Mountain Teaches<br>What Schools Cannot</h2>
+  <div class="philosophy-grid">
+    <div class="philo-card">
+      <div class="philo-icon">▲</div>
+      <h3 class="philo-title">Technical Excellence</h3>
+      <p class="philo-text">We take safety and technical skill seriously. Every member receives structured training in rope work, glacier travel, high-altitude physiology, and mountain meteorology before joining expeditions above 4,000 metres.</p>
+    </div>
+    <div class="philo-card">
+      <div class="philo-icon">◈</div>
+      <h3 class="philo-title">Leave No Trace</h3>
+      <p class="philo-text">The mountains sustain us. We operate under strict environmental ethics — no fixed ropes left in pristine terrain, no waste at altitude, and active participation in mountain conservation and trail maintenance programmes.</p>
+    </div>
+    <div class="philo-card">
+      <div class="philo-icon">⟐</div>
+      <h3 class="philo-title">Collective Safety</h3>
+      <p class="philo-text">We never leave members alone on the mountain. Every expedition has a dedicated safety officer, and our culture of mutual accountability has maintained an outstanding safety record across seven decades of climbing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Collection Grid (Expeditions) -->
+<section class="collection" id="collection">
+  <div class="section-eyebrow">Featured Expeditions</div>
+  <h2 class="section-title">Where We <em>Climb</em></h2>
+  <div class="collection-grid">
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Annual Expedition</span>
+        <h3 class="col-card-title">Alpine Grand Traverse</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Training Course</span>
+        <h3 class="col-card-title">Technical Ice Climbing</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-3.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Himalayan Expedition</span>
+        <h3 class="col-card-title">6000m Challenge</h3>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-card-img" style="background-image: url('images/img-4.webp')"></div>
+      <div class="col-card-overlay"></div>
+      <div class="col-card-content">
+        <span class="col-card-tag">Winter Mountaineering</span>
+        <h3 class="col-card-title">North Face Routes</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Atelier / Story -->
+<section class="atelier" id="about">
+  <div class="atelier-inner">
+    <div class="atelier-img-wrap">
+      <div class="atelier-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="atelier-accent"></div>
+    </div>
+    <div>
+      <div class="section-eyebrow">Our Story</div>
+      <h2 class="section-title">Founded by<br>Returning <em>Climbers</em></h2>
+      <p class="atelier-body">The Alpine Meridian Club was founded in 1948 by veterans of the first post-war alpine expeditions — climbers who had survived extraordinary circumstances and returned determined to pursue the mountains in peacetime with the same discipline and care for one another that had kept them alive.</p>
+      <p class="atelier-body" style="margin-top:16px;">Over seven decades we have led expeditions to the Alps, Andes, Himalayas, and Karakoram. Our members have completed first ascents, published route guides, and mentored thousands of climbers from beginner to advanced. Safety, technical excellence, and brotherhood on the mountain remain our founding commitments.</p>
+      <div class="atelier-cta">
+        <a href="about.html" class="btn-primary">Our History</a>
+        <a href="process.html" class="btn-ghost-dark">Join the Club</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process / Timeline -->
+<section class="process" id="process">
+  <div class="section-eyebrow">Training Programme</div>
+  <h2 class="section-title">Your Path to <em>the Summit</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-num">01</div>
+      <div>
+        <h3 class="timeline-title">Foundation Training</h3>
+        <p class="timeline-text">All new members complete our eight-week foundation programme covering basic rope work, navigation, mountain weather reading, and emergency procedures. Delivered at our training centre and on local hills.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">02</div>
+      <div>
+        <h3 class="timeline-title">Alpine Skills Course</h3>
+        <p class="timeline-text">A week-long residential course in the Alps covering glacier travel, crampon technique, crevasse rescue, and snow/ice anchors. Prerequisite for all high-altitude expeditions.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">03</div>
+      <div>
+        <h3 class="timeline-title">First Alpine Expedition</h3>
+        <p class="timeline-text">Newly qualified members join a guided expedition to peaks of 3,000–4,000 metres, supervised by experienced club leaders. Typically the Stubai or Ötztal Alps for an introduction to sustained climbing at altitude.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">04</div>
+      <div>
+        <h3 class="timeline-title">Technical Specialisation</h3>
+        <p class="timeline-text">Members choose a specialisation: rock climbing (sport and trad), ice climbing, ski mountaineering, or mixed routes. Specialist coaching and mentorship from titled club members in each discipline.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-num">05</div>
+      <div>
+        <h3 class="timeline-title">Expedition Leadership</h3>
+        <p class="timeline-text">Experienced members are trained as expedition leaders and safety officers. Leading club expeditions is both the highest responsibility and the greatest honour within the club's culture.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Heritage Milestones -->
+<section class="heritage">
+  <div class="heritage-inner">
+    <div class="section-eyebrow">Club Heritage</div>
+    <h2 class="section-title">Decades of <em>Ascent</em></h2>
+    <div class="milestones">
+      <div class="milestone">
+        <span class="milestone-year">1948</span>
+        <h3 class="milestone-title">Club Founded</h3>
+        <p class="milestone-text">Twelve veterans of post-war alpine expeditions establish the club with a charter focused on safety, training, and brotherhood.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">1962</span>
+        <h3 class="milestone-title">First Himalayan Expedition</h3>
+        <p class="milestone-text">Club team reaches the summit of a 6,200m Nepali peak — the club's first ascent above 6,000 metres.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">1989</span>
+        <h3 class="milestone-title">Training Centre Opens</h3>
+        <p class="milestone-text">Purpose-built training centre with indoor wall, gear store, and lecture hall provides year-round skill development.</p>
+      </div>
+      <div class="milestone">
+        <span class="milestone-year">2024</span>
+        <h3 class="milestone-title">340th Summit</h3>
+        <p class="milestone-text">The club logs its 340th documented summit across 24 countries and 5 mountain ranges over 76 years of expeditions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Press / Reviews -->
+<section class="press" id="reviews">
+  <div class="section-eyebrow">Member Voices</div>
+  <h2 class="section-title">From Those Who <em>Climbed</em></h2>
+  <div class="swiper reviews-swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"The Alpine Skills Course alone was worth ten times the membership fee. I went in thinking I knew how to move on a glacier and came out realising how much I didn't know. The gap between 'not dying' and 'moving efficiently at altitude' is enormous, and the club bridges it."</p>
+          <span class="review-name">James Coulter</span>
+          <span class="review-role">Member since 2018 · Completed 6 expeditions</span>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"Standing on the summit of my first 4,000m peak with three club members who had been climbing for thirty years between them — and knowing they had made sure I was ready — is a feeling I will never forget. The culture of genuine care here is real."</p>
+          <span class="review-name">Yuki Tanaka</span>
+          <span class="review-role">Member since 2021 · Foundation Course Graduate</span>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="review-card">
+          <p class="review-quote">"I have climbed with six different clubs over twenty years. Alpine Meridian's commitment to technical excellence and safety culture is the finest I have encountered. The leadership training programme is genuinely world-class."</p>
+          <span class="review-name">Ingrid Haakonsen</span>
+          <span class="review-role">Member since 2012 · Expedition Leader</span>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- Membership / Contact Form -->
+<section class="membership" id="contact">
+  <div class="membership-inner">
+    <div>
+      <div class="section-eyebrow">Membership</div>
+      <h2 class="section-title">Begin Your <em>Ascent</em></h2>
+      <ul class="membership-perks">
+        <li>Foundation training programme included</li>
+        <li>Access to Alpine Skills Course (annual)</li>
+        <li>Priority expedition places</li>
+        <li>Club gear library (ropes, harnesses, hardware)</li>
+        <li>Mountain rescue insurance included</li>
+        <li>Training wall and lecture facilities</li>
+        <li>Expedition planning and logistics support</li>
+      </ul>
+    </div>
+    <form>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Climbing Experience</label>
+        <select class="form-input">
+          <option>None — complete beginner</option>
+          <option>Some hillwalking and scrambling</option>
+          <option>Basic roped climbing</option>
+          <option>Summer alpine experience</option>
+          <option>Winter alpine and ice climbing</option>
+          <option>High altitude (above 5000m)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tell us about your mountain goals</label>
+        <textarea class="form-input" placeholder="What summits are you working towards?"></textarea>
+      </div>
+      <button type="submit" class="btn-primary form-submit">Apply for Membership</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div style="font-family:var(--font-serif);font-size:1.1rem;font-weight:300;color:var(--ivory)">Alpine <span style="color:var(--accent)">Meridian</span></div>
+      <p>High-altitude mountaineering, technical training, and expedition leadership since 1948. The summit waits for the patient.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About</a></li>
+        <li><a href="collection.html">Expeditions</a></li>
+        <li><a href="process.html">Membership</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Training</div>
+      <ul class="footer-links">
+        <li><a href="#">Foundation Course</a></li>
+        <li><a href="#">Alpine Skills</a></li>
+        <li><a href="#">Gear Library</a></li>
+        <li><a href="#">Expedition Archive</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <ul class="footer-links">
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">YouTube</a></li>
+        <li><a href="#">Member Forum</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2024 Alpine Meridian Club. All rights reserved.</span>
+    <span class="footer-copy">The Summit Waits for the Patient</span>
+  </div>
+</footer>
+
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span');
+      wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+      if (type.includes('chars')) {
+        [...word].forEach(ch => {
+          const c = document.createElement('span');
+          c.className = 'split-char'; c.style.display = 'inline-block'; c.textContent = ch;
+          wSpan.appendChild(c); this.chars.push(c);
+        });
+      } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+window.addEventListener('load', () => {
+  gsap.to('#preloader', {
+    opacity: 0, duration: 0.8, delay: 0.9, ease: 'power2.out',
+    onComplete: () => {
+      document.getElementById('preloader').style.display = 'none';
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }
+  });
+  setTimeout(() => document.getElementById('scroll-indicator').classList.add('visible'), 4000);
+});
+
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('si-fill').style.height = (window.scrollY / scrollable * 100) + '%';
+});
+
+// Parallax mousemove (Type B)
+document.querySelector('.hero').addEventListener('mousemove', e => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 30;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
+  gsap.to('.layer-1', { x: x * 0.5, y: y * 0.5, duration: 1.2, ease: 'power2.out' });
+  gsap.to('.layer-2', { x: x * 1.4, y: y * 1.0, duration: 1.2, ease: 'power2.out' });
+});
+
+// Hero content animation on load
+gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 1.2 });
+gsap.from('.hero-title', { immediateRender: false, opacity: 0, y: 28, duration: 1.4, ease: 'power2.out', delay: 1.35, stagger: 0.09 });
+gsap.from('.hero-sub', { immediateRender: false, opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 1.6 });
+gsap.from('.hero-ctas', { immediateRender: false, opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 1.8 });
+gsap.from('.altitude-bar', { immediateRender: false, opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 2.0 });
+
+// Parallax on scroll
+gsap.to('.layer-1', {
+  yPercent: -20,
+  scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.5 }
+});
+gsap.to('.layer-2', {
+  yPercent: -30,
+  scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 2 }
+});
+
+// Stats counter
+document.querySelectorAll('.stat-num[data-target]').forEach(counter => {
+  ScrollTrigger.create({
+    trigger: counter, start: 'top 85%', once: true,
+    onEnter: () => gsap.to({ val: 0 }, {
+      val: parseInt(counter.dataset.target), duration: 1.8, ease: 'power2.out',
+      onUpdate: function() { counter.textContent = Math.round(this.targets()[0].val); }
+    })
+  });
+});
+
+// Philosophy
+gsap.from('.philo-card', {
+  immediateRender: false, opacity: 0, y: 24, duration: 1.2, ease: 'power2.out', stagger: 0.09,
+  scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+});
+
+// Collection
+gsap.from('.col-card', {
+  immediateRender: false, opacity: 0, y: 28, duration: 1.0, ease: 'power2.out', stagger: 0.09,
+  scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+});
+
+// Atelier
+gsap.from('.atelier-img-wrap', {
+  immediateRender: false, opacity: 0, x: -28, duration: 1.4, ease: 'power2.out',
+  scrollTrigger: { trigger: '.atelier-inner', start: 'top 80%', once: true }
+});
+gsap.from('.atelier-inner > div:last-child', {
+  immediateRender: false, opacity: 0, x: 28, duration: 1.4, ease: 'power2.out',
+  scrollTrigger: { trigger: '.atelier-inner', start: 'top 80%', once: true }
+});
+
+// Timeline
+gsap.from('.timeline-item', {
+  immediateRender: false, opacity: 0, x: -20, duration: 1.2, ease: 'power2.out', stagger: 0.09,
+  scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true }
+});
+
+// Milestones
+gsap.from('.milestone', {
+  immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09,
+  scrollTrigger: { trigger: '.milestones', start: 'top 85%', once: true }
+});
+
+// Swiper
+new Swiper('.reviews-swiper', {
+  slidesPerView: 1, spaceBetween: 24,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

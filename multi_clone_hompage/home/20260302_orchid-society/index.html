@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orchidea Rare Society — Cultivating Nature's Most Elusive Beauty</title>
+  <meta name="description" content="A private society dedicated to the cultivation, study, and appreciation of the world's rarest orchid species. Greenhouse growing, botanical competitions, and exotic collection." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Karla:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #1A0A0E;
+      --surface: #241016;
+      --surface2: #2C1420;
+      --accent: #C96A8A;
+      --accent-light: #E090A8;
+      --accent-dark: #8A3A5C;
+      --ivory: #F0DCE4;
+      --smoke: #A08088;
+      --muted: #604A52;
+      --border: #200C12;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'Karla', system-ui, sans-serif;
+      --max-w: 1400px;
+      --nav-h: 80px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 24px;
+    }
+    .preloader-logo {
+      font-family: var(--font-serif); font-size: 32px;
+      color: var(--ivory); letter-spacing: 0.15em;
+    }
+    .preloader-logo em { color: var(--accent); font-style: italic; }
+    .preloader-bar { width: 160px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+    .preloader-text { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--smoke); }
+
+    /* SCROLL INDICATOR */
+    .scroll-indicator {
+      position: fixed; left: 32px; top: 50%; transform: translateY(-50%);
+      z-index: 400; display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .scroll-indicator-line { width: 1px; height: 60px; background: var(--border); position: relative; overflow: hidden; }
+    .scroll-indicator-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent); animation: scrollLine 2s ease-in-out infinite; }
+    @keyframes scrollLine { 0% { top: -100%; } 100% { top: 100%; } }
+    .scroll-indicator-text { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-rl; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 60px;
+      background: rgba(26,10,14,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 20px; letter-spacing: 0.1em; color: var(--ivory); }
+    .nav-logo em { color: var(--accent); font-style: italic; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 12px 28px; border-radius: 1px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* HERO TYPE E */
+    .hero {
+      position: relative; height: 100vh;
+      display: flex; align-items: center;
+      background: var(--bg); overflow: hidden;
+    }
+    .hero-grid-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(201,106,138,0.06) 0%, transparent 60%),
+                  radial-gradient(ellipse at center, transparent 30%, var(--bg) 90%);
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 700px; padding: 0 80px;
+    }
+    .hero-eyebrow {
+      font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 24px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 40px; height: 1px; background: var(--accent); }
+    .hero-title {
+      font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 6rem);
+      line-height: 1.05; color: var(--ivory); margin-bottom: 24px;
+    }
+    .hero-title em { color: var(--accent); font-style: italic; }
+    .hero-sub {
+      font-size: 16px; font-weight: 300; color: var(--smoke);
+      max-width: 480px; margin-bottom: 40px; line-height: 1.75;
+    }
+    .btn-primary {
+      display: inline-block; font-size: 11px; font-weight: 500;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--bg); background: var(--accent);
+      padding: 16px 40px; border-radius: 1px; transition: background 0.3s;
+    }
+    .btn-primary:hover { background: var(--accent-light); }
+    .corners .corner {
+      position: absolute; width: 50px; height: 50px;
+      border-color: var(--accent); border-style: solid; opacity: 0.4;
+    }
+    .corner.tl { top: 30px; left: 30px; border-width: 1px 0 0 1px; }
+    .corner.tr { top: 30px; right: 30px; border-width: 1px 1px 0 0; }
+    .corner.bl { bottom: 30px; left: 30px; border-width: 0 0 1px 1px; }
+    .corner.br { bottom: 30px; right: 30px; border-width: 0 1px 1px 0; }
+
+    /* STATS STRIP */
+    .stats-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 0;
+    }
+    .stats-inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 60px;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .stat-item {
+      text-align: center; padding: 0 32px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: var(--font-serif); font-size: 3.5rem; color: var(--accent); display: block; line-height: 1; }
+    .stat-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+    /* CONTAINER */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 60px; }
+
+    /* SECTION COMMON */
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    }
+    .section-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+    .section-tag-text { font-size: 10px; font-weight: 500; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); }
+
+    .section-heading {
+      font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem);
+      color: var(--ivory); line-height: 1.1; margin-bottom: 16px;
+    }
+    .section-sub { font-size: 16px; font-weight: 300; color: var(--smoke); line-height: 1.75; max-width: 560px; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 0; background: var(--bg); }
+    .philosophy-header { text-align: center; margin-bottom: 72px; }
+    .philosophy-header .section-sub { margin: 0 auto; }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .philosophy-card {
+      background: var(--surface);
+      padding: 48px 40px;
+      border: 1px solid var(--border);
+      position: relative; overflow: hidden;
+      transition: border-color 0.4s;
+    }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .philosophy-card-num {
+      font-family: var(--font-serif); font-size: 4rem;
+      color: var(--border); line-height: 1; margin-bottom: 24px;
+      transition: color 0.4s;
+    }
+    .philosophy-card:hover .philosophy-card-num { color: var(--accent-dark); }
+    .philosophy-card-title {
+      font-family: var(--font-serif); font-size: 1.5rem;
+      color: var(--ivory); margin-bottom: 16px;
+    }
+    .philosophy-card p { font-size: 14px; color: var(--smoke); line-height: 1.75; }
+
+    /* COLLECTION */
+    .collection { padding: 120px 0; background: var(--surface); }
+    .collection-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; }
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      overflow: visible;
+    }
+    .collection-card { position: relative; overflow: hidden; border-radius: 2px; aspect-ratio: 4/3; }
+    .collection-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s ease; }
+    .collection-card:hover img { transform: scale(1.04); }
+    .collection-card-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 40px 32px 28px;
+      background: linear-gradient(transparent, rgba(26,10,14,0.9));
+    }
+    .collection-card-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 4px; }
+    .collection-card-sub { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+    .btn-outline {
+      display: inline-block; font-size: 11px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid var(--accent);
+      padding: 14px 32px; border-radius: 1px; transition: all 0.3s;
+    }
+    .btn-outline:hover { background: var(--accent); color: var(--bg); }
+
+    /* ATELIER */
+    .atelier { padding: 120px 0; background: var(--bg); }
+    .atelier-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center;
+    }
+    .atelier-image { aspect-ratio: 4/5; overflow: hidden; border-radius: 2px; }
+    .atelier-image img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-content { padding-right: 40px; }
+    .atelier-content .section-heading { margin-bottom: 24px; }
+    .atelier-content p { font-size: 15px; color: var(--smoke); line-height: 1.8; margin-bottom: 20px; }
+    .atelier-feature {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 0; border-bottom: 1px solid var(--border);
+    }
+    .atelier-feature-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .atelier-feature-text { font-size: 14px; color: var(--ivory); }
+
+    /* PROCESS */
+    .process { padding: 120px 0; background: var(--surface); }
+    .process-header { text-align: center; margin-bottom: 80px; }
+    .process-header .section-sub { margin: 0 auto; }
+    .process-timeline { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
+    .process-timeline::before {
+      content: ''; position: absolute;
+      top: 32px; left: 10%; right: 10%;
+      height: 1px; background: var(--border);
+    }
+    .process-step { text-align: center; padding: 0 20px; }
+    .process-step-num {
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-size: 1.25rem; color: var(--accent);
+      background: var(--surface); margin: 0 auto 24px;
+      position: relative; z-index: 1; transition: border-color 0.3s, background 0.3s;
+    }
+    .process-step:hover .process-step-num { border-color: var(--accent); background: var(--surface2); }
+    .process-step-title { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 10px; }
+    .process-step p { font-size: 13px; color: var(--smoke); line-height: 1.6; }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 0; background: var(--bg); }
+    .heritage-header { text-align: center; margin-bottom: 80px; }
+    .heritage-timeline { display: flex; flex-direction: column; gap: 0; max-width: 800px; margin: 0 auto; }
+    .heritage-item {
+      display: grid; grid-template-columns: 120px 1px 1fr;
+      gap: 0 40px; align-items: start; padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .heritage-item:last-child { border-bottom: none; }
+    .heritage-year {
+      font-family: var(--font-serif); font-size: 1.75rem;
+      color: var(--accent); text-align: right; padding-top: 4px;
+    }
+    .heritage-divider { background: var(--border); position: relative; }
+    .heritage-divider::before {
+      content: ''; position: absolute; top: 8px; left: 50%;
+      transform: translateX(-50%); width: 8px; height: 8px;
+      border-radius: 50%; background: var(--accent);
+    }
+    .heritage-content { padding-left: 0; }
+    .heritage-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-text { font-size: 14px; color: var(--smoke); line-height: 1.7; }
+
+    /* PRESS */
+    .press { padding: 120px 0; background: var(--surface); }
+    .press-header { text-align: center; margin-bottom: 56px; }
+    .swiper-press { padding-bottom: 48px !important; }
+    .press-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 48px 40px; border-radius: 2px;
+    }
+    .press-quote {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: 1.2rem; color: var(--ivory); line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .press-quote::before { content: '\201C'; color: var(--accent); font-size: 2rem; line-height: 0; vertical-align: -0.6em; margin-right: 8px; }
+    .press-source { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--smoke) !important; }
+    .swiper-pagination-bullet-active { background: var(--accent) !important; }
+
+    /* MEMBERSHIP FORM */
+    .membership { padding: 120px 0; background: var(--bg); }
+    .membership-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center;
+    }
+    .membership-content .section-heading { margin-bottom: 20px; }
+    .membership-content p { font-size: 15px; color: var(--smoke); line-height: 1.8; margin-bottom: 32px; }
+    .membership-benefit { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .membership-benefit-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .membership-benefit-text { font-size: 14px; color: var(--ivory); }
+    .membership-form { background: var(--surface); border: 1px solid var(--border); padding: 48px; border-radius: 2px; }
+    .form-title { font-family: var(--font-serif); font-size: 1.75rem; color: var(--ivory); margin-bottom: 32px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 1px;
+      padding: 14px 18px; font-family: var(--font-sans); font-size: 14px;
+      color: var(--ivory); outline: none; transition: border-color 0.3s;
+      appearance: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-submit {
+      width: 100%; padding: 18px; background: var(--accent);
+      color: var(--bg); font-family: var(--font-sans); font-size: 12px;
+      font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase;
+      border: none; border-radius: 1px; cursor: pointer; transition: background 0.3s;
+    }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 80px 0 40px;
+    }
+    .footer-inner {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px; margin-bottom: 60px;
+    }
+    .footer-brand-name { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 16px; }
+    .footer-brand-name em { color: var(--accent); font-style: italic; }
+    .footer-tagline { font-size: 14px; color: var(--smoke); line-height: 1.7; max-width: 280px; }
+    .footer-col-title { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-links a { font-size: 14px; color: var(--smoke); transition: color 0.3s; }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 32px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+    .footer-legal { display: flex; gap: 32px; }
+    .footer-legal a { font-size: 12px; color: var(--muted); transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--smoke); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo"><em>Orchidea</em> Rare Society</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="preloaderFill"></div></div>
+    <div class="preloader-text">Cultivating Rare Beauty</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollIndicator" style="opacity:0">
+    <div class="scroll-indicator-line"></div>
+    <div class="scroll-indicator-text">Scroll</div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo"><em>Orchidea</em> Rare Society</div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Collection</a></li>
+      <li><a href="process.html">Cultivation</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Join Society</a>
+  </nav>
+
+  <!-- HERO TYPE E -->
+  <section class="hero" id="hero">
+    <canvas class="hero-grid-canvas" id="heroCanvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Est. 1952 — Private Botanical Society</div>
+      <h1 class="hero-title">Cultivating<br><em>Nature's</em> Most<br>Elusive Beauty</h1>
+      <p class="hero-sub">A private society dedicated to rare orchid species — from exotic jungle specimens to award-winning greenhouse cultivars. Join a community of passionate botanists and collectors.</p>
+      <a href="#collection" class="btn-primary">Explore Species</a>
+    </div>
+    <div class="corners">
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <span class="stat-num">340+</span>
+        <span class="stat-label">Registered Species</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">72</span>
+        <span class="stat-label">Years of Excellence</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">180</span>
+        <span class="stat-label">Active Members</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">28</span>
+        <span class="stat-label">International Awards</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="about">
+    <div class="container">
+      <div class="philosophy-header">
+        <div class="section-tag"><span class="section-tag-text">Our Principles</span></div>
+        <h2 class="section-heading">The Three Pillars<br>of Orchidea</h2>
+        <p class="section-sub">Our society is built upon three fundamental beliefs that guide every cultivation decision, every acquisition, and every member relationship.</p>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">01</div>
+          <div class="philosophy-card-title">Botanical Integrity</div>
+          <p>Every specimen in our collection is meticulously documented, sourced ethically, and cultivated according to strict botanical standards that honor the natural origins of each species.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">02</div>
+          <div class="philosophy-card-title">Obsessive Cultivation</div>
+          <p>We believe that growing rare orchids is an art form. Our greenhouse protocols follow decades of accumulated wisdom, pushing the boundaries of what each species can achieve.</p>
+        </div>
+        <div class="philosophy-card">
+          <div class="philosophy-card-num">03</div>
+          <div class="philosophy-card-title">Shared Knowledge</div>
+          <p>The rarest beauty deserves to be witnessed by more than one pair of eyes. We freely share cultivation techniques, findings, and expertise with our community and beyond.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="collection">
+    <div class="container">
+      <div class="collection-header">
+        <div>
+          <div class="section-tag"><span class="section-tag-text">Featured Species</span></div>
+          <h2 class="section-heading">Rare Orchid<br>Collection</h2>
+        </div>
+        <a href="collection.html" class="btn-outline">View All Species</a>
+      </div>
+      <div class="collection-grid">
+        <div class="collection-card">
+          <img src="images/img-1.webp" alt="Purple orchid bloom" loading="lazy" />
+          <div class="collection-card-info">
+            <div class="collection-card-title">Vanda Coerulea</div>
+            <div class="collection-card-sub">Blue Orchid — Thailand</div>
+          </div>
+        </div>
+        <div class="collection-card">
+          <img src="images/img-2.webp" alt="Exotic tropical orchid" loading="lazy" />
+          <div class="collection-card-info">
+            <div class="collection-card-title">Dracula Simia</div>
+            <div class="collection-card-sub">Monkey Orchid — Ecuador</div>
+          </div>
+        </div>
+        <div class="collection-card">
+          <img src="images/img-1.webp" alt="White orchid species" loading="lazy" />
+          <div class="collection-card-info">
+            <div class="collection-card-title">Ghost Orchid</div>
+            <div class="collection-card-sub">Dendrophylax Lindenii — Florida</div>
+          </div>
+        </div>
+        <div class="collection-card">
+          <img src="images/img-2.webp" alt="Rare orchid species close up" loading="lazy" />
+          <div class="collection-card-info">
+            <div class="collection-card-title">Rothschild's Slipper</div>
+            <div class="collection-card-sub">Paphiopedilum Rothschildianum — Borneo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="greenhouse">
+    <div class="container">
+      <div class="atelier-inner">
+        <div class="atelier-image">
+          <img src="images/img-1.webp" alt="Orchid greenhouse interior" loading="lazy" />
+        </div>
+        <div class="atelier-content">
+          <div class="section-tag"><span class="section-tag-text">Our Greenhouse</span></div>
+          <h2 class="section-heading">Where Rare<br>Species Flourish</h2>
+          <p>Our climate-controlled greenhouse spans 2,400 square feet and maintains five distinct microclimates, each calibrated to support specific orchid families from around the world.</p>
+          <p>Humidity, temperature, and light spectra are precisely managed by a dedicated team of horticultural specialists who have spent decades understanding the needs of rare species.</p>
+          <div class="atelier-feature">
+            <div class="atelier-feature-dot"></div>
+            <div class="atelier-feature-text">Five distinct microclimate zones</div>
+          </div>
+          <div class="atelier-feature">
+            <div class="atelier-feature-dot"></div>
+            <div class="atelier-feature-text">Advanced hydroponic and bark substrate systems</div>
+          </div>
+          <div class="atelier-feature">
+            <div class="atelier-feature-dot"></div>
+            <div class="atelier-feature-text">LED spectral lighting matched to natural habitats</div>
+          </div>
+          <div class="atelier-feature" style="border-bottom: none">
+            <div class="atelier-feature-dot"></div>
+            <div class="atelier-feature-text">Weekly member greenhouse access and tours</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS TIMELINE -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="process-header">
+        <div class="section-tag"><span class="section-tag-text">Our Method</span></div>
+        <h2 class="section-heading">The Cultivation Process</h2>
+        <p class="section-sub">From acquisition to bloom — every orchid in our collection follows a rigorous five-stage cultivation protocol.</p>
+      </div>
+      <div class="process-timeline">
+        <div class="process-step">
+          <div class="process-step-num">I</div>
+          <div class="process-step-title">Acquisition</div>
+          <p>Ethical sourcing from certified nurseries and conservation programs worldwide.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">II</div>
+          <div class="process-step-title">Quarantine</div>
+          <p>60-day observation period to ensure plant health and prevent disease.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">III</div>
+          <div class="process-step-title">Acclimatisation</div>
+          <p>Gradual introduction to our greenhouse microclimate conditions.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">IV</div>
+          <div class="process-step-title">Cultivation</div>
+          <p>Year-round care with precise environmental monitoring and adjustment.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">V</div>
+          <div class="process-step-title">Exhibition</div>
+          <p>Showcase at society exhibitions and national botanical competitions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="container">
+      <div class="heritage-header">
+        <div class="section-tag"><span class="section-tag-text">Our History</span></div>
+        <h2 class="section-heading">Seven Decades<br>of Botanical Passion</h2>
+      </div>
+      <div class="heritage-timeline">
+        <div class="heritage-item">
+          <div class="heritage-year">1952</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">Society Founded</div>
+            <p class="heritage-text">Eight passionate orchid enthusiasts gathered in a Chelsea conservatory to establish the Orchidea Rare Society, with an initial collection of 24 species.</p>
+          </div>
+        </div>
+        <div class="heritage-item">
+          <div class="heritage-year">1967</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">First International Award</div>
+            <p class="heritage-text">Our Paphiopedilum specimen won the Grand Champion award at the World Orchid Conference in Sydney, establishing our reputation for excellence.</p>
+          </div>
+        </div>
+        <div class="heritage-item">
+          <div class="heritage-year">1984</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">Greenhouse Established</div>
+            <p class="heritage-text">The society's first permanent greenhouse opened, enabling year-round cultivation of tropical species requiring controlled environments.</p>
+          </div>
+        </div>
+        <div class="heritage-item">
+          <div class="heritage-year">2008</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">Conservation Programme</div>
+            <p class="heritage-text">Launched a dedicated programme for the propagation and conservation of CITES-listed endangered orchid species in partnership with Kew Gardens.</p>
+          </div>
+        </div>
+        <div class="heritage-item">
+          <div class="heritage-year">2024</div>
+          <div class="heritage-divider"></div>
+          <div class="heritage-content">
+            <div class="heritage-title">300th Species Registered</div>
+            <p class="heritage-text">Our collection exceeded 300 registered species — a milestone celebrated with the opening of a new wing dedicated to Borneo's endangered terrestrial orchids.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press" id="press">
+    <div class="container">
+      <div class="press-header">
+        <div class="section-tag"><span class="section-tag-text">Recognition</span></div>
+        <h2 class="section-heading">What They Say</h2>
+      </div>
+      <div class="swiper swiper-press">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="press-card">
+              <p class="press-quote">The Orchidea Rare Society maintains perhaps the most significant private collection of threatened orchid species in the Northern Hemisphere. Their cultivation standards are unmatched.</p>
+              <div class="press-source">— Royal Horticultural Society Journal, 2024</div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="press-card">
+              <p class="press-quote">Walking through Orchidea's greenhouse is an experience that transforms one's understanding of botanical beauty. Every specimen tells a story of obsession and extraordinary skill.</p>
+              <div class="press-source">— The Garden Magazine, Spring Issue</div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div class="press-card">
+              <p class="press-quote">Their conservation work with Kew Gardens has helped bring back from the brink three orchid species that were believed functionally extinct in the wild. Truly remarkable dedication.</p>
+              <div class="press-source">— Orchid Review International</div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMBERSHIP FORM -->
+  <section class="membership" id="membership">
+    <div class="container">
+      <div class="membership-inner">
+        <div class="membership-content">
+          <div class="section-tag"><span class="section-tag-text">Membership</span></div>
+          <h2 class="section-heading">Join the Society</h2>
+          <p>Membership at Orchidea Rare Society opens the door to a world of botanical wonder — exclusive greenhouse access, monthly cultivation workshops, and access to our rare species exchange programme.</p>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Unlimited greenhouse access and guided tours</div>
+          </div>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Monthly cultivation workshops with expert horticulturalists</div>
+          </div>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Access to the rare species exchange and propagation programme</div>
+          </div>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Priority entry to the annual Orchidea Exhibition</div>
+          </div>
+          <div class="membership-benefit">
+            <div class="membership-benefit-dot"></div>
+            <div class="membership-benefit-text">Quarterly publication with cultivation insights and species profiles</div>
+          </div>
+        </div>
+        <div class="membership-form">
+          <div class="form-title">Apply for Membership</div>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your full name" />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="your@email.com" />
+          </div>
+          <div class="form-group">
+            <label>Cultivation Experience</label>
+            <select>
+              <option value="">Select your experience level</option>
+              <option>Beginner — Less than 2 years</option>
+              <option>Intermediate — 2 to 5 years</option>
+              <option>Advanced — Over 5 years</option>
+              <option>Professional Horticulturalist</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Area of Interest</label>
+            <textarea placeholder="Tell us about your orchid interests and what you hope to gain from membership..."></textarea>
+          </div>
+          <button class="form-submit">Submit Application</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-brand-name"><em>Orchidea</em> Rare Society</div>
+          <p class="footer-tagline">A private society dedicated to the cultivation, study, and preservation of the world's rarest orchid species since 1952.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Explore</div>
+          <ul class="footer-links">
+            <li><a href="about.html">About Society</a></li>
+            <li><a href="collection.html">Species Collection</a></li>
+            <li><a href="process.html">Cultivation Methods</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Society</div>
+          <ul class="footer-links">
+            <li><a href="#">Membership</a></li>
+            <li><a href="#">Annual Exhibition</a></li>
+            <li><a href="#">Workshops</a></li>
+            <li><a href="#">Conservation</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="#">Chelsea Greenhouse</a></li>
+            <li><a href="#">secretary@orchidea.org</a></li>
+            <li><a href="#">+44 20 7946 0123</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2024 Orchidea Rare Society. All rights reserved.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script class="split-text-polyfill">
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim(); el.innerHTML = '';
+      text.split(/\s+/).forEach((word, wi, arr) => {
+        const wSpan = document.createElement('span');
+        wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+        if (type.includes('chars')) {
+          [...word].forEach(ch => {
+            const c = document.createElement('span'); c.className = 'split-char';
+            c.style.display = 'inline-block'; c.textContent = ch;
+            wSpan.appendChild(c); this.chars.push(c);
+          });
+        } else { wSpan.textContent = word; }
+        this.words.push(wSpan); el.appendChild(wSpan);
+        if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // PRELOADER
+    const fill = document.getElementById('preloaderFill');
+    gsap.to(fill, {
+      scaleX: 1, duration: 1.8, ease: 'power1.inOut',
+      onComplete: () => {
+        gsap.to('#preloader', {
+          autoAlpha: 0, duration: 0.6, delay: 0.2,
+          onComplete: () => {
+            document.getElementById('preloader').style.display = 'none';
+            // Show scroll indicator
+            gsap.to('#scrollIndicator', { autoAlpha: 1, duration: 0.5 });
+          }
+        });
+      }
+    });
+
+    // Also show scroll indicator after delay
+    setTimeout(() => {
+      const si = document.getElementById('scrollIndicator');
+      if (si) gsap.to(si, { autoAlpha: 1, duration: 0.5 });
+    }, 4000);
+
+    // HERO CANVAS GRID
+    const canvas = document.getElementById('heroCanvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; drawGrid(); }
+      function drawGrid() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'rgba(201,106,138,0.10)'; ctx.lineWidth = 0.5;
+        const sz = 52;
+        for (let x = 0; x <= canvas.width; x += sz) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+        for (let y = 0; y <= canvas.height; y += sz) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+        // Floating dots at intersections
+        ctx.fillStyle = 'rgba(201,106,138,0.18)';
+        for (let x = sz; x < canvas.width; x += sz * 4) {
+          for (let y = sz; y < canvas.height; y += sz * 4) {
+            ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
+          }
+        }
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+    }
+
+    // HERO ANIMATIONS
+    const heroTl = gsap.timeline({ delay: 2.2 });
+    heroTl
+      .from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out' })
+      .from('.hero-title', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', stagger: 0.06 }, '-=0.8')
+      .from('.hero-sub', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out' }, '-=0.8')
+      .from('.btn-primary', { immediateRender: false, opacity: 0, y: 14, duration: 1.2, ease: 'power1.out' }, '-=0.8')
+      .from('.corner', { immediateRender: false, opacity: 0, duration: 1.0, stagger: 0.15, ease: 'power1.out' }, '-=0.6');
+
+    // STATS STRIP
+    gsap.from('.stat-item', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.stats-strip', start: 'top 85%', once: true }
+    });
+
+    // PHILOSOPHY CARDS
+    gsap.from('.philosophy-card', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+    });
+
+    // COLLECTION CARDS
+    gsap.from('.collection-card', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+    });
+
+    // ATELIER
+    gsap.from('.atelier-image', {
+      immediateRender: false, opacity: 0, x: -40, duration: 1.5, ease: 'power1.out',
+      scrollTrigger: { trigger: '.atelier-inner', start: 'top 85%', once: true }
+    });
+    gsap.from('.atelier-content > *', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.atelier-inner', start: 'top 85%', once: true }
+    });
+
+    // PROCESS STEPS
+    gsap.from('.process-step', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.process-timeline', start: 'top 85%', once: true }
+    });
+
+    // HERITAGE ITEMS
+    gsap.from('.heritage-item', {
+      immediateRender: false, opacity: 0, x: -20, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.heritage-timeline', start: 'top 85%', once: true }
+    });
+
+    // MEMBERSHIP SECTION
+    gsap.from('.membership-form', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out',
+      scrollTrigger: { trigger: '.membership-inner', start: 'top 85%', once: true }
+    });
+
+    // SWIPER
+    new Swiper('.swiper-press', {
+      slidesPerView: 1,
+      spaceBetween: 24,
+      breakpoints: { 768: { slidesPerView: 2 }, 1200: { slidesPerView: 3 } },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      loop: false
+    });
+  </script>
+</body>
+</html>

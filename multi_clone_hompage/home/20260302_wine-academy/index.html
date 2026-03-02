@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clos d'Or Wine Academy — Sommelier Training Excellence</title>
+  <meta name="description" content="Premier wine sommelier training academy. From WSET certification to Master Sommelier exam preparation. Train with distinguished Masters of Wine in Bordeaux.">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:#1A0A0E; --surface:#241016; --surface2:#2C1420;
+      --accent:#C96A8A; --accent-light:#E090A8; --accent-dark:#8A3A5C;
+      --ivory:#F0DCE4; --smoke:#A08088; --muted:#604A52; --border:#200C12;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Lato', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+    .preloader-mark { width: 72px; height: 72px; animation: preloaderPulse 1.5s ease-in-out infinite; }
+    .preloader-name { font-family: var(--font-serif); font-size: 1rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; opacity: 0; animation: preloaderFade 1s ease 0.5s forwards; font-style: italic; }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); animation: preloaderBar 1.8s ease forwards; }
+    @keyframes preloaderPulse { 0%,100%{opacity:0.5;transform:scale(0.95)} 50%{opacity:1;transform:scale(1)} }
+    @keyframes preloaderFade { to{opacity:1} }
+    @keyframes preloaderBar { to{transform:translateX(0)} }
+
+    #scroll-indicator { position: fixed; left: 28px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; opacity: 0; transition: opacity 0.6s ease; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 40%; background: var(--accent); animation: scrollFill 2s ease-in-out infinite; }
+    .scroll-label { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; writing-mode: vertical-lr; margin-top: 8px; }
+    @keyframes scrollFill { 0%{top:-40%} 100%{top:100%} }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+    nav.scrolled { background: rgba(26,10,14,0.92); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); text-decoration: none; font-style: italic; }
+    .nav-logo span { color: var(--accent); font-style: normal; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--ivory); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 24px; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO - Type D: Portraits + Stats */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; align-items: center; background: var(--bg); position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(201,106,138,0.10) 0%, transparent 60%); }
+    .hero-content-panel { padding: 120px 60px 120px 80px; position: relative; z-index: 2; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .hero-eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--accent); }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.8rem, 5vw, 4.8rem); font-weight: 700; line-height: 1.05; color: var(--ivory); margin-bottom: 20px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); font-weight: 400; }
+    .hero-subtitle { font-size: 0.95rem; color: var(--smoke); line-height: 1.8; max-width: 440px; margin-bottom: 36px; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 36px 0; padding: 28px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 2.6rem; color: var(--accent); display: block; line-height: 1; }
+    .stat-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 6px; display: block; }
+    .hero-ctas { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+    .btn-primary { background: var(--accent); color: var(--bg); padding: 14px 30px; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; text-decoration: none; display: inline-block; transition: all 0.3s; font-family: var(--font-sans); }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { background: transparent; color: var(--ivory); padding: 14px 30px; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--muted); text-decoration: none; display: inline-block; transition: all 0.3s; font-family: var(--font-sans); }
+    .btn-secondary:hover { border-color: var(--ivory); }
+    .hero-portraits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 40px; height: 100vh; position: relative; z-index: 1; }
+    .portrait-card { background-size: cover; background-position: center; border-radius: 2px; position: relative; overflow: hidden; }
+    .portrait-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,10,14,0.5) 0%, transparent 50%); }
+    .portrait-card:first-child { grid-row: span 2; }
+    .portrait-label { background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--border); }
+    .portrait-label .label-text { font-family: var(--font-serif); font-size: 1rem; color: var(--accent); font-style: italic; text-align: center; padding: 20px; line-height: 1.6; }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); padding: 60px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .strip-stat { text-align: center; }
+    .strip-num { font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent); display: block; line-height: 1; }
+    .strip-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; display: block; }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .section-header { text-align: center; margin-bottom: 70px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--ivory); line-height: 1.2; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+    .section-subtitle { font-size: 0.95rem; color: var(--smoke); max-width: 520px; margin: 16px auto 0; line-height: 1.8; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 60px; }
+    .philosophy-item { padding: 40px; background: var(--surface); border: 1px solid var(--border); position: relative; }
+    .philosophy-item::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
+    .philosophy-icon { font-size: 1.8rem; margin-bottom: 18px; display: block; }
+    .philosophy-item h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 12px; font-weight: 400; }
+    .philosophy-item p { font-size: 0.87rem; color: var(--smoke); line-height: 1.8; }
+
+    /* PROGRAMS */
+    .programs { padding: 120px 80px; background: var(--surface); }
+    .programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 60px; overflow: visible; }
+    .program-card { background: var(--bg); overflow: hidden; cursor: pointer; transition: transform 0.4s ease; }
+    .program-card:hover { transform: translateY(-4px); z-index: 2; }
+    .program-img { width: 100%; height: 280px; background-size: cover; background-position: center; transition: transform 0.6s ease; }
+    .program-card:hover .program-img { transform: scale(1.04); }
+    .program-info { padding: 28px; }
+    .program-tag { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
+    .program-name { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 10px; font-weight: 400; }
+    .program-desc { font-size: 0.85rem; color: var(--smoke); line-height: 1.8; margin-bottom: 14px; }
+    .program-meta { font-size: 0.73rem; color: var(--muted); display: flex; gap: 16px; }
+
+    /* ATELIER */
+    .atelier { padding: 120px 80px; background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img-wrap { position: relative; height: 560px; overflow: hidden; }
+    .atelier-img { width: 100%; height: 110%; background-size: cover; background-position: center; position: absolute; top: -5%; will-change: transform; }
+    .atelier-content h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--ivory); line-height: 1.2; margin-bottom: 24px; font-weight: 400; }
+    .atelier-content h2 em { font-style: italic; color: var(--accent-light); }
+    .atelier-content p { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .atelier-quote { margin: 28px 0; padding: 20px 0 20px 24px; border-left: 2px solid var(--accent); font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; color: var(--accent-light); line-height: 1.6; }
+
+    /* PROCESS */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-list { margin-top: 60px; }
+    .process-item { display: flex; gap: 48px; padding: 36px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .process-item:last-child { border-bottom: none; }
+    .process-num { width: 72px; height: 72px; flex-shrink: 0; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.6rem; color: var(--accent); }
+    .process-content h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 8px; font-weight: 400; }
+    .process-content p { font-size: 0.87rem; color: var(--smoke); line-height: 1.8; }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .heritage-item { background: var(--surface); padding: 32px; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); display: block; margin-bottom: 12px; }
+    .heritage-item h4 { font-family: var(--font-serif); font-size: 1rem; color: var(--ivory); margin-bottom: 10px; font-weight: 400; }
+    .heritage-item p { font-size: 0.82rem; color: var(--smoke); line-height: 1.7; }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 120px 80px; background: var(--surface); overflow: hidden; }
+    .swiper { margin-top: 60px; overflow: visible; }
+    .swiper-slide { background: var(--surface2); padding: 44px; border: 1px solid var(--border); }
+    .testimonial-text { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; color: var(--ivory); line-height: 1.8; margin-bottom: 24px; }
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+    .author-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--muted); background-size: cover; background-position: center; flex-shrink: 0; }
+    .author-name { font-family: var(--font-serif); font-size: 0.95rem; color: var(--ivory); }
+    .author-title { font-size: 0.75rem; color: var(--smoke); margin-top: 2px; }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ENROLLMENT */
+    .enrollment { padding: 120px 80px; background: var(--bg); }
+    .enrollment-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .enrollment-info h2 { font-family: var(--font-serif); font-size: 2rem; color: var(--ivory); margin-bottom: 20px; font-weight: 400; }
+    .enrollment-info p { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; }
+    .contact-detail { display: flex; gap: 12px; margin-bottom: 14px; font-size: 0.85rem; color: var(--smoke); }
+    .contact-detail strong { color: var(--ivory); min-width: 80px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 16px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group select { appearance: none; }
+    .form-group textarea { height: 110px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; padding: 16px; font-family: var(--font-sans); font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; margin-top: 8px; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    footer { background: var(--bg); padding: 80px 80px 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 14px; font-style: italic; }
+    .footer-brand p { font-size: 0.85rem; color: var(--smoke); line-height: 1.8; max-width: 260px; }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; }
+    .footer-bottom p { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+    <svg class="preloader-mark" viewBox="0 0 72 72" fill="none">
+      <ellipse cx="36" cy="44" rx="18" ry="22" stroke="#C96A8A" stroke-width="1" opacity="0.5"/>
+      <line x1="36" y1="22" x2="36" y2="10" stroke="#C96A8A" stroke-width="1" opacity="0.6"/>
+      <line x1="28" y1="10" x2="44" y2="10" stroke="#C96A8A" stroke-width="1" opacity="0.6"/>
+    </svg>
+    <div class="preloader-name">Clos d'Or Wine Academy</div>
+    <div class="preloader-bar"></div>
+  </div>
+
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo"><em>Clos d'Or</em></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="programs.html">Programs</a></li>
+      <li><a href="process.html">Enroll</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Enroll</a>
+  </nav>
+
+  <!-- HERO - Type D: Portraits + Stats -->
+  <section class="hero" id="hero">
+    <div class="hero-content-panel">
+      <div class="hero-eyebrow" id="hero-eyebrow">Bordeaux · London · Hong Kong</div>
+      <h1 class="hero-title" id="hero-title">
+        The <em>Language</em><br>of Fine Wine
+      </h1>
+      <p class="hero-subtitle" id="hero-subtitle">
+        Clos d'Or trains wine professionals and passionate enthusiasts to the highest international standards. From WSET Foundation to Master Sommelier examination, our Masters of Wine guide your journey.
+      </p>
+      <div class="hero-stats" id="hero-stats">
+        <div class="stat-item"><span class="stat-num" data-target="42">0</span><span class="stat-label">Years Teaching</span></div>
+        <div class="stat-item"><span class="stat-num" data-target="8">0</span><span class="stat-label">Masters of Wine</span></div>
+        <div class="stat-item"><span class="stat-num" data-target="94">0</span><span class="stat-label">% Pass Rate</span></div>
+      </div>
+      <div class="hero-ctas" id="hero-ctas">
+        <a href="programs.html" class="btn-primary">Our Courses</a>
+        <a href="contact.html" class="btn-secondary">Tasting Session</a>
+      </div>
+    </div>
+    <div class="hero-portraits" id="hero-portraits">
+      <div class="portrait-card" style="background-image: url('images/hero-1.webp')"></div>
+      <div class="portrait-card" style="background-image: url('images/hero-2.webp')"></div>
+      <div class="portrait-card portrait-label">
+        <div class="label-text">"Wine is the most civilised of pleasures — and the most demanding to truly understand."<br><br><small style="font-family:var(--font-sans);font-size:0.68rem;letter-spacing:0.15em;color:var(--smoke)">— ACADEMY MOTTO</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="strip-stat"><span class="strip-num" data-target="2200">0</span><span class="strip-label">Certified Graduates</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="14">0</span><span class="strip-label">Wine Regions Covered</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="850">0</span><span class="strip-label">Wines Tasted Per Course</span></div>
+    <div class="strip-stat"><span class="strip-num" data-target="48">0</span><span class="strip-label">Chateau Visits</span></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-header">
+      <p class="section-eyebrow">Our Philosophy</p>
+      <h2 class="section-title">Wine as <em>Living Knowledge</em></h2>
+      <p class="section-subtitle">Three pillars that define the Clos d'Or approach to wine education.</p>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-item">
+        <span class="philosophy-icon">🍷</span>
+        <h3>Tasting First</h3>
+        <p>Wine is experienced before it is explained. Every programme at Clos d'Or places the glass before the textbook. Sensory training — learning to identify aromas, structure, and quality — is the foundation of everything we teach.</p>
+      </div>
+      <div class="philosophy-item">
+        <span class="philosophy-icon">🗺</span>
+        <h3>Terroir & Place</h3>
+        <p>Wine is inseparable from its origin. We teach through geography, geology, and viticulture — ensuring students understand why Burgundy smells different from Barossa and what makes Champagne impossible to replicate elsewhere.</p>
+      </div>
+      <div class="philosophy-item">
+        <span class="philosophy-icon">📜</span>
+        <h3>Examination Excellence</h3>
+        <p>Clos d'Or boasts the highest pass rate of any approved wine education provider globally. Our structured approach to examination preparation has produced more Master Sommeliers and Masters of Wine than any comparable institution.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="programs" id="programs">
+    <div class="section-header">
+      <p class="section-eyebrow">Courses</p>
+      <h2 class="section-title">From <em>Enthusiast</em> to Master</h2>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-1.webp')"></div>
+        <div class="program-info"><span class="program-tag">WSET Foundation</span><h3 class="program-name">Level 1 & 2 Award</h3><p class="program-desc">The internationally recognised entry point for wine education. Two days of tasting and classroom learning leading to the WSET Level 1 and Level 2 Awards in Wine.</p><div class="program-meta"><span>2 days</span><span>All levels</span></div></div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-2.webp')"></div>
+        <div class="program-info"><span class="program-tag">WSET Advanced</span><h3 class="program-name">Diploma in Wine</h3><p class="program-desc">The world's most rigorous wine qualification below Master of Wine. Eighteen months of intensive study across all major wine regions, viticulture, vinification, and spirits.</p><div class="program-meta"><span>18 months</span><span>Part-time</span></div></div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-3.webp')"></div>
+        <div class="program-info"><span class="program-tag">CMS Track</span><h3 class="program-name">Sommelier Certification</h3><p class="program-desc">Full preparation for the Court of Master Sommeliers examinations from Introductory through Advanced Sommelier level. Includes service technique and blind tasting intensive training.</p><div class="program-meta"><span>6 months</span><span>Professionals</span></div></div>
+      </div>
+      <div class="program-card">
+        <div class="program-img" style="background-image: url('images/product-4.webp')"></div>
+        <div class="program-info"><span class="program-tag">Estate Immersion</span><h3 class="program-name">Bordeaux & Burgundy Tour</h3><p class="program-desc">A seven-day château and domaine immersion in Bordeaux and Burgundy — visiting our partner estates, meeting winemakers, and tasting wines across all classifications with a Master of Wine guide.</p><div class="program-meta"><span>7 days</span><span>WSET L3+ req'd</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img-wrap">
+        <div class="atelier-img" id="atelier-parallax" style="background-image: url('images/workspace-1.webp')"></div>
+      </div>
+      <div class="atelier-content">
+        <p class="section-eyebrow" style="margin-bottom: 16px;">Our Cave</p>
+        <h2>A <em>Cave</em> for<br>Serious Study</h2>
+        <p>Our Bordeaux headquarters — a nineteenth-century cave à vin in the Saint-Julien appellation — houses over 14,000 bottles and a purpose-built tasting room designed for systematic blind tasting practice.</p>
+        <div class="atelier-quote">"To understand wine is to understand time, climate, soil, and the quiet genius of the winemaker."</div>
+        <p>The cave serves as both classroom and cellar. Students taste at temperature, alongside the library vintages that allow vertical comparisons across three decades. No other wine school offers this depth of tasting access.</p>
+        <a href="about.html" class="btn-primary" style="margin-top: 24px; display: inline-block;">Visit Our Cave</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-header">
+      <p class="section-eyebrow">Getting Started</p>
+      <h2 class="section-title">Begin Your <em>Wine Journey</em></h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item"><div class="process-num">01</div><div class="process-content"><h3>Level Assessment</h3><p>Complete our online level assessment — a 20-question sensory and theoretical quiz that places you accurately within our programme pathway. No preparation required; honest answers give the best result.</p></div></div>
+      <div class="process-item"><div class="process-num">02</div><div class="process-content"><h3>Programme Consultation</h3><p>A 30-minute call with one of our Masters of Wine to discuss your goals — whether professional certification, personal enrichment, or examination preparation — and confirm the right starting point.</p></div></div>
+      <div class="process-item"><div class="process-num">03</div><div class="process-content"><h3>Introductory Tasting</h3><p>Join a complimentary one-hour introductory tasting session at your nearest campus. Taste six wines guided by a sommelier and experience the Clos d'Or method before committing to a full programme.</p></div></div>
+      <div class="process-item"><div class="process-num">04</div><div class="process-content"><h3>Enrolment & Materials</h3><p>Complete enrolment online. Your welcome kit — including your tasting notebook, Riedel tasting glass, and study materials — is dispatched before your first session.</p></div></div>
+      <div class="process-item"><div class="process-num">05</div><div class="process-content"><h3>First Tasting Class</h3><p>Every programme begins with a two-hour structured tasting session. Six wines, the Clos d'Or tasting method, and the foundation vocabulary of serious wine appreciation. The glass is always in your hand before the lecture begins.</p></div></div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-header">
+      <p class="section-eyebrow">Our History</p>
+      <h2 class="section-title">Forty-Two Years of <em>Wine Scholarship</em></h2>
+    </div>
+    <div class="heritage-grid">
+      <div class="heritage-item"><span class="heritage-year">1984</span><h4>Founded in Bordeaux</h4><p>Master of Wine Sylvie Leconte establishes Clos d'Or in Saint-Julien to train winemakers' children and château staff in the formal language of wine appreciation and service.</p></div>
+      <div class="heritage-item"><span class="heritage-year">1997</span><h4>WSET Accreditation</h4><p>Clos d'Or receives its WSET Approved Programme Provider status, becoming one of the first French institutions to offer internationally recognised wine qualifications.</p></div>
+      <div class="heritage-item"><span class="heritage-year">2009</span><h4>Hong Kong Campus</h4><p>A third campus opens in Hong Kong's Central district, serving the rapidly growing Asia-Pacific market and establishing the Academy's Cantonese and Mandarin study programmes.</p></div>
+      <div class="heritage-item"><span class="heritage-year">2021</span><h4>MW Pass Record</h4><p>Clos d'Or students achieve a 94% pass rate across all WSET levels — the highest recorded pass rate in the institution's history and among the highest of any WSET provider globally.</p></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="section-header">
+      <p class="section-eyebrow">Alumni Stories</p>
+      <h2 class="section-title">Educated at <em>Clos d'Or</em></h2>
+    </div>
+    <div class="swiper testimonials-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <p class="testimonial-text">"The WSET Diploma at Clos d'Or gave me a depth of wine knowledge I could not have acquired through any other provider. The tasting access — particularly the Bordeaux library vintages — is simply extraordinary. I passed at Distinction."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/detail-1.webp')"></div>
+            <div><div class="author-name">François Beaumont</div><div class="author-title">Advanced Sommelier, Three Michelin Star Restaurant</div></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <p class="testimonial-text">"I completed the Bordeaux Immersion as a passionate amateur and returned home with a completely transformed relationship with wine. Tasting with Master of Wine Sylvie in the cellars where these wines were made — irreplaceable."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background-image: url('images/detail-2.webp')"></div>
+            <div><div class="author-name">Yuki Yamamoto</div><div class="author-title">Wine Enthusiast & WSET L3 Graduate</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="position: relative; margin-top: 40px;"></div>
+    </div>
+  </section>
+
+  <!-- ENROLLMENT -->
+  <section class="enrollment" id="enrollment">
+    <div class="section-header">
+      <p class="section-eyebrow">Join Clos d'Or</p>
+      <h2 class="section-title">Enroll <em>Today</em></h2>
+    </div>
+    <div class="enrollment-inner">
+      <div class="enrollment-info">
+        <h2>Begin With a Free Tasting</h2>
+        <p>We invite all prospective students to attend a complimentary introductory tasting before enrolling. Meet our faculty, taste six wines, and experience our method first-hand.</p>
+        <div class="contact-detail"><strong>Bordeaux</strong>Château Clos d'Or, 33250 Saint-Julien</div>
+        <div class="contact-detail"><strong>London</strong>18 St. James's Square, London SW1Y 4JU</div>
+        <div class="contact-detail"><strong>Phone</strong>+33 5 56 55 0192</div>
+        <div class="contact-detail"><strong>Email</strong>enrol@closdor.com</div>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text"></div>
+          <div class="form-group"><label>Last Name</label><input type="text"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email"></div>
+        <div class="form-group"><label>Current Level</label>
+          <select><option>Complete Beginner</option><option>WSET Level 1–2</option><option>WSET Level 3</option><option>WSET Diploma</option><option>Professional Sommelier</option></select>
+        </div>
+        <div class="form-group"><label>Programme Interest</label>
+          <select><option>WSET Level 1 & 2</option><option>WSET Diploma</option><option>Sommelier Certification</option><option>Bordeaux & Burgundy Tour</option></select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea placeholder="Tell us about your wine interests..."></textarea></div>
+        <button type="submit" class="form-submit">Request Free Tasting</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><h3>Clos d'Or Wine Academy</h3><p>Premier wine sommelier training. WSET certification, Master Sommelier preparation, and estate immersion. Bordeaux · London · Hong Kong since 1984.</p></div>
+      <div class="footer-col"><h4>Courses</h4><ul><li><a href="programs.html">WSET Level 1 & 2</a></li><li><a href="programs.html">WSET Diploma</a></li><li><a href="programs.html">Sommelier Track</a></li><li><a href="programs.html">Bordeaux Tour</a></li></ul></div>
+      <div class="footer-col"><h4>Academy</h4><ul><li><a href="about.html">About</a></li><li><a href="about.html">Faculty</a></li><li><a href="process.html">Enroll</a></li><li><a href="about.html">Our Cave</a></li></ul></div>
+      <div class="footer-col"><h4>Connect</h4><ul><li><a href="contact.html">Contact</a></li><li><a href="#">Scholarships</a></li><li><a href="#">Alumni Club</a></li><li><a href="#">Press</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Clos d'Or Wine Academy. All rights reserved.</p>
+      <p>Bordeaux · London · Hong Kong</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    class SplitText {
+      constructor(t, o = {}) {
+        const e = typeof t === 'string' ? document.querySelector(t) : (t instanceof Element ? t : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!e) return; this._el = e;
+        const tp = (o.type || 'chars,words').toLowerCase(); const orig = e.textContent;
+        e.setAttribute('data-split-orig', orig);
+        if (tp.includes('words')) { e.innerHTML = orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join(''); this.words = Array.from(e.querySelectorAll('.word')); }
+        this.lines = [e];
+      }
+      revert() { if (this._el) { const o = this._el.getAttribute('data-split-orig'); if (o) this._el.textContent = o; } }
+    }
+
+    window.addEventListener('load', () => {
+      gsap.to('#preloader', { opacity: 0, duration: 0.8, delay: 1.8, ease: 'power2.inOut',
+        onComplete: () => { document.getElementById('preloader').style.display = 'none'; document.getElementById('scroll-indicator').classList.add('visible'); initHeroAnim(); }
+      });
+    });
+    setTimeout(() => { document.getElementById('scroll-indicator')?.classList.add('visible'); }, 4000);
+
+    function initHeroAnim() {
+      // A2 Whisper: duration:1.4-1.6s, y:14px, stagger:0.06, ease:'power1.out'
+      gsap.from('#hero-eyebrow', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out' });
+      gsap.from('#hero-title', { immediateRender: false, opacity: 0, y: 14, duration: 1.6, ease: 'power1.out', delay: 0.06 });
+      gsap.from('#hero-subtitle', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 0.12 });
+      gsap.from('.stat-item', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out', delay: 0.18 });
+      gsap.from('#hero-ctas', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 0.30 });
+      gsap.from('.portrait-card', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, stagger: 0.06, ease: 'power1.out', delay: 0.06 });
+    }
+
+    window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80); });
+
+    document.querySelectorAll('[data-target]').forEach(el => {
+      const target = +el.dataset.target;
+      gsap.from(el, { immediateRender: false, textContent: 0, duration: 2, ease: 'power1.out', snap: { textContent: 1 }, scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+    });
+
+    gsap.from('.philosophy-item', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out', scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%' } });
+    gsap.from('.program-card', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out', scrollTrigger: { trigger: '.programs-grid', start: 'top 85%' } });
+    gsap.to('#atelier-parallax', { yPercent: -12, ease: 'none', scrollTrigger: { trigger: '.atelier', start: 'top bottom', end: 'bottom top', scrub: 1 } });
+    gsap.from('.atelier-content', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', scrollTrigger: { trigger: '.atelier', start: 'top 80%' } });
+    gsap.from('.process-item', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out', scrollTrigger: { trigger: '.process-list', start: 'top 85%' } });
+    gsap.from('.heritage-item', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out', scrollTrigger: { trigger: '.heritage-grid', start: 'top 85%' } });
+    document.querySelectorAll('.section-header').forEach(h => { gsap.from(h, { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', scrollTrigger: { trigger: h, start: 'top 85%' } }); });
+
+    new Swiper('.testimonials-swiper', { slidesPerView: 1, spaceBetween: 24, loop: true, breakpoints: { 768: { slidesPerView: 2 } }, pagination: { el: '.swiper-pagination', clickable: true }, autoplay: { delay: 5000, disableOnInteraction: false } });
+  </script>
+</body>
+</html>

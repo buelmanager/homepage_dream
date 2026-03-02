@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Royal Botanical Conservatory — Where Nature's Diversity Flourishes</title>
+  <meta name="description" content="The Royal Botanical Conservatory houses over 12,000 rare plant species across seven biome pavilions. A living archive of the world's botanical heritage.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #141810;
+      --surface: #1C2018;
+      --surface2: #222A1E;
+      --accent: #8AB56A;
+      --accent-light: #AACE8A;
+      --accent-dark: #5A8040;
+      --ivory: #E4EEE0;
+      --smoke: #889880;
+      --muted: #4E5E48;
+      --border: #181E14;
+      --font-serif: 'Spectral', Georgia, serif;
+      --font-sans: 'Mulish', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 2rem; }
+    .preloader-bar { width: 200px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--accent); transition: width 0.8s ease; }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator {
+      position: fixed; left: 32px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 60px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent); animation: scrollDown 2s ease infinite; }
+    @keyframes scrollDown { 0% { top: -100%; } 100% { top: 100%; } }
+    .scroll-text { writing-mode: vertical-lr; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 20px 60px; display: flex; align-items: center; justify-content: space-between;
+      background: transparent; transition: background 0.4s ease;
+    }
+    nav.scrolled { background: rgba(20, 24, 16, 0.95); backdrop-filter: blur(12px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.05rem; letter-spacing: 0.15em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { padding: 8px 20px; border: 1px solid var(--accent); color: var(--accent); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO — TYPE E: Canvas Grid */
+    .hero {
+      position: relative; min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; overflow: hidden;
+      background: var(--bg);
+    }
+    .hero-grid-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(20,24,16,0.7) 80%),
+                  linear-gradient(180deg, rgba(20,24,16,0.2) 0%, rgba(20,24,16,0.6) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 10; text-align: center; max-width: 900px; padding: 0 40px;
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 7rem); font-weight: 300;
+      line-height: 1.0; color: var(--ivory); margin-bottom: 28px;
+      font-style: italic;
+    }
+    .hero-title strong { font-style: normal; font-weight: 600; color: var(--accent-light); }
+    .hero-sub {
+      font-size: 1rem; color: var(--smoke); line-height: 1.7; max-width: 540px; margin: 0 auto 40px;
+      font-weight: 300; letter-spacing: 0.02em;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; }
+    .btn-primary {
+      padding: 14px 36px; background: var(--accent); color: var(--bg);
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+      transition: background 0.3s; font-weight: 500;
+    }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-outline {
+      padding: 14px 36px; border: 1px solid var(--smoke); color: var(--smoke);
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+      transition: all 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-corners .corner {
+      position: absolute; width: 30px; height: 30px;
+      border-color: var(--accent); border-style: solid;
+    }
+    .corner.tl { top: 40px; left: 40px; border-width: 1px 0 0 1px; }
+    .corner.tr { top: 40px; right: 40px; border-width: 1px 1px 0 0; }
+    .corner.bl { bottom: 40px; left: 40px; border-width: 0 0 1px 1px; }
+    .corner.br { bottom: 40px; right: 40px; border-width: 0 1px 1px 0; }
+
+    /* STATS STRIP */
+    .stats-strip {
+      padding: 60px 80px; background: var(--surface);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center;
+    }
+    .stat-item {}
+    .stat-num { font-family: var(--font-serif); font-size: 3rem; font-weight: 300; color: var(--accent); line-height: 1; }
+    .stat-unit { font-size: 0.8rem; color: var(--accent); }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* PHILOSOPHY */
+    .philosophy {
+      padding: 120px 80px; background: var(--bg);
+    }
+    .section-label {
+      font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300;
+      color: var(--ivory); line-height: 1.15; margin-bottom: 60px; max-width: 640px;
+    }
+    .philosophy-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+    }
+    .philosophy-card {
+      padding: 40px; background: var(--surface); border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .phil-num { font-family: var(--font-serif); font-size: 2.5rem; color: var(--muted); font-weight: 300; margin-bottom: 20px; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.25rem; color: var(--accent-light); margin-bottom: 12px; }
+    .phil-text { font-size: 0.85rem; color: var(--smoke); line-height: 1.7; }
+
+    /* COLLECTION GRID */
+    .collection {
+      padding: 120px 80px; background: var(--surface);
+    }
+    .collection-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; }
+    .collection-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;
+      overflow: visible;
+    }
+    .collection-card {
+      position: relative; overflow: hidden; aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+    .collection-card img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+    .collection-card:hover img { transform: scale(1.06); }
+    .collection-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(0deg, rgba(20,24,16,0.85) 0%, transparent 60%);
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 30px;
+    }
+    .card-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .card-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); }
+    .card-sub { font-size: 0.78rem; color: var(--smoke); margin-top: 6px; }
+
+    /* ATELIER */
+    .atelier {
+      padding: 120px 80px; background: var(--bg);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .atelier-image { position: relative; aspect-ratio: 3/4; overflow: hidden; }
+    .atelier-image img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-badge {
+      position: absolute; bottom: -20px; right: -20px;
+      width: 120px; height: 120px; background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-size: 0.7rem; text-align: center;
+      color: var(--bg); letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.4;
+    }
+    .atelier-text {}
+    .atelier-text .section-title { margin-bottom: 20px; }
+    .atelier-body { font-size: 0.9rem; color: var(--smoke); line-height: 1.8; margin-bottom: 32px; }
+    .atelier-list { list-style: none; }
+    .atelier-list li {
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.8rem; color: var(--smoke); display: flex; align-items: center; gap: 12px;
+    }
+    .atelier-list li::before { content: '—'; color: var(--accent); }
+
+    /* PROCESS */
+    .process {
+      padding: 120px 80px; background: var(--surface2);
+    }
+    .process-timeline {
+      margin-top: 60px; position: relative; padding-left: 60px;
+    }
+    .process-timeline::before {
+      content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 1px; background: var(--border);
+    }
+    .process-step {
+      position: relative; margin-bottom: 50px; padding-left: 40px;
+    }
+    .process-step:last-child { margin-bottom: 0; }
+    .step-dot {
+      position: absolute; left: -48px; top: 6px; width: 10px; height: 10px;
+      background: var(--accent); border-radius: 50%;
+    }
+    .step-num { font-size: 0.65rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+    .step-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 10px; }
+    .step-text { font-size: 0.85rem; color: var(--smoke); line-height: 1.7; max-width: 560px; }
+
+    /* HERITAGE */
+    .heritage {
+      padding: 120px 80px; background: var(--bg);
+    }
+    .heritage-milestones {
+      margin-top: 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border);
+    }
+    .milestone {
+      background: var(--surface); padding: 40px 30px;
+      transition: background 0.3s;
+    }
+    .milestone:hover { background: var(--surface2); }
+    .milestone-year { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); font-weight: 300; margin-bottom: 14px; }
+    .milestone-title { font-family: var(--font-serif); font-size: 1.0rem; color: var(--ivory); margin-bottom: 10px; }
+    .milestone-text { font-size: 0.78rem; color: var(--smoke); line-height: 1.6; }
+
+    /* PRESS */
+    .press {
+      padding: 100px 80px; background: var(--surface);
+    }
+    .press-swiper { margin-top: 50px; }
+    .press-slide {
+      padding: 40px; background: var(--surface2); border: 1px solid var(--border);
+    }
+    .press-quote {
+      font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory);
+      line-height: 1.6; font-style: italic; margin-bottom: 24px;
+    }
+    .press-source { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+
+    /* COMMISSION FORM */
+    .commission {
+      padding: 120px 80px; background: var(--bg);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    }
+    .commission-text .section-title { margin-bottom: 20px; }
+    .commission-body { font-size: 0.9rem; color: var(--smoke); line-height: 1.8; }
+    .form-row { margin-bottom: 20px; }
+    .form-row label { display: block; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .form-row input, .form-row select, .form-row textarea {
+      width: 100%; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border);
+      color: var(--ivory); font-family: var(--font-sans); font-size: 0.85rem;
+      outline: none; transition: border-color 0.3s;
+    }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--accent); }
+    .form-row textarea { resize: vertical; min-height: 100px; }
+    .form-submit {
+      width: 100%; padding: 14px; background: var(--accent); border: none; cursor: pointer;
+      font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--bg); transition: background 0.3s; font-weight: 500;
+    }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer {
+      padding: 60px 80px 40px; background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 50px;
+    }
+    .footer-brand .footer-logo {
+      font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.1em; color: var(--ivory);
+      margin-bottom: 16px; display: block;
+    }
+    .footer-brand p { font-size: 0.8rem; color: var(--smoke); line-height: 1.7; }
+    .footer-col h4 { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a { color: var(--smoke); font-size: 0.8rem; text-decoration: none; transition: color 0.3s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--border); padding-top: 24px;
+      font-size: 0.72rem; color: var(--muted);
+    }
+
+    /* SECTION HEADER */
+    .section-header { text-align: center; margin-bottom: 60px; }
+
+    @media (max-width: 1024px) {
+      nav { padding: 20px 30px; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 60px 40px; }
+      .philosophy { padding: 80px 40px; }
+      .philosophy-grid { grid-template-columns: repeat(2, 1fr); }
+      .collection, .process, .heritage, .press { padding: 80px 40px; }
+      .atelier { padding: 80px 40px; grid-template-columns: 1fr; }
+      .commission { padding: 80px 40px; grid-template-columns: 1fr; }
+      .heritage-milestones { grid-template-columns: repeat(2, 1fr); }
+      footer { padding: 60px 40px 30px; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .heritage-milestones { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="preloader-logo">The Royal Botanical Conservatory</div>
+  <div class="preloader-bar"><div class="preloader-fill" id="preloader-fill"></div></div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <span class="scroll-text">Scroll</span>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Royal Botanical Conservatory</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Collections</a></li>
+    <li><a href="process.html">Research</a></li>
+    <li><a href="contact.html">Visit</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Plan Your Visit</a>
+</nav>
+
+<!-- HERO — TYPE E -->
+<section class="hero" id="hero">
+  <canvas class="hero-grid-canvas" id="heroCanvas"></canvas>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Est. 1847 &nbsp;·&nbsp; Over 12,000 Species</div>
+    <h1 class="hero-title">Where Nature's<br><strong>Diversity Flourishes</strong></h1>
+    <p class="hero-sub">Seven living biome pavilions. A legacy of horticultural excellence. The world's most endangered species, preserved for future generations.</p>
+    <div class="hero-actions">
+      <a href="collection.html" class="btn-primary">Explore Collections</a>
+      <a href="process.html" class="btn-outline">Our Research</a>
+    </div>
+  </div>
+  <div class="hero-corners">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<section class="stats-strip">
+  <div class="stat-item">
+    <div class="stat-num">12<span class="stat-unit">k+</span></div>
+    <div class="stat-label">Plant Species</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">7</div>
+    <div class="stat-label">Biome Pavilions</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">177</div>
+    <div class="stat-label">Years of Heritage</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">320</div>
+    <div class="stat-label">Endangered Species Preserved</div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy" id="philosophy">
+  <div class="section-label">Our Ethos</div>
+  <h2 class="section-title">A Living Archive of Botanical Heritage</h2>
+  <div class="philosophy-grid">
+    <div class="philosophy-card">
+      <div class="phil-num">01</div>
+      <div class="phil-title">Conservation First</div>
+      <p class="phil-text">Every specimen in our collection serves a purpose beyond beauty. We safeguard genetic diversity for a planet under ecological pressure.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="phil-num">02</div>
+      <div class="phil-title">Scientific Rigour</div>
+      <p class="phil-text">Our research teams collaborate with 60 international institutions, publishing findings that advance botanical science and conservation policy worldwide.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="phil-num">03</div>
+      <div class="phil-title">Public Education</div>
+      <p class="phil-text">We believe that wonder and knowledge travel together. Through guided programmes and public engagement, we cultivate the next generation of naturalists.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION GRID -->
+<section class="collection" id="collection">
+  <div class="collection-header">
+    <div>
+      <div class="section-label">Living Collections</div>
+      <h2 class="section-title" style="margin-bottom:0;">Seven Worlds Under Glass</h2>
+    </div>
+    <a href="collection.html" class="btn-outline">View All Pavilions</a>
+  </div>
+  <div class="collection-grid">
+    <div class="collection-card">
+      <img src="images/img-1.webp" alt="Tropical Rainforest Pavilion" loading="lazy">
+      <div class="collection-card-overlay">
+        <div class="card-label">Pavilion I</div>
+        <div class="card-title">Tropical Rainforest</div>
+        <div class="card-sub">2,400+ species from equatorial regions</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="images/img-2.webp" alt="Alpine & Sub-Alpine Collection" loading="lazy">
+      <div class="collection-card-overlay">
+        <div class="card-label">Pavilion II</div>
+        <div class="card-title">Alpine Extremes</div>
+        <div class="card-sub">Resilient flora from mountain ecosystems</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="images/img-3.webp" alt="Arid & Desert Collection" loading="lazy">
+      <div class="collection-card-overlay">
+        <div class="card-label">Pavilion III</div>
+        <div class="card-title">Arid Wonders</div>
+        <div class="card-sub">Cacti, succulents and desert survivors</div>
+      </div>
+    </div>
+    <div class="collection-card">
+      <img src="images/img-4.webp" alt="Orchid & Epiphyte House" loading="lazy">
+      <div class="collection-card-overlay">
+        <div class="card-label">Pavilion IV</div>
+        <div class="card-title">Orchid Sanctuary</div>
+        <div class="card-sub">1,800 orchid varieties, the finest in Europe</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATELIER -->
+<section class="atelier" id="atelier">
+  <div class="atelier-image">
+    <img src="images/img-5.webp" alt="Horticultural Research" loading="lazy">
+    <div class="atelier-badge">Since<br>1847</div>
+  </div>
+  <div class="atelier-text">
+    <div class="section-label">Horticultural Excellence</div>
+    <h2 class="section-title">Cultivated Over Generations</h2>
+    <p class="atelier-body">The Royal Botanical Conservatory was founded under royal charter in 1847, with a mandate to collect, study and preserve the world's plant diversity. Today, our 68 horticultural specialists tend to collections spanning every major biome, from cloud forests to coastal dunes.</p>
+    <ul class="atelier-list">
+      <li>International Seed Bank — 180,000 accessions</li>
+      <li>Living Herbarium — 3.2 million pressed specimens</li>
+      <li>Public Education — 85,000 annual visitors</li>
+      <li>Partner Institutions — 60 global universities</li>
+      <li>Restoration Projects — 24 active field programmes</li>
+    </ul>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-label">How We Work</div>
+  <h2 class="section-title">The Conservation Pipeline</h2>
+  <div class="process-timeline">
+    <div class="process-step">
+      <div class="step-dot"></div>
+      <div class="step-num">Stage 01</div>
+      <div class="step-title">Field Collection & Provenance</div>
+      <p class="step-text">Scientific expeditions document wild populations in situ, gathering seeds and cuttings with full provenance records and ecological data.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-dot"></div>
+      <div class="step-num">Stage 02</div>
+      <div class="step-title">Quarantine & Health Assessment</div>
+      <p class="step-text">All incoming material is held in biosecure facilities and assessed for pathogens before entering the living collections.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-dot"></div>
+      <div class="step-num">Stage 03</div>
+      <div class="step-title">Propagation & Banking</div>
+      <p class="step-text">Specimens are propagated using best-practice techniques; excess seed is banked at controlled temperatures for long-term preservation.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-dot"></div>
+      <div class="step-num">Stage 04</div>
+      <div class="step-title">Research & Documentation</div>
+      <p class="step-text">Botanical research teams study each species' genetics, ecology and potential uses, publishing peer-reviewed findings annually.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-dot"></div>
+      <div class="step-num">Stage 05</div>
+      <div class="step-title">Reintroduction & Partnerships</div>
+      <p class="step-text">Where possible, plants are reintroduced to restored habitats in collaboration with national conservation authorities and local communities.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HERITAGE -->
+<section class="heritage" id="heritage">
+  <div class="section-label">Our Legacy</div>
+  <h2 class="section-title">175 Years of Botanical Discovery</h2>
+  <div class="heritage-milestones">
+    <div class="milestone">
+      <div class="milestone-year">1847</div>
+      <div class="milestone-title">Royal Foundation</div>
+      <p class="milestone-text">Established under royal charter with an initial collection of 1,200 species from colonial expeditions.</p>
+    </div>
+    <div class="milestone">
+      <div class="milestone-year">1923</div>
+      <div class="milestone-title">The Crystal Pavilion</div>
+      <p class="milestone-text">Construction of the iconic iron-and-glass palm house, now a Grade I listed heritage structure.</p>
+    </div>
+    <div class="milestone">
+      <div class="milestone-year">1971</div>
+      <div class="milestone-title">Seed Bank Established</div>
+      <p class="milestone-text">Pioneered long-term seed storage, setting global standards adopted by the Svalbard Global Seed Vault.</p>
+    </div>
+    <div class="milestone">
+      <div class="milestone-year">2015</div>
+      <div class="milestone-title">UNESCO Recognition</div>
+      <p class="milestone-text">Designated a World Heritage Site for outstanding botanical and architectural significance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="press" id="press">
+  <div class="section-label">In the Press</div>
+  <h2 class="section-title">What They Say</h2>
+  <div class="swiper press-swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide press-slide">
+        <p class="press-quote">"One of the most significant plant collections in the world — a treasury of living science that every generation deserves access to."</p>
+        <div class="press-source">The Guardian &nbsp;·&nbsp; Botanical Issue 2025</div>
+      </div>
+      <div class="swiper-slide press-slide">
+        <p class="press-quote">"The Royal Botanical Conservatory's reintroduction programme for critically endangered ferns represents a benchmark for habitat restoration globally."</p>
+        <div class="press-source">Nature Journal &nbsp;·&nbsp; Conservation Feature</div>
+      </div>
+      <div class="swiper-slide press-slide">
+        <p class="press-quote">"An afternoon in the orchid pavilion is worth a hundred textbooks. The experience is transformative, educating while it enchants."</p>
+        <div class="press-source">The Sunday Times &nbsp;·&nbsp; Travel & Culture</div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- COMMISSION FORM -->
+<section class="commission" id="commission">
+  <div class="commission-text">
+    <div class="section-label">School & Group Visits</div>
+    <h2 class="section-title">Book a Guided Programme</h2>
+    <p class="commission-body">We offer tailored educational experiences for schools, universities and specialist groups. Our expert guides lead tours through the biome pavilions, connecting visitors with the stories behind each species and the science of conservation.</p>
+  </div>
+  <form class="commission-form">
+    <div class="form-row">
+      <label>Organisation / School</label>
+      <input type="text" placeholder="Institution name">
+    </div>
+    <div class="form-row">
+      <label>Contact Person</label>
+      <input type="text" placeholder="Full name">
+    </div>
+    <div class="form-row">
+      <label>Email Address</label>
+      <input type="email" placeholder="your@email.com">
+    </div>
+    <div class="form-row">
+      <label>Group Type</label>
+      <select>
+        <option>Primary School</option>
+        <option>Secondary School</option>
+        <option>University / Research</option>
+        <option>Corporate Group</option>
+        <option>General Public</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Special Requirements</label>
+      <textarea placeholder="Accessibility needs, focus areas, preferred dates…"></textarea>
+    </div>
+    <button type="submit" class="form-submit">Request a Programme</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="footer-logo">The Royal Botanical Conservatory</span>
+      <p>Seven biome pavilions, 12,000 species, and 177 years of living science — open to the world.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="#">Opening Hours</a></li>
+        <li><a href="#">Admission</a></li>
+        <li><a href="#">Getting Here</a></li>
+        <li><a href="#">Accessibility</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Collections</h4>
+      <ul>
+        <li><a href="collection.html">Biome Pavilions</a></li>
+        <li><a href="#">Seed Bank</a></li>
+        <li><a href="#">Herbarium</a></li>
+        <li><a href="#">Rare Plants</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Research</h4>
+      <ul>
+        <li><a href="process.html">Conservation</a></li>
+        <li><a href="#">Publications</a></li>
+        <li><a href="#">Fellowships</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 The Royal Botanical Conservatory. All rights reserved.</span>
+    <span>Where Nature's Diversity Flourishes</span>
+  </div>
+</footer>
+
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span');
+      wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+      if (type.includes('chars')) {
+        [...word].forEach(ch => {
+          const c = document.createElement('span');
+          c.className = 'split-char'; c.style.display = 'inline-block'; c.textContent = ch;
+          wSpan.appendChild(c); this.chars.push(c);
+        });
+      } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+// PRELOADER
+window.addEventListener('load', () => {
+  const fill = document.getElementById('preloader-fill');
+  const preloader = document.getElementById('preloader');
+  let w = 0;
+  const interval = setInterval(() => {
+    w += Math.random() * 15 + 5;
+    if (w >= 100) {
+      w = 100;
+      clearInterval(interval);
+      setTimeout(() => {
+        preloader.classList.add('hidden');
+        // Show scroll indicator after preloader
+        document.getElementById('scroll-indicator').classList.add('visible');
+        initAnimations();
+      }, 400);
+    }
+    fill.style.width = w + '%';
+  }, 80);
+});
+
+// Show scroll indicator fallback
+setTimeout(() => {
+  document.getElementById('scroll-indicator').classList.add('visible');
+}, 4000);
+
+// CANVAS GRID
+const canvas = document.getElementById('heroCanvas');
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  let dots = [];
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    dots = [];
+    for (let i = 0; i < 40; i++) {
+      dots.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 2 + 0.5, s: Math.random() * 0.3 + 0.1 });
+    }
+    draw();
+  }
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = 'rgba(138,181,106,0.12)'; ctx.lineWidth = 0.5;
+    const sz = 70;
+    for (let x = 0; x <= canvas.width; x += sz) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+    for (let y = 0; y <= canvas.height; y += sz) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+    // Animated dots
+    dots.forEach(d => {
+      ctx.beginPath();
+      const alpha = 0.3 + 0.3 * Math.sin(t * d.s + d.x);
+      ctx.fillStyle = `rgba(138,181,106,${alpha})`;
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+    });
+    t += 0.02;
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', resize); resize();
+}
+
+// NAVBAR SCROLL
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// GSAP ANIMATIONS
+function initAnimations() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Hero content
+  gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', delay: 0.2 });
+  gsap.from('.hero-title', { immediateRender: false, opacity: 0, y: 28, duration: 1.2, ease: 'power2.out', delay: 0.4 });
+  gsap.from('.hero-sub', { immediateRender: false, opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 0.6 });
+  gsap.from('.hero-actions', { immediateRender: false, opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 0.8 });
+
+  // Stats
+  gsap.from('.stat-item', {
+    immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09,
+    scrollTrigger: { trigger: '.stats-strip', start: 'top 85%', once: true }
+  });
+
+  // Philosophy
+  gsap.from('.philosophy-card', {
+    immediateRender: false, opacity: 0, y: 28, duration: 1.1, ease: 'power2.out', stagger: 0.09,
+    scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+  });
+
+  // Collection
+  gsap.from('.collection-card', {
+    immediateRender: false, opacity: 0, y: 24, duration: 1.2, ease: 'power2.out', stagger: 0.09,
+    scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+  });
+
+  // Atelier
+  gsap.from('.atelier-image', {
+    immediateRender: false, opacity: 0, x: -30, duration: 1.3, ease: 'power2.out',
+    scrollTrigger: { trigger: '.atelier', start: 'top 85%', once: true }
+  });
+  gsap.from('.atelier-text', {
+    immediateRender: false, opacity: 0, x: 30, duration: 1.3, ease: 'power2.out',
+    scrollTrigger: { trigger: '.atelier', start: 'top 85%', once: true }
+  });
+
+  // Process steps
+  gsap.from('.process-step', {
+    immediateRender: false, opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', stagger: 0.09,
+    scrollTrigger: { trigger: '.process-timeline', start: 'top 85%', once: true }
+  });
+
+  // Milestones
+  gsap.from('.milestone', {
+    immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09,
+    scrollTrigger: { trigger: '.heritage-milestones', start: 'top 85%', once: true }
+  });
+}
+
+// Press Swiper
+const pressSwiper = new Swiper('.press-swiper', {
+  slidesPerView: 1, spaceBetween: 30, loop: true,
+  autoplay: { delay: 5000 }, pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

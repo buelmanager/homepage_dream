@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LACUSTRE — Pearl Estate | Freshwater Pearl Cultivation & Fine Jewelry</title>
+  <meta name="description" content="LACUSTRE Pearl Estate — Freshwater pearl cultivation from pristine river lakes, transformed into exceptional fine jewelry by master craftspeople.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #1A0A0E; --surface: #241016; --surface2: #2C1420;
+      --accent: #C96A8A; --accent-light: #E090A8; --accent-dark: #8A3A5C;
+      --ivory: #F0DCE4; --smoke: #A08088; --muted: #604A52;
+      --border: #200C12;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent-dark) var(--bg); }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--ivory); line-height: 1.6; overflow-x: hidden; }
+    body.locked { overflow: hidden; }
+
+    /* Preloader */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .preloader-logo {
+      width: 80px; height: 80px;
+      stroke: var(--accent); stroke-width: 1.5; fill: none;
+      stroke-dasharray: 250; stroke-dashoffset: 250;
+      animation: drawLogo 2s ease forwards;
+    }
+    @keyframes drawLogo { to { stroke-dashoffset: 0; } }
+    .preloader-text {
+      margin-top: 24px; font-family: var(--font-serif);
+      font-size: 1.1rem; letter-spacing: 0.3em; color: var(--accent);
+      opacity: 0; animation: fadeIn 1s ease 1.2s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* Scroll Indicator */
+    #scroll-indicator {
+      position: fixed; left: 30px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 12px;
+      opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; visibility: visible; }
+    .scroll-progress { width: 2px; height: 80px; background: var(--border); position: relative; border-radius: 1px; }
+    .scroll-progress-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); border-radius: 1px; transition: height 0.1s ease; }
+    .scroll-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--smoke); text-transform: uppercase; }
+
+    /* Navbar */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 20px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .navbar.scrolled { background: rgba(26,10,14,0.95); backdrop-filter: blur(12px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.18em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; transition: color 0.3s ease; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { padding: 10px 24px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; font-family: var(--font-sans); }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* Hero Type G — Scroll-Driven Text Transform */
+    .hero-text-driven { min-height: 200vh; position: relative; }
+    .hero-bg {
+      position: fixed; inset: 0;
+      background: url('images/img-4.webp') center/cover;
+      filter: brightness(0.5); z-index: -1;
+    }
+    .hero-overlay {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, rgba(26,10,14,0.5) 0%, rgba(14,6,8,0.3) 100%);
+      z-index: -1;
+    }
+    .hero-text-wrap {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 80px; z-index: 1;
+    }
+    .hero-word {
+      font-family: var(--font-serif); font-size: clamp(4rem, 14vw, 14rem);
+      line-height: 0.85; font-weight: 700; text-transform: uppercase; color: var(--ivory);
+    }
+    .hero-tagline {
+      font-size: 0.95rem; letter-spacing: 0.22em; color: var(--accent);
+      margin-top: 2.5rem; font-family: var(--font-sans); text-transform: uppercase;
+    }
+    .hero-cta-wrap { margin-top: 2rem; display: flex; gap: 20px; }
+    .btn-primary { display: inline-block; padding: 16px 40px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.14em; border: none; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { display: inline-block; padding: 16px 40px; background: transparent; color: var(--ivory); font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.14em; border: 1px solid rgba(240,220,228,0.3); cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; }
+    .btn-secondary:hover { border-color: var(--ivory); }
+    .hero-scroll-hint {
+      position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+      color: var(--accent); font-size: 1.8rem; z-index: 2;
+      animation: bounce 2s ease infinite;
+    }
+    @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+    /* Stats Strip */
+    .stats-strip { background: var(--surface); padding: 48px 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent); display: block; }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase; margin-top: 8px; font-family: var(--font-sans); }
+
+    /* Sections */
+    section { padding: 120px 60px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; font-family: var(--font-sans); }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 400; margin-bottom: 24px; }
+    .section-subtitle { color: var(--smoke); max-width: 600px; font-weight: 300; line-height: 1.8; }
+
+    /* Philosophy */
+    .philosophy { background: var(--surface); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; }
+    .philosophy-card { background: var(--bg); padding: 48px 36px; border: 1px solid var(--border); transition: border-color 0.3s ease, transform 0.3s ease; }
+    .philosophy-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .philosophy-icon { font-size: 1.8rem; color: var(--accent); margin-bottom: 24px; }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 16px; }
+    .philosophy-card p { color: var(--smoke); font-size: 0.95rem; line-height: 1.7; }
+
+    /* Collection */
+    .collection { background: var(--bg); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 60px; overflow: visible; }
+    .collection-item { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--surface); }
+    .collection-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .collection-item:hover img { transform: scale(1.05); }
+    .collection-item-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,10,14,0.9) 0%, transparent 55%); display: flex; flex-direction: column; justify-content: flex-end; padding: 30px; }
+    .collection-item h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 8px; }
+    .collection-item p { color: var(--smoke); font-size: 0.88rem; }
+
+    /* Atelier */
+    .atelier { background: var(--surface); }
+    .atelier-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 60px; }
+    .atelier-img { position: relative; aspect-ratio: 4/3; overflow: hidden; }
+    .atelier-img img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-text h3 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: 24px; }
+    .atelier-text p { color: var(--smoke); margin-bottom: 16px; line-height: 1.8; font-size: 0.95rem; }
+
+    /* Process */
+    .process { background: var(--bg); }
+    .process-timeline { margin-top: 80px; position: relative; padding-left: 60px; }
+    .process-timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+    .process-step { position: relative; padding-bottom: 60px; }
+    .process-step:last-child { padding-bottom: 0; }
+    .process-step::before { content: ''; position: absolute; left: -48px; top: 8px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); }
+    .process-step h4 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 12px; }
+    .process-step p { color: var(--smoke); line-height: 1.7; max-width: 520px; font-size: 0.95rem; }
+
+    /* Heritage */
+    .heritage { background: var(--surface); }
+    .heritage-timeline { display: flex; gap: 40px; margin-top: 60px; overflow-x: auto; padding-bottom: 20px; }
+    .heritage-item { min-width: 280px; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.5rem; color: var(--accent); margin-bottom: 16px; display: block; }
+    .heritage-item h4 { font-size: 1.05rem; margin-bottom: 12px; font-family: var(--font-serif); }
+    .heritage-item p { color: var(--smoke); font-size: 0.88rem; line-height: 1.6; }
+
+    /* Press */
+    .press { background: var(--bg); }
+    .press-slider { margin-top: 60px; }
+    .press-quote { background: var(--surface); padding: 60px; text-align: center; border: 1px solid var(--border); }
+    .press-quote blockquote { font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; line-height: 1.6; margin-bottom: 24px; color: var(--ivory); }
+    .press-quote cite { color: var(--accent); font-size: 0.82rem; letter-spacing: 0.12em; font-family: var(--font-sans); }
+
+    /* Commission / Bespoke */
+    .commission { background: var(--surface); }
+    .commission-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .commission-form { display: flex; flex-direction: column; gap: 24px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 0.78rem; letter-spacing: 0.12em; color: var(--smoke); text-transform: uppercase; font-family: var(--font-sans); }
+    .form-group input, .form-group textarea, .form-group select { padding: 16px; background: var(--bg); border: 1px solid var(--border); color: var(--ivory); font-family: var(--font-sans); font-size: 0.95rem; transition: border-color 0.3s ease; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+    .form-group textarea { min-height: 140px; resize: vertical; }
+    .commission-info h3 { font-family: var(--font-serif); font-size: 1.9rem; margin-bottom: 24px; }
+    .commission-info p { color: var(--smoke); margin-bottom: 16px; line-height: 1.7; font-size: 0.95rem; }
+
+    /* Footer */
+    .footer { background: var(--bg); padding: 80px 60px 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 60px; margin-bottom: 60px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 16px; }
+    .footer-brand p { color: var(--smoke); font-size: 0.9rem; line-height: 1.7; max-width: 300px; }
+    .footer-col h4 { font-size: 0.78rem; letter-spacing: 0.18em; color: var(--accent); margin-bottom: 20px; text-transform: uppercase; font-family: var(--font-sans); }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { color: var(--smoke); text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 40px; border-top: 1px solid var(--border); }
+    .footer-bottom p { color: var(--muted); font-size: 0.78rem; }
+    .footer-social { display: flex; gap: 20px; }
+    .footer-social a { color: var(--smoke); font-size: 0.88rem; text-decoration: none; transition: color 0.3s ease; }
+    .footer-social a:hover { color: var(--accent); }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .atelier-content { grid-template-columns: 1fr; }
+      .commission-content { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .hero-text-wrap { padding: 0 40px; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 80px 24px; }
+      .navbar { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 30px 24px; }
+      #scroll-indicator { display: none; }
+      .hero-text-wrap { padding: 0 24px; }
+      .hero-word { font-size: clamp(3rem, 16vw, 8rem); }
+      .hero-scroll-hint { display: none; }
+      .footer { padding: 60px 24px 30px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+      .heritage-timeline { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body class="locked">
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <svg class="preloader-logo" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="38"/>
+      <circle cx="50" cy="50" r="20"/>
+      <circle cx="50" cy="50" r="6"/>
+    </svg>
+    <span class="preloader-text">LACUSTRE</span>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-progress"><div class="scroll-progress-fill" style="height:0%"></div></div>
+    <span class="scroll-label" id="scroll-section-label">Hero</span>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="mainNav">
+    <a href="#" class="nav-logo">LACUSTRE</a>
+    <div class="nav-links">
+      <a href="about.html">The Estate</a>
+      <a href="collection.html">Jewelry</a>
+      <a href="process.html">Cultivation</a>
+      <a href="contact.html">Bespoke</a>
+    </div>
+    <button class="nav-cta">Enquire</button>
+  </nav>
+
+  <!-- Hero Type G — Scroll-Driven Text Transform -->
+  <section class="hero-text-driven" id="hero" data-section="Hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-word word-1">LACUSTRE</div>
+      <div class="hero-word word-2">PEARL</div>
+      <div class="hero-tagline">River-born pearls, hand-selected and forever treasured</div>
+      <div class="hero-cta-wrap">
+        <a href="collection.html" class="btn-primary">Explore Pearls</a>
+        <a href="about.html" class="btn-secondary">The Estate</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">↓</div>
+  </section>
+
+  <!-- Stats Strip -->
+  <div class="stats-strip" data-section="Legacy">
+    <div class="stat-item">
+      <span class="stat-num" data-target="48">0</span>
+      <span class="stat-label">Years Cultivating</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="6">0</span>
+      <span class="stat-label">Lake Estates</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="340">0</span>
+      <span class="stat-label">Pearl Strands Yearly</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="22">0</span>
+      <span class="stat-label">Countries Served</span>
+    </div>
+  </div>
+
+  <!-- Philosophy -->
+  <section class="philosophy" data-section="Philosophy">
+    <p class="section-eyebrow">Our Philosophy</p>
+    <h2 class="section-title">Born of Still Water</h2>
+    <p class="section-subtitle">A pearl requires perfect patience — three to seven years of undisturbed growth in water of absolute purity. We cultivate that patience.</p>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <div class="philosophy-icon">○</div>
+        <h3>Lacustrine Purity</h3>
+        <p>Our six estates occupy glacially-fed lakes with zero agricultural runoff. The water quality required to produce luminous pearls is maintained through rigorous conservation of the surrounding watershed.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">◎</div>
+        <h3>Patient Cultivation</h3>
+        <p>We nucleate fewer mussels than any commercial cultivator — the crowding that produces quantity destroys quality. Every LACUSTRE pearl grows in conditions approaching its wild origin.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">●</div>
+        <h3>Estate Traceability</h3>
+        <p>Every piece of LACUSTRE jewelry comes with a provenance document specifying the lake of origin, harvest year, mussel lineage, and the artisan who set the pearl. A complete history in every clasp.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collection -->
+  <section class="collection" data-section="Collection">
+    <p class="section-eyebrow">The Collection</p>
+    <h2 class="section-title">Fine Pearl Jewelry</h2>
+    <p class="section-subtitle">Each piece is designed to allow the pearl to speak — minimal settings that honor rather than overwhelm nature's perfect object.</p>
+    <div class="collection-grid">
+      <div class="collection-item">
+        <img src="images/img-4.webp" alt="Pearl Strand Necklace" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Lacustrine Strand</h3>
+          <p>Graduated freshwater pearls · 18k gold clasp</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-5.webp" alt="Pearl Drop Earrings" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Still Water Drops</h3>
+          <p>Baroque pearls · Oxidized silver</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-6.webp" alt="Pearl Ring" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Lake Stone Ring</h3>
+          <p>Single Biwa pearl · 18k rose gold band</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-7.webp" alt="Pearl Bracelet" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>River Thread Bracelet</h3>
+          <p>Keshi pearl cluster · Woven silk cord</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Atelier -->
+  <section class="atelier" data-section="Estate">
+    <p class="section-eyebrow">The Lake</p>
+    <h2 class="section-title">Six Pristine Estates</h2>
+    <div class="atelier-content">
+      <div class="atelier-img">
+        <img src="images/img-1.webp" alt="LACUSTRE lake estate" loading="lazy">
+      </div>
+      <div class="atelier-text">
+        <h3>Where Glacier Meets Still Water</h3>
+        <p>Our six lake estates span three countries — the Swiss Pre-Alps, the Finnish lake district, and the glacial lakes of northern Patagonia. Each was selected for water of extraordinary clarity, free from industrial and agricultural influence.</p>
+        <p>The pearl mussel lines float at precisely calibrated depths, where temperature, light, and mineral content combine to produce the nacre quality that LACUSTRE is known for: deep luster, smooth surface, and a orient that shifts with every angle of light.</p>
+        <p>We employ resident lake keepers at each estate — people who monitor water quality daily, hand-harvest at exactly the right moment, and have typically spent their entire careers at a single lake. Their knowledge of each body of water is irreplaceable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="process" data-section="Cultivation">
+    <p class="section-eyebrow">The Process</p>
+    <h2 class="section-title">Seven Years to Perfection</h2>
+    <p class="section-subtitle">The cultivation of a LACUSTRE pearl is a commitment that spans years. We are always working at least seven years into the future.</p>
+    <div class="process-timeline">
+      <div class="process-step">
+        <h4>Mussel Selection</h4>
+        <p>We cultivate our own mussel seed from parent lines selected over decades for health, size, and nacre quality. Only the strongest individuals from each generation are used for nucleation — we reject over 80% at this stage.</p>
+      </div>
+      <div class="process-step">
+        <h4>Nucleation</h4>
+        <p>A minute nucleus — a sphere of freshwater mussel shell, cut to 0.5–3mm depending on the desired pearl size — is surgically implanted into the mussel's mantle tissue by a trained technician working under magnification. This is the most delicate moment in the entire process.</p>
+      </div>
+      <div class="process-step">
+        <h4>Growth Period</h4>
+        <p>The nucleated mussels return to the lake for between three and seven years. They are checked twice yearly for health and position, and the lines are adjusted for optimal water flow. During this time, layer after layer of nacre builds around the nucleus.</p>
+      </div>
+      <div class="process-step">
+        <h4>Harvest & Grading</h4>
+        <p>Harvesting happens in autumn, when water temperatures are lowest and nacre is densest. Each pearl is graded across eight criteria: luster, surface quality, shape, size, color, orient, matching (for strands), and nacre thickness.</p>
+      </div>
+      <div class="process-step">
+        <h4>Setting</h4>
+        <p>Only pearls meeting our highest grade — roughly 12% of each harvest — enter the LACUSTRE jewelry collection. They are matched by hand, sometimes from multiple harvests across multiple lakes, and set by goldsmiths in Geneva and Helsinki.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage -->
+  <section class="heritage" data-section="Heritage">
+    <p class="section-eyebrow">Our Story</p>
+    <h2 class="section-title">Four Decades by Still Water</h2>
+    <div class="heritage-timeline">
+      <div class="heritage-item">
+        <span class="heritage-year">1978</span>
+        <h4>The First Lake</h4>
+        <p>Founder Elena Vasari, a freshwater biologist, acquires rights to cultivate in Lago di Ledro in the Italian Pre-Alps, the first dedicated freshwater pearl estate in Europe.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">1989</span>
+        <h4>First Collection</h4>
+        <p>LACUSTRE jewelry debuts at Salone del Mobile in Milan. The simplicity of the designs — letting freshwater pearls speak without ornament — is immediately noted by critics.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2001</span>
+        <h4>Finnish Expansion</h4>
+        <p>Partnership with a Finnish lake conservation trust enables cultivation in the pristine Saimaa lake system — the largest lake in Finland and one of the cleanest in the world.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2015</span>
+        <h4>Patagonia Estate</h4>
+        <p>Opening of the world's southernmost freshwater pearl estate on a glacially-fed lake in Chilean Patagonia. The cold, pure water produces pearls of exceptional density and luster.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Press -->
+  <section class="press" data-section="Press">
+    <p class="section-eyebrow">Recognition</p>
+    <h2 class="section-title">As Featured In</h2>
+    <div class="press-slider swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"LACUSTRE has redefined what freshwater pearl jewelry can be. These are not the 'budget pearls' of another era — they are arguably more interesting than anything cultured in saltwater."</blockquote>
+            <cite>— Vogue, Fine Jewelry Annual</cite>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"The provenance documentation alone sets LACUSTRE apart. In an age of greenwashing, here is a jewelry house that actually shows its work — lake by lake, harvest by harvest."</blockquote>
+            <cite>— The Business of Fashion, Ethical Luxury Report</cite>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"Elena Vasari's life work: to prove that the most beautiful pearls do not come from the ocean, but from glacial lakes where nothing has been compromised for the sake of scale."</blockquote>
+            <cite>— Financial Times, How to Spend It</cite>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- Commission / Bespoke -->
+  <section class="commission" data-section="Bespoke">
+    <p class="section-eyebrow">Bespoke Service</p>
+    <h2 class="section-title">Commission a Piece</h2>
+    <div class="commission-content">
+      <div class="commission-info">
+        <h3>Your Pearl, Your Design</h3>
+        <p>LACUSTRE's bespoke service begins with pearl selection — you choose from our inventory of exceptional specimens, including pieces reserved exclusively for commissions. A goldsmith then works with you to design a setting.</p>
+        <p>Bespoke pieces typically take 6–12 weeks from brief to delivery. All bespoke work is accompanied by our full provenance documentation and a 10-year service guarantee.</p>
+        <p>Commissions from €1,200. We ship worldwide with full insurance to any destination.</p>
+      </div>
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label for="type">Piece Type</label>
+          <select id="type">
+            <option value="">Select type</option>
+            <option>Necklace / Strand</option>
+            <option>Earrings</option>
+            <option>Ring</option>
+            <option>Bracelet</option>
+            <option>Brooch / Object</option>
+            <option>Parure (full set)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Your Vision</label>
+          <textarea id="message" placeholder="Describe the occasion, the aesthetic, any preferences for pearl color or size..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Send Bespoke Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>LACUSTRE</h3>
+        <p>Freshwater pearl cultivation and fine jewelry from six pristine lake estates. Every pearl a seven-year story of still water and patient craft.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Estate</h4>
+        <ul>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html#lakes">The Lakes</a></li>
+          <li><a href="about.html#team">Artisans</a></li>
+          <li><a href="about.html#sustainability">Ecology</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Jewelry</h4>
+        <ul>
+          <li><a href="collection.html">All Pieces</a></li>
+          <li><a href="collection.html#strands">Strands</a></li>
+          <li><a href="collection.html#earrings">Earrings</a></li>
+          <li><a href="contact.html">Bespoke</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Enquiries</h4>
+        <ul>
+          <li><a href="contact.html">Commission</a></li>
+          <li><a href="#">Gift Wrapping</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Provenance</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 LACUSTRE Pearl Estate. All pearls sustainably cultivated.</p>
+      <div class="footer-social">
+        <a href="#">Instagram</a>
+        <a href="#">Pinterest</a>
+        <a href="#">Press</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return; this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('words')) {
+          el.innerHTML = original.split(/\s+/).filter(Boolean).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() { if (this._el) { const orig = this._el.getAttribute('data-split-orig'); if (orig) this._el.textContent = orig; } }
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.getElementById('preloader').classList.add('hidden');
+        document.body.classList.remove('locked');
+        // Scroll indicator — place 1
+        document.getElementById('scroll-indicator').classList.add('visible');
+        initAnimations();
+      }, 2400);
+    });
+
+    // Scroll indicator — place 2
+    setTimeout(function() {
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }, 4000);
+
+    window.addEventListener('scroll', function() {
+      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+      const fill = document.querySelector('.scroll-progress-fill');
+      const totalHeight = document.body.scrollHeight - window.innerHeight;
+      const pct = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+      if (fill) fill.style.height = pct + '%';
+    });
+
+    ;(function preHideBelowFold() {
+      const VH = window.innerHeight;
+      const selectors = ['.stat-item','.philosophy-card','.collection-item','.atelier-img','.atelier-content','.process-step','.heritage-item','.press-quote','.form-group','.footer-col'];
+      document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+        if (el.getBoundingClientRect().top > VH * 0.95) {
+          el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; el.style.willChange = 'opacity, transform';
+        }
+      });
+    })();
+
+    function initAnimations() {
+      // Hero Type G — scroll text transform
+      gsap.to('.word-1', { x: '-30vw', scale: 0.4, opacity: 0.2, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '40% top', scrub: 1 } });
+      gsap.to('.word-2', { x: '30vw', scale: 0.4, opacity: 0.2, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '40% top', scrub: 1 } });
+      gsap.to('.hero-tagline', { opacity: 0, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '30% top', scrub: 1 } });
+      gsap.to('.hero-cta-wrap', { opacity: 0, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '30% top', scrub: 1 } });
+
+      // Hero scroll hint
+      gsap.to('.hero-scroll-hint', { opacity: 0, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '20% top', scrub: 1 } });
+
+      // Fix hero bg when past hero
+      ScrollTrigger.create({
+        trigger: '.stats-strip',
+        start: 'top top',
+        onEnter: function() {
+          document.querySelector('.hero-bg').style.position = 'absolute';
+          document.querySelector('.hero-overlay').style.position = 'absolute';
+        },
+        onLeaveBack: function() {
+          document.querySelector('.hero-bg').style.position = 'fixed';
+          document.querySelector('.hero-overlay').style.position = 'fixed';
+        }
+      });
+
+      // Stats — A1 Standard
+      document.querySelectorAll('[data-target]').forEach(function(el) {
+        const target = parseInt(el.dataset.target);
+        ScrollTrigger.create({
+          trigger: el, start: 'top 85%', once: true,
+          onEnter: function() {
+            let current = 0;
+            const inc = Math.ceil(target / 60);
+            const timer = setInterval(function() {
+              current += inc;
+              if (current >= target) { current = target; clearInterval(timer); }
+              el.textContent = current;
+            }, 25);
+          }
+        });
+        gsap.from(el.parentElement, { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', scrollTrigger: { trigger: el.parentElement, start: 'top 85%', once: true } });
+      });
+
+      // Philosophy — A1 Standard
+      gsap.from('.philosophy-card', { immediateRender: false, opacity: 0, y: 24, duration: 1.1, stagger: 0.10, ease: 'power2.out', scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true } });
+
+      // Collection
+      document.querySelectorAll('.collection-item').forEach(function(el) {
+        gsap.from(el, { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+      });
+
+      // Atelier
+      gsap.from('.atelier-img', { immediateRender: false, opacity: 0, x: -40, duration: 1.2, ease: 'power2.out', scrollTrigger: { trigger: '.atelier-content', start: 'top 80%', once: true } });
+      gsap.from('.atelier-text', { immediateRender: false, opacity: 0, x: 40, duration: 1.2, ease: 'power2.out', scrollTrigger: { trigger: '.atelier-content', start: 'top 80%', once: true } });
+
+      // Process
+      gsap.from('.process-step', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, stagger: 0.10, ease: 'power2.out', scrollTrigger: { trigger: '.process-timeline', start: 'top 85%', once: true } });
+
+      // Heritage
+      gsap.from('.heritage-item', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, stagger: 0.10, ease: 'power2.out', scrollTrigger: { trigger: '.heritage-timeline', start: 'top 85%', once: true } });
+
+      // Press
+      gsap.from('.press-quote', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', scrollTrigger: { trigger: '.press-slider', start: 'top 85%', once: true } });
+
+      // Form
+      gsap.from('.form-group', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, stagger: 0.10, ease: 'power2.out', scrollTrigger: { trigger: '.commission-form', start: 'top 85%', once: true } });
+
+      // Footer
+      gsap.from('.footer-col', { immediateRender: false, opacity: 0, y: 24, duration: 1.0, stagger: 0.10, ease: 'power2.out', scrollTrigger: { trigger: '.footer-grid', start: 'top 90%', once: true } });
+    }
+
+    new Swiper('.press-slider', {
+      loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      speed: 700
+    });
+
+    document.querySelectorAll('[data-section]').forEach(function(sec) {
+      ScrollTrigger.create({
+        trigger: sec, start: 'top center', end: 'bottom center',
+        onEnter: function() { const el = document.getElementById('scroll-section-label'); if(el) el.textContent = sec.dataset.section; },
+        onEnterBack: function() { const el = document.getElementById('scroll-section-label'); if(el) el.textContent = sec.dataset.section; }
+      });
+    });
+  </script>
+</body>
+</html>

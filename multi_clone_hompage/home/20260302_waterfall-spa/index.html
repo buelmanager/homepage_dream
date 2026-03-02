@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VELLUM — Waterfall Sanctuary | Natural Wellness & Luxury Spa</title>
+  <meta name="description" content="VELLUM Waterfall Sanctuary — A luxury wellness retreat where cascading natural waterfalls are the foundation of every healing experience.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A1818; --surface: #0F2020; --surface2: #142828;
+      --accent: #4DCFB0; --accent-light: #7ADFC8; --accent-dark: #2A9A80;
+      --ivory: #DCEFEC; --smoke: #809890; --muted: #4A6860;
+      --border: #0C1E1E;
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent-dark) var(--bg); }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--ivory); line-height: 1.6; overflow-x: hidden; }
+    body.locked { overflow: hidden; }
+
+    /* Preloader */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .preloader-logo {
+      width: 90px; height: 90px;
+      stroke: var(--accent); stroke-width: 1.5; fill: none;
+      stroke-dasharray: 400; stroke-dashoffset: 400;
+      animation: drawLogo 2s ease forwards;
+    }
+    @keyframes drawLogo { to { stroke-dashoffset: 0; } }
+    .preloader-text {
+      margin-top: 24px; font-family: var(--font-serif);
+      font-size: 1.1rem; letter-spacing: 0.3em; color: var(--accent);
+      opacity: 0; animation: fadeIn 1s ease 1.2s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* Scroll Indicator */
+    #scroll-indicator {
+      position: fixed; left: 30px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 12px;
+      opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; visibility: visible; }
+    .scroll-progress { width: 2px; height: 80px; background: var(--border); position: relative; border-radius: 1px; }
+    .scroll-progress-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); border-radius: 1px; transition: height 0.1s ease; }
+    .scroll-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--smoke); text-transform: uppercase; }
+
+    /* Navbar */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 20px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .navbar.scrolled { background: rgba(10,24,24,0.95); backdrop-filter: blur(12px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.15rem; letter-spacing: 0.2em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; transition: color 0.3s ease; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { padding: 10px 24px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 0.8rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; font-family: var(--font-sans); }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* Hero Type D — Portraits + Stats */
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 100vh; align-items: center; background: var(--bg);
+    }
+    .hero-content-panel { padding: 140px 60px 120px 80px; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.4em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; font-family: var(--font-sans); }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 5vw, 5rem); font-weight: 600; line-height: 1.05; margin-bottom: 24px; color: var(--ivory); }
+    .hero-subtitle { font-size: 1.05rem; color: var(--smoke); max-width: 440px; font-weight: 300; line-height: 1.8; margin-bottom: 40px; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 40px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 0; }
+    .stat-item { }
+    .stat-num { font-size: 2.8rem; font-family: var(--font-serif); color: var(--accent); display: block; line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.12em; color: var(--smoke); text-transform: uppercase; font-family: var(--font-sans); }
+    .hero-cta { }
+    .btn-primary { display: inline-block; padding: 16px 40px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.14em; border: none; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-secondary { display: inline-block; padding: 16px 40px; background: transparent; color: var(--ivory); font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.14em; border: 1px solid rgba(220,239,236,0.3); cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; margin-left: 16px; }
+    .btn-secondary:hover { border-color: var(--ivory); }
+    .hero-portraits {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+      padding: 40px 40px 40px 20px; height: 100vh;
+    }
+    .portrait-card { background-size: cover; background-position: center; border-radius: 4px; overflow: hidden; }
+    .card-1 { background-image: url('images/img-5.webp'); }
+    .card-2 { background-image: url('images/img-7.webp'); }
+    .card-3 { grid-column: span 2; max-height: 200px; background-image: url('images/img-8.webp'); }
+
+    /* Stats Strip */
+    .stats-strip { background: var(--surface); padding: 48px 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .strip-stat { text-align: center; }
+    .strip-stat-num { font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent); display: block; }
+    .strip-stat-label { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase; margin-top: 8px; font-family: var(--font-sans); }
+
+    /* Sections */
+    section { padding: 120px 60px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; font-family: var(--font-sans); }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; margin-bottom: 24px; }
+    .section-subtitle { color: var(--smoke); max-width: 600px; font-weight: 300; line-height: 1.8; }
+
+    /* Philosophy */
+    .philosophy { background: var(--surface); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; }
+    .philosophy-card { background: var(--bg); padding: 48px 36px; border: 1px solid var(--border); transition: border-color 0.3s ease, transform 0.3s ease; }
+    .philosophy-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .philosophy-icon { font-size: 1.8rem; color: var(--accent); margin-bottom: 24px; }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 16px; font-weight: 300; }
+    .philosophy-card p { color: var(--smoke); font-size: 0.95rem; line-height: 1.7; }
+
+    /* Collection / Therapies */
+    .collection { background: var(--bg); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 60px; overflow: visible; }
+    .collection-item { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--surface); }
+    .collection-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .collection-item:hover img { transform: scale(1.05); }
+    .collection-item-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,24,24,0.9) 0%, transparent 55%); display: flex; flex-direction: column; justify-content: flex-end; padding: 30px; }
+    .collection-item h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 8px; font-weight: 300; }
+    .collection-item p { color: var(--smoke); font-size: 0.88rem; }
+
+    /* Atelier */
+    .atelier { background: var(--surface); }
+    .atelier-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 60px; }
+    .atelier-img { position: relative; aspect-ratio: 3/4; overflow: hidden; }
+    .atelier-img img { width: 100%; height: 100%; object-fit: cover; }
+    .atelier-text h3 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: 24px; font-weight: 300; }
+    .atelier-text p { color: var(--smoke); margin-bottom: 16px; line-height: 1.8; font-size: 0.95rem; }
+
+    /* Process */
+    .process { background: var(--bg); }
+    .process-timeline { margin-top: 80px; position: relative; padding-left: 60px; }
+    .process-timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+    .process-step { position: relative; padding-bottom: 60px; }
+    .process-step:last-child { padding-bottom: 0; }
+    .process-step::before { content: ''; position: absolute; left: -48px; top: 8px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); }
+    .process-step h4 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 12px; font-weight: 300; }
+    .process-step p { color: var(--smoke); line-height: 1.7; max-width: 520px; font-size: 0.95rem; }
+
+    /* Heritage */
+    .heritage { background: var(--surface); }
+    .heritage-timeline { display: flex; gap: 40px; margin-top: 60px; overflow-x: auto; padding-bottom: 20px; }
+    .heritage-item { min-width: 280px; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.5rem; color: var(--accent); margin-bottom: 16px; display: block; }
+    .heritage-item h4 { font-size: 1.05rem; margin-bottom: 12px; font-family: var(--font-serif); font-weight: 300; }
+    .heritage-item p { color: var(--smoke); font-size: 0.88rem; line-height: 1.6; }
+
+    /* Press */
+    .press { background: var(--bg); }
+    .press-slider { margin-top: 60px; }
+    .press-quote { background: var(--surface); padding: 60px; text-align: center; border: 1px solid var(--border); }
+    .press-quote blockquote { font-family: var(--font-serif); font-size: 1.55rem; font-style: italic; line-height: 1.6; margin-bottom: 24px; color: var(--ivory); font-weight: 300; }
+    .press-quote cite { color: var(--accent); font-size: 0.82rem; letter-spacing: 0.12em; font-family: var(--font-sans); }
+
+    /* Booking */
+    .booking { background: var(--surface); }
+    .booking-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .booking-form { display: flex; flex-direction: column; gap: 24px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-size: 0.78rem; letter-spacing: 0.12em; color: var(--smoke); text-transform: uppercase; font-family: var(--font-sans); }
+    .form-group input, .form-group textarea, .form-group select { padding: 16px; background: var(--bg); border: 1px solid var(--border); color: var(--ivory); font-family: var(--font-sans); font-size: 0.95rem; transition: border-color 0.3s ease; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+    .form-group textarea { min-height: 140px; resize: vertical; }
+    .booking-info h3 { font-family: var(--font-serif); font-size: 1.9rem; margin-bottom: 24px; font-weight: 300; }
+    .booking-info p { color: var(--smoke); margin-bottom: 16px; line-height: 1.7; font-size: 0.95rem; }
+    .booking-detail { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+    .booking-icon { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+    .booking-detail p { color: var(--smoke); font-size: 0.9rem; margin: 0; }
+
+    /* Footer */
+    .footer { background: var(--bg); padding: 80px 60px 40px; border-top: 1px solid var(--border); }
+    .footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 60px; margin-bottom: 60px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 16px; font-weight: 300; }
+    .footer-brand p { color: var(--smoke); font-size: 0.9rem; line-height: 1.7; max-width: 300px; }
+    .footer-col h4 { font-size: 0.78rem; letter-spacing: 0.18em; color: var(--accent); margin-bottom: 20px; text-transform: uppercase; font-family: var(--font-sans); }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { color: var(--smoke); text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 40px; border-top: 1px solid var(--border); }
+    .footer-bottom p { color: var(--muted); font-size: 0.78rem; }
+    .footer-social { display: flex; gap: 20px; }
+    .footer-social a { color: var(--smoke); font-size: 0.88rem; text-decoration: none; transition: color 0.3s ease; }
+    .footer-social a:hover { color: var(--accent); }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-portraits { height: 60vh; }
+      .hero-content-panel { padding: 120px 40px 60px; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .atelier-content { grid-template-columns: 1fr; }
+      .booking-content { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 80px 24px; }
+      .navbar { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 30px 24px; }
+      #scroll-indicator { display: none; }
+      .hero-content-panel { padding: 80px 24px 40px; }
+      .hero-portraits { padding: 20px 24px; height: 50vh; }
+      .hero-stats { grid-template-columns: repeat(3, 1fr); }
+      .footer { padding: 60px 24px 30px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+      .heritage-timeline { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body class="locked">
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <svg class="preloader-logo" viewBox="0 0 100 100">
+      <path d="M50 15 Q80 40 50 55 Q20 70 50 85"/>
+      <path d="M35 25 Q65 50 35 75"/>
+      <path d="M65 25 Q35 50 65 75"/>
+      <circle cx="50" cy="50" r="38"/>
+    </svg>
+    <span class="preloader-text">VELLUM</span>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-progress"><div class="scroll-progress-fill" style="height:0%"></div></div>
+    <span class="scroll-label" id="scroll-section-label">Hero</span>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="mainNav">
+    <a href="#" class="nav-logo">VELLUM</a>
+    <div class="nav-links">
+      <a href="about.html">Sanctuary</a>
+      <a href="collection.html">Therapies</a>
+      <a href="process.html">Retreat</a>
+      <a href="contact.html">Book</a>
+    </div>
+    <button class="nav-cta">Book Retreat</button>
+  </nav>
+
+  <!-- Hero Type D — Portraits + Stats -->
+  <section class="hero" id="hero" data-section="Hero">
+    <div class="hero-content-panel">
+      <div class="hero-eyebrow">Est. 2008 · Waterfall Sanctuary</div>
+      <h1 class="hero-title">Where Waters<br>Heal the Spirit</h1>
+      <p class="hero-subtitle">A private wellness retreat built around ancient natural waterfalls. Where cascading waters become the foundation of every healing experience.</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num" data-target="18">0</span>
+          <span class="stat-label">Therapies</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="450">0</span>
+          <span class="stat-label">Guests Yearly</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="9">0</span>
+          <span class="stat-label">Natural Springs</span>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <a href="contact.html" class="btn-primary">Book a Retreat</a>
+        <a href="collection.html" class="btn-secondary">Our Therapies</a>
+      </div>
+    </div>
+    <div class="hero-portraits">
+      <div class="portrait-card card-1"></div>
+      <div class="portrait-card card-2"></div>
+      <div class="portrait-card card-3"></div>
+    </div>
+  </section>
+
+  <!-- Stats Strip -->
+  <div class="stats-strip" data-section="Legacy">
+    <div class="strip-stat">
+      <span class="strip-stat-num" data-target="16">0</span>
+      <span class="strip-stat-label">Years Operating</span>
+    </div>
+    <div class="strip-stat">
+      <span class="strip-stat-num" data-target="12">0</span>
+      <span class="strip-stat-label">Waterfalls on Site</span>
+    </div>
+    <div class="strip-stat">
+      <span class="strip-stat-num" data-target="3">0</span>
+      <span class="strip-stat-label">Private Villas</span>
+    </div>
+    <div class="strip-stat">
+      <span class="strip-stat-num" data-target="98">0</span>
+      <span class="strip-stat-label">Guest Satisfaction</span>
+    </div>
+  </div>
+
+  <!-- Philosophy -->
+  <section class="philosophy" data-section="Philosophy">
+    <p class="section-eyebrow">Our Approach</p>
+    <h2 class="section-title">The Science of Water Healing</h2>
+    <p class="section-subtitle">Every treatment at VELLUM harnesses the documented therapeutic properties of moving water — negative ionization, hydrostatic pressure, and thermal variation.</p>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <div class="philosophy-icon">~</div>
+        <h3>Negative Ionization</h3>
+        <p>Waterfalls generate a field of negative ions proven to elevate serotonin levels, reduce cortisol, and promote deep sleep. Our cascade pools maximize this effect through engineered waterfall height and basin design.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">◎</div>
+        <h3>Thermal Contrast</h3>
+        <p>The ancient practice of alternating between cold waterfall plunge and warm thermal spring creates a cardiovascular response that has been refined by indigenous cultures worldwide for thousands of years.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">∿</div>
+        <h3>Sound Therapy</h3>
+        <p>The frequency of falling water has measurable effects on the autonomic nervous system. Our acoustic architects have mapped the sanctuary's soundscape to create zones of varying intensity and rest.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collection / Therapies -->
+  <section class="collection" data-section="Therapies">
+    <p class="section-eyebrow">The Treatments</p>
+    <h2 class="section-title">Waterfall Therapies</h2>
+    <p class="section-subtitle">Eighteen unique treatments, all rooted in the restorative power of natural water.</p>
+    <div class="collection-grid">
+      <div class="collection-item">
+        <img src="images/img-5.webp" alt="Cascade Immersion Therapy" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Cascade Immersion</h3>
+          <p>90-minute · Full waterfall immersion & guided breathwork</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-6.webp" alt="Thermal Circuit" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Thermal Circuit</h3>
+          <p>3-hour · Cold cascade / hot spring alternation protocol</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-7.webp" alt="Sound Bath" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Sound Bath</h3>
+          <p>60-minute · Waterfall acoustic meditation with singing bowls</p>
+        </div>
+      </div>
+      <div class="collection-item">
+        <img src="images/img-8.webp" alt="Stone & Water Ritual" loading="lazy">
+        <div class="collection-item-overlay">
+          <h3>Stone & Water Ritual</h3>
+          <p>120-minute · River stone massage under waterfall mist</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Atelier / Sanctuary -->
+  <section class="atelier" data-section="Sanctuary">
+    <p class="section-eyebrow">The Location</p>
+    <h2 class="section-title">A Hidden Valley Sanctuary</h2>
+    <div class="atelier-content">
+      <div class="atelier-img">
+        <img src="images/img-1.webp" alt="VELLUM sanctuary waterfall valley" loading="lazy">
+      </div>
+      <div class="atelier-text">
+        <h3>Where the Valley Narrows</h3>
+        <p>VELLUM occupies a private valley in the Costa Verde mountains, accessible only by a single forest road. The property encompasses twelve natural waterfalls, three thermal springs, and eleven hectares of pristine primary forest.</p>
+        <p>The main sanctuary was designed by architect Lucia Benvenuto, who spent two years studying the valley's water patterns before placing the first foundation. Every structure follows the water's existing paths — nothing was diverted or redirected.</p>
+        <p>Accommodation consists of three private villas and eight individual suites, each positioned to ensure guests wake to the sound of falling water. The valley's natural contours ensure complete acoustic privacy between structures.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process / Retreat -->
+  <section class="process" data-section="Retreat">
+    <p class="section-eyebrow">The Experience</p>
+    <h2 class="section-title">Your Retreat Journey</h2>
+    <p class="section-subtitle">A typical VELLUM stay unfolds over three days, each with a different water element as its focus.</p>
+    <div class="process-timeline">
+      <div class="process-step">
+        <h4>Arrival & Orientation</h4>
+        <p>Guests arrive in the late afternoon to allow the nervous system to decompress before any treatments begin. A long immersion in the warm arrival pool, followed by a consultation with your personal wellness curator, sets the tone for your stay.</p>
+      </div>
+      <div class="process-step">
+        <h4>Day One — Cascade</h4>
+        <p>The first full day is devoted to the waterfalls themselves: standing under the main cascade for thirty minutes of negative ion immersion, followed by guided breathwork at the middle pool. Afternoon free time for forest walking on unmarked trails.</p>
+      </div>
+      <div class="process-step">
+        <h4>Day Two — Thermal</h4>
+        <p>The thermal circuit begins at dawn with a cold plunge under the upper cascade, followed by the hot spring, repeated in cycles across three hours. Afternoon treatment: the signature River Stone Ritual. Evening sound bath under stars.</p>
+      </div>
+      <div class="process-step">
+        <h4>Day Three — Integration</h4>
+        <p>The final day focuses on stillness: a guided meditation at the lowest pool, where water barely moves. A closing consultation with your wellness curator documents the physical and emotional markers before departure, with follow-up protocol provided.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage -->
+  <section class="heritage" data-section="Heritage">
+    <p class="section-eyebrow">Our Story</p>
+    <h2 class="section-title">Founded on Water</h2>
+    <div class="heritage-timeline">
+      <div class="heritage-item">
+        <span class="heritage-year">2006</span>
+        <h4>The Discovery</h4>
+        <p>Wellness researcher Dr. Mara Fontaine discovers the Costa Verde valley on a botanical survey. The twelve waterfalls and three thermal springs convince her this land holds exceptional therapeutic potential.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2008</span>
+        <h4>VELLUM Opens</h4>
+        <p>After two years of sympathetic development, VELLUM welcomes its first twelve guests. The three-villa sanctuary is immediately booked 18 months in advance.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2013</span>
+        <h4>Clinical Recognition</h4>
+        <p>A peer-reviewed study published in the Journal of Integrative Medicine documents the measurable health outcomes of VELLUM's water immersion protocols.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2019</span>
+        <h4>Acoustic Program</h4>
+        <p>Partnership with acoustic ecology pioneer Dr. Gordon Hempton leads to the development of VELLUM's unique soundscape therapy program — the first of its kind in the world.</p>
+      </div>
+      <div class="heritage-item">
+        <span class="heritage-year">2024</span>
+        <h4>The Springs</h4>
+        <p>Geological survey confirms three additional thermal springs beneath the lower valley. Expansion plans for two new treatment pools developed in consultation with the valley's ecosystems.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Press -->
+  <section class="press" data-section="Press">
+    <p class="section-eyebrow">Recognition</p>
+    <h2 class="section-title">What Guests Say</h2>
+    <div class="press-slider swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"I have been to every major wellness retreat in the world. VELLUM is the only one where I left feeling genuinely changed rather than merely rested."</blockquote>
+            <cite>— Condé Nast Traveller, Spa of the Year</cite>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"The waterfalls at VELLUM are not decoration — they are the medicine. Standing under the main cascade for thirty minutes reset something in me that years of therapy could not touch."</blockquote>
+            <cite>— Monocle Magazine, Wellness Special</cite>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <blockquote>"An extraordinary integration of natural science and sensory design. VELLUM is what wellness should be — rooted in the landscape, not imposed upon it."</blockquote>
+            <cite>— The Guardian, Best Wellness Retreat Europe</cite>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- Booking -->
+  <section class="booking" data-section="Book">
+    <p class="section-eyebrow">Reservations</p>
+    <h2 class="section-title">Book Your Retreat</h2>
+    <div class="booking-content">
+      <div class="booking-info">
+        <h3>Three Nights Minimum Stay</h3>
+        <p>VELLUM accepts a maximum of twelve guests at any time, ensuring absolute privacy and the full attention of our team. Stays are limited to three nights minimum to allow adequate time for the therapeutic protocols.</p>
+        <p>All rates are inclusive of accommodation, all meals sourced from the sanctuary's gardens, all treatments in the standard program, and use of all water facilities without restriction.</p>
+        <div class="booking-detail">
+          <span class="booking-icon">◈</span>
+          <p>Villa Suite (exclusive 3-night stay): from €4,200 per person</p>
+        </div>
+        <div class="booking-detail">
+          <span class="booking-icon">◈</span>
+          <p>Individual Suite (3-night stay): from €2,800 per person</p>
+        </div>
+        <div class="booking-detail">
+          <span class="booking-icon">◈</span>
+          <p>Extended programs (7+ nights) available with clinical support</p>
+        </div>
+      </div>
+      <form class="booking-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label for="accommodation">Accommodation</label>
+          <select id="accommodation">
+            <option value="">Select type</option>
+            <option>Villa Suite (exclusive)</option>
+            <option>Individual Suite</option>
+            <option>Couple's Suite</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="dates">Preferred Dates</label>
+          <input type="text" id="dates" placeholder="e.g. June 2026">
+        </div>
+        <div class="form-group">
+          <label for="notes">Health Notes</label>
+          <textarea id="notes" placeholder="Any health conditions, treatment preferences, or special requirements..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Request Reservation</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>VELLUM</h3>
+        <p>A private waterfall wellness sanctuary hidden in a Costa Verde mountain valley. Twelve waterfalls, three thermal springs, eighteen healing therapies.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Sanctuary</h4>
+        <ul>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="about.html#location">The Valley</a></li>
+          <li><a href="about.html#team">The Team</a></li>
+          <li><a href="about.html#science">The Science</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Therapies</h4>
+        <ul>
+          <li><a href="collection.html">All Treatments</a></li>
+          <li><a href="collection.html#waterfall">Waterfall Therapies</a></li>
+          <li><a href="collection.html#thermal">Thermal Circuit</a></li>
+          <li><a href="process.html">Retreat Journey</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Reserve</h4>
+        <ul>
+          <li><a href="contact.html">Book a Retreat</a></li>
+          <li><a href="#">Gift Experiences</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Access</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 VELLUM Waterfall Sanctuary. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#">Instagram</a>
+        <a href="#">Press</a>
+        <a href="#">Newsletter</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return; this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('words')) {
+          el.innerHTML = original.split(/\s+/).filter(Boolean).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() { if (this._el) { const orig = this._el.getAttribute('data-split-orig'); if (orig) this._el.textContent = orig; } }
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.getElementById('preloader').classList.add('hidden');
+        document.body.classList.remove('locked');
+        // Scroll indicator — place 1
+        document.getElementById('scroll-indicator').classList.add('visible');
+        initAnimations();
+      }, 2400);
+    });
+
+    // Scroll indicator — place 2
+    setTimeout(function() {
+      document.getElementById('scroll-indicator').classList.add('visible');
+    }, 4000);
+
+    window.addEventListener('scroll', function() {
+      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+      const fill = document.querySelector('.scroll-progress-fill');
+      const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      if (fill) fill.style.height = pct + '%';
+    });
+
+    ;(function preHideBelowFold() {
+      const VH = window.innerHeight;
+      const selectors = ['.strip-stat','.philosophy-card','.collection-item','.atelier-img','.atelier-content','.process-step','.heritage-item','.press-quote','.form-group','.footer-col'];
+      document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+        if (el.getBoundingClientRect().top > VH * 0.95) {
+          el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; el.style.willChange = 'opacity, transform';
+        }
+      });
+    })();
+
+    function initAnimations() {
+      // Hero — A2 Whisper
+      const heroTitle = document.querySelector('.hero-title');
+      if (heroTitle) {
+        const split = new SplitText(heroTitle, { type: 'words' });
+        gsap.from(split.words, { opacity: 0, y: 14, duration: 1.5, stagger: 0.06, ease: 'power1.out', delay: 0.3 });
+      }
+      gsap.from('.hero-eyebrow', { opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 0.1 });
+      gsap.from('.hero-subtitle', { opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 0.5 });
+      gsap.from('.hero-stats', { opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 0.8 });
+      gsap.from('.hero-cta', { opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', delay: 1.1 });
+      gsap.from('.portrait-card', { opacity: 0, y: 14, duration: 1.5, stagger: 0.06, ease: 'power1.out', delay: 0.4 });
+
+      // Stats counter
+      document.querySelectorAll('[data-target]').forEach(function(el) {
+        const target = parseInt(el.dataset.target);
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 85%',
+          once: true,
+          onEnter: function() {
+            let current = 0;
+            const increment = Math.ceil(target / 60);
+            const timer = setInterval(function() {
+              current += increment;
+              if (current >= target) { current = target; clearInterval(timer); }
+              el.textContent = current;
+            }, 25);
+          }
+        });
+        gsap.from(el.parentElement, { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', scrollTrigger: { trigger: el.parentElement, start: 'top 85%', once: true } });
+      });
+
+      // Philosophy — A2 Whisper
+      document.querySelectorAll('.philosophy-card').forEach(function(el) {
+        gsap.from(el, { immediateRender: false, opacity: 0, y: 14, duration: 1.5, stagger: 0.06, ease: 'power1.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+      });
+
+      // Collection
+      document.querySelectorAll('.collection-item').forEach(function(el) {
+        gsap.from(el, { immediateRender: false, opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+      });
+
+      // Atelier
+      gsap.from('.atelier-img', { immediateRender: false, opacity: 0, x: -30, duration: 1.4, ease: 'power1.out', scrollTrigger: { trigger: '.atelier-content', start: 'top 80%', once: true } });
+      gsap.from('.atelier-text', { immediateRender: false, opacity: 0, x: 30, duration: 1.4, ease: 'power1.out', scrollTrigger: { trigger: '.atelier-content', start: 'top 80%', once: true } });
+
+      // Process
+      document.querySelectorAll('.process-step').forEach(function(el) {
+        gsap.from(el, { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+      });
+
+      // Heritage
+      gsap.from('.heritage-item', { immediateRender: false, opacity: 0, y: 14, duration: 1.5, stagger: 0.06, ease: 'power1.out', scrollTrigger: { trigger: '.heritage-timeline', start: 'top 85%', once: true } });
+
+      // Press
+      gsap.from('.press-quote', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', scrollTrigger: { trigger: '.press-slider', start: 'top 85%', once: true } });
+
+      // Form
+      gsap.from('.form-group', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out', scrollTrigger: { trigger: '.booking-form', start: 'top 85%', once: true } });
+
+      // Footer
+      gsap.from('.footer-col', { immediateRender: false, opacity: 0, y: 14, duration: 1.4, stagger: 0.06, ease: 'power1.out', scrollTrigger: { trigger: '.footer-grid', start: 'top 90%', once: true } });
+    }
+
+    new Swiper('.press-slider', {
+      loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      speed: 800
+    });
+
+    document.querySelectorAll('[data-section]').forEach(function(sec) {
+      ScrollTrigger.create({
+        trigger: sec, start: 'top center', end: 'bottom center',
+        onEnter: function() { const el = document.getElementById('scroll-section-label'); if(el) el.textContent = sec.dataset.section; },
+        onEnterBack: function() { const el = document.getElementById('scroll-section-label'); if(el) el.textContent = sec.dataset.section; }
+      });
+    });
+  </script>
+</body>
+</html>

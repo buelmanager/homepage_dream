@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commons Orchard — Grow Together, Share Together</title>
+  <meta name="description" content="Commons Orchard is an urban permaculture collective cultivating shared food forests, community gardens, and seasonal harvests for everyone.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141810;
+      --surface: #1C2018;
+      --surface2: #222A1E;
+      --accent: #8AB56A;
+      --accent-light: #AACE8A;
+      --accent-dark: #5A8040;
+      --ivory: #E4EEE0;
+      --smoke: #889880;
+      --muted: #4E5E48;
+      --border: #181E14;
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* ─── PRELOADER ─── */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+    }
+    .preloader-mark svg { width: 64px; height: 64px; }
+    .preloader-brand { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); }
+    .preloader-bar { width: 120px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+
+    /* ─── SCROLL INDICATOR ─── */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 100; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 80px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line-fill { position: absolute; top: 0; left: 0; right: 0; height: 0%; background: var(--accent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+
+    /* ─── NAVBAR ─── */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 24px 64px; transition: background 0.4s, backdrop-filter 0.4s; }
+    nav.scrolled { background: rgba(20,24,16,0.92); backdrop-filter: blur(14px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.05rem; letter-spacing: 0.1em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── HERO TYPE E (Grid/Pattern Canvas) ─── */
+    .hero { position: relative; height: 100vh; display: flex; align-items: center; background: var(--bg); overflow: hidden; }
+    .hero-grid-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.2; }
+    .hero-overlay { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, transparent 30%, var(--bg) 80%); }
+    .hero-content { position: relative; z-index: 2; max-width: 680px; padding: 0 80px; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; font-family: var(--font-sans); }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 6.5rem); font-weight: 600; color: var(--ivory); line-height: 1.0; margin-bottom: 28px; }
+    .hero-sub { font-size: 1.1rem; color: var(--smoke); font-weight: 300; line-height: 1.75; margin-bottom: 40px; max-width: 500px; }
+    .btn-primary { display: inline-block; padding: 14px 44px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: background 0.3s, color 0.3s; }
+    .btn-primary:hover { background: var(--accent); color: var(--bg); }
+    .btn-ghost { display: inline-block; padding: 14px 44px; background: transparent; border: 1px solid var(--muted); color: var(--smoke); font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-corner-accents .corner { position: absolute; width: 56px; height: 56px; border-color: var(--accent); border-style: solid; opacity: 0.5; }
+    .corner.tl { top: 28px; left: 28px; border-width: 2px 0 0 2px; }
+    .corner.tr { top: 28px; right: 28px; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: 28px; left: 28px; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: 28px; right: 28px; border-width: 0 2px 2px 0; }
+
+    /* ─── SECTION COMMONS ─── */
+    section { position: relative; z-index: 1; }
+    .section-label { font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; font-family: var(--font-sans); }
+    .section-heading { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; color: var(--ivory); line-height: 1.15; }
+    .section-sub { color: var(--smoke); font-size: 1rem; font-weight: 300; line-height: 1.85; max-width: 580px; }
+
+    /* ─── STATS ─── */
+    .stats-strip { background: var(--surface); padding: 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); display: block; }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* ─── PHILOSOPHY ─── */
+    .philosophy { padding: 120px 80px; background: var(--bg); }
+    .philosophy-header { margin-bottom: 72px; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .philosophy-card { padding: 40px 32px; border: 1px solid var(--border); background: var(--surface); transition: border-color 0.3s; }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .philosophy-icon { width: 44px; height: 44px; margin-bottom: 20px; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; }
+    .philosophy-icon svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-bottom: 14px; font-weight: 300; }
+    .philosophy-card p { color: var(--smoke); font-size: 0.92rem; line-height: 1.8; font-weight: 300; }
+
+    /* ─── COLLECTION ─── */
+    .collection { padding: 120px 80px; background: var(--surface); }
+    .collection-header { margin-bottom: 64px; }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; overflow: visible; }
+    .collection-card { position: relative; overflow: hidden; cursor: pointer; }
+    .collection-img { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; transition: transform 0.8s ease; }
+    .collection-card:hover .collection-img { transform: scale(1.04); }
+    .collection-info { padding: 24px 0 0; }
+    .collection-tag { font-size: 0.64rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); }
+    .collection-title { font-family: var(--font-serif); font-size: 1.35rem; color: var(--ivory); margin-top: 8px; font-weight: 300; }
+    .collection-desc { color: var(--smoke); font-size: 0.9rem; margin-top: 8px; line-height: 1.7; }
+
+    /* ─── ATELIER ─── */
+    .atelier { padding: 120px 80px; background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img { width: 100%; aspect-ratio: 3/4; background-size: cover; background-position: center; }
+    .atelier-content { padding: 40px 0; }
+    .atelier-content .section-heading { margin-bottom: 24px; }
+    .atelier-content p { color: var(--smoke); line-height: 1.85; margin-bottom: 16px; font-weight: 300; }
+
+    /* ─── PROCESS ─── */
+    .process { padding: 120px 80px; background: var(--surface); }
+    .process-header { margin-bottom: 64px; }
+    .process-list { display: flex; flex-direction: column; }
+    .process-item { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 48px 0; border-top: 1px solid var(--border); align-items: start; }
+    .process-item:last-child { border-bottom: 1px solid var(--border); }
+    .process-num { font-family: var(--font-serif); font-size: 2.4rem; color: var(--muted); font-weight: 600; }
+    .process-content h3 { font-family: var(--font-serif); font-size: 1.25rem; color: var(--ivory); font-weight: 300; margin-bottom: 12px; }
+    .process-content p { color: var(--smoke); font-size: 0.95rem; line-height: 1.8; font-weight: 300; }
+
+    /* ─── HERITAGE ─── */
+    .heritage { padding: 120px 80px; background: var(--bg); }
+    .heritage-header { margin-bottom: 64px; }
+    .heritage-timeline { display: flex; flex-direction: column; position: relative; }
+    .heritage-timeline::before { content: ''; position: absolute; left: 100px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .heritage-item { display: grid; grid-template-columns: 100px 1fr; gap: 48px; padding: 36px 0; align-items: start; position: relative; }
+    .heritage-item::before { content: ''; position: absolute; left: 96px; top: 46px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+    .heritage-year { font-family: var(--font-serif); font-size: 1rem; color: var(--accent); font-weight: 600; padding-top: 8px; }
+    .heritage-content h3 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); font-weight: 300; margin-bottom: 8px; }
+    .heritage-content p { color: var(--smoke); font-size: 0.9rem; line-height: 1.75; font-weight: 300; }
+
+    /* ─── PRESS ─── */
+    .press { padding: 120px 80px; background: var(--surface); }
+    .press-header { margin-bottom: 56px; }
+    .swiper { overflow: hidden; }
+    .press-card { background: var(--bg); padding: 48px 44px; border: 1px solid var(--border); }
+    .press-quote { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); line-height: 1.75; font-style: italic; margin-bottom: 28px; }
+    .press-quote::before { content: '\201C'; font-size: 3rem; color: var(--accent); line-height: 0.5; display: block; margin-bottom: 14px; }
+    .press-source { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ─── COMMISSION ─── */
+    .commission { padding: 120px 80px; background: var(--bg); }
+    .commission-header { margin-bottom: 64px; }
+    .commission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .form-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .form-input, .form-select, .form-textarea { background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 20px; font-family: var(--font-sans); font-size: 0.92rem; outline: none; transition: border-color 0.3s; -webkit-appearance: none; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .commission-info h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); font-weight: 300; margin-bottom: 20px; }
+    .commission-info p { color: var(--smoke); line-height: 1.85; font-weight: 300; margin-bottom: 16px; }
+    .contact-item { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px; }
+    .contact-item-icon { color: var(--accent); }
+    .contact-item-text { color: var(--smoke); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 64px 80px 40px; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; margin-bottom: 48px; }
+    .footer-brand h3 { font-family: var(--font-serif); font-size: 1.05rem; color: var(--ivory); margin-bottom: 14px; }
+    .footer-brand p { color: var(--smoke); font-size: 0.86rem; line-height: 1.7; font-weight: 300; }
+    .footer-col h4 { font-size: 0.66rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.86rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { color: var(--muted); font-size: 0.76rem; }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { color: var(--muted); font-size: 0.76rem; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="28" r="14" stroke="#8AB56A" stroke-width="1.5"/>
+        <path d="M20 28 Q32 16 44 28" stroke="#8AB56A" stroke-width="1"/>
+        <line x1="32" y1="14" x2="32" y2="10" stroke="#8AB56A" stroke-width="1.5"/>
+        <line x1="32" y1="42" x2="32" y2="50" stroke="#8AB56A" stroke-width="1.5"/>
+        <line x1="20" y1="50" x2="44" y2="50" stroke="#8AB56A" stroke-width="1.5"/>
+        <line x1="25" y1="42" x2="22" y2="50" stroke="#8AB56A" stroke-width="1"/>
+        <line x1="39" y1="42" x2="42" y2="50" stroke="#8AB56A" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="preloader-brand">Commons Orchard</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="bar-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"><div class="scroll-line-fill" id="scroll-fill"></div></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Commons Orchard</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Spaces</a></li>
+      <li><a href="process.html">How to Join</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="#commission" class="btn-primary" style="padding: 10px 20px;">Get Involved</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO TYPE E -->
+  <section class="hero" id="hero">
+    <canvas class="hero-grid-canvas" id="hero-canvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Urban Permaculture Collective — Est. 2014</div>
+      <h1 class="hero-title">Grow<br>Together,<br>Share<br>Together</h1>
+      <p class="hero-sub">A community-rooted network of urban orchards, food forests, and shared growing spaces cultivating abundance for all.</p>
+      <a href="#collection" class="btn-primary">Explore Our Spaces</a>
+    </div>
+    <div class="hero-corner-accents">
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-strip">
+    <div class="stat-item">
+      <span class="stat-num" data-target="18">0</span>
+      <div class="stat-label">Active Orchard Sites</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="3200">0</span>
+      <div class="stat-label">Community Members</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="12000">0</span>
+      <div class="stat-label">Kg Harvested Per Year</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" data-target="46">0</span>
+      <div class="stat-label">Species in Our Forests</div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="philosophy-header">
+      <div class="section-label">Our Principles</div>
+      <h2 class="section-heading">Rooted in Community</h2>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 2a7 7 0 017 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 017-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        </div>
+        <h3>Land as Commons</h3>
+        <p>We hold our growing spaces as shared commons — stewarded collectively and open to everyone, guided by the principle that food-producing land belongs to the community, not individuals.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 5-5"/></svg>
+        </div>
+        <h3>Regenerative Practice</h3>
+        <p>Every decision we make in the orchard improves soil health, increases biodiversity, and builds resilience over time. Permaculture is not just a technique — it is a commitment to reciprocity with the land.</p>
+      </div>
+      <div class="philosophy-card">
+        <div class="philosophy-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3>Harvest for All</h3>
+        <p>The fruits of our collective labor are distributed equitably. Surplus harvests are shared with food banks and neighbourhood kitchens, ensuring that abundance reaches those who need it most.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION -->
+  <section class="collection" id="collection">
+    <div class="collection-header">
+      <div class="section-label">Spaces</div>
+      <h2 class="section-heading">Our Growing Sites</h2>
+    </div>
+    <div class="collection-grid">
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-2.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Food Forest</div>
+          <div class="collection-title">Hawthorn Commons Food Forest</div>
+          <div class="collection-desc">A 2-acre permaculture food forest with seven species layers — canopy apples and pears, berry understorey, ground herbs, and root vegetables throughout the seasons.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-3.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Community Garden</div>
+          <div class="collection-title">Millbank Community Plots</div>
+          <div class="collection-desc">Sixty individual and shared growing plots cultivated by households throughout the neighborhood. Plot waiting list averages two growing seasons.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-4.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Orchard</div>
+          <div class="collection-title">Riverside Heritage Orchard</div>
+          <div class="collection-desc">Sixty heritage apple and pear varieties restored from a Victorian-era walled garden. Community harvest days every September open to all members and neighbors.</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-img" style="background-image: url('images/img-5.webp')"></div>
+        <div class="collection-info">
+          <div class="collection-tag">Seed Library</div>
+          <div class="collection-title">Open Seed Commons</div>
+          <div class="collection-desc">Over 300 open-pollinated, heritage seed varieties freely available to members. Annual seed saving and swap events in late autumn preserve biodiversity and knowledge.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="atelier-content">
+        <div class="section-label">Our Method</div>
+        <h2 class="section-heading">Permaculture in Practice</h2>
+        <p>Every site we tend is designed using permaculture principles: observe, then intervene gently, always building toward greater self-sufficiency and ecological richness. We prioritize perennial plants, water harvesting, and soil biology over yield maximization.</p>
+        <p>Our growing team includes trained permaculture designers, but most of what we know comes from the collective experience of three thousand members across a decade of tending shared land together.</p>
+        <p>We run regular workshops in composting, pruning, seed saving, and soil care — open to all community members, free of charge.</p>
+        <a href="about.html" class="btn-ghost" style="margin-top: 24px;">Read Our Story</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="process-header">
+      <div class="section-label">Getting Involved</div>
+      <h2 class="section-heading">From Newcomer to Steward</h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item">
+        <div class="process-num">01</div>
+        <div class="process-content">
+          <h3>Attend an Open Orchard Day</h3>
+          <p>First Sundays of each month at any of our sites are open to the public — no membership needed. Come, walk the space, meet stewards, and see if the orchard feels like home.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">02</div>
+        <div class="process-content">
+          <h3>Join the Commons</h3>
+          <p>Membership is free and open to all. Register online or at any site. Members receive access to all growing spaces, workshops, seed library, and our seasonal harvest shares.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">03</div>
+        <div class="process-content">
+          <h3>Choose Your Involvement</h3>
+          <p>Some members tend plots weekly. Others come to harvest days twice a year. Some contribute to governance and planning. We welcome every level of engagement without expectation or obligation.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">04</div>
+        <div class="process-content">
+          <h3>Learn and Contribute</h3>
+          <p>Join a working group — soil health, water management, seed saving, or new site development — to deepen your knowledge and contribute to the collective's long-term vision.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-num">05</div>
+        <div class="process-content">
+          <h3>Become a Site Steward</h3>
+          <p>Experienced members can apply to become site stewards — taking on coordination and mentorship responsibilities for a growing site in exchange for access to additional growing resources.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage">
+    <div class="heritage-header">
+      <div class="section-label">Our Journey</div>
+      <h2 class="section-heading">A Decade of Growing Together</h2>
+    </div>
+    <div class="heritage-timeline">
+      <div class="heritage-item">
+        <div class="heritage-year">2014</div>
+        <div class="heritage-content">
+          <h3>First Site — A Disused Allotment</h3>
+          <p>Fourteen neighbors received permission to cultivate a neglected allotment. The first planting day saw forty volunteers show up with tools and seeds.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2016</div>
+        <div class="heritage-content">
+          <h3>Food Forest Established</h3>
+          <p>The Hawthorn Commons Food Forest was designed and planted with 800 perennial plants across seven food-producing layers — a living demonstration of urban permaculture.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2019</div>
+        <div class="heritage-content">
+          <h3>1,000 Members and Heritage Orchard Restored</h3>
+          <p>Membership crossed a thousand. The Riverside Heritage Orchard — abandoned since the 1980s — was restored to full production through 2,400 volunteer hours.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2022</div>
+        <div class="heritage-content">
+          <h3>Open Seed Commons Launched</h3>
+          <p>Our seed library opened with 180 heritage varieties. By the following year it had grown to over 300, all contributed and stewarded by members.</p>
+        </div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2025</div>
+        <div class="heritage-content">
+          <h3>18 Sites, 3,200 Members, 12 Tonnes Harvested</h3>
+          <p>Commons Orchard now stewards 18 sites across the city. Our 2025 harvest exceeded 12,000 kg, with 35% donated to community food networks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press">
+    <div class="press-header">
+      <div class="section-label">In The Press</div>
+      <h2 class="section-heading">What People Say</h2>
+    </div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">Commons Orchard is proving that urban food production can be a genuine commons — not a boutique amenity but a true community resource rooted in reciprocity and care.</div>
+            <div class="press-source">— Urban Agriculture Review, Autumn 2024</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">In twelve years, this collective has transformed disused land into one of the most biodiverse and socially vibrant growing networks in the region. It is a model for cities everywhere.</div>
+            <div class="press-source">— Permaculture Journal, Issue 42</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-card">
+            <div class="press-quote">The decision to keep membership free and open to all is remarkable. In an era of wellness commodification, Commons Orchard insists that growing together is everyone's birthright.</div>
+            <div class="press-source">— Community Food Network Newsletter, Spring 2025</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="margin-top: 32px; position: static;"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION FORM -->
+  <section class="commission" id="commission">
+    <div class="commission-header">
+      <div class="section-label">Join Us</div>
+      <h2 class="section-heading">Become Part of the Commons</h2>
+    </div>
+    <div class="commission-grid">
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" placeholder="Ingrid">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" placeholder="Larsson">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Neighborhood / Postcode</label>
+          <input type="text" class="form-input" placeholder="E.g. Millbank, SE14">
+        </div>
+        <div class="form-group">
+          <label class="form-label">How Would You Like to Get Involved?</label>
+          <select class="form-select">
+            <option>Join as a member</option>
+            <option>Apply for a growing plot</option>
+            <option>Volunteer for events</option>
+            <option>Donate land or resources</option>
+            <option>Partner with us (organisation)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Any Questions or Notes?</label>
+          <textarea class="form-textarea" placeholder="Tell us a little about yourself or your interest..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="border: none; cursor: pointer; width: 100%;">Send Enquiry</button>
+      </form>
+      <div class="commission-info">
+        <h3>Everyone Is Welcome in the Orchard</h3>
+        <p>Membership is free and open to all residents, regardless of gardening experience or physical ability. We have accessible paths and adaptable tasks for every level of mobility.</p>
+        <p>We respond to all enquiries within three working days. If you prefer, you can simply show up to any Open Orchard Day — no registration required.</p>
+        <div class="contact-item">
+          <span class="contact-item-icon">✉</span>
+          <span class="contact-item-text">hello@commonsorchard.org</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-icon">☎</span>
+          <span class="contact-item-text">+44 20 7946 0385<br>Mon–Fri 10am–4pm</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-icon">⊕</span>
+          <span class="contact-item-text">Hawthorn Commons, Millbank Path<br>London SE14 7RN</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>Commons Orchard</h3>
+        <p>An urban permaculture collective stewarding shared food forests, community gardens, and heritage orchards across the city since 2014.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Spaces</h4>
+        <ul>
+          <li><a href="collection.html">Food Forest</a></li>
+          <li><a href="collection.html">Community Plots</a></li>
+          <li><a href="collection.html">Heritage Orchard</a></li>
+          <li><a href="collection.html">Seed Commons</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Collective</h4>
+        <ul>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="process.html">How to Join</a></li>
+          <li><a href="#">Workshops</a></li>
+          <li><a href="#">Governance</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Newsletter</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Donate</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 Commons Orchard. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SPLITTEXT POLYFILL -->
+  <script>
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = []; this.lines = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim(); el.innerHTML = '';
+      const wordArr = text.split(/\s+/);
+      wordArr.forEach((word, wi) => {
+        const wSpan = document.createElement('span');
+        wSpan.className = 'split-word'; wSpan.style.cssText = 'display:inline-block;overflow:hidden;';
+        if (type.includes('chars')) {
+          [...word].forEach(ch => { const cSpan = document.createElement('span'); cSpan.className = 'split-char'; cSpan.style.display = 'inline-block'; cSpan.textContent = ch; wSpan.appendChild(cSpan); this.chars.push(cSpan); });
+        } else { wSpan.style.overflow = 'visible'; wSpan.textContent = word; }
+        this.words.push(wSpan); el.appendChild(wSpan);
+        if (wi < wordArr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => { el.innerHTML = this.originals[i]; }); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // CANVAS GRID
+    const canvas = document.getElementById('hero-canvas');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; drawGrid(); }
+    function drawGrid() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const sz = 64; ctx.lineWidth = 0.5;
+      ctx.strokeStyle = 'rgba(138,181,106,0.35)';
+      for (let x = 0; x <= canvas.width; x += sz) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+      for (let y = 0; y <= canvas.height; y += sz) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+      // Organic dot accent at intersections
+      for (let x = 0; x <= canvas.width; x += sz) {
+        for (let y = 0; y <= canvas.height; y += sz) {
+          ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(138,181,106,0.4)'; ctx.fill();
+        }
+      }
+    }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+    // PRELOADER
+    gsap.to('#bar-fill', { scaleX: 1, duration: 1.8, ease: 'power2.inOut', onComplete: () => {
+      gsap.to('#preloader', { autoAlpha: 0, duration: 0.6, onComplete: () => {
+        document.getElementById('preloader').style.display = 'none';
+        gsap.fromTo('#scroll-indicator', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.8 });
+      }});
+    }});
+    setTimeout(() => { gsap.to('#scroll-indicator', { autoAlpha: 1, duration: 0.6 }); }, 4000);
+
+    // SCROLL
+    window.addEventListener('scroll', () => {
+      const s = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      document.getElementById('scroll-fill').style.height = (s * 100) + '%';
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // HERO ENTRY
+    gsap.from('.hero-eyebrow', { y: 20, duration: 1.2, ease: 'power2.out', immediateRender: false, delay: 2.0 });
+    gsap.from('.hero-title', { y: 24, duration: 1.4, ease: 'power2.out', immediateRender: false, delay: 2.2 });
+    gsap.from('.hero-sub', { y: 20, duration: 1.0, ease: 'power2.out', immediateRender: false, delay: 2.4 });
+    gsap.from('.hero-content .btn-primary', { y: 20, duration: 1.0, ease: 'power2.out', immediateRender: false, delay: 2.6 });
+
+    // STATS COUNTERS
+    document.querySelectorAll('.stat-num').forEach(el => {
+      gsap.from(el, {
+        textContent: 0, duration: 2.2, ease: 'power2.out',
+        snap: { textContent: 1 }, immediateRender: false,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+        onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)); }
+      });
+    });
+
+    // SECTION REVEALS
+    gsap.utils.toArray('.philosophy-card').forEach((card, i) => {
+      gsap.from(card, { y: 24, duration: 1.2, ease: 'power2.out', delay: i * 0.09, immediateRender: false, scrollTrigger: { trigger: card, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.collection-card').forEach((card, i) => {
+      gsap.from(card, { y: 22, duration: 1.1, ease: 'power2.out', delay: i * 0.09, immediateRender: false, scrollTrigger: { trigger: card, start: 'top 88%', once: true } });
+    });
+    gsap.from('.atelier-img', { y: 28, duration: 1.3, ease: 'power2.out', immediateRender: false, scrollTrigger: { trigger: '.atelier', start: 'top 80%', once: true } });
+    gsap.utils.toArray('.process-item').forEach((item, i) => {
+      gsap.from(item, { y: 22, duration: 1.1, ease: 'power2.out', delay: i * 0.09, immediateRender: false, scrollTrigger: { trigger: item, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.heritage-item').forEach((item, i) => {
+      gsap.from(item, { y: 20, duration: 1.0, ease: 'power2.out', delay: i * 0.09, immediateRender: false, scrollTrigger: { trigger: item, start: 'top 88%', once: true } });
+    });
+    gsap.utils.toArray('.section-heading').forEach(el => {
+      gsap.from(el, { y: 24, duration: 1.2, ease: 'power2.out', immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+    });
+
+    // PRESS SWIPER
+    new Swiper('.press-swiper', {
+      slidesPerView: 1, spaceBetween: 40, loop: true,
+      autoplay: { delay: 5500, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 } }
+    });
+
+    // FILTER BUTTONS
+    document.querySelectorAll('.filter-btn')?.forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

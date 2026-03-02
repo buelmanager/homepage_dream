@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events — The Folio Society of Letters</title>
+  <meta name="description" content="A year-round programme of literary events — monthly salons, author talks, reading groups, and the annual Folio Society lecture." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg: #141820; --surface: #1C2030; --surface2: #222838;
+      --accent: #A0C4D8; --accent-light: #C4DCE8; --accent-dark: #6090B0;
+      --ivory: #DCE8F0; --smoke: #809098; --muted: #505860; --border: #181C28;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', sans-serif;
+      --max-w: 1400px; --nav-h: 80px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+    a { text-decoration: none; color: inherit; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 60px; background: rgba(20,24,32,0.96); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 17px; font-style: italic; }
+    .nav-logo strong { font-style: normal; color: var(--accent); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 12px 28px; border-radius: 1px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--accent-light); }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 60px; }
+    .section-tag { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .section-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+    .section-tag-text { font-size: 10px; font-weight: 600; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); }
+    .section-heading { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); color: var(--ivory); line-height: 1.15; margin-bottom: 16px; }
+    .page-hero { padding: calc(var(--nav-h) + 100px) 0 100px; background: var(--bg); }
+    .page-hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+    .page-hero-heading { font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1.05; color: var(--ivory); }
+    .page-hero-heading em { color: var(--accent); }
+    .page-hero-body p { font-size: 16px; font-weight: 300; color: var(--smoke); line-height: 1.8; margin-bottom: 20px; }
+    .events-list { padding: 120px 0; background: var(--surface); }
+    .events-grid { display: flex; flex-direction: column; gap: 0; }
+    .event-row { display: grid; grid-template-columns: 160px 1px 1fr auto; gap: 0 48px; align-items: center; padding: 40px 0; border-bottom: 1px solid var(--border); }
+    .event-row:last-child { border-bottom: none; }
+    .event-date { text-align: right; }
+    .event-month { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .event-day { font-family: var(--font-serif); font-size: 2.5rem; color: var(--ivory); line-height: 1; }
+    .event-divider { background: var(--border); align-self: stretch; }
+    .event-info { padding-left: 0; }
+    .event-type { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .event-title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); margin-bottom: 6px; }
+    .event-desc { font-size: 14px; color: var(--smoke); }
+    .event-cta { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 12px 24px; border-radius: 1px; white-space: nowrap; transition: all 0.3s; }
+    .event-cta:hover { background: var(--accent); color: var(--bg); }
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 0 40px; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+    .footer-nav { display: flex; gap: 32px; }
+    .footer-nav a { font-size: 12px; color: var(--smoke); transition: color 0.3s; }
+    .footer-nav a:hover { color: var(--ivory); }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-logo"><em>The <strong>Folio</strong> Society</em></div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Library</a></li>
+      <li><a href="process.html" class="active">Events</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Join Society</a>
+  </nav>
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-inner">
+        <div>
+          <div class="section-tag"><span class="section-tag-text">Programme 2024</span></div>
+          <h1 class="page-hero-heading">A Year of<br><em>Literary</em><br>Events</h1>
+        </div>
+        <div class="page-hero-body">
+          <p>From intimate evening salons to the landmark annual lecture, our programme ensures that members are never without a reason to visit the reading room.</p>
+          <p>All events are free to members. Some events are open to guests — contact the secretary's office for guest passes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="events-list">
+    <div class="container">
+      <div class="events-grid">
+        <div class="event-row">
+          <div class="event-date">
+            <div class="event-month">March</div>
+            <div class="event-day">14</div>
+          </div>
+          <div class="event-divider"></div>
+          <div class="event-info">
+            <div class="event-type">Monthly Salon</div>
+            <div class="event-title">On Chekhov — The Short Story as a Form</div>
+            <div class="event-desc">An evening discussion of Chekhov's major stories, led by Professor Ellis. Selected texts circulated in advance to all registered members.</div>
+          </div>
+          <a href="contact.html" class="event-cta">Reserve Place</a>
+        </div>
+        <div class="event-row">
+          <div class="event-date">
+            <div class="event-month">March</div>
+            <div class="event-day">28</div>
+          </div>
+          <div class="event-divider"></div>
+          <div class="event-info">
+            <div class="event-type">Author Talk</div>
+            <div class="event-title">A Conversation with Sebastian Barry</div>
+            <div class="event-desc">Award-winning novelist Sebastian Barry reads from his latest work and speaks about history, memory, and the Irish imagination.</div>
+          </div>
+          <a href="contact.html" class="event-cta">Reserve Place</a>
+        </div>
+        <div class="event-row">
+          <div class="event-date">
+            <div class="event-month">April</div>
+            <div class="event-day">11</div>
+          </div>
+          <div class="event-divider"></div>
+          <div class="event-info">
+            <div class="event-type">Reading Group</div>
+            <div class="event-title">The Russian Novel — Dostoevsky Circle</div>
+            <div class="event-desc">Six-week reading group focused on The Brothers Karamazov, using the new translation. Limited to 12 participants.</div>
+          </div>
+          <a href="contact.html" class="event-cta">Reserve Place</a>
+        </div>
+        <div class="event-row">
+          <div class="event-date">
+            <div class="event-month">May</div>
+            <div class="event-day">3</div>
+          </div>
+          <div class="event-divider"></div>
+          <div class="event-info">
+            <div class="event-type">Antiquarian Fair</div>
+            <div class="event-title">Chelsea Rare Book Fair — Society Visit</div>
+            <div class="event-desc">Guided visit to the Chelsea Rare Book Fair with a dedicated society purchasing budget for the Rare Books Archive.</div>
+          </div>
+          <a href="contact.html" class="event-cta">Reserve Place</a>
+        </div>
+        <div class="event-row">
+          <div class="event-date">
+            <div class="event-month">June</div>
+            <div class="event-day">20</div>
+          </div>
+          <div class="event-divider"></div>
+          <div class="event-info">
+            <div class="event-type">Annual Lecture</div>
+            <div class="event-title">The 2024 Folio Society Annual Lecture</div>
+            <div class="event-desc">Our flagship event — the year's most celebrated literary address, delivered by an outstanding figure in contemporary letters. Speaker to be announced.</div>
+          </div>
+          <a href="contact.html" class="event-cta">Reserve Place</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2024 The Folio Society of Letters. All rights reserved.</div>
+        <div class="footer-nav">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="collection.html">Library</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.page-hero-heading, .page-hero-body', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06, delay: 0.3
+    });
+    gsap.from('.event-row', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.events-grid', start: 'top 85%', once: true }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library — The Folio Society of Letters</title>
+  <meta name="description" content="Browse the Folio Society's curated library of 4,200 titles — rare editions, illustrated works, and essential texts across literature, history, and philosophy." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg: #141820; --surface: #1C2030; --surface2: #222838;
+      --accent: #A0C4D8; --accent-light: #C4DCE8; --accent-dark: #6090B0;
+      --ivory: #DCE8F0; --smoke: #809098; --muted: #505860; --border: #181C28;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Source Sans 3', sans-serif;
+      --max-w: 1400px; --nav-h: 80px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 60px; background: rgba(20,24,32,0.96); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-serif); font-size: 17px; font-style: italic; }
+    .nav-logo strong { font-style: normal; color: var(--accent); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 12px 28px; border-radius: 1px; transition: background 0.3s; }
+    .nav-cta:hover { background: var(--accent-light); }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 60px; }
+    .section-tag { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .section-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+    .section-tag-text { font-size: 10px; font-weight: 600; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); }
+    .section-heading { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem); color: var(--ivory); line-height: 1.15; margin-bottom: 16px; }
+    .page-hero { padding: calc(var(--nav-h) + 100px) 0 80px; background: var(--bg); text-align: center; }
+    .page-hero h1 { font-family: var(--font-serif); font-size: clamp(3rem, 7vw, 6rem); color: var(--ivory); margin-bottom: 20px; }
+    .page-hero h1 em { color: var(--accent); }
+    .page-hero p { font-size: 16px; color: var(--smoke); max-width: 560px; margin: 0 auto; line-height: 1.8; }
+    .filter-section { padding: 40px 0 0; background: var(--bg); }
+    .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-tab { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; padding: 10px 24px; border: 1px solid var(--border); border-radius: 1px; color: var(--smoke); cursor: pointer; transition: all 0.3s; }
+    .filter-tab.active, .filter-tab:hover { border-color: var(--accent); color: var(--accent); }
+    .library-main { padding: 60px 0 120px; background: var(--bg); }
+    .library-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; overflow: visible; }
+    .book-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; transition: border-color 0.4s; }
+    .book-card:hover { border-color: var(--accent); }
+    .book-img { aspect-ratio: 3/2; overflow: hidden; }
+    .book-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+    .book-card:hover .book-img img { transform: scale(1.04); }
+    .book-info { padding: 24px 28px; }
+    .book-genre { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .book-title { font-family: var(--font-serif); font-size: 1.15rem; color: var(--ivory); margin-bottom: 4px; }
+    .book-author { font-size: 13px; color: var(--smoke); margin-bottom: 12px; font-style: italic; }
+    .book-badge { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 10px; border: 1px solid var(--accent-dark); color: var(--accent-dark); border-radius: 1px; display: inline-block; }
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 0 40px; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+    .footer-nav { display: flex; gap: 32px; }
+    .footer-nav a { font-size: 12px; color: var(--smoke); transition: color 0.3s; }
+    .footer-nav a:hover { color: var(--ivory); }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-logo"><em>The <strong>Folio</strong> Society</em></div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html" class="active">Library</a></li>
+      <li><a href="process.html">Events</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Join Society</a>
+  </nav>
+  <section class="page-hero">
+    <div class="container">
+      <div class="section-tag" style="justify-content:center"><span class="section-tag-text">The Collection</span></div>
+      <h1>The <em>Library</em></h1>
+      <p>4,200 curated titles available to members — from rare first editions to landmark illustrated works, spanning literature, history, philosophy, and beyond.</p>
+    </div>
+  </section>
+  <section class="filter-section">
+    <div class="container">
+      <div class="filter-tabs">
+        <div class="filter-tab active">All Titles</div>
+        <div class="filter-tab">Fiction</div>
+        <div class="filter-tab">Poetry</div>
+        <div class="filter-tab">History</div>
+        <div class="filter-tab">Philosophy</div>
+        <div class="filter-tab">Rare Editions</div>
+        <div class="filter-tab">New Acquisitions</div>
+      </div>
+    </div>
+  </section>
+  <section class="library-main">
+    <div class="container">
+      <div class="library-grid">
+        <div class="book-card">
+          <div class="book-img"><img src="images/img-1.webp" alt="Vintage books" loading="lazy" /></div>
+          <div class="book-info">
+            <div class="book-genre">Essays</div>
+            <div class="book-title">The Complete Montaigne</div>
+            <div class="book-author">Michel de Montaigne, trans. M. A. Screech</div>
+            <span class="book-badge">Folio Edition</span>
+          </div>
+        </div>
+        <div class="book-card">
+          <div class="book-img"><img src="images/img-2.webp" alt="Library shelves" loading="lazy" /></div>
+          <div class="book-info">
+            <div class="book-genre">Fiction</div>
+            <div class="book-title">Middlemarch</div>
+            <div class="book-author">George Eliot</div>
+            <span class="book-badge">Illustrated Edition</span>
+          </div>
+        </div>
+        <div class="book-card">
+          <div class="book-img"><img src="images/img-1.webp" alt="Old books" loading="lazy" /></div>
+          <div class="book-info">
+            <div class="book-genre">Fiction</div>
+            <div class="book-title">The Brothers Karamazov</div>
+            <div class="book-author">Fyodor Dostoevsky</div>
+            <span class="book-badge">New Translation</span>
+          </div>
+        </div>
+        <div class="book-card">
+          <div class="book-img"><img src="images/img-2.webp" alt="Books" loading="lazy" /></div>
+          <div class="book-info">
+            <div class="book-genre">Fiction</div>
+            <div class="book-title">In Search of Lost Time</div>
+            <div class="book-author">Marcel Proust, trans. C. K. Scott Moncrieff</div>
+            <span class="book-badge">7-Volume Set</span>
+          </div>
+        </div>
+        <div class="book-card">
+          <div class="book-img"><img src="images/img-1.webp" alt="Reading" loading="lazy" /></div>
+          <div class="book-info">
+            <div class="book-genre">History</div>
+            <div class="book-title">The Decline and Fall</div>
+            <div class="book-author">Edward Gibbon</div>
+            <span class="book-badge">Rare Edition</span>
+          </div>
+        </div>
+        <div class="book-card">
+          <div class="book-img"><img src="images/img-2.webp" alt="Poetry books" loading="lazy" /></div>
+          <div class="book-info">
+            <div class="book-genre">Poetry</div>
+            <div class="book-title">The Complete Poems</div>
+            <div class="book-author">John Keats</div>
+            <span class="book-badge">First Edition Facsimile</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <div class="footer-copy">&copy; 2024 The Folio Society of Letters. All rights reserved.</div>
+        <div class="footer-nav">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="process.html">Events</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.page-hero h1, .page-hero p', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06, delay: 0.3
+    });
+    gsap.from('.book-card', {
+      immediateRender: false, opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.library-grid', start: 'top 85%', once: true }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRESTILLE — Crystal Atelier</title>
+  <meta name="description" content="Alpine gemstone and crystal fine jewelry — rare minerals sourced from high-altitude veins, set by hand in Chamonix.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #101420;
+      --surface: #181E2A;
+      --surface2: #1E2438;
+      --accent: #4EE8FF;
+      --accent-light: #8AF3FF;
+      --accent-dark: #22B8CC;
+      --ivory: #DCE8F0;
+      --smoke: #8090A0;
+      --muted: #506070;
+      --border: #1A2234;
+      --font-serif: 'Bodoni Moda', 'Didot', serif;
+      --font-sans: 'Work Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent-dark) var(--bg); }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--ivory); line-height: 1.6; overflow-x: hidden; }
+    body.locked { overflow: hidden; }
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .preloader-logo {
+      width: 80px; height: 80px; stroke: var(--accent); stroke-width: 1; fill: none;
+      stroke-dasharray: 280; stroke-dashoffset: 280;
+      animation: drawLogo 2s ease forwards;
+    }
+    @keyframes drawLogo { to { stroke-dashoffset: 0; } }
+    .preloader-text {
+      margin-top: 24px; font-family: var(--font-serif);
+      font-size: 1.1rem; letter-spacing: 0.3em; color: var(--accent);
+      opacity: 0; animation: fadeUp 0.8s ease 1.5s forwards;
+    }
+    .preloader-sub {
+      margin-top: 6px; font-size: 0.7rem; letter-spacing: 0.22em; color: var(--smoke); text-transform: uppercase;
+      opacity: 0; animation: fadeUp 0.8s ease 1.8s forwards;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== SCROLL INDICATOR ===== */
+    #scroll-indicator {
+      position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; visibility: visible; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-progress { width: 1px; height: 80px; background: var(--border); position: relative; }
+    .scroll-progress-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); transition: height 0.1s linear; }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase; }
+    .scroll-index { font-family: var(--font-serif); font-size: 0.85rem; color: var(--accent); }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 20px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .navbar.scrolled { background: rgba(16,20,32,0.96); backdrop-filter: blur(14px); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1rem; letter-spacing: 0.25em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { padding: 10px 24px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 0.76rem; letter-spacing: 0.12em; text-decoration: none; text-transform: uppercase; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* ===== HERO (Type G — Scroll-Driven Text Transform) ===== */
+    .hero.hero-text-driven { min-height: 200vh; position: relative; }
+    .hero-bg-fixed {
+      position: fixed; inset: 0;
+      background-image: url('images/img-3.webp');
+      background-size: cover; background-position: center;
+      filter: brightness(0.55); z-index: -2;
+    }
+    .hero-overlay-fixed {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, rgba(16,20,32,0.55) 0%, rgba(8,12,24,0.3) 100%);
+      z-index: -1;
+    }
+    .hero-text-wrap {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 80px; z-index: 1;
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.3em; color: var(--accent);
+      text-transform: uppercase; margin-bottom: 20px;
+    }
+    .hero-word {
+      font-family: var(--font-serif); font-size: clamp(5rem, 18vw, 18rem);
+      line-height: 0.85; font-weight: 700; text-transform: uppercase; color: var(--ivory);
+      will-change: transform, opacity;
+    }
+    .hero-word.word-2 { color: var(--accent); margin-left: 4vw; }
+    .hero-tagline {
+      font-family: var(--font-sans); font-size: 1rem; letter-spacing: 0.22em;
+      color: var(--accent); margin-top: 2.5rem; text-transform: uppercase;
+    }
+    .hero-cta { margin-top: 2rem; }
+    .hero-cta a {
+      display: inline-block; padding: 14px 36px; background: var(--accent); color: var(--bg);
+      font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none;
+      transition: all 0.3s;
+    }
+    .hero-cta a:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .hero-scroll-hint {
+      position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+      color: var(--accent); font-size: 2rem; z-index: 2;
+      animation: bounce 2.5s ease infinite;
+    }
+    @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-8px); } }
+
+    /* ===== STATS STRIP ===== */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 60px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; position: relative; z-index: 2; }
+    .stats-item { text-align: center; }
+    .stats-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); display: block; line-height: 1; }
+    .stats-label { display: block; font-size: 0.7rem; letter-spacing: 0.18em; color: var(--smoke); text-transform: uppercase; margin-top: 8px; }
+
+    /* ===== PHILOSOPHY ===== */
+    .philosophy { padding: 120px 80px; background: var(--bg); position: relative; z-index: 2; }
+    .section-header { margin-bottom: 70px; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 4.5vw, 4rem); color: var(--ivory); line-height: 1; }
+    .section-title em { font-style: italic; color: var(--accent); }
+    .phil-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .phil-card { background: var(--surface); padding: 50px 38px; border: 1px solid var(--border); transition: border-color 0.3s, transform 0.4s; }
+    .phil-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .phil-gem { font-size: 2.5rem; margin-bottom: 24px; display: block; }
+    .phil-card h3 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 16px; }
+    .phil-card p { font-size: 0.88rem; color: var(--smoke); line-height: 1.9; font-weight: 300; }
+
+    /* ===== COLLECTION ===== */
+    .collection { padding: 120px 80px; background: var(--surface); position: relative; z-index: 2; }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; overflow: visible; margin-top: 60px; }
+    .col-item { position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 4/3; }
+    .col-item-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s; }
+    .col-item:hover .col-item-bg { transform: scale(1.06); }
+    .col-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(16,20,32,0.9) 0%, transparent 50%); }
+    .col-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; }
+    .col-info h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); font-style: italic; }
+    .col-info p { font-size: 0.78rem; color: var(--accent); letter-spacing: 0.12em; margin-top: 6px; }
+
+    /* ===== ATELIER ===== */
+    .atelier { padding: 120px 80px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; z-index: 2; }
+    .atelier-img { aspect-ratio: 3/4; overflow: hidden; position: relative; }
+    .atelier-img img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+    .atelier-img::after { content: ''; position: absolute; top: -16px; left: -16px; right: 16px; bottom: 16px; border: 1px solid var(--accent); z-index: -1; opacity: 0.5; }
+    .atelier-content h2 { font-family: var(--font-serif); font-size: clamp(2rem,4vw,3.2rem); color: var(--ivory); line-height: 1.1; margin-bottom: 28px; }
+    .atelier-content p { font-size: 0.92rem; color: var(--smoke); line-height: 1.9; margin-bottom: 16px; font-weight: 300; }
+    .atelier-details { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 36px; }
+    .detail-item { border-left: 1px solid var(--accent); padding-left: 16px; }
+    .detail-item strong { display: block; font-size: 0.68rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
+    .detail-item span { font-size: 0.88rem; color: var(--smoke); }
+
+    /* ===== PROCESS ===== */
+    .process { padding: 120px 80px; background: var(--surface); position: relative; z-index: 2; }
+    .process-timeline { margin-top: 70px; position: relative; }
+    .process-timeline::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: flex; gap: 50px; margin-bottom: 60px; }
+    .step-marker { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); color: var(--accent); flex-shrink: 0; background: var(--surface); z-index: 1; }
+    .step-content { flex: 1; padding-top: 10px; }
+    .step-content h3 { font-family: var(--font-serif); font-size: 1.4rem; color: var(--ivory); margin-bottom: 10px; }
+    .step-content p { font-size: 0.88rem; color: var(--smoke); line-height: 1.8; font-weight: 300; }
+
+    /* ===== HERITAGE ===== */
+    .heritage { padding: 120px 80px; background: var(--bg); position: relative; z-index: 2; }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .heritage-item { background: var(--surface); padding: 40px 28px; border: 1px solid var(--border); transition: border-color 0.3s; }
+    .heritage-item:hover { border-color: var(--accent); }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.2rem; color: var(--accent); display: block; margin-bottom: 14px; }
+    .heritage-item h3 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 10px; font-style: italic; }
+    .heritage-item p { font-size: 0.84rem; color: var(--smoke); line-height: 1.7; }
+
+    /* ===== PRESS ===== */
+    .press { padding: 100px 80px; background: var(--surface); position: relative; z-index: 2; }
+    .press-card { background: var(--bg); border: 1px solid var(--border); padding: 50px 40px; transition: border-color 0.3s; }
+    .press-card:hover { border-color: var(--accent); }
+    .press-quote { font-family: var(--font-serif); font-size: 1.05rem; color: var(--smoke); line-height: 1.8; font-style: italic; margin-bottom: 28px; }
+    .press-source { font-size: 0.7rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; }
+
+    /* ===== COMMISSION ===== */
+    .commission { padding: 120px 80px; background: var(--bg); position: relative; z-index: 2; }
+    .commission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; }
+    .commission-info h3 { font-family: var(--font-serif); font-size: 1.6rem; color: var(--ivory); font-style: italic; margin-bottom: 18px; }
+    .commission-info p { font-size: 0.9rem; color: var(--smoke); line-height: 1.8; margin-bottom: 14px; font-weight: 300; }
+    .commission-detail { display: flex; gap: 14px; margin-bottom: 12px; font-size: 0.84rem; color: var(--smoke); }
+    .commission-detail span:first-child { color: var(--accent); }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.7rem; letter-spacing: 0.16em; color: var(--smoke); text-transform: uppercase; margin-bottom: 8px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); font-family: var(--font-sans); font-size: 0.88rem; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-submit { width: 100%; padding: 15px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* ===== FOOTER ===== */
+    .footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; position: relative; z-index: 2; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-col h4 { font-family: var(--font-serif); font-size: 0.95rem; letter-spacing: 0.12em; color: var(--ivory); margin-bottom: 20px; }
+    .footer-col p { font-size: 0.84rem; color: var(--smoke); line-height: 1.8; font-weight: 300; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-size: 0.84rem; color: var(--smoke); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--accent); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-bottom p { font-size: 0.78rem; color: var(--muted); }
+    .footer-logo { font-family: var(--font-serif); font-size: 1rem; color: var(--accent); letter-spacing: 0.25em; }
+
+    .btn-primary { display: inline-block; padding: 14px 36px; background: var(--accent); color: var(--bg); font-size: 0.8rem; letter-spacing: 0.15em; text-decoration: none; transition: all 0.3s; text-transform: uppercase; }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .btn-secondary { display: inline-block; padding: 14px 36px; border: 1px solid var(--accent); color: var(--accent); font-size: 0.8rem; letter-spacing: 0.15em; text-decoration: none; transition: all 0.3s; text-transform: uppercase; }
+    .btn-secondary:hover { background: rgba(78,232,255,0.1); transform: translateY(-2px); }
+
+    @media (max-width: 900px) {
+      .hero-text-wrap { padding: 0 30px; }
+      .navbar { padding: 16px 24px; } .nav-links { display: none; }
+      .stats-strip, .philosophy, .collection, .atelier, .process, .heritage, .press, .commission { padding: 80px 30px; }
+      .phil-grid, .collection-grid { grid-template-columns: 1fr; }
+      .atelier { grid-template-columns: 1fr; }
+      .heritage-grid { grid-template-columns: 1fr 1fr; }
+      .commission-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .hero-word { font-size: clamp(4rem, 18vw, 10rem); }
+    }
+  </style>
+</head>
+<body class="locked">
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <svg class="preloader-logo" viewBox="0 0 100 100">
+      <polygon points="50,10 90,35 90,65 50,90 10,65 10,35"/>
+      <line x1="50" y1="10" x2="50" y2="40"/>
+      <line x1="90" y1="35" x2="65" y2="50"/>
+      <line x1="90" y1="65" x2="65" y2="50"/>
+      <line x1="50" y1="90" x2="50" y2="60"/>
+      <line x1="10" y1="65" x2="35" y2="50"/>
+      <line x1="10" y1="35" x2="35" y2="50"/>
+      <circle cx="50" cy="50" r="8"/>
+    </svg>
+    <div class="preloader-text">CRESTILLE</div>
+    <div class="preloader-sub">Crystal Atelier · Chamonix</div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <span class="scroll-index">01</span>
+    <div class="scroll-dot"></div>
+    <div class="scroll-progress">
+      <div class="scroll-progress-fill" id="scroll-fill"></div>
+    </div>
+    <span class="scroll-label" id="scroll-section-label">Crystal</span>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">CRESTILLE</a>
+    <div class="nav-links">
+      <a href="collection.html">Collection</a>
+      <a href="process.html">Atelier</a>
+      <a href="about.html">Story</a>
+      <a href="contact.html">Enquire</a>
+    </div>
+    <a href="contact.html" class="nav-cta">Commission</a>
+  </nav>
+
+  <!-- HERO (Type G — Scroll-Driven Text Transform) -->
+  <section class="hero hero-text-driven" id="hero">
+    <div class="hero-bg-fixed"></div>
+    <div class="hero-overlay-fixed"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow">Est. 2003 · Chamonix, 1,800m</div>
+      <div class="hero-word word-1">ALPINE</div>
+      <div class="hero-word word-2">CRYSTAL</div>
+      <div class="hero-tagline">Rare gemstones, elevated craftsmanship</div>
+      <div class="hero-cta"><a href="collection.html">Discover the Collection</a></div>
+    </div>
+    <div class="hero-scroll-hint">↓</div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="stats-item"><span class="stats-num" data-target="21">0</span><span class="stats-label">Years of Craft</span></div>
+    <div class="stats-item"><span class="stats-num" data-target="280">0</span><span class="stats-label">Pieces Created</span></div>
+    <div class="stats-item"><span class="stats-num" data-target="34">0</span><span class="stats-label">Mineral Species Used</span></div>
+    <div class="stats-item"><span class="stats-num" data-target="1800">0</span><span class="stats-label">Meters Elevation</span></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-header">
+      <span class="section-eyebrow">The Crestille Way</span>
+      <h2 class="section-title">Geometry of<br><em>the Mountain</em></h2>
+    </div>
+    <div class="phil-grid">
+      <div class="phil-card">
+        <span class="phil-gem">◇</span>
+        <h3>Alpine Provenance</h3>
+        <p>Every mineral we work with is sourced from specific alpine deposits between 1,400 and 2,800 meters. The crystalline structures formed at altitude under extreme pressure produce optical properties unavailable in commercially mined gemstones.</p>
+      </div>
+      <div class="phil-card">
+        <span class="phil-gem">◆</span>
+        <h3>Geometric Purity</h3>
+        <p>We never fight the crystal's natural geometry. Each setting is designed around what the mineral reveals under magnification — the facets follow the stone's internal lattice, not a predetermined template. No two pieces can ever be identical.</p>
+      </div>
+      <div class="phil-card">
+        <span class="phil-gem">◈</span>
+        <h3>Lifetime Provenance</h3>
+        <p>Every Crestille piece ships with a geological certificate detailing the mineral's exact origin, formation depth, and spectroscopic analysis. The story of the crystal is as important as the setting that holds it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="collection">
+    <div class="section-header">
+      <span class="section-eyebrow">Crystal Collection</span>
+      <h2 class="section-title">The Stones</h2>
+    </div>
+    <div class="collection-grid">
+      <div class="col-item">
+        <div class="col-item-bg" style="background-image: url('images/img-3.webp');"></div>
+        <div class="col-overlay"></div>
+        <div class="col-info"><h3>Mont Blanc Aquamarine</h3><p>2,800m · Beryl Family · Pendant</p></div>
+      </div>
+      <div class="col-item">
+        <div class="col-item-bg" style="background-image: url('images/img-4.webp');"></div>
+        <div class="col-overlay"></div>
+        <div class="col-info"><h3>Aiguille Tourmaline</h3><p>1,900m · Tourmaline · Ring</p></div>
+      </div>
+      <div class="col-item">
+        <div class="col-item-bg" style="background-image: url('images/img-5.webp');"></div>
+        <div class="col-overlay"></div>
+        <div class="col-info"><h3>Glacier Quartz Series</h3><p>2,200m · Smoky Quartz · Necklace</p></div>
+      </div>
+      <div class="col-item">
+        <div class="col-item-bg" style="background-image: url('images/img-6.webp');"></div>
+        <div class="col-overlay"></div>
+        <div class="col-info"><h3>Massif Obsidian Cuff</h3><p>1,600m · Volcanic Obsidian · Bracelet</p></div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:50px;">
+      <a href="collection.html" class="btn-primary">View Full Collection</a>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-img">
+      <img src="images/img-2.webp" alt="Crestille Atelier" loading="lazy">
+    </div>
+    <div class="atelier-content">
+      <span class="section-eyebrow">The Workshop</span>
+      <h2>Where Crystal<br>Becomes Jewelry</h2>
+      <p>The Crestille atelier occupies a converted 19th-century mineral assay building in Chamonix at 1,800 meters. The stone walls and mountain light create conditions that allow the jeweler to see exactly what the collector will — the play of natural alpine light on the mineral surface.</p>
+      <p>All setting work is done under 10x magnification. Prong geometry is calculated against the crystal's natural cleavage planes to ensure the stone is never under structural stress.</p>
+      <div class="atelier-details">
+        <div class="detail-item"><strong>Location</strong><span>Chamonix, 1,800m</span></div>
+        <div class="detail-item"><strong>Founded</strong><span>2003</span></div>
+        <div class="detail-item"><strong>Lead Time</strong><span>4–12 months</span></div>
+        <div class="detail-item"><strong>Pieces per Year</strong><span>~18 unique pieces</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-header">
+      <span class="section-eyebrow">Craftsmanship</span>
+      <h2 class="section-title">From Crystal<br>to Collector</h2>
+    </div>
+    <div class="process-timeline">
+      <div class="process-step">
+        <div class="step-marker">I</div>
+        <div class="step-content"><h3>Mineral Prospecting</h3><p>We prospect specific alpine veins each season, working with geological maps that have been refined over two decades. Raw crystals are selected for optical clarity, formation geometry, and structural integrity — discarding over 80% of what we find.</p></div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker">II</div>
+        <div class="step-content"><h3>Spectroscopic Analysis</h3><p>Each selected mineral is subjected to full spectroscopic and refractive index analysis. This data forms the basis of the provenance certificate and informs the setting design — particularly regarding which faces of the crystal should be exposed for maximum optical effect.</p></div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker">III</div>
+        <div class="step-content"><h3>Setting Design</h3><p>The setting geometry is drawn specifically for the individual stone — we do not use templates. Precious metal choice (18k white gold, rose gold, or platinum) is determined by the mineral's color frequency to maximize visual contrast.</p></div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker">IV</div>
+        <div class="step-content"><h3>Hand Setting</h3><p>Setting takes 20–60 hours per piece under 10x magnification. Prong positions are calculated to align with the crystal's cleavage planes, distributing stress evenly and allowing maximum light transmission through the stone's natural geometry.</p></div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker">V</div>
+        <div class="step-content"><h3>Documentation & Delivery</h3><p>Every piece ships with a complete geological and craft certificate: mineral origin coordinates, formation depth, spectroscopic data, setting metal specifications, and the maker's signature. The certificate is as irreplaceable as the piece itself.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-header">
+      <span class="section-eyebrow">Legacy</span>
+      <h2 class="section-title">Two Decades<br>in the Mountain</h2>
+    </div>
+    <div class="heritage-grid">
+      <div class="heritage-item"><span class="heritage-year">2003</span><h3>First Piece</h3><p>The first Crestille piece — a Mont Blanc aquamarine set in 18k white gold — sells to a private collector within 48 hours of completion.</p></div>
+      <div class="heritage-item"><span class="heritage-year">2010</span><h3>Spectroscopic Archive</h3><p>Completion of the first comprehensive spectroscopic archive of Chamonix-area mineral deposits, referenced by subsequent geological research.</p></div>
+      <div class="heritage-item"><span class="heritage-year">2017</span><h3>Salon de Bijoux Award</h3><p>Receives the Salon de Bijoux d'Exception award for mineralogical jewelry, the first alpine atelier to win in the award's history.</p></div>
+      <div class="heritage-item"><span class="heritage-year">2024</span><h3>Permanent Collection</h3><p>Three Crestille pieces enter the permanent collection of the Musée National des Arts Décoratifs, Paris — recognition as significant objects of craft.</p></div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press" id="press">
+    <div class="section-header">
+      <span class="section-eyebrow">Recognition</span>
+      <h2 class="section-title">Critical Attention</h2>
+    </div>
+    <div class="swiper press-swiper" style="margin-top:60px; overflow:visible;">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="press-card"><p class="press-quote">"Crestille operates at the intersection of geology and jewelry design — a discipline that has no established framework, which is why their work feels genuinely new. The Mont Blanc aquamarine is one of the most beautiful objects I have ever held."</p><span class="press-source">— Vogue Paris, December 2023</span></div></div>
+        <div class="swiper-slide"><div class="press-card"><p class="press-quote">"The geological certificates that accompany each Crestille piece elevate the transaction from commerce to scholarship. You are not buying jewelry — you are adopting a piece of the Alpine geological record."</p><span class="press-source">— Financial Times How to Spend It, 2024</span></div></div>
+        <div class="swiper-slide"><div class="press-card"><p class="press-quote">"There is a stillness to Crestille jewelry that is difficult to articulate. It comes from starting with the mineral's own geometry rather than imposing a human template. The result is jewelry that looks inevitable rather than designed."</p><span class="press-source">— Wallpaper* Jewellery Issue, 2023</span></div></div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION -->
+  <section class="commission" id="commission">
+    <div class="section-header">
+      <span class="section-eyebrow">Commission</span>
+      <h2 class="section-title">Begin Your<br><em>Piece</em></h2>
+    </div>
+    <div class="commission-grid">
+      <div class="commission-info">
+        <h3>A Crystal Found for You</h3>
+        <p>A commission begins with a mineral. We discuss which stone family interests you — aquamarine, tourmaline, quartz, obsidian — and what optical character you are drawn to. Then we prospect specifically for your piece.</p>
+        <p>The process takes between 4 and 12 months from commission confirmation to delivery. We photograph every stage and send updates as the piece develops.</p>
+        <div class="commission-detail"><span>◈</span><span>Commission pieces from €8,000</span></div>
+        <div class="commission-detail"><span>◈</span><span>Lead time: 4–12 months</span></div>
+        <div class="commission-detail"><span>◈</span><span>Full geological provenance certificate</span></div>
+        <div class="commission-detail"><span>◈</span><span>Insured shipping to 40 countries</span></div>
+      </div>
+      <form>
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your name"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+        <div class="form-group"><label>Mineral Interest</label><select><option>Aquamarine</option><option>Tourmaline</option><option>Smoky Quartz</option><option>Obsidian</option><option>Open to Suggestion</option></select></div>
+        <div class="form-group"><label>Jewelry Type</label><select><option>Pendant / Necklace</option><option>Ring</option><option>Bracelet / Cuff</option><option>Brooch</option><option>Custom</option></select></div>
+        <div class="form-group"><label>Your Vision</label><textarea placeholder="Tell us what draws you to alpine crystal jewelry..."></textarea></div>
+        <button type="submit" class="form-submit">Begin Commission Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-logo">CRESTILLE</div>
+        <p style="margin-top:18px;">Crystal Atelier. Alpine gemstone and fine jewelry in Chamonix since 2003. Rare minerals, elevated craftsmanship, lifetime provenance.</p>
+      </div>
+      <div class="footer-col">
+        <h4>ATELIER</h4>
+        <ul>
+          <li><a href="about.html">Our Story</a></li>
+          <li><a href="process.html">The Process</a></li>
+          <li><a href="about.html#heritage">Heritage</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>COLLECTION</h4>
+        <ul>
+          <li><a href="collection.html">All Pieces</a></li>
+          <li><a href="collection.html#aquamarine">Aquamarine</a></li>
+          <li><a href="collection.html#quartz">Quartz Series</a></li>
+          <li><a href="contact.html">Commission</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>CONTACT</h4>
+        <ul>
+          <li><a href="mailto:atelier@crestille.fr">atelier@crestille.fr</a></li>
+          <li><a href="#">+33 4 50 53 0821</a></li>
+          <li><a href="#">Chamonix, France</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Crestille Crystal Atelier. All rights reserved.</p>
+      <p>Chamonix · Mont-Blanc · France</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    class SplitText {
+      constructor(target, opts = {}) {
+        const el = typeof target === 'string' ? document.querySelector(target) : (target instanceof Element ? target : null);
+        this.chars = []; this.words = []; this.lines = [];
+        if (!el) return;
+        this._el = el;
+        const type = (opts.type || 'chars,words').toLowerCase();
+        const original = el.textContent;
+        el.setAttribute('data-split-orig', original);
+        if (type.includes('chars')) {
+          el.innerHTML = original.split('').map(c => c === ' ' ? '<span class="char" style="display:inline-block">&nbsp;</span>' : `<span class="char" style="display:inline-block">${c}</span>`).join('');
+          this.chars = Array.from(el.querySelectorAll('.char'));
+        } else if (type.includes('words')) {
+          el.innerHTML = original.split(/\s+/).filter(Boolean).map(w => `<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');
+          this.words = Array.from(el.querySelectorAll('.word'));
+        }
+        this.lines = [el];
+      }
+      revert() { if (this._el) { const orig = this._el.getAttribute('data-split-orig'); if (orig) this._el.textContent = orig; } }
+    }
+
+    ;(function preHideBelowFold() {
+      const VH = window.innerHeight;
+      const selectors = ['.stats-item','.phil-card','.col-item','.atelier-img','.atelier-content','.process-step','.heritage-item','.press-card','.form-group','.footer-col','[data-animate]'];
+      document.querySelectorAll(selectors.join(',')).forEach(function(el) {
+        if (el.getBoundingClientRect().top > VH * 0.95) {
+          el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; el.style.willChange = 'opacity, transform';
+        }
+      });
+    })();
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('preloader').classList.add('hidden');
+        document.body.classList.remove('locked');
+        document.getElementById('scroll-indicator').classList.add('visible');
+        gsap.from('.hero-eyebrow', { immediateRender: false, opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', delay: 0.3 });
+        gsap.from('.word-1', { immediateRender: false, opacity: 0, x: -60, duration: 1.3, ease: 'power2.inOut', delay: 0.5 });
+        gsap.from('.word-2', { immediateRender: false, opacity: 0, x: 60, duration: 1.3, ease: 'power2.inOut', delay: 0.7 });
+        gsap.from('.hero-tagline', { immediateRender: false, opacity: 0, y: 30, duration: 1.1, ease: 'power2.inOut', delay: 1.0 });
+        gsap.from('.hero-cta', { immediateRender: false, opacity: 0, y: 20, duration: 1.0, ease: 'power2.inOut', delay: 1.2 });
+      }, 2600);
+      setTimeout(() => { document.getElementById('scroll-indicator')?.classList.add('visible'); }, 4000);
+    });
+
+    // Navbar
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 100);
+    });
+
+    // Hero scroll transform — Dramatic (A4)
+    gsap.to('.word-1', {
+      x: '-30vw', scale: 0.35, opacity: 0.15,
+      scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '40% top', scrub: 1 }
+    });
+    gsap.to('.word-2', {
+      x: '30vw', scale: 0.35, opacity: 0.15,
+      scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '40% top', scrub: 1 }
+    });
+    gsap.to('.hero-tagline, .hero-cta', {
+      opacity: 0, y: -40,
+      scrollTrigger: { trigger: '.hero-text-driven', start: '10% top', end: '35% top', scrub: 1 }
+    });
+    gsap.to('.hero-eyebrow', {
+      opacity: 0,
+      scrollTrigger: { trigger: '.hero-text-driven', start: '5% top', end: '25% top', scrub: 1 }
+    });
+    // Unfix background after hero
+    ScrollTrigger.create({
+      trigger: '.stats-strip', start: 'top top',
+      onEnter: () => {
+        document.querySelector('.hero-bg-fixed').style.position = 'absolute';
+        document.querySelector('.hero-overlay-fixed').style.position = 'absolute';
+      },
+      onLeaveBack: () => {
+        document.querySelector('.hero-bg-fixed').style.position = 'fixed';
+        document.querySelector('.hero-overlay-fixed').style.position = 'fixed';
+      }
+    });
+
+    // Scroll indicator
+    const sections = ['#hero','#philosophy','#collection','#atelier','#process','#heritage','#press','#commission'];
+    const sectionNames = ['Crystal','Philosophy','Collection','Atelier','Process','Heritage','Press','Commission'];
+    const scrollLabel = document.getElementById('scroll-section-label');
+    const scrollIndex = document.querySelector('.scroll-index');
+    const scrollFill = document.getElementById('scroll-fill');
+    function updateScrollIndicator() {
+      const progress = Math.min((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100, 100);
+      scrollFill.style.height = progress + '%';
+      sections.forEach((sel, i) => {
+        const el = document.querySelector(sel); if (!el) return;
+        const r = el.getBoundingClientRect();
+        if (r.top <= window.innerHeight * 0.5 && r.bottom > 0) { scrollLabel.textContent = sectionNames[i]; scrollIndex.textContent = String(i+1).padStart(2,'0'); }
+      });
+    }
+    window.addEventListener('scroll', updateScrollIndicator);
+
+    // Stats counters
+    document.querySelectorAll('.stats-num').forEach(el => {
+      ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true,
+        onEnter: () => gsap.to({ val: 0 }, { val: parseInt(el.dataset.target), duration: 2, ease: 'power2.out', onUpdate: function() { el.textContent = Math.round(this.targets()[0].val).toLocaleString(); } })
+      });
+    });
+
+    // Dramatic animations (A4)
+    document.querySelectorAll('.phil-card, .col-item, .process-step, .heritage-item, .press-card, .form-group, .footer-col, .stats-item').forEach(el => {
+      gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.2, ease: 'power2.inOut', stagger: 0.15,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+    document.querySelectorAll('.atelier-img, .atelier-content').forEach((el, i) => {
+      gsap.to(el, { immediateRender: false, opacity: 1, y: 0, duration: 1.3, ease: 'power2.inOut', delay: i * 0.2,
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+
+    // Atelier parallax
+    gsap.to('.atelier-img img', { y: -40, ease: 'none',
+      scrollTrigger: { trigger: '.atelier', start: 'top bottom', end: 'bottom top', scrub: 1 }
+    });
+
+    // Swiper
+    new Swiper('.press-swiper', {
+      slidesPerView: 1, spaceBetween: 24,
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 }, 1200: { slidesPerView: 3 } }
+    });
+  </script>
+</body>
+</html>

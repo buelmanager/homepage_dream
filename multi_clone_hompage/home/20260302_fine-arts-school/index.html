@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atelier des Beaux-Arts — Where Vision Becomes Mastery</title>
+  <meta name="description" content="Atelier des Beaux-Arts is a premier fine arts school in Paris offering intensive programs in painting, sculpture, printmaking, and contemporary art for dedicated students worldwide.">
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #130F1A;
+      --surface: #1C1626;
+      --surface2: #231D30;
+      --accent: #9B6EDB;
+      --accent-light: #B894EE;
+      --accent-dark: #6840A8;
+      --ivory: #EAE0F8;
+      --smoke: #907890;
+      --muted: #544860;
+      --border: #181420;
+      --font-serif: 'Spectral', Georgia, serif;
+      --font-sans: 'Mulish', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px;
+    }
+    .preloader-logo { font-family: var(--font-serif); font-size: 1.5rem; letter-spacing: 0.3em; color: var(--ivory); text-transform: uppercase; }
+    .preloader-line { width: 200px; height: 1px; background: var(--muted); position: relative; overflow: hidden; }
+    .preloader-line::after { content: ''; position: absolute; left: -100%; top: 0; width: 100%; height: 100%; background: var(--accent); animation: loadBar 1.8s ease forwards; }
+    @keyframes loadBar { to { left: 0; } }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator {
+      position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0; transition: opacity 0.6s;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--accent), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+    .scroll-text { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; writing-mode: vertical-rl; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 20px 60px; display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(19,15,26,0.95), transparent);
+      transition: background 0.4s;
+    }
+    nav.scrolled { background: rgba(19,15,26,0.97); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.25em; color: var(--ivory); text-decoration: none; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 0.75rem; letter-spacing: 0.12em; color: var(--smoke); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent-light); }
+    .nav-cta { font-size: 0.7rem; letter-spacing: 0.12em; padding: 9px 22px; border: 1px solid var(--accent); color: var(--accent-light); text-decoration: none; text-transform: uppercase; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO TYPE D */
+    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; background: var(--bg); }
+    .hero-content-panel {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 120px 60px 120px 80px;
+    }
+    .hero-eyebrow { font-size: 0.7rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.8rem, 4vw, 4.5rem); font-weight: 300; line-height: 1.15; color: var(--ivory); margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-sub { font-size: 1.05rem; color: var(--smoke); max-width: 420px; line-height: 1.8; margin-bottom: 40px; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 40px 0; }
+    .stat-item { border-left: 2px solid var(--accent-dark); padding-left: 16px; }
+    .stat-num { font-size: 2.8rem; font-family: var(--font-serif); color: var(--accent); display: block; line-height: 1; }
+    .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--smoke); margin-top: 4px; display: block; }
+    .btn-primary { display: inline-block; padding: 14px 36px; background: var(--accent); color: var(--bg); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; font-family: var(--font-sans); font-weight: 500; transition: all 0.3s; width: fit-content; }
+    .btn-primary:hover { background: var(--accent-light); }
+
+    .hero-portraits { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; padding: 40px 40px 40px 20px; }
+    .portrait-card { background-size: cover; background-position: center; border-radius: 2px; min-height: 200px; }
+    .pc-large { grid-row: span 2; }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 40px 80px; display: flex; justify-content: space-around; align-items: center; }
+    .strip-stat { text-align: center; }
+    .strip-num { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); display: block; }
+    .strip-label { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--smoke); text-transform: uppercase; }
+
+    /* PHILOSOPHY / VALUES */
+    .section { padding: 100px 80px; }
+    .section-label { font-size: 0.65rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 3vw, 3rem); font-weight: 300; color: var(--ivory); line-height: 1.25; margin-bottom: 60px; }
+    .section-title em { font-style: italic; color: var(--accent-light); }
+
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .phil-card { background: var(--surface); padding: 48px 36px; border-top: 2px solid var(--border); transition: border-color 0.3s; }
+    .phil-card:hover { border-color: var(--accent); }
+    .phil-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent-dark); line-height: 1; display: block; margin-bottom: 20px; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 16px; }
+    .phil-body { font-size: 0.88rem; color: var(--smoke); line-height: 1.8; }
+
+    /* PROGRAMS GRID */
+    .programs-section { padding: 100px 80px; background: var(--surface); }
+    .programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; overflow: visible; }
+    .program-card { position: relative; height: 420px; overflow: hidden; cursor: pointer; }
+    .program-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.7s ease; }
+    .program-card:hover .program-img { transform: scale(1.06); }
+    .program-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(19,15,26,0.92) 0%, transparent 60%); }
+    .program-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 36px; }
+    .program-tag { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: block; }
+    .program-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); margin-bottom: 8px; }
+    .program-desc { font-size: 0.83rem; color: var(--smoke); line-height: 1.6; }
+
+    /* FACULTY */
+    .faculty-section { padding: 100px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .faculty-img { height: 600px; background-size: cover; background-position: center; border-radius: 2px; }
+    .faculty-eyebrow { font-size: 0.65rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; }
+    .faculty-title { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 300; color: var(--ivory); line-height: 1.25; margin-bottom: 24px; }
+    .faculty-body { font-size: 0.9rem; color: var(--smoke); line-height: 1.9; margin-bottom: 40px; }
+    .faculty-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .faculty-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.85rem; color: var(--smoke); }
+    .faculty-list li::before { content: '—'; color: var(--accent); flex-shrink: 0; }
+
+    /* CURRICULUM TIMELINE */
+    .timeline-section { padding: 100px 80px; background: var(--surface); }
+    .timeline { display: flex; flex-direction: column; gap: 0; margin-top: 60px; }
+    .timeline-item { display: grid; grid-template-columns: 80px 1fr; gap: 32px; padding: 36px 0; border-bottom: 1px solid var(--border); }
+    .timeline-item:last-child { border-bottom: none; }
+    .tl-num { font-family: var(--font-serif); font-size: 2rem; color: var(--accent-dark); line-height: 1; padding-top: 4px; }
+    .tl-title { font-family: var(--font-serif); font-size: 1.15rem; color: var(--ivory); margin-bottom: 10px; }
+    .tl-body { font-size: 0.85rem; color: var(--smoke); line-height: 1.8; }
+
+    /* HISTORY */
+    .history-section { padding: 100px 80px; }
+    .milestones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .milestone { background: var(--surface); padding: 36px 28px; }
+    .milestone-year { font-family: var(--font-serif); font-size: 1.8rem; color: var(--accent); display: block; margin-bottom: 12px; }
+    .milestone-text { font-size: 0.83rem; color: var(--smoke); line-height: 1.7; }
+
+    /* TESTIMONIALS */
+    .testimonials-section { padding: 100px 80px; background: var(--surface); }
+    .swiper { padding-bottom: 48px !important; }
+    .swiper-slide { padding: 0 16px; }
+    .testimonial-card { background: var(--surface2); padding: 52px 44px; border-left: 3px solid var(--accent); }
+    .testimonial-quote { font-family: var(--font-serif); font-size: 1.15rem; font-style: italic; color: var(--ivory); line-height: 1.85; margin-bottom: 32px; }
+    .testimonial-author { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; }
+    .testimonial-role { font-size: 0.8rem; color: var(--smoke); margin-top: 4px; }
+    .swiper-pagination-bullet { background: var(--muted); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* ENROLLMENT FORM */
+    .enrollment-section { padding: 100px 80px; }
+    .enrollment-inner { max-width: 700px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .form-group label { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--smoke); text-transform: uppercase; }
+    .form-group input, .form-group select, .form-group textarea {
+      background: var(--surface); border: 1px solid var(--border); color: var(--ivory);
+      padding: 14px 16px; font-family: var(--font-sans); font-size: 0.9rem; outline: none;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group select option { background: var(--surface); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .btn-submit { padding: 16px 48px; background: var(--accent); color: var(--bg); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; border: none; cursor: pointer; font-family: var(--font-sans); font-weight: 500; transition: all 0.3s; }
+    .btn-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 80px 40px; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 48px; }
+    .footer-brand-name { font-family: var(--font-serif); font-size: 1.1rem; letter-spacing: 0.2em; color: var(--ivory); margin-bottom: 16px; }
+    .footer-tagline { font-size: 0.83rem; color: var(--smoke); line-height: 1.7; max-width: 260px; }
+    .footer-col h4 { font-size: 0.65rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 0.83rem; color: var(--smoke); text-decoration: none; transition: color 0.3s; }
+    .footer-col ul li a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-portraits { display: none; }
+      .hero-content-panel { padding: 120px 40px; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .programs-grid { grid-template-columns: 1fr; }
+      .faculty-section { grid-template-columns: 1fr; }
+      .milestones { grid-template-columns: 1fr 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .section, .programs-section, .testimonials-section, .enrollment-section, .timeline-section, .history-section { padding: 70px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="preloader-logo">Atelier des Beaux-Arts</div>
+  <div class="preloader-line"></div>
+</div>
+
+<!-- SCROLL INDICATOR -->
+<div id="scroll-indicator">
+  <div class="scroll-text">Scroll</div>
+  <div class="scroll-line"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Atelier des Beaux-Arts</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Programs</a></li>
+    <li><a href="process.html">Enrollment</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="#enrollment" class="nav-cta">Apply Now</a>
+</nav>
+
+<!-- HERO TYPE D: PORTRAITS + STATS -->
+<section class="hero" id="hero">
+  <div class="hero-content-panel">
+    <div class="hero-eyebrow">Est. 1926 &middot; Paris, France</div>
+    <h1 class="hero-title">Where Vision<br><em>Becomes Mastery</em></h1>
+    <p class="hero-sub">A sanctuary for serious artists. We teach the timeless disciplines of painting, sculpture, and printmaking alongside the vital questions of contemporary art.</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" data-target="120">0</span>
+        <span class="stat-label">Students</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="18">0</span>
+        <span class="stat-label">Faculty</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="98">0</span>
+        <span class="stat-label">Years</span>
+      </div>
+    </div>
+    <a href="#programs" class="btn-primary">Explore Programs</a>
+  </div>
+  <div class="hero-portraits">
+    <div class="portrait-card pc-large" style="background-image: url('images/img-1.webp')"></div>
+    <div class="portrait-card" style="background-image: url('images/img-4.webp')"></div>
+    <div class="portrait-card" style="background-image: url('images/img-3.webp')"></div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="strip-stat"><span class="strip-num">4</span><span class="strip-label">Disciplines</span></div>
+  <div class="strip-stat"><span class="strip-num">42</span><span class="strip-label">International Alumni Awards</span></div>
+  <div class="strip-stat"><span class="strip-num">8</span><span class="strip-label">Resident Studios</span></div>
+  <div class="strip-stat"><span class="strip-num">3</span><span class="strip-label">Annual Exhibitions</span></div>
+</div>
+
+<!-- PHILOSOPHY -->
+<section class="section" id="philosophy">
+  <div class="section-label">Our Philosophy</div>
+  <h2 class="section-title">Three Pillars of<br><em>Artistic Formation</em></h2>
+  <div class="philosophy-grid">
+    <div class="phil-card">
+      <span class="phil-num">01</span>
+      <h3 class="phil-title">Rigorous Craft</h3>
+      <p class="phil-body">Mastery begins with material knowledge. Our students spend the first year learning to see — to truly see — before they are allowed to express. Drawing from life, mixing colour, understanding the chemistry of paint.</p>
+    </div>
+    <div class="phil-card">
+      <span class="phil-num">02</span>
+      <h3 class="phil-title">Critical Thinking</h3>
+      <p class="phil-body">Art without intellectual grounding is decoration. Every studio practice session is paired with seminar discussion. We question the canon, situate work in historical lineage, and insist on conceptual integrity.</p>
+    </div>
+    <div class="phil-card">
+      <span class="phil-num">03</span>
+      <h3 class="phil-title">Individual Voice</h3>
+      <p class="phil-body">We never teach a single style. After foundations, every student embarks on a personal research project. Faculty act as interlocutors — challenging, probing, but never prescribing. Your vision is the curriculum.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMS GRID -->
+<section class="programs-section" id="programs">
+  <div class="section-label">Programs</div>
+  <h2 class="section-title">Four Disciplines,<br><em>One Tradition</em></h2>
+  <div class="programs-grid">
+    <div class="program-card">
+      <div class="program-img" style="background-image: url('images/img-1.webp')"></div>
+      <div class="program-overlay"></div>
+      <div class="program-content">
+        <span class="program-tag">2-Year Intensive</span>
+        <h3 class="program-title">Painting</h3>
+        <p class="program-desc">Oil, encaustic, fresco and mixed media. From Old Master techniques to abstraction and material experimentation.</p>
+      </div>
+    </div>
+    <div class="program-card">
+      <div class="program-img" style="background-image: url('images/img-3.webp')"></div>
+      <div class="program-overlay"></div>
+      <div class="program-content">
+        <span class="program-tag">2-Year Intensive</span>
+        <h3 class="program-title">Sculpture</h3>
+        <p class="program-desc">Clay, stone, bronze casting, and installation. We offer a professional foundry and a dedicated stone yard.</p>
+      </div>
+    </div>
+    <div class="program-card">
+      <div class="program-img" style="background-image: url('images/img-4.webp')"></div>
+      <div class="program-overlay"></div>
+      <div class="program-content">
+        <span class="program-tag">1-Year Certificate</span>
+        <h3 class="program-title">Printmaking</h3>
+        <p class="program-desc">Etching, lithography, screen printing, and digital editions. A letterpress and full intaglio studio is available 24 hours.</p>
+      </div>
+    </div>
+    <div class="program-card">
+      <div class="program-img" style="background-image: url('images/img-2.webp')"></div>
+      <div class="program-overlay"></div>
+      <div class="program-content">
+        <span class="program-tag">1-Year Certificate</span>
+        <h3 class="program-title">Contemporary Practice</h3>
+        <p class="program-desc">Video, performance, installation and new media. For artists who need to interrogate the boundaries of the medium itself.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FACULTY -->
+<section class="faculty-section">
+  <div class="faculty-img" style="background-image: url('images/img-5.webp')"></div>
+  <div class="faculty-info">
+    <div class="faculty-eyebrow">Our Faculty</div>
+    <h2 class="faculty-title">Artists Who<br>Teach, Not Professors<br><em>Who Paint</em></h2>
+    <p class="faculty-body">Every tutor at Atelier des Beaux-Arts maintains an active practice and a gallery relationship. We believe you can only be taught by someone still in the arena — someone whose work is still at risk.</p>
+    <ul class="faculty-list">
+      <li>Léa Fontaine — Painting &amp; Colour Theory, exhibited at Palais de Tokyo</li>
+      <li>Matthias Berger — Sculpture &amp; Material Research, Kunsthalle Basel alumnus</li>
+      <li>Solène Aubert — Printmaking &amp; Edition, co-founder of Éditions du Fer</li>
+      <li>Cyrus Naghavi — Contemporary Practice &amp; Critical Theory, Venice Biennale participant</li>
+    </ul>
+  </div>
+</section>
+
+<!-- CURRICULUM TIMELINE -->
+<section class="timeline-section" id="curriculum">
+  <div class="section-label">How We Teach</div>
+  <h2 class="section-title">The Atelier<br><em>Methodology</em></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="tl-num">01</div>
+      <div>
+        <h3 class="tl-title">Observation &amp; Drawing</h3>
+        <p class="tl-body">The first three months are devoted entirely to sustained looking. Life drawing, still life, and spatial observation. No paint, no clay — only the pencil and the eye.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-num">02</div>
+      <div>
+        <h3 class="tl-title">Material Foundations</h3>
+        <p class="tl-body">Students rotate through all four disciplines for four weeks each — gaining intimacy with every medium before committing to a specialisation. Ground pigments, fire bronze, pull an edition.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-num">03</div>
+      <div>
+        <h3 class="tl-title">Studio Practice</h3>
+        <p class="tl-body">Each student receives a private studio of 18 square metres. Daily work sessions alternate with twice-weekly critiques. Visiting artists provide an outside perspective each month.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-num">04</div>
+      <div>
+        <h3 class="tl-title">Critical Seminars</h3>
+        <p class="tl-body">Art history, philosophy, and contemporary criticism meet studio practice. Students are expected to write as fluently as they make. The thesis functions as a manifesto.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-num">05</div>
+      <div>
+        <h3 class="tl-title">Graduate Exhibition</h3>
+        <p class="tl-body">The final semester is consumed by one task: preparing a solo exhibition. Faculty, gallerists, and press attend the graduate show. Many students receive their first representation here.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section class="history-section">
+  <div class="section-label">Our History</div>
+  <h2 class="section-title">Nearly a Century<br><em>of Formation</em></h2>
+  <div class="milestones">
+    <div class="milestone">
+      <span class="milestone-year">1926</span>
+      <p class="milestone-text">Founded in a converted printshop in the Marais district by painter Émile Vasseur, who believed the academy had killed French art and needed a different model.</p>
+    </div>
+    <div class="milestone">
+      <span class="milestone-year">1954</span>
+      <p class="milestone-text">The Atelier moves to its current premises on Rue des Abbesses, a former weaver's building with north-facing skylights that remain the finest painting light in Paris.</p>
+    </div>
+    <div class="milestone">
+      <span class="milestone-year">1978</span>
+      <p class="milestone-text">The first international cohort enrolled. Within five years, 40% of students would come from outside France, bringing the Atelier's global perspective it is now known for.</p>
+    </div>
+    <div class="milestone">
+      <span class="milestone-year">2008</span>
+      <p class="milestone-text">The Contemporary Practice programme launched in response to the expanded field. The Atelier became one of the few schools to offer both traditional and new media under one roof.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-label">Alumni Voices</div>
+  <h2 class="section-title">What the<br><em>Work Demands</em></h2>
+  <div class="swiper testimonials-swiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"The Atelier taught me that there is no shortcut through vision. Every hour in that studio was an argument with myself — and the faculty made sure I never settled for the comfortable answer."</p>
+          <div class="testimonial-author">Hana Kimura</div>
+          <div class="testimonial-role">Painting Program, Class of 2019 — Represented by Galerie Perrotin</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"I arrived as a printmaker. I left as an artist. The distinction matters enormously. The Atelier strips away the comfort of technique and forces you to ask the only question that counts: why?"</p>
+          <div class="testimonial-author">Marcus da Silva</div>
+          <div class="testimonial-role">Printmaking Program, Class of 2021 — Finalist, Prix de Rome</div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"The faculty here are not career academics. They are fighters who have chosen to share the ring. That changes everything about how they teach — and how you learn."</p>
+          <div class="testimonial-author">Aisha Okonkwo</div>
+          <div class="testimonial-role">Sculpture Program, Class of 2022 — Solo Show, Serpentine Pavilion 2025</div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- ENROLLMENT FORM -->
+<section class="enrollment-section" id="enrollment">
+  <div class="enrollment-inner">
+    <div class="section-label">Applications</div>
+    <h2 class="section-title">Begin Your<br><em>Application</em></h2>
+    <form>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fname">First Name</label>
+          <input type="text" id="fname" placeholder="Léa">
+        </div>
+        <div class="form-group">
+          <label for="lname">Last Name</label>
+          <input type="text" id="lname" placeholder="Fontaine">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="lea@example.com">
+      </div>
+      <div class="form-group">
+        <label for="program">Desired Program</label>
+        <select id="program">
+          <option value="">Select a program</option>
+          <option>Painting — 2-Year Intensive</option>
+          <option>Sculpture — 2-Year Intensive</option>
+          <option>Printmaking — 1-Year Certificate</option>
+          <option>Contemporary Practice — 1-Year Certificate</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="statement">Artist Statement (brief)</label>
+        <textarea id="statement" placeholder="Describe your current practice and what you hope to achieve at the Atelier..."></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Submit Application</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">Atelier des Beaux-Arts</div>
+      <p class="footer-tagline">A sanctuary for the formation of serious artists in Paris since 1926. Where vision becomes mastery.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Programs</h4>
+      <ul>
+        <li><a href="collection.html">Painting</a></li>
+        <li><a href="collection.html">Sculpture</a></li>
+        <li><a href="collection.html">Printmaking</a></li>
+        <li><a href="collection.html">Contemporary Practice</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>School</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="about.html">Faculty</a></li>
+        <li><a href="process.html">Admissions</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="#">14 Rue des Abbesses</a></li>
+        <li><a href="#">75018 Paris, France</a></li>
+        <li><a href="#">+33 1 42 55 00 12</a></li>
+        <li><a href="#">info@atelierdesbeauxarts.fr</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2026 Atelier des Beaux-Arts. All rights reserved.</span>
+    <span class="footer-copy">Paris &middot; Since 1926</span>
+  </div>
+</footer>
+
+<script>
+class SplitText {
+  constructor(target, options={}) {
+    this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+    this.chars = []; this.words = [];
+    this.originals = this.elements.map(el => el.innerHTML);
+    this.elements.forEach(el => this._split(el, options.type || 'words'));
+  }
+  _split(el, type) {
+    const text = el.textContent.trim(); el.innerHTML = '';
+    text.split(/\s+/).forEach((word, wi, arr) => {
+      const wSpan = document.createElement('span');
+      wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+      if (type.includes('chars')) {
+        [...word].forEach(ch => {
+          const c = document.createElement('span'); c.className = 'split-char';
+          c.style.display = 'inline-block'; c.textContent = ch;
+          wSpan.appendChild(c); this.chars.push(c);
+        });
+      } else { wSpan.textContent = word; }
+      this.words.push(wSpan); el.appendChild(wSpan);
+      if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+    });
+  }
+  revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+}
+
+gsap.registerPlugin(ScrollTrigger);
+
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+  const scrollInd = document.getElementById('scroll-indicator');
+
+  gsap.to(preloader, {
+    duration: 0.8, delay: 1.8, opacity: 0, onComplete: () => {
+      preloader.style.display = 'none';
+      scrollInd.classList.add('visible');
+      initAnimations();
+    }
+  });
+
+  setTimeout(() => { scrollInd.classList.add('visible'); }, 4000);
+});
+
+function initAnimations() {
+  // Hero
+  gsap.from('.hero-eyebrow', { opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, delay: 0.1 });
+  gsap.from('.hero-title', { opacity: 0, y: 40, duration: 1.3, ease: 'power2.inOut', immediateRender: false, delay: 0.25 });
+  gsap.from('.hero-sub', { opacity: 0, y: 40, duration: 1.2, ease: 'power2.inOut', immediateRender: false, delay: 0.4 });
+  gsap.from('.hero-stats .stat-item', { opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', immediateRender: false, stagger: 0.15, delay: 0.55 });
+  gsap.from('.btn-primary', { opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', immediateRender: false, delay: 0.75 });
+  gsap.from('.portrait-card', { opacity: 0, scale: 0.96, duration: 1.3, ease: 'power2.inOut', immediateRender: false, stagger: 0.15, delay: 0.3 });
+
+  // Stat counters
+  document.querySelectorAll('.stat-num[data-target]').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    gsap.from(el, {
+      textContent: 0, duration: 2, ease: 'power2.out',
+      snap: { textContent: 1 },
+      immediateRender: false,
+      scrollTrigger: { trigger: el, start: 'top 80%', once: true },
+      onUpdate: function() { el.textContent = Math.round(parseFloat(el.textContent)); }
+    });
+  });
+
+  // Scroll-triggered sections
+  gsap.from('.phil-card', {
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, immediateRender: false,
+    scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+  });
+  gsap.from('.program-card', {
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, immediateRender: false,
+    scrollTrigger: { trigger: '.programs-grid', start: 'top 85%', once: true }
+  });
+  gsap.from('.faculty-img', {
+    opacity: 0, x: -40, duration: 1.2, ease: 'power2.inOut', immediateRender: false,
+    scrollTrigger: { trigger: '.faculty-section', start: 'top 85%', once: true }
+  });
+  gsap.from('.faculty-info > *', {
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, immediateRender: false,
+    scrollTrigger: { trigger: '.faculty-info', start: 'top 85%', once: true }
+  });
+  gsap.from('.timeline-item', {
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, immediateRender: false,
+    scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true }
+  });
+  gsap.from('.milestone', {
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, immediateRender: false,
+    scrollTrigger: { trigger: '.milestones', start: 'top 85%', once: true }
+  });
+  gsap.from('.testimonial-card', {
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', immediateRender: false,
+    scrollTrigger: { trigger: '.testimonials-section', start: 'top 85%', once: true }
+  });
+  gsap.from('.enrollment-inner > *', {
+    opacity: 0, y: 40, duration: 1.1, ease: 'power2.inOut', stagger: 0.15, immediateRender: false,
+    scrollTrigger: { trigger: '.enrollment-section', start: 'top 85%', once: true }
+  });
+}
+
+// Navbar scroll
+window.addEventListener('scroll', () => {
+  const nb = document.getElementById('navbar');
+  nb.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Testimonials swiper
+new Swiper('.testimonials-swiper', {
+  slidesPerView: 1, spaceBetween: 24,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1200: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stellaris Space Centre — Beyond the Horizon of the Known</title>
+  <meta name="description" content="Stellaris Space Centre: national space exploration center dedicated to astronomy, satellite programs, and aerospace education. Explore missions, discover the cosmos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #101420;
+      --surface: #181E2A;
+      --surface2: #1E2438;
+      --accent: #4EE8FF;
+      --accent-light: #8AF3FF;
+      --accent-dark: #22B8CC;
+      --ivory: #DCE8F0;
+      --smoke: #8090A0;
+      --muted: #506070;
+      --border: #1A2234;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+    }
+    .preloader-logo {
+      font-family: var(--font-serif); font-size: 2.4rem; letter-spacing: 0.15em;
+      color: var(--ivory); text-transform: uppercase;
+    }
+    .preloader-line {
+      width: 180px; height: 1px; background: var(--border); position: relative; overflow: hidden;
+    }
+    .preloader-progress {
+      position: absolute; left: 0; top: 0; height: 100%; width: 0;
+      background: var(--accent); transition: width 1.8s ease;
+    }
+    .preloader-tagline {
+      font-size: 0.7rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; font-family: var(--font-sans);
+    }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator {
+      position: fixed; left: 32px; bottom: 48px; z-index: 100;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; transition: opacity 0.6s;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line {
+      width: 1px; height: 48px; background: var(--muted); position: relative; overflow: hidden;
+    }
+    .scroll-line::after {
+      content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%;
+      background: var(--accent); animation: scrollDown 1.8s infinite;
+    }
+    @keyframes scrollDown { 0% { top: -100%; } 100% { top: 100%; } }
+    .scroll-label {
+      font-size: 0.6rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+
+    /* NAVBAR */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 24px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s, padding 0.4s;
+    }
+    #navbar.scrolled { background: rgba(16,20,32,0.95); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 0.12em; color: var(--ivory); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: color 0.2s; font-family: var(--font-sans); }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 9px 22px; font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO TYPE G — SCROLL TEXT DRIVEN */
+    .hero-text-driven {
+      min-height: 200vh; position: relative;
+    }
+    .hero-bg {
+      position: fixed; inset: 0;
+      background-image: url('images/img-7.webp');
+      background-size: cover; background-position: center;
+      filter: brightness(0.18); z-index: -1;
+    }
+    .hero-text-wrap {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 80px; overflow: hidden;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem; letter-spacing: 0.35em; color: var(--accent); text-transform: uppercase;
+      font-family: var(--font-sans); margin-bottom: 20px;
+    }
+    .hero-word {
+      font-family: var(--font-serif);
+      font-size: clamp(4.5rem, 14vw, 14rem);
+      line-height: 0.85; letter-spacing: 0.04em;
+      color: var(--ivory); text-transform: uppercase; will-change: transform;
+    }
+    .hero-tagline {
+      color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase;
+      font-size: 0.85rem; margin: 32px 0 48px; font-family: var(--font-sans);
+    }
+    .btn-primary {
+      display: inline-block; background: var(--accent); color: var(--bg);
+      padding: 14px 36px; font-family: var(--font-sans); font-size: 0.82rem;
+      letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+      font-weight: 500; transition: background 0.3s; align-self: flex-start;
+    }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-outline {
+      display: inline-block; border: 1px solid var(--accent); color: var(--accent);
+      padding: 14px 36px; font-family: var(--font-sans); font-size: 0.82rem;
+      letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+      font-weight: 500; transition: all 0.3s;
+    }
+    .btn-outline:hover { background: var(--accent); color: var(--bg); }
+    .hero-scroll-hint {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-size: 0.62rem; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase;
+    }
+    .scroll-arrow { width: 18px; height: 18px; border-right: 1px solid var(--muted); border-bottom: 1px solid var(--muted); transform: rotate(45deg); animation: bounce 2s infinite; }
+    @keyframes bounce { 0%, 100% { transform: rotate(45deg) translate(0,0); } 50% { transform: rotate(45deg) translate(3px,3px); } }
+
+    /* STATS STRIP */
+    .stats-strip {
+      background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 48px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: var(--font-serif); font-size: clamp(2.4rem, 4vw, 3.6rem);
+      color: var(--accent); letter-spacing: 0.05em; display: block; line-height: 1;
+    }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; margin-top: 8px; font-family: var(--font-sans); }
+
+    /* SECTION COMMON */
+    section { padding: 100px 80px; }
+    .section-label {
+      font-size: 0.68rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase;
+      font-family: var(--font-sans); margin-bottom: 16px; display: block;
+    }
+    .section-title {
+      font-family: var(--font-serif); font-size: clamp(2.4rem, 5vw, 4.2rem);
+      color: var(--ivory); line-height: 0.95; letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .section-body {
+      font-size: 0.96rem; line-height: 1.75; color: var(--smoke); max-width: 600px; font-weight: 300;
+    }
+    hr.section-rule { border: none; border-top: 1px solid var(--border); margin: 0 80px; }
+
+    /* PHILOSOPHY */
+    .philosophy { background: var(--bg); }
+    .philosophy-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 64px;
+    }
+    .philosophy-card {
+      background: var(--surface); padding: 44px 36px; border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .philosophy-icon {
+      font-family: var(--font-serif); font-size: 3.2rem; color: var(--accent);
+      letter-spacing: 0.05em; margin-bottom: 20px; display: block; line-height: 1;
+    }
+    .philosophy-card h3 {
+      font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory);
+      letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .philosophy-card p { font-size: 0.88rem; line-height: 1.7; color: var(--smoke); font-weight: 300; }
+
+    /* COLLECTION GRID */
+    .collection { background: var(--surface); }
+    .collection-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
+      margin-top: 64px; overflow: visible;
+    }
+    .collection-card { position: relative; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; }
+    .collection-card img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.8s ease; filter: brightness(0.65);
+    }
+    .collection-card:hover img { transform: scale(1.06); }
+    .collection-overlay {
+      position: absolute; inset: 0; background: linear-gradient(to top, rgba(16,20,32,0.9) 30%, transparent);
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 32px;
+    }
+    .collection-tag {
+      font-size: 0.64rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase;
+      font-family: var(--font-sans); margin-bottom: 8px;
+    }
+    .collection-title {
+      font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory);
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .collection-sub { font-size: 0.8rem; color: var(--smoke); margin-top: 6px; font-weight: 300; }
+
+    /* ATELIER */
+    .atelier { background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img { position: relative; }
+    .atelier-img img { width: 100%; height: 520px; object-fit: cover; filter: brightness(0.8); }
+    .atelier-img-accent {
+      position: absolute; bottom: -20px; right: -20px;
+      width: 50%; height: 50%; border: 1px solid var(--accent); z-index: -1;
+    }
+    .atelier-content { padding: 20px 0; }
+    .atelier-content .section-body { max-width: 100%; }
+    .atelier-list { list-style: none; margin-top: 36px; display: flex; flex-direction: column; gap: 14px; }
+    .atelier-list li {
+      display: flex; align-items: flex-start; gap: 16px;
+      font-size: 0.88rem; color: var(--smoke); line-height: 1.6; font-weight: 300;
+    }
+    .atelier-list li::before { content: '→'; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+    /* PROCESS TIMELINE */
+    .process { background: var(--surface); }
+    .process-header { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; align-items: start; margin-bottom: 72px; }
+    .process-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+    .step-card {
+      background: var(--surface2); padding: 36px 28px; border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .step-card:hover { border-color: var(--accent); }
+    .step-num {
+      font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent);
+      opacity: 0.4; display: block; line-height: 1; margin-bottom: 16px;
+    }
+    .step-card h4 {
+      font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory);
+      letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .step-card p { font-size: 0.82rem; color: var(--smoke); line-height: 1.65; font-weight: 300; }
+
+    /* HERITAGE */
+    .heritage { background: var(--bg); }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 64px; }
+    .heritage-card {
+      padding: 40px 32px; border: 1px solid var(--border); background: var(--surface);
+      transition: border-color 0.3s;
+    }
+    .heritage-card:hover { border-color: var(--accent); }
+    .heritage-year {
+      font-family: var(--font-serif); font-size: 2rem; color: var(--accent); display: block; margin-bottom: 14px;
+    }
+    .heritage-card h4 {
+      font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory);
+      letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .heritage-card p { font-size: 0.82rem; color: var(--smoke); line-height: 1.6; font-weight: 300; }
+
+    /* PRESS SWIPER */
+    .press { background: var(--surface); overflow: hidden; }
+    .press-swiper { margin-top: 56px; }
+    .press-slide { padding: 48px 52px; background: var(--surface2); border: 1px solid var(--border); }
+    .press-quote {
+      font-family: var(--font-sans); font-size: 1.05rem; color: var(--ivory); line-height: 1.7;
+      font-weight: 300; font-style: italic; margin-bottom: 28px;
+    }
+    .press-quote::before { content: '\201C'; color: var(--accent); font-size: 2rem; line-height: 0; vertical-align: -0.4em; margin-right: 6px; }
+    .press-source { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; font-family: var(--font-sans); }
+
+    /* CONTACT FORM */
+    .contact { background: var(--bg); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .contact-form { display: grid; gap: 18px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-field { display: flex; flex-direction: column; gap: 8px; }
+    .form-field label { font-size: 0.68rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; font-family: var(--font-sans); }
+    .form-field input, .form-field textarea, .form-field select {
+      background: var(--surface); border: 1px solid var(--border); color: var(--ivory);
+      padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none;
+      transition: border-color 0.3s; resize: none; -webkit-appearance: none;
+    }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: var(--accent); }
+    .form-field textarea { min-height: 130px; }
+    .form-submit { width: 100%; }
+    .contact-info { padding-top: 20px; }
+    .contact-info-item { margin-bottom: 36px; }
+    .contact-info-label { font-size: 0.66rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 8px; }
+    .contact-info-value { font-size: 0.92rem; color: var(--smoke); line-height: 1.7; font-weight: 300; }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border);
+      padding: 64px 80px 40px;
+    }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 56px; }
+    .footer-brand .nav-logo { display: block; margin-bottom: 16px; }
+    .footer-brand p { font-size: 0.84rem; color: var(--muted); line-height: 1.65; font-weight: 300; max-width: 280px; }
+    .footer-col h5 { font-size: 0.68rem; letter-spacing: 0.2em; color: var(--ivory); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 0.84rem; color: var(--muted); text-decoration: none; transition: color 0.2s; font-family: var(--font-sans); font-weight: 300; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.76rem; color: var(--muted); font-family: var(--font-sans); font-weight: 300; }
+    .footer-legal { display: flex; gap: 28px; }
+    .footer-legal a { font-size: 0.76rem; color: var(--muted); text-decoration: none; transition: color 0.2s; font-family: var(--font-sans); }
+    .footer-legal a:hover { color: var(--accent); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      #navbar { padding: 20px 32px; }
+      #navbar.scrolled { padding: 14px 32px; }
+      .hero-text-wrap { padding: 0 40px; }
+      section { padding: 80px 40px; }
+      .stats-strip { padding: 40px; grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .atelier-inner { grid-template-columns: 1fr; }
+      .process-header { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: repeat(3, 1fr); }
+      .heritage-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-inner { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      hr.section-rule { margin: 0 40px; }
+    }
+    @media (max-width: 768px) {
+      .hero-text-wrap { padding: 0 24px; }
+      .hero-word { font-size: clamp(3rem, 16vw, 6rem); }
+      section { padding: 60px 24px; }
+      .nav-links { display: none; }
+      .stats-strip { padding: 36px 24px; grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+      .heritage-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      hr.section-rule { margin: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">STELLARIS<span style="color:var(--accent)">.</span></div>
+    <div class="preloader-tagline">Space Centre</div>
+    <div class="preloader-line"><div class="preloader-progress" id="preloader-bar"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">STELLARIS<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#programs">Programs</a></li>
+      <li><a href="#missions">Missions</a></li>
+      <li><a href="#process">Operations</a></li>
+      <li><a href="#heritage">Heritage</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Explore Now</a>
+  </nav>
+
+  <!-- HERO TYPE G — SCROLL TEXT DRIVEN -->
+  <section class="hero-text-driven" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow">Est. 1968 · National Space Authority · Orbital Programs</div>
+      <div class="hero-word word-1">STELLARIS</div>
+      <div class="hero-word word-2">SPACE</div>
+      <p class="hero-tagline">Beyond the Horizon of the Known</p>
+      <a href="#programs" class="btn-primary">Explore Missions</a>
+      <div class="hero-scroll-hint">
+        <div class="scroll-arrow"></div>
+        <span>Scroll</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip" id="stats">
+    <div class="stat-item">
+      <span class="stat-num">247</span>
+      <div class="stat-label">Missions Completed</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">56</span>
+      <div class="stat-label">Active Satellites</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">12K+</span>
+      <div class="stat-label">Educators Trained</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">8</span>
+      <div class="stat-label">Orbital Platforms</div>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="programs">
+    <span class="section-label">Our Mandate</span>
+    <h2 class="section-title">Pioneering<br>the Final Frontier</h2>
+    <p class="section-body">Stellaris Space Centre operates at the intersection of scientific discovery, national security, and human curiosity. We push boundaries not for ambition alone, but to understand our place in the universe.</p>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <span class="philosophy-icon">01</span>
+        <h3>Deep Space Exploration</h3>
+        <p>Our unmanned probe network extends humanity's senses to the outer reaches of the solar system, transmitting data from distances measured in light-hours.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="philosophy-icon">02</span>
+        <h3>Satellite Sciences</h3>
+        <p>A constellation of 56 active satellites enables climate monitoring, communications infrastructure, navigation services, and real-time Earth observation.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="philosophy-icon">03</span>
+        <h3>Aerospace Education</h3>
+        <p>Through our national education network, Stellaris brings the cosmos into classrooms — training the next generation of scientists, engineers, and explorers.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="missions">
+    <span class="section-label">Mission Catalogue</span>
+    <h2 class="section-title">Active<br>Operations</h2>
+    <div class="collection-grid">
+      <div class="collection-card">
+        <img src="images/img-3.webp" alt="Deep Space Mission">
+        <div class="collection-overlay">
+          <span class="collection-tag">Interplanetary</span>
+          <div class="collection-title">Project Helios</div>
+          <div class="collection-sub">Solar observation and heliosphere mapping</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <img src="images/img-4.webp" alt="Lunar Program">
+        <div class="collection-overlay">
+          <span class="collection-tag">Lunar</span>
+          <div class="collection-title">Selene Program</div>
+          <div class="collection-sub">Permanent lunar surface research stations</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <img src="images/img-2.webp" alt="Astronomy">
+        <div class="collection-overlay">
+          <span class="collection-tag">Astronomy</span>
+          <div class="collection-title">Nebula Watch</div>
+          <div class="collection-sub">Deep-field telescope array and spectroscopy</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <img src="images/img-5.webp" alt="Earth Orbit">
+        <div class="collection-overlay">
+          <span class="collection-tag">Earth Orbit</span>
+          <div class="collection-title">Sentinel Network</div>
+          <div class="collection-sub">Climate and environmental satellite constellation</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ATELIER -->
+  <section class="atelier" id="facilities">
+    <div class="atelier-inner">
+      <div class="atelier-img">
+        <img src="images/img-6.webp" alt="Mission Control">
+        <div class="atelier-img-accent"></div>
+      </div>
+      <div class="atelier-content">
+        <span class="section-label">Infrastructure</span>
+        <h2 class="section-title">Mission Control &amp; Research Facilities</h2>
+        <p class="section-body">Our flagship operations campus houses the most advanced space command infrastructure in the nation — spanning launch preparation, orbital tracking, data analysis, and educational outreach.</p>
+        <ul class="atelier-list">
+          <li>12,000 m² mission control and telemetry complex</li>
+          <li>Dedicated planetary science and astrophysics laboratories</li>
+          <li>Public observatory with 3 research-grade telescopes</li>
+          <li>Flight simulation and astronaut readiness centre</li>
+          <li>International collaboration hub with 24 partner agencies</li>
+        </ul>
+        <div style="margin-top: 40px; display: flex; gap: 16px;">
+          <a href="about.html" class="btn-primary">Learn More</a>
+          <a href="collection.html" class="btn-outline">View Programs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- PROCESS TIMELINE -->
+  <section class="process" id="process">
+    <div class="process-header">
+      <div>
+        <span class="section-label">How We Operate</span>
+        <h2 class="section-title">Mission Lifecycle</h2>
+      </div>
+      <p class="section-body">Every Stellaris mission follows a rigorous five-phase lifecycle designed to maximise scientific yield while ensuring crew safety, public accountability, and long-term data accessibility.</p>
+    </div>
+    <div class="process-steps">
+      <div class="step-card">
+        <span class="step-num">01</span>
+        <h4>Concept &amp; Proposal</h4>
+        <p>Scientific community proposals are reviewed by mission directors. Objectives, resource requirements, and orbital windows are assessed.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">02</span>
+        <h4>Design &amp; Engineering</h4>
+        <p>Payload design, spacecraft integration, and systems validation across our aerospace engineering teams and international partners.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">03</span>
+        <h4>Launch Preparation</h4>
+        <p>Fuelling, payload installation, environmental testing, and countdown procedures executed at the Stellaris Launch Complex.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">04</span>
+        <h4>Active Operations</h4>
+        <p>Real-time telemetry monitoring, trajectory corrections, scientific data collection and relay through our global ground station network.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">05</span>
+        <h4>Data &amp; Legacy</h4>
+        <p>Mission data is archived, analysed, and published to the global scientific community. Findings inform future programs and public education.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <span class="section-label">Our Timeline</span>
+    <h2 class="section-title">Five Decades<br>of Discovery</h2>
+    <div class="heritage-grid">
+      <div class="heritage-card">
+        <span class="heritage-year">1968</span>
+        <h4>Foundation</h4>
+        <p>Stellaris Space Centre established by national charter. First ground tracking station becomes operational at northern latitude site.</p>
+      </div>
+      <div class="heritage-card">
+        <span class="heritage-year">1981</span>
+        <h4>First Orbital Mission</h4>
+        <p>Launch of Arcturus-1, our first indigenous satellite, marking the nation's entry into independent orbital capability.</p>
+      </div>
+      <div class="heritage-card">
+        <span class="heritage-year">2004</span>
+        <h4>Deep Space Array</h4>
+        <p>Commissioning of the Horizon Deep Space Network — three globally distributed antennas enabling real-time interplanetary communication.</p>
+      </div>
+      <div class="heritage-card">
+        <span class="heritage-year">2022</span>
+        <h4>Lunar Partnership</h4>
+        <p>Stellaris joins the Artemis Accord framework, contributing instrumentation to the Lunar Gateway and securing landing site surveys.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- PRESS SWIPER -->
+  <section class="press" id="press">
+    <span class="section-label">Recognition</span>
+    <h2 class="section-title">What the World<br>is Saying</h2>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide press-slide">
+          <p class="press-quote">Stellaris has established itself as one of the world's most effective mid-tier space agencies, blending scientific rigour with a remarkable commitment to public engagement and education.</p>
+          <div class="press-source">Nature Astronomy — Annual Space Agency Review</div>
+        </div>
+        <div class="swiper-slide press-slide">
+          <p class="press-quote">The Sentinel satellite network has become a globally relied-upon climate data resource. The openness of Stellaris's data-sharing policies sets a benchmark for international scientific cooperation.</p>
+          <div class="press-source">The Aerospace Journal — Earth Observation Special Report</div>
+        </div>
+        <div class="swiper-slide press-slide">
+          <p class="press-quote">Few institutions have managed to make the cosmos feel as accessible and urgent to young people as Stellaris. Their education programme is a model other nations should replicate.</p>
+          <div class="press-source">Scientific American — Future of Space Education</div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="margin-top: 24px; position: static;"></div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- CONTACT FORM -->
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <div>
+        <span class="section-label">Get in Touch</span>
+        <h2 class="section-title">Connect With<br>Stellaris</h2>
+        <p class="section-body">Whether you're a researcher proposing collaboration, an educator seeking resources, or a citizen curious about our programs — we welcome your message.</p>
+        <form class="contact-form" style="margin-top: 44px;">
+          <div class="form-row">
+            <div class="form-field">
+              <label>First Name</label>
+              <input type="text" placeholder="Dr. Amara">
+            </div>
+            <div class="form-field">
+              <label>Last Name</label>
+              <input type="text" placeholder="Osei">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Email Address</label>
+            <input type="email" placeholder="a.osei@institution.edu">
+          </div>
+          <div class="form-field">
+            <label>Subject</label>
+            <select>
+              <option>Research Collaboration</option>
+              <option>Educational Partnership</option>
+              <option>Media &amp; Press</option>
+              <option>Public Programs</option>
+              <option>General Enquiry</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Message</label>
+            <textarea placeholder="Describe your enquiry or proposal..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary form-submit">Send Message</button>
+        </form>
+      </div>
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <div class="contact-info-label">Headquarters</div>
+          <div class="contact-info-value">Stellaris Space Centre<br>Aurora Boulevard, Sector 7<br>National Capital Region</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-label">Public Enquiries</div>
+          <div class="contact-info-value">+1 800 STELLARIS<br>info@stellaris-space.gov</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-label">Research Partnerships</div>
+          <div class="contact-info-value">research@stellaris-space.gov</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-label">Media Relations</div>
+          <div class="contact-info-value">media@stellaris-space.gov</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-label">Visitor Centre Hours</div>
+          <div class="contact-info-value">Tue – Sun: 09:00 – 17:30<br>Public Telescope Nights: Fri 20:00</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">STELLARIS<span style="color:var(--accent)">.</span></a>
+        <p>A national institution dedicated to space exploration, satellite science, and inspiring humanity to look beyond the horizon of the known.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Programs</h5>
+        <ul>
+          <li><a href="collection.html">Active Missions</a></li>
+          <li><a href="collection.html">Satellite Operations</a></li>
+          <li><a href="collection.html">Deep Space</a></li>
+          <li><a href="collection.html">Earth Observation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Centre</h5>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="about.html">Leadership</a></li>
+          <li><a href="process.html">How We Work</a></li>
+          <li><a href="about.html">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Public</h5>
+        <ul>
+          <li><a href="#">Visitor Centre</a></li>
+          <li><a href="#">Education</a></li>
+          <li><a href="#">Open Data</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 Stellaris Space Centre. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    class SplitText {
+      constructor(target, options={}) {
+        this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+        this.chars = []; this.words = [];
+        this.originals = this.elements.map(el => el.innerHTML);
+        this.elements.forEach(el => this._split(el, options.type || 'words'));
+      }
+      _split(el, type) {
+        const text = el.textContent.trim(); el.innerHTML = '';
+        text.split(/\s+/).forEach((word, wi, arr) => {
+          const wSpan = document.createElement('span');
+          wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+          if (type.includes('chars')) {
+            [...word].forEach(ch => {
+              const c = document.createElement('span'); c.className = 'split-char';
+              c.style.display = 'inline-block'; c.textContent = ch;
+              wSpan.appendChild(c); this.chars.push(c);
+            });
+          } else { wSpan.textContent = word; }
+          this.words.push(wSpan); el.appendChild(wSpan);
+          if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+        });
+      }
+      revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Preloader
+    window.addEventListener('DOMContentLoaded', () => {
+      const bar = document.getElementById('preloader-bar');
+      bar.style.width = '100%';
+      setTimeout(() => {
+        gsap.to('#preloader', {
+          opacity: 0, duration: 0.8, onComplete: () => {
+            document.getElementById('preloader').style.display = 'none';
+            document.getElementById('scroll-indicator').classList.add('visible');
+          }
+        });
+      }, 2000);
+      setTimeout(() => {
+        document.getElementById('scroll-indicator').classList.add('visible');
+      }, 4000);
+    });
+
+    // Navbar
+    const navbarEl = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) navbarEl.classList.add('scrolled');
+      else navbarEl.classList.remove('scrolled');
+    });
+
+    // Hero Type G — scroll-driven text transform
+    gsap.to('.word-1', {
+      x: '-25vw', scale: 0.5, opacity: 0.06,
+      scrollTrigger: {
+        trigger: '.hero-text-driven',
+        start: 'top top',
+        end: '60% top',
+        scrub: 1.5
+      }
+    });
+    gsap.to('.word-2', {
+      x: '25vw', scale: 0.5, opacity: 0.06,
+      scrollTrigger: {
+        trigger: '.hero-text-driven',
+        start: 'top top',
+        end: '60% top',
+        scrub: 1.5
+      }
+    });
+    gsap.to('.hero-tagline', {
+      y: -30, opacity: 0,
+      scrollTrigger: {
+        trigger: '.hero-text-driven',
+        start: '20% top',
+        end: '50% top',
+        scrub: 1
+      }
+    });
+
+    // Stats
+    gsap.from('.stat-item', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.04,
+      scrollTrigger: { trigger: '.stats-strip', start: 'top 85%', once: true }
+    });
+
+    // Philosophy cards
+    gsap.from('.philosophy-card', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.08,
+      scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+    });
+
+    // Collection cards
+    gsap.from('.collection-card', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.08,
+      scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+    });
+
+    // Atelier
+    gsap.from('.atelier-img', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out',
+      scrollTrigger: { trigger: '.atelier-inner', start: 'top 85%', once: true }
+    });
+    gsap.from('.atelier-content', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out', delay: 0.12,
+      scrollTrigger: { trigger: '.atelier-inner', start: 'top 85%', once: true }
+    });
+
+    // Process steps
+    gsap.from('.step-card', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.04,
+      scrollTrigger: { trigger: '.process-steps', start: 'top 85%', once: true }
+    });
+
+    // Heritage
+    gsap.from('.heritage-card', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.06,
+      scrollTrigger: { trigger: '.heritage-grid', start: 'top 85%', once: true }
+    });
+
+    // Press
+    gsap.from('.press-swiper', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out',
+      scrollTrigger: { trigger: '.press-swiper', start: 'top 85%', once: true }
+    });
+
+    // Contact
+    gsap.from('.contact-inner > *', {
+      immediateRender: false,
+      x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.1,
+      scrollTrigger: { trigger: '.contact-inner', start: 'top 85%', once: true }
+    });
+
+    // Section labels and titles
+    gsap.utils.toArray('.section-label, .section-title').forEach(el => {
+      gsap.from(el, {
+        immediateRender: false,
+        x: -20, duration: 0.75, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+      });
+    });
+
+    // Swiper
+    new Swiper('.press-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 2,
+      loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 1024: { slidesPerView: 2 } }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'École du Nez — The Art of Invisible Sculpture</title>
+<meta name="description" content="L'École du Nez offers an intimate education in perfumery — nose training, fragrance composition and the creation of artisan perfume rooted in French haute parfumerie tradition.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #1A0A0E;
+  --surface: #241016;
+  --surface2: #2C1420;
+  --accent: #C96A8A;
+  --accent-light: #E090A8;
+  --accent-dark: #8A3A5C;
+  --ivory: #F0DCE4;
+  --smoke: #A08088;
+  --muted: #604A52;
+  --border: #200C12;
+  --font-serif: 'Bodoni Moda', 'Didot', serif;
+  --font-sans: 'Work Sans', system-ui, sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Preloader */
+#preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.preloader-ring { width: 48px; height: 48px; border: 1px solid var(--muted); border-top-color: var(--accent); border-radius: 50%; animation: spin 1.5s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.preloader-text { font-family: var(--font-serif); font-size: 0.78rem; letter-spacing: 0.25em; color: var(--smoke); margin-top: 24px; font-style: italic; }
+
+/* Scroll Indicator */
+#scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.6s; }
+#scroll-indicator.visible { opacity: 1; }
+.scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--accent)); }
+.scroll-label { font-family: var(--font-sans); font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-rl; transform: rotate(180deg); }
+
+/* Navbar */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s; }
+nav.scrolled { background: rgba(26,10,14,0.92); backdrop-filter: blur(12px); }
+.nav-logo { font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; color: var(--ivory); }
+.nav-logo span { color: var(--accent); font-style: normal; }
+.nav-links { display: flex; gap: 40px; list-style: none; }
+.nav-links a { font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; font-weight: 400; }
+.nav-links a:hover { color: var(--accent); }
+.nav-cta { padding: 10px 28px; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 400; transition: background 0.3s, color 0.3s; }
+.nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+/* Hero — Type G Scroll Text Transform */
+.hero-text-driven { min-height: 200vh; position: relative; }
+.hero-bg {
+  position: fixed; inset: 0;
+  background-image: url('images/img-1.webp');
+  background-size: cover; background-position: center;
+  filter: brightness(0.25); z-index: -1;
+}
+.hero-text-wrap {
+  position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; padding: 0 80px; overflow: hidden;
+}
+.hero-word { font-family: var(--font-serif); font-size: clamp(4rem, 14vw, 13rem); line-height: 0.85; font-weight: 700; text-transform: uppercase; color: var(--ivory); will-change: transform; }
+.hero-word-2 { color: var(--accent); font-style: italic; }
+.hero-tagline { font-family: var(--font-sans); font-size: 0.95rem; color: var(--smoke); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 300; margin-top: 32px; }
+.hero-cta-wrap { margin-top: 40px; }
+.btn-primary { display: inline-block; padding: 14px 40px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; transition: background 0.3s; }
+.btn-primary:hover { background: var(--accent-light); }
+.btn-outline { display: inline-block; padding: 14px 40px; border: 1px solid rgba(240,220,228,0.25); color: var(--ivory); font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; margin-left: 16px; transition: border-color 0.3s; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Stats Strip */
+.stats-strip { position: relative; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 60px 80px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; max-width: 1200px; margin: 0 auto; }
+.stat-item { text-align: center; }
+.stat-num { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--accent); display: block; line-height: 1; font-style: italic; }
+.stat-label { font-family: var(--font-sans); font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--smoke); margin-top: 10px; display: block; }
+
+/* Section commons */
+.section-label { font-family: var(--font-sans); font-size: 0.62rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: block; font-weight: 400; }
+.section-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 400; color: var(--ivory); margin-bottom: 60px; line-height: 1.2; font-style: italic; }
+
+/* Philosophy */
+.philosophy { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+.phil-card { padding: 48px 36px; background: var(--surface); border: 1px solid var(--border); border-top: 1px solid var(--accent); position: relative; }
+.phil-card::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; background: var(--accent); }
+.phil-num { font-family: var(--font-serif); font-size: 2.5rem; font-style: italic; color: var(--muted); margin-bottom: 20px; display: block; font-weight: 400; }
+.phil-card h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 400; color: var(--ivory); margin-bottom: 16px; font-style: italic; }
+.phil-card p { font-family: var(--font-sans); font-size: 0.88rem; line-height: 1.85; color: var(--smoke); font-weight: 300; }
+
+/* Programs Grid */
+.programs { padding: 0 80px 120px; max-width: 1300px; margin: 0 auto; }
+.programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; overflow: visible; }
+.program-card { background: var(--surface); border: 1px solid var(--border); overflow: hidden; transition: transform 0.4s, box-shadow 0.4s; }
+.program-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+.program-card-img { height: 280px; overflow: hidden; }
+.program-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+.program-card:hover .program-card-img img { transform: scale(1.05); }
+.program-card-body { padding: 40px; }
+.program-tag { font-family: var(--font-sans); font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: block; font-weight: 400; }
+.program-card h3 { font-family: var(--font-serif); font-size: 1.3rem; font-style: italic; color: var(--ivory); margin-bottom: 12px; }
+.program-card p { font-family: var(--font-sans); font-size: 0.88rem; line-height: 1.85; color: var(--smoke); margin-bottom: 24px; font-weight: 300; }
+.program-meta { display: flex; gap: 16px; font-family: var(--font-sans); font-size: 0.72rem; color: var(--muted); padding-top: 20px; border-top: 1px solid var(--border); font-weight: 400; }
+
+/* Master */
+.master { padding: 120px 80px; background: var(--surface); }
+.master-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.master-img { position: relative; }
+.master-img img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+.master-img-accent { position: absolute; bottom: -20px; right: -20px; width: 55%; aspect-ratio: 1; border: 1px solid var(--accent); z-index: -1; opacity: 0.5; }
+.master-body { padding-right: 40px; }
+.master-name { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 400; color: var(--ivory); margin-bottom: 8px; font-style: italic; }
+.master-role { font-family: var(--font-sans); font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; display: block; font-weight: 400; }
+.master-bio { font-family: var(--font-sans); font-size: 0.92rem; line-height: 1.9; color: var(--smoke); margin-bottom: 32px; font-weight: 300; }
+.master-credentials { display: flex; flex-direction: column; gap: 12px; }
+.credential { display: flex; gap: 16px; align-items: flex-start; }
+.credential-dot { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; margin-top: 10px; flex-shrink: 0; }
+.credential p { font-family: var(--font-sans); font-size: 0.83rem; color: var(--smoke); line-height: 1.6; font-weight: 300; }
+
+/* Curriculum */
+.curriculum { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.step { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 40px 0; border-top: 1px solid var(--border); }
+.step:last-child { border-bottom: 1px solid var(--border); }
+.step-num { font-family: var(--font-serif); font-size: 3rem; font-weight: 400; color: var(--muted); line-height: 1; font-style: italic; }
+.step-body h3 { font-family: var(--font-serif); font-size: 1.2rem; font-style: italic; color: var(--ivory); margin-bottom: 12px; }
+.step-body p { font-family: var(--font-sans); font-size: 0.88rem; line-height: 1.85; color: var(--smoke); font-weight: 300; }
+.step-duration { font-family: var(--font-sans); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-top: 12px; display: block; }
+
+/* History */
+.history { padding: 120px 80px; background: var(--surface); }
+.history-inner { max-width: 1200px; margin: 0 auto; }
+.timeline-item { display: grid; grid-template-columns: 120px 1fr; gap: 48px; padding: 32px 0; border-top: 1px solid var(--border); }
+.timeline-year { font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; color: var(--accent); }
+.timeline-content h3 { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; color: var(--ivory); margin-bottom: 8px; }
+.timeline-content p { font-family: var(--font-sans); font-size: 0.87rem; line-height: 1.7; color: var(--smoke); font-weight: 300; }
+
+/* Testimonials */
+.testimonials { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.swiper-slide-content { padding: 48px; background: var(--surface); border: 1px solid var(--border); }
+.testimonial-stars { color: var(--accent); margin-bottom: 24px; font-size: 0.85rem; }
+.testimonial-text { font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; line-height: 1.8; color: var(--ivory); margin-bottom: 32px; }
+.testimonial-author { display: flex; align-items: center; gap: 16px; }
+.author-avatar { width: 48px; height: 48px; background: var(--surface2); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); color: var(--accent); font-style: italic; }
+.author-info h4 { font-family: var(--font-sans); font-size: 0.88rem; font-weight: 500; color: var(--ivory); }
+.author-info span { font-family: var(--font-sans); font-size: 0.75rem; color: var(--smoke); font-weight: 300; }
+.swiper-pagination-bullet { background: var(--muted) !important; }
+.swiper-pagination-bullet-active { background: var(--accent) !important; }
+
+/* Enrollment */
+.enrollment { padding: 120px 80px; background: var(--surface); }
+.enrollment-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+.enrollment form { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-family: var(--font-sans); font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); font-weight: 400; }
+.form-group input, .form-group select, .form-group textarea { background: var(--bg); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.88rem; outline: none; transition: border-color 0.3s; width: 100%; font-weight: 300; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+.form-group select option { background: var(--bg); }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-submit { grid-column: 1 / -1; }
+.form-submit button { width: 100%; padding: 18px; background: var(--accent); color: var(--bg); border: none; font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; font-weight: 500; transition: background 0.3s; }
+.form-submit button:hover { background: var(--accent-light); }
+
+/* Footer */
+footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+.footer-brand p { font-family: var(--font-sans); font-size: 0.85rem; line-height: 1.7; color: var(--smoke); max-width: 280px; margin-top: 16px; font-weight: 300; }
+.footer-col h4 { font-family: var(--font-sans); font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 400; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col ul a { font-family: var(--font-sans); font-size: 0.85rem; color: var(--smoke); transition: color 0.3s; font-weight: 300; }
+.footer-col ul a:hover { color: var(--accent); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 32px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-family: var(--font-sans); font-size: 0.75rem; color: var(--muted); font-weight: 300; }
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-ring"></div>
+  <p class="preloader-text">L'École du Nez</p>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <span class="scroll-label">Scroll</span>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo"><span>L'École</span> du Nez</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Courses</a></li>
+    <li><a href="process.html">Method</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Enrol</a>
+</nav>
+
+<!-- Hero — Type G Scroll Text Transform -->
+<section class="hero-text-driven" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-text-wrap">
+    <div class="hero-word word-1">L'ART</div>
+    <div class="hero-word hero-word-2 word-2">Invisible</div>
+    <p class="hero-tagline">The Art of Invisible Sculpture · Grasse Tradition</p>
+    <div class="hero-cta-wrap">
+      <a href="collection.html" class="btn-primary">Explore Courses</a>
+      <a href="about.html" class="btn-outline">Our Philosophy</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section class="stats-strip">
+  <div class="stats-grid">
+    <div class="stat-item reveal-whisper">
+      <span class="stat-num">28</span>
+      <span class="stat-label">Years of Teaching</span>
+    </div>
+    <div class="stat-item reveal-whisper">
+      <span class="stat-num">600+</span>
+      <span class="stat-label">Perfumers Trained</span>
+    </div>
+    <div class="stat-item reveal-whisper">
+      <span class="stat-num">3,000</span>
+      <span class="stat-label">Raw Materials in Library</span>
+    </div>
+    <div class="stat-item reveal-whisper">
+      <span class="stat-num">6</span>
+      <span class="stat-label">Languages of Instruction</span>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy">
+  <span class="section-label reveal-whisper">Notre Philosophie</span>
+  <h2 class="section-title reveal-whisper">Three Principles<br>of the Perfumer's Education</h2>
+  <div class="philosophy-grid">
+    <div class="phil-card reveal-whisper">
+      <span class="phil-num">I</span>
+      <h3>Training the Nose</h3>
+      <p>The perfumer's primary instrument is olfactory memory — the ability to name, retain and recall thousands of distinct aromatic signatures. Our training is as much neurological as chemical: we build the memory of smell before we build with it.</p>
+    </div>
+    <div class="phil-card reveal-whisper">
+      <span class="phil-num">II</span>
+      <h3>The Language of Accord</h3>
+      <p>Fragrance is relational. Individual materials mean little without their context — how bergamot opens vetiver, how rose contracts in the presence of oud. The study of accords is the grammar of perfumery, and we begin with grammar.</p>
+    </div>
+    <div class="phil-card reveal-whisper">
+      <span class="phil-num">III</span>
+      <h3>Composition as Narrative</h3>
+      <p>A perfume tells a story in three acts: top, heart, base. The arc of that story — its surprises, its resolution, its emotional logic — is the true subject of our advanced courses. We teach not chemistry but dramaturgy.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Programs Grid -->
+<section class="programs">
+  <div class="section-header">
+    <span class="section-label reveal-whisper">Courses</span>
+    <h2 class="section-title reveal-whisper">Pathways into<br>Fragrance</h2>
+  </div>
+  <div class="programs-grid">
+    <div class="program-card reveal-whisper">
+      <div class="program-card-img">
+        <img src="images/img-1.webp" alt="Olfactory Foundation">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Foundation</span>
+        <h3>Olfactory Foundation</h3>
+        <p>Fifty hours of structured smell training — building the vocabulary, the memory and the discriminative capacity needed to work seriously with fragrance materials. The irreplaceable first step for all serious students.</p>
+        <div class="program-meta">
+          <span>4 Weeks</span>
+          <span>·</span>
+          <span>Beginner</span>
+          <span>·</span>
+          <span>Daily sessions</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-whisper">
+      <div class="program-card-img">
+        <img src="images/img-2.webp" alt="Natural Perfumery">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Intermediate</span>
+        <h3>Natural Perfumery</h3>
+        <p>Working exclusively with botanical absolutes, essential oils, resins and tinctures. Students compose three original natural fragrances under the supervision of a senior parfumeur and receive detailed formula notation.</p>
+        <div class="program-meta">
+          <span>8 Weeks</span>
+          <span>·</span>
+          <span>Foundation required</span>
+          <span>·</span>
+          <span>12 students max</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-whisper">
+      <div class="program-card-img">
+        <img src="images/img-1.webp" alt="Haute Parfumerie Diploma">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Professional</span>
+        <h3>Haute Parfumerie Diploma</h3>
+        <p>The school's most complete professional training: 200 hours of nose training, accord study, formula development, IFRA compliance, brief interpretation and the creation of a complete original fragrance collection.</p>
+        <div class="program-meta">
+          <span>10 Months</span>
+          <span>·</span>
+          <span>Application required</span>
+          <span>·</span>
+          <span>8 students only</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-whisper">
+      <div class="program-card-img">
+        <img src="images/img-2.webp" alt="Grasse Field Seminar">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Intensive</span>
+        <h3>Grasse Field Seminar</h3>
+        <p>Five days in the perfume capital of the world — visiting jasmine and rose fields at harvest, distilleries, enfleurage ateliers and historic fragrance houses. Offered twice yearly in May (rose) and August (jasmine).</p>
+        <div class="program-meta">
+          <span>5 Days</span>
+          <span>·</span>
+          <span>All levels</span>
+          <span>·</span>
+          <span>Grasse, France</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Master Section -->
+<section class="master">
+  <div class="master-inner">
+    <div class="master-img reveal-whisper">
+      <img src="images/img-1.webp" alt="Isabelle Vernet — Founder & Parfumeur">
+      <div class="master-img-accent"></div>
+    </div>
+    <div class="master-body reveal-whisper">
+      <h2 class="master-name">Isabelle Vernet</h2>
+      <span class="master-role">Founder & Maître Parfumeur</span>
+      <p class="master-bio">Isabelle Vernet trained at the ISIPCA in Versailles under Edmond Roudnitska's student, Henri Giboulet, before spending seven years as a junior parfumeur at Givaudan in Geneva. She founded L'École du Nez in 1998 with a single conviction: that the education of the nose belongs not only inside industrial laboratories but in independent schools devoted to the full tradition of French perfumery.</p>
+      <div class="master-credentials">
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Diplômée ISIPCA, Institut Supérieur International du Parfum de Versailles</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Former junior parfumeur, Givaudan Fine Fragrance, Geneva (1991–1998)</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Author of <em>L'Accord Parfait: An Introduction to Fragrance Composition</em> (2014)</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Member, Société Française des Parfumeurs; advisory board, ISIPCA Versailles</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Curriculum -->
+<section class="curriculum">
+  <span class="section-label reveal-whisper">How We Teach</span>
+  <h2 class="section-title reveal-whisper">The Five Stages<br>of the Nose</h2>
+  <div>
+    <div class="step reveal-whisper">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Olfactory Vocabulary</h3>
+        <p>Students begin by building the vocabulary of fragrance — learning to identify, name and recall 200 core raw materials from the Baur-Müller classification: citrus, green, floral, spice, wood, resin, animalic and synthetic families.</p>
+        <span class="step-duration">Weeks 1–4</span>
+      </div>
+    </div>
+    <div class="step reveal-whisper">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>The Structure of Fragrance</h3>
+        <p>Top notes, heart notes, base notes — the temporal architecture of perfume. Students learn how volatility, substantivity and fixative power determine the arc of a fragrance from the first spray to the dry-down hours later.</p>
+        <span class="step-duration">Weeks 5–8</span>
+      </div>
+    </div>
+    <div class="step reveal-whisper">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>Accord Study: Building Blocks</h3>
+        <p>Classic accords — chypre, fougère, oriental, aquatic, floral — are dissected and reconstructed from their component parts. Students learn to read existing formulas and understand the logic of great twentieth-century perfumery.</p>
+        <span class="step-duration">Weeks 9–14</span>
+      </div>
+    </div>
+    <div class="step reveal-whisper">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>Original Composition</h3>
+        <p>Students develop three original fragrances in response to written briefs — working through iteration, evaluation and modification with direct feedback from the maître parfumeur at each stage of the creative process.</p>
+        <span class="step-duration">Weeks 15–22</span>
+      </div>
+    </div>
+    <div class="step reveal-whisper">
+      <div class="step-num">05</div>
+      <div class="step-body">
+        <h3>Professional Practice</h3>
+        <p>IFRA compliance, perfume regulation, brief interpretation, client communication, formula documentation and the business of independent perfumery — the professional framework that surrounds the creative practice.</p>
+        <span class="step-duration">Weeks 23–26</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- History -->
+<section class="history">
+  <div class="history-inner">
+    <span class="section-label reveal-whisper">Our Journey</span>
+    <h2 class="section-title reveal-whisper">Twenty-Eight Years<br>of the Nose</h2>
+    <div>
+      <div class="timeline-item reveal-whisper">
+        <div class="timeline-year">1998</div>
+        <div class="timeline-content">
+          <h3>Founded in Grasse</h3>
+          <p>Isabelle Vernet opens L'École du Nez in a former négociant's townhouse in the Vieille Ville of Grasse — with a library of 800 raw materials and an inaugural class of six students.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-whisper">
+        <div class="timeline-year">2004</div>
+        <div class="timeline-content">
+          <h3>The Natural Materials Library</h3>
+          <p>The school's raw material library expands to over 1,500 naturals through a formal exchange programme with enfleurage producers in Grasse, jasmine farmers in Pégomas and Bulgarian rose distillers in Kazanlak.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-whisper">
+        <div class="timeline-year">2011</div>
+        <div class="timeline-content">
+          <h3>Haute Parfumerie Diploma Launches</h3>
+          <p>The school's first ten-month professional programme receives accreditation from the French Ministry of Culture and the Société Française des Parfumeurs — one of only three independent schools in France to hold this recognition.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-whisper">
+        <div class="timeline-year">2019</div>
+        <div class="timeline-content">
+          <h3>The Field Seminar Programme</h3>
+          <p>Formal harvest season seminars launch in Grasse for rose (May) and jasmine (August), bringing students directly into the fields, distilleries and enfleurage facilities of the French perfume trade.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-whisper">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-content">
+          <h3>3,000 Materials & Counting</h3>
+          <p>The raw material library reaches 3,000 items — the most extensive teaching collection available to independent students anywhere in the world, including the Omega-3 library of synthetic aroma-chemicals donated by a leading Swiss fragrance house.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+  <span class="section-label reveal-whisper">Student Words</span>
+  <h2 class="section-title reveal-whisper">What Our Students Say</h2>
+  <div class="swiper testimonials-swiper reveal-whisper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"Before L'École du Nez, I could tell you a perfume smelled 'nice' or 'heavy'. After the Olfactory Foundation course, I could tell you it contained heliotrope, ambrette and a facet of iso-E-super. The training was literally transformative."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">C</div>
+            <div class="author-info"><h4>Clara Okonkwo</h4><span>Foundation Graduate, Lagos</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"The Diploma programme gave me a creative methodology I still use daily. Isabelle's way of teaching — through questioning rather than telling — builds the kind of understanding that doesn't disappear when the course ends."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">J</div>
+            <div class="author-info"><h4>James Whitfield</h4><span>Diploma Graduate, New York</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"The Grasse Field Seminar changed my relationship to raw materials permanently. Smelling jasmine at five in the morning during harvest — before it oxidises, before it travels — is something no formula can replicate."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">Y</div>
+            <div class="author-info"><h4>Yuki Tamura</h4><span>Field Seminar Participant, Osaka</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination" style="margin-top: 32px; position: relative; bottom: auto;"></div>
+  </div>
+</section>
+
+<!-- Enrollment Form -->
+<section class="enrollment">
+  <div class="enrollment-inner">
+    <span class="section-label reveal-whisper" style="display:block; text-align:center;">Begin Your Education</span>
+    <h2 class="section-title reveal-whisper" style="text-align:center; font-style:italic;">Write to L'École du Nez</h2>
+    <p style="font-family:var(--font-sans); font-size:0.88rem; color:var(--smoke); line-height:1.8; text-align:center; font-weight:300;" class="reveal-whisper">We welcome students at every stage of their olfactory journey. Every application is read personally by Isabelle Vernet and answered within one week.</p>
+    <form class="reveal-whisper">
+      <div class="form-group">
+        <label>Prénom / First Name</label>
+        <input type="text" placeholder="Your first name">
+      </div>
+      <div class="form-group">
+        <label>Nom / Last Name</label>
+        <input type="text" placeholder="Your last name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>Country</label>
+        <input type="text" placeholder="Your country">
+      </div>
+      <div class="form-group full">
+        <label>Course Interest</label>
+        <select>
+          <option>Olfactory Foundation (4 weeks)</option>
+          <option>Natural Perfumery (8 weeks)</option>
+          <option>Haute Parfumerie Diploma (10 months)</option>
+          <option>Grasse Field Seminar</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Your Relationship with Fragrance</label>
+        <textarea placeholder="Tell us about your existing relationship with perfumery, your background, and what you hope to develop through study at L'École du Nez..."></textarea>
+      </div>
+      <div class="form-submit">
+        <button type="submit">Envoyer / Send Enquiry</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span style="font-family:var(--font-serif); font-size:1.1rem; font-style:italic; color:var(--ivory);"><span style="color:var(--accent); font-style:normal;">L'École</span> du Nez</span>
+        <p>A school of French perfumery tradition — dedicated to the education of the nose and the art of invisible sculpture since 1998.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="collection.html">Courses</a></li>
+          <li><a href="process.html">Method</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Courses</h4>
+        <ul>
+          <li><a href="collection.html">Olfactory Foundation</a></li>
+          <li><a href="collection.html">Natural Perfumery</a></li>
+          <li><a href="collection.html">Diploma</a></li>
+          <li><a href="collection.html">Grasse Seminar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:bonjour@lencoledu nez.fr">bonjour@lecoledunez.fr</a></li>
+          <li><a href="#">Grasse, Alpes-Maritimes</a></li>
+          <li><a href="#">France 06130</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 L'École du Nez. All rights reserved.</p>
+      <p>The Art of Invisible Sculpture</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+window.addEventListener('load', () => {
+  gsap.to('#preloader', { opacity: 0, duration: 1.0, ease: 'power2.out', onComplete: () => {
+    document.getElementById('preloader').style.display = 'none';
+    document.getElementById('scroll-indicator').classList.add('visible');
+  }});
+  gsap.from('.word-1', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', delay: 0.5, immediateRender: false });
+  gsap.from('.word-2', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', delay: 0.7, immediateRender: false });
+  gsap.from('.hero-tagline', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', delay: 0.9, immediateRender: false });
+  gsap.from('.hero-cta-wrap', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', delay: 1.1, immediateRender: false });
+});
+
+setTimeout(() => { document.getElementById('scroll-indicator').classList.add('visible'); }, 4000);
+window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
+
+// Scroll text transform — Type G
+gsap.to('.word-1', { x: '-25vw', scale: 0.5, opacity: 0.08, immediateRender: false, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 } });
+gsap.to('.word-2', { x: '25vw', scale: 0.5, opacity: 0.08, immediateRender: false, scrollTrigger: { trigger: '.hero-text-driven', start: 'top top', end: '60% top', scrub: 1.5 } });
+
+// Scroll animations — A2 Whisper
+document.querySelectorAll('.reveal-whisper').forEach(el => {
+  gsap.from(el, {
+    opacity: 0, y: 14, duration: 1.5, ease: 'power1.out',
+    immediateRender: false,
+    scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+  });
+});
+
+new Swiper('.testimonials-swiper', {
+  slidesPerView: 1, spaceBetween: 32, loop: true,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>

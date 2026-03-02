@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frequency Amateur Radio Club — Connecting Minds Across the Spectrum</title>
+  <meta name="description" content="Frequency Amateur Radio Club: connecting licensed operators through HF communications, emergency preparedness, digital modes, and antenna building. Join our global network.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #101420; --surface: #181E2A; --surface2: #1E2438;
+      --accent: #4EE8FF; --accent-light: #8AF3FF; --accent-dark: #22B8CC;
+      --ivory: #DCE8F0; --smoke: #8090A0; --muted: #506070; --border: #1A2234;
+      --font-serif: 'Bebas Neue', Impact, sans-serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px;
+    }
+    .preloader-logo { font-family: var(--font-serif); font-size: 2rem; letter-spacing: 0.18em; color: var(--ivory); text-transform: uppercase; }
+    .preloader-wave { display: flex; gap: 4px; align-items: center; height: 24px; }
+    .preloader-wave span { display: block; width: 3px; background: var(--accent); border-radius: 2px; animation: waveBar 1.2s ease-in-out infinite; }
+    .preloader-wave span:nth-child(1) { animation-delay: 0s; height: 8px; }
+    .preloader-wave span:nth-child(2) { animation-delay: 0.15s; height: 16px; }
+    .preloader-wave span:nth-child(3) { animation-delay: 0.3s; height: 24px; }
+    .preloader-wave span:nth-child(4) { animation-delay: 0.15s; height: 16px; }
+    .preloader-wave span:nth-child(5) { animation-delay: 0s; height: 8px; }
+    @keyframes waveBar { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+    .preloader-tagline { font-size: 0.68rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; font-family: var(--font-sans); }
+    .preloader-line { width: 180px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--accent); transition: width 1.8s ease; }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator {
+      position: fixed; left: 32px; bottom: 48px; z-index: 100;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; transition: opacity 0.6s;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-line { width: 1px; height: 48px; background: var(--muted); position: relative; overflow: hidden; }
+    .scroll-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent); animation: scrollDown 1.8s infinite; }
+    @keyframes scrollDown { 0% { top: -100%; } 100% { top: 100%; } }
+    .scroll-label { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; writing-mode: vertical-rl; }
+
+    /* NAVBAR */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 24px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s, padding 0.4s;
+    }
+    #navbar.scrolled { background: rgba(16,20,32,0.95); backdrop-filter: blur(12px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.3rem; letter-spacing: 0.14em; color: var(--ivory); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: color 0.2s; font-family: var(--font-sans); }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 9px 22px; font-family: var(--font-sans); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO TYPE F */
+    .hero { position: relative; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+    .hero-bg {
+      position: absolute; inset: -5%;
+      background-image: url('images/img-8.webp');
+      background-size: cover; background-position: center; filter: brightness(0.3);
+    }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(16,20,32,0.9) 50%, transparent); }
+    .hero-content { position: relative; z-index: 2; padding: 0 80px; max-width: 740px; }
+    .hero-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 18px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 8rem); line-height: 0.88; color: var(--ivory); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 20px; }
+    .hero-sub { color: var(--smoke); font-size: 1rem; margin-bottom: 36px; max-width: 480px; font-weight: 300; line-height: 1.6; }
+    .hero-widget { background: rgba(255,255,255,0.04); backdrop-filter: blur(16px); border: 1px solid rgba(78,232,255,0.15); border-radius: 6px; padding: 24px; max-width: 560px; }
+    .widget-label { font-size: 0.62rem; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 14px; }
+    .widget-search { display: flex; margin-bottom: 18px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .widget-search input { flex: 1; background: transparent; border: none; outline: none; color: var(--ivory); padding: 12px 18px; font-family: var(--font-sans); font-size: 0.9rem; }
+    .widget-search input::placeholder { color: var(--muted); }
+    .widget-search button { background: var(--accent); border: none; color: var(--bg); padding: 12px 22px; cursor: pointer; font-size: 1rem; font-weight: 700; font-family: var(--font-sans); transition: background 0.2s; }
+    .widget-search button:hover { background: var(--accent-light); }
+    .widget-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 0.7rem; letter-spacing: 0.05em; cursor: pointer; color: var(--smoke); transition: all 0.2s; font-family: var(--font-sans); }
+    .tag:hover, .tag.active { border-color: var(--accent); color: var(--accent); }
+
+    /* BUTTONS */
+    .btn-primary { display: inline-block; background: var(--accent); color: var(--bg); padding: 14px 36px; font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; font-weight: 500; transition: background 0.3s; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-outline { display: inline-block; border: 1px solid var(--accent); color: var(--accent); padding: 14px 36px; font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; font-weight: 500; transition: all 0.3s; }
+    .btn-outline:hover { background: var(--accent); color: var(--bg); }
+
+    /* STATS */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: clamp(2.4rem, 4vw, 3.6rem); color: var(--accent); letter-spacing: 0.05em; display: block; line-height: 1; }
+    .stat-label { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; margin-top: 8px; font-family: var(--font-sans); }
+
+    /* SECTION COMMON */
+    section { padding: 100px 80px; }
+    .section-label { font-size: 0.68rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 16px; display: block; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.4rem, 5vw, 4.2rem); color: var(--ivory); line-height: 0.95; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 24px; }
+    .section-body { font-size: 0.96rem; line-height: 1.75; color: var(--smoke); max-width: 600px; font-weight: 300; }
+    hr.section-rule { border: none; border-top: 1px solid var(--border); margin: 0 80px; }
+
+    /* PHILOSOPHY */
+    .philosophy { background: var(--bg); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 64px; }
+    .philosophy-card { background: var(--surface); padding: 44px 36px; border: 1px solid var(--border); transition: border-color 0.3s; }
+    .philosophy-card:hover { border-color: var(--accent); }
+    .philosophy-icon { font-family: var(--font-serif); font-size: 3.2rem; color: var(--accent); letter-spacing: 0.05em; margin-bottom: 20px; display: block; line-height: 1; }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ivory); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 14px; }
+    .philosophy-card p { font-size: 0.88rem; line-height: 1.7; color: var(--smoke); font-weight: 300; }
+
+    /* COLLECTION */
+    .collection { background: var(--surface); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 64px; overflow: visible; }
+    .collection-card { position: relative; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; }
+    .collection-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; filter: brightness(0.65); }
+    .collection-card:hover img { transform: scale(1.06); }
+    .collection-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(16,20,32,0.9) 30%, transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; }
+    .collection-tag { font-size: 0.64rem; letter-spacing: 0.25em; color: var(--accent); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 8px; }
+    .collection-title { font-family: var(--font-serif); font-size: 1.8rem; color: var(--ivory); letter-spacing: 0.05em; text-transform: uppercase; }
+    .collection-sub { font-size: 0.8rem; color: var(--smoke); margin-top: 6px; font-weight: 300; }
+
+    /* ATELIER */
+    .atelier { background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img { position: relative; }
+    .atelier-img img { width: 100%; height: 520px; object-fit: cover; filter: brightness(0.8); }
+    .atelier-img-accent { position: absolute; bottom: -20px; right: -20px; width: 50%; height: 50%; border: 1px solid var(--accent); z-index: -1; }
+    .atelier-content .section-body { max-width: 100%; }
+    .atelier-list { list-style: none; margin-top: 36px; display: flex; flex-direction: column; gap: 14px; }
+    .atelier-list li { display: flex; align-items: flex-start; gap: 16px; font-size: 0.88rem; color: var(--smoke); line-height: 1.6; font-weight: 300; }
+    .atelier-list li::before { content: '→'; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+    /* PROCESS */
+    .process { background: var(--surface); }
+    .process-header { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; align-items: start; margin-bottom: 72px; }
+    .process-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+    .step-card { background: var(--surface2); padding: 36px 28px; border: 1px solid var(--border); transition: border-color 0.3s; }
+    .step-card:hover { border-color: var(--accent); }
+    .step-num { font-family: var(--font-serif); font-size: 2.8rem; color: var(--accent); opacity: 0.4; display: block; line-height: 1; margin-bottom: 16px; }
+    .step-card h4 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px; }
+    .step-card p { font-size: 0.82rem; color: var(--smoke); line-height: 1.65; font-weight: 300; }
+
+    /* HERITAGE */
+    .heritage { background: var(--bg); }
+    .heritage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 64px; }
+    .heritage-card { padding: 40px 32px; border: 1px solid var(--border); background: var(--surface); transition: border-color 0.3s; }
+    .heritage-card:hover { border-color: var(--accent); }
+    .heritage-year { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); display: block; margin-bottom: 14px; }
+    .heritage-card h4 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px; }
+    .heritage-card p { font-size: 0.82rem; color: var(--smoke); line-height: 1.6; font-weight: 300; }
+
+    /* PRESS */
+    .press { background: var(--surface); overflow: hidden; }
+    .press-swiper { margin-top: 56px; }
+    .press-slide { padding: 48px 52px; background: var(--surface2); border: 1px solid var(--border); }
+    .press-quote { font-family: var(--font-sans); font-size: 1.05rem; color: var(--ivory); line-height: 1.7; font-weight: 300; font-style: italic; margin-bottom: 28px; }
+    .press-quote::before { content: '\201C'; color: var(--accent); font-size: 2rem; line-height: 0; vertical-align: -0.4em; margin-right: 6px; }
+    .press-source { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; font-family: var(--font-sans); }
+
+    /* CONTACT */
+    .contact { background: var(--bg); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .contact-form { display: grid; gap: 18px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-field { display: flex; flex-direction: column; gap: 8px; }
+    .form-field label { font-size: 0.68rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; font-family: var(--font-sans); }
+    .form-field input, .form-field textarea, .form-field select { background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; resize: none; -webkit-appearance: none; }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: var(--accent); }
+    .form-field textarea { min-height: 130px; }
+    .form-submit { width: 100%; background: var(--accent); color: var(--bg); border: none; padding: 16px; font-family: var(--font-sans); font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; cursor: pointer; transition: background 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+    .contact-info { padding-top: 20px; }
+    .contact-info-item { margin-bottom: 36px; }
+    .contact-info-label { font-size: 0.66rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 8px; }
+    .contact-info-value { font-size: 0.92rem; color: var(--smoke); line-height: 1.7; font-weight: 300; }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 64px 80px 40px; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 56px; }
+    .footer-brand p { font-size: 0.84rem; color: var(--muted); line-height: 1.65; font-weight: 300; max-width: 280px; margin-top: 14px; }
+    .footer-col h5 { font-size: 0.68rem; letter-spacing: 0.2em; color: var(--ivory); text-transform: uppercase; font-family: var(--font-sans); margin-bottom: 20px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 0.84rem; color: var(--muted); text-decoration: none; transition: color 0.2s; font-family: var(--font-sans); font-weight: 300; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.76rem; color: var(--muted); font-family: var(--font-sans); font-weight: 300; }
+    .footer-legal { display: flex; gap: 28px; }
+    .footer-legal a { font-size: 0.76rem; color: var(--muted); text-decoration: none; transition: color 0.2s; font-family: var(--font-sans); }
+    .footer-legal a:hover { color: var(--accent); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      #navbar { padding: 20px 32px; } #navbar.scrolled { padding: 14px 32px; }
+      .hero-content { padding: 0 40px; } section { padding: 80px 40px; }
+      .stats-strip { padding: 40px; grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: 1fr 1fr; } .collection-grid { grid-template-columns: 1fr; }
+      .atelier-inner { grid-template-columns: 1fr; } .process-header { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: repeat(3, 1fr); } .heritage-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-inner { grid-template-columns: 1fr; } .footer-top { grid-template-columns: 1fr 1fr; }
+      hr.section-rule { margin: 0 40px; }
+    }
+    @media (max-width: 768px) {
+      .hero-content { padding: 0 24px; max-width: 100%; } section { padding: 60px 24px; }
+      .nav-links { display: none; } .stats-strip { padding: 36px 24px; grid-template-columns: repeat(2, 1fr); }
+      .philosophy-grid { grid-template-columns: 1fr; } .process-steps { grid-template-columns: 1fr 1fr; }
+      .heritage-grid { grid-template-columns: 1fr 1fr; } .footer-top { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; } hr.section-rule { margin: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">FREQUENCY<span style="color:var(--accent)">.</span></div>
+    <div class="preloader-wave"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="preloader-tagline">Amateur Radio Club</div>
+    <div class="preloader-line"><div class="preloader-progress" id="preloader-bar"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">FREQUENCY<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#programs">Programs</a></li>
+      <li><a href="#bands">Bands</a></li>
+      <li><a href="#process">Training</a></li>
+      <li><a href="#heritage">History</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Join the Club</a>
+  </nav>
+
+  <!-- HERO TYPE F — INTERACTIVE WIDGET -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Est. 1962 · Licensed Operators · Global Network</div>
+      <h1 class="hero-title">FREQUENCY<br>RADIO<br>CLUB</h1>
+      <p class="hero-sub">Connecting Minds Across the Spectrum — from HF to microwave, emergency nets to digital modes.</p>
+      <div class="hero-widget">
+        <div class="widget-label">Search frequencies, events &amp; resources</div>
+        <div class="widget-search">
+          <input type="text" placeholder="e.g. 14.225 MHz, antenna workshop, FT8...">
+          <button>GO</button>
+        </div>
+        <div class="widget-tags">
+          <span class="tag active">HF/VHF</span>
+          <span class="tag">Digital Modes</span>
+          <span class="tag">Emergency Comms</span>
+          <span class="tag">Antenna Building</span>
+          <span class="tag">Satellites</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip" id="stats">
+    <div class="stat-item"><span class="stat-num">840+</span><div class="stat-label">Licensed Members</div></div>
+    <div class="stat-item"><span class="stat-num">47</span><div class="stat-label">Countries Contacted</div></div>
+    <div class="stat-item"><span class="stat-num">12</span><div class="stat-label">Repeater Nodes</div></div>
+    <div class="stat-item"><span class="stat-num">24/7</span><div class="stat-label">Emergency Net On-Air</div></div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="programs">
+    <span class="section-label">Our Purpose</span>
+    <h2 class="section-title">More Than<br>Radio Waves</h2>
+    <p class="section-body">Frequency Amateur Radio Club exists to advance the art and science of radio communication — fostering community, technical excellence, and public service through the spectrum.</p>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <span class="philosophy-icon">01</span>
+        <h3>HF Communications</h3>
+        <p>From 80 metres to 10 metres, our operators run DX expeditions, contest weekends, and nightly nets connecting continents using skill and atmospheric propagation.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="philosophy-icon">02</span>
+        <h3>Emergency Preparedness</h3>
+        <p>Our certified ARES team maintains trained operators and equipment for local emergency management, providing critical communications when infrastructure fails.</p>
+      </div>
+      <div class="philosophy-card">
+        <span class="philosophy-icon">03</span>
+        <h3>Technical Mastery</h3>
+        <p>Regular antenna construction workshops, SDR evenings, digital modes training, and elmer mentorship programs develop technical depth in every member.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="bands">
+    <span class="section-label">Operating Modes</span>
+    <h2 class="section-title">Across the<br>Entire Spectrum</h2>
+    <div class="collection-grid">
+      <div class="collection-card">
+        <img src="images/img-3.webp" alt="HF Station">
+        <div class="collection-overlay">
+          <span class="collection-tag">HF Station</span>
+          <div class="collection-title">High Frequency</div>
+          <div class="collection-sub">Long-haul voice, CW and data on 160m–10m bands</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <img src="images/img-4.webp" alt="Digital Modes">
+        <div class="collection-overlay">
+          <span class="collection-tag">Digital</span>
+          <div class="collection-title">Digital Modes</div>
+          <div class="collection-sub">FT8, JS8Call, APRS, Winlink and packet radio</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <img src="images/img-5.webp" alt="Emergency Net">
+        <div class="collection-overlay">
+          <span class="collection-tag">Emergency</span>
+          <div class="collection-title">ARES Network</div>
+          <div class="collection-sub">24/7 emergency net and community resilience operation</div>
+        </div>
+      </div>
+      <div class="collection-card">
+        <img src="images/img-6.webp" alt="Antenna Building">
+        <div class="collection-overlay">
+          <span class="collection-tag">Antenna</span>
+          <div class="collection-title">Antenna Workshop</div>
+          <div class="collection-sub">Yagi, dipole, EFHW and satellite antenna construction</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ATELIER -->
+  <section class="atelier" id="facilities">
+    <div class="atelier-inner">
+      <div class="atelier-img">
+        <img src="images/img-9.webp" alt="Club Station">
+        <div class="atelier-img-accent"></div>
+      </div>
+      <div class="atelier-content">
+        <span class="section-label">Club Shack</span>
+        <h2 class="section-title">Our Flagship<br>Station W0FRQ</h2>
+        <p class="section-body">Our fully equipped club station — call sign W0FRQ — operates 24 hours a day with licensed supervisors on-site during all scheduled activities. Members have access to a full arsenal of HF, VHF/UHF, and satellite gear.</p>
+        <ul class="atelier-list">
+          <li>Icom IC-7610 and Kenwood TS-890S transceivers</li>
+          <li>Three independently rotatable antenna systems</li>
+          <li>SDR receiver for spectrum monitoring and SIGINT practice</li>
+          <li>Winlink gateway and digital modes terminal</li>
+          <li>APRS digipeater and I-gate covering 40km radius</li>
+        </ul>
+        <div style="margin-top: 40px; display: flex; gap: 16px;">
+          <a href="about.html" class="btn-primary">About the Club</a>
+          <a href="collection.html" class="btn-outline">Browse Programs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- PROCESS TIMELINE -->
+  <section class="process" id="process">
+    <div class="process-header">
+      <div>
+        <span class="section-label">Getting Started</span>
+        <h2 class="section-title">Your Path to<br>Licensing</h2>
+      </div>
+      <p class="section-body">Whether you're brand new to radio or upgrading your existing license class, our elmer mentorship program and structured training pathway makes the journey achievable.</p>
+    </div>
+    <div class="process-steps">
+      <div class="step-card">
+        <span class="step-num">01</span>
+        <h4>Attend a Meeting</h4>
+        <p>Visit one of our monthly open-house evenings. Meet members, see the station, and get your questions answered with no obligation or pressure.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">02</span>
+        <h4>Study the Theory</h4>
+        <p>Access our member study portal with practice exams, video lessons, and elmer sessions covering regulations, propagation, and electronics.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">03</span>
+        <h4>Pass Your Exam</h4>
+        <p>We host Technician and General class exam sessions monthly. Our volunteer examiners guide you through registration and testing logistics.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">04</span>
+        <h4>Get on the Air</h4>
+        <p>Your callsign is issued — the real adventure begins. Make your first contact on our nightly net, try your first DX, or log your first contest QSO.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">05</span>
+        <h4>Give Back</h4>
+        <p>Volunteer for ARES activations, run an antenna workshop, help a newcomer study for their ticket. Giving back is how our community stays strong.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <span class="section-label">Our History</span>
+    <h2 class="section-title">Six Decades<br>on the Air</h2>
+    <div class="heritage-grid">
+      <div class="heritage-card">
+        <span class="heritage-year">1962</span>
+        <h4>Charter Founded</h4>
+        <p>Frequency ARC founded by 14 licensed operators. Club callsign W0FRQ issued by the FCC the following month. First net runs on 40 metres.</p>
+      </div>
+      <div class="heritage-card">
+        <span class="heritage-year">1978</span>
+        <h4>Emergency Net Launch</h4>
+        <p>Partnership with local emergency management formalised. W0FRQ net activated during the regional ice storm, providing 72 hours of emergency traffic handling.</p>
+      </div>
+      <div class="heritage-card">
+        <span class="heritage-year">2003</span>
+        <h4>Digital Revolution</h4>
+        <p>Club station upgraded with PSK31 and RTTY capability. Early adoption of Winlink and APRS positions us as regional digital-mode leaders.</p>
+      </div>
+      <div class="heritage-card">
+        <span class="heritage-year">2021</span>
+        <h4>Satellite Operations</h4>
+        <p>Installation of dual-band satellite tracking antenna enables QSOs through FO-29, SO-50, and ISS. Club becomes regional satellite contact centre.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- PRESS SWIPER -->
+  <section class="press" id="press">
+    <span class="section-label">Community Voice</span>
+    <h2 class="section-title">What Our<br>Members Say</h2>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide press-slide">
+          <p class="press-quote">Joining Frequency ARC was the single best decision I've made as a ham. The elmers here genuinely care — they helped me go from zero radio experience to Extra class in under a year.</p>
+          <div class="press-source">K7WXV — Extra Class, joined 2019</div>
+        </div>
+        <div class="swiper-slide press-slide">
+          <p class="press-quote">During the 2022 winter storm, the ARES team had emergency communications running within 90 minutes of request. The professionalism and preparedness of this group is outstanding.</p>
+          <div class="press-source">County Emergency Management Coordinator</div>
+        </div>
+        <div class="swiper-slide press-slide">
+          <p class="press-quote">The antenna workshop changed my entire approach to the hobby. I built a 40m EFHW in one afternoon and worked 22 countries that same evening. The knowledge in this club is remarkable.</p>
+          <div class="press-source">W0NDB — General Class, joined 2023</div>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="margin-top: 24px; position: static;"></div>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- CONTACT FORM -->
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <div>
+        <span class="section-label">Join the Net</span>
+        <h2 class="section-title">Become a<br>Member</h2>
+        <p class="section-body">Whether you hold an amateur license or are still studying for your first ticket, Frequency ARC welcomes you. Fill out the form and we'll be in touch within 48 hours.</p>
+        <form class="contact-form" style="margin-top: 44px;">
+          <div class="form-row">
+            <div class="form-field"><label>First Name</label><input type="text" placeholder="Marcus"></div>
+            <div class="form-field"><label>Last Name</label><input type="text" placeholder="Okafor"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-field"><label>Email Address</label><input type="email" placeholder="m.okafor@email.com"></div>
+            <div class="form-field"><label>Callsign (if licensed)</label><input type="text" placeholder="W0XYZ (optional)"></div>
+          </div>
+          <div class="form-field">
+            <label>License Class</label>
+            <select><option>Not yet licensed</option><option>Technician</option><option>General</option><option>Extra</option></select>
+          </div>
+          <div class="form-field">
+            <label>Areas of Interest</label>
+            <textarea placeholder="Tell us what interests you — HF, digital modes, emergency comms, antennas, contesting..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">Send Membership Enquiry</button>
+        </form>
+      </div>
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <div class="contact-info-label">Club Station</div>
+          <div class="contact-info-value">Frequency ARC — W0FRQ<br>Radio House, 4441 Spectrum Drive<br>Clearview, OH 44101</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-label">General Enquiries</div>
+          <div class="contact-info-value">info@frequency-arc.org<br>+1 (440) 555-0173</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-label">Club Net — Nightly</div>
+          <div class="contact-info-value">147.195 MHz (+600 PL 100.0)<br>Every evening at 20:00 local time</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-label">Meeting Schedule</div>
+          <div class="contact-info-value">2nd Tuesday of each month: 19:30<br>Open to all — members and visitors welcome</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-label">Annual Dues</div>
+          <div class="contact-info-value">Full membership: $40/year<br>Student/YL rate: $20/year</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">FREQUENCY<span style="color:var(--accent)">.</span></a>
+        <p>Frequency Amateur Radio Club — connecting operators across HF, VHF, and digital modes since 1962. Join our growing community of radio enthusiasts.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Programs</h5>
+        <ul>
+          <li><a href="collection.html">HF Operations</a></li>
+          <li><a href="collection.html">Digital Modes</a></li>
+          <li><a href="collection.html">Emergency ARES</a></li>
+          <li><a href="collection.html">Antenna Workshop</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Club</h5>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="about.html">Leadership</a></li>
+          <li><a href="process.html">Get Licensed</a></li>
+          <li><a href="about.html">Membership</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">Band Plan</a></li>
+          <li><a href="#">Repeater Status</a></li>
+          <li><a href="#">Logbook</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 Frequency Amateur Radio Club W0FRQ. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">73 &amp; DX</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    class SplitText {
+      constructor(target, options={}) {
+        this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+        this.chars = []; this.words = [];
+        this.originals = this.elements.map(el => el.innerHTML);
+        this.elements.forEach(el => this._split(el, options.type || 'words'));
+      }
+      _split(el, type) {
+        const text = el.textContent.trim(); el.innerHTML = '';
+        text.split(/\s+/).forEach((word, wi, arr) => {
+          const wSpan = document.createElement('span');
+          wSpan.className = 'split-word'; wSpan.style.display = 'inline-block';
+          if (type.includes('chars')) {
+            [...word].forEach(ch => {
+              const c = document.createElement('span'); c.className = 'split-char';
+              c.style.display = 'inline-block'; c.textContent = ch;
+              wSpan.appendChild(c); this.chars.push(c);
+            });
+          } else { wSpan.textContent = word; }
+          this.words.push(wSpan); el.appendChild(wSpan);
+          if (wi < arr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+        });
+      }
+      revert() { this.elements.forEach((el, i) => el.innerHTML = this.originals[i]); }
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const bar = document.getElementById('preloader-bar');
+      bar.style.width = '100%';
+      setTimeout(() => {
+        gsap.to('#preloader', {
+          opacity: 0, duration: 0.8, onComplete: () => {
+            document.getElementById('preloader').style.display = 'none';
+            document.getElementById('scroll-indicator').classList.add('visible');
+          }
+        });
+        gsap.from('.hero-eyebrow', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.1 });
+        gsap.from('.hero-title', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.2 });
+        gsap.from('.hero-sub', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.32 });
+        gsap.from('.hero-widget', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.44 });
+      }, 2000);
+      setTimeout(() => { document.getElementById('scroll-indicator').classList.add('visible'); }, 4000);
+    });
+
+    const navbarEl = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) navbarEl.classList.add('scrolled');
+      else navbarEl.classList.remove('scrolled');
+    });
+
+    document.querySelectorAll('.tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+      });
+    });
+
+    gsap.from('.stat-item', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.04, scrollTrigger: { trigger: '.stats-strip', start: 'top 85%', once: true } });
+    gsap.from('.philosophy-card', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true } });
+    gsap.from('.collection-card', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true } });
+    gsap.from('.atelier-img', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', scrollTrigger: { trigger: '.atelier-inner', start: 'top 85%', once: true } });
+    gsap.from('.atelier-content', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', delay: 0.12, scrollTrigger: { trigger: '.atelier-inner', start: 'top 85%', once: true } });
+    gsap.from('.step-card', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.04, scrollTrigger: { trigger: '.process-steps', start: 'top 85%', once: true } });
+    gsap.from('.heritage-card', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.06, scrollTrigger: { trigger: '.heritage-grid', start: 'top 85%', once: true } });
+    gsap.from('.press-swiper', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', scrollTrigger: { trigger: '.press-swiper', start: 'top 85%', once: true } });
+    gsap.from('.contact-inner > *', { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.contact-inner', start: 'top 85%', once: true } });
+    gsap.utils.toArray('.section-label, .section-title').forEach(el => {
+      gsap.from(el, { immediateRender: false, x: -20, duration: 0.75, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+    });
+
+    new Swiper('.press-swiper', {
+      slidesPerView: 1, spaceBetween: 2, loop: true,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 1024: { slidesPerView: 2 } }
+    });
+  </script>
+</body>
+</html>

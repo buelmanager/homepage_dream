@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VULCAN GEOTHERMAL — Luxury Geothermal Energy Solutions</title>
+  <meta name="description" content="Vulcan Geothermal harnesses the Earth's primal heat to deliver luxury-grade geothermal energy solutions for estates, resorts, and critical infrastructure.">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:#1C1008; --surface:#261608; --surface2:#2E1C0A;
+      --accent:#D4612A; --accent-light:#E8884A; --accent-dark:#9C3C14;
+      --ivory:#F0E4DC; --smoke:#A07860; --muted:#604840; --border:#201408;
+      --font-serif: 'Cinzel', 'Times New Roman', serif;
+      --font-sans: 'Crimson Pro', Georgia, serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .preloader-logo { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 400; letter-spacing: 0.4em; color: var(--accent); margin-bottom: 24px; }
+    .preloader-bar { width: 200px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-bar-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--accent); }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; opacity: 0; transition: opacity 0.6s; }
+    #scroll-indicator.visible { opacity: 1; }
+    .scroll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, var(--accent), transparent); }
+    .scroll-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--smoke); text-transform: uppercase; }
+    .scroll-progress { position: fixed; left: 32px; top: 0; width: 1px; height: 0%; background: var(--accent); z-index: 99; }
+
+    /* NAVBAR */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 500; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+    .navbar.scrolled { background: rgba(28,16,8,0.92); backdrop-filter: blur(16px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 400; letter-spacing: 0.25em; color: var(--ivory); text-decoration: none; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; font-family: var(--font-serif); transition: color 0.3s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { border: 1px solid var(--accent); color: var(--accent); padding: 10px 28px; font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; text-decoration: none; transition: all 0.3s; }
+    .nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+    /* HERO TYPE C — Diagonal Split */
+    .hero { position: relative; width: 100%; height: 100vh; display: flex; overflow: hidden; }
+    .hero-left {
+      width: 50%; background: var(--bg); display: flex; align-items: center;
+      padding: 0 60px 0 80px; position: relative; z-index: 2;
+      clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+    }
+    .hero-right { flex: 1; position: relative; }
+    .hero-img { position: absolute; inset: 0; background-image: url('images/hero-1.webp'); background-size: cover; background-position: center; filter: brightness(0.7); }
+    .hero-right-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(28,16,8,0.6) 0%, transparent 60%); }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-eyebrow { font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 400; line-height: 1.1; color: var(--ivory); margin-bottom: 28px; }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub { font-size: 1.1rem; font-weight: 300; line-height: 1.8; color: var(--smoke); max-width: 400px; margin-bottom: 40px; }
+    .hero-ctas { display: flex; flex-direction: column; gap: 14px; max-width: 280px; }
+    .btn-primary { background: var(--accent); color: var(--bg); padding: 16px 32px; font-family: var(--font-serif); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; transition: background 0.3s; text-align: center; display: block; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-ghost { border: 1px solid var(--smoke); color: var(--smoke); padding: 16px 32px; font-family: var(--font-serif); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; text-align: center; display: block; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-diagonal-decor { position: absolute; bottom: 40px; right: 40px; z-index: 3; text-align: right; }
+    .hero-decor-text { font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.3em; color: var(--ivory); opacity: 0.6; }
+
+    /* STATS */
+    .stats-strip { background: var(--surface); padding: 60px; display: grid; grid-template-columns: repeat(4,1fr); gap: 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-serif); font-size: 3rem; color: var(--accent); display: block; line-height: 1; }
+    .stat-unit { font-size: 1.4rem; color: var(--accent-dark); }
+    .stat-label { display: block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; font-family: var(--font-serif); }
+
+    /* PHILOSOPHY */
+    .philosophy { padding: 120px 60px; background: var(--bg); }
+    .section-header { margin-bottom: 72px; }
+    .section-eyebrow { font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 4rem); font-weight: 400; color: var(--ivory); line-height: 1.2; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    .philosophy-card { padding: 44px 36px; background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); }
+    .philosophy-card h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; letter-spacing: 0.1em; color: var(--ivory); margin-bottom: 16px; }
+    .philosophy-card p { font-size: 1rem; line-height: 1.8; color: var(--smoke); }
+
+    /* PROJECTS GRID */
+    .projects { padding: 120px 60px; background: var(--surface); }
+    .projects-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; overflow: visible; margin-top: 60px; }
+    .project-card { position: relative; aspect-ratio: 4/3; overflow: hidden; cursor: pointer; }
+    .project-card:nth-child(2) { transform: translateY(32px); }
+    .project-card:nth-child(4) { transform: translateY(-24px); }
+    .project-img { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.65); transition: transform 0.7s, filter 0.4s; }
+    .project-card:hover .project-img { transform: scale(1.05); filter: brightness(0.85); }
+    .project-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 28px 28px; background: linear-gradient(transparent, rgba(28,16,8,0.96)); }
+    .project-category { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .project-title { font-family: var(--font-serif); font-size: 1.3rem; color: var(--ivory); }
+    .project-detail { font-size: 0.85rem; color: var(--smoke); margin-top: 4px; }
+
+    /* ATELIER */
+    .atelier { padding: 120px 60px; background: var(--bg); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-image { position: relative; aspect-ratio: 4/5; overflow: hidden; }
+    .atelier-img { width: 100%; height: 100%; background-size: cover; background-position: center; filter: brightness(0.8); transition: transform 0.8s; }
+    .atelier-image:hover .atelier-img { transform: scale(1.04); }
+    .atelier-accent { position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border: 2px solid var(--accent); pointer-events: none; }
+    .atelier-content p { font-size: 1.05rem; line-height: 1.9; color: var(--smoke); margin-bottom: 20px; }
+    .atelier-stats { display: flex; gap: 40px; margin-top: 40px; }
+    .atelier-stat-label { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .atelier-stat-value { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); }
+
+    /* PROCESS */
+    .process { padding: 120px 60px; background: var(--surface); }
+    .process-steps { margin-top: 60px; position: relative; }
+    .process-line { position: absolute; left: 24px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 0 0 56px; position: relative; }
+    .process-step-num { width: 48px; height: 48px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1rem; color: var(--accent); background: var(--surface); position: relative; z-index: 2; }
+    .process-step-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--ivory); margin-bottom: 10px; margin-top: 8px; }
+    .process-step-desc { font-size: 0.95rem; line-height: 1.8; color: var(--smoke); }
+
+    /* HERITAGE */
+    .heritage { padding: 120px 60px; background: var(--bg); }
+    .heritage-timeline { margin-top: 60px; }
+    .heritage-item { display: grid; grid-template-columns: 140px 1fr; gap: 40px; padding: 36px 0; border-bottom: 1px solid var(--border); }
+    .heritage-year { font-family: var(--font-serif); font-size: 1.8rem; color: var(--accent); }
+    .heritage-content h3 { font-family: var(--font-serif); font-size: 1.1rem; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-content p { font-size: 0.95rem; line-height: 1.7; color: var(--smoke); }
+
+    /* PRESS */
+    .press { padding: 120px 60px; background: var(--surface); }
+    .press-swiper { margin-top: 60px; }
+    .press-slide { padding: 48px; background: var(--surface2); border: 1px solid var(--border); }
+    .press-quote { font-size: 1.15rem; font-style: italic; line-height: 1.8; color: var(--ivory); margin-bottom: 28px; }
+    .press-source { font-family: var(--font-serif); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .swiper-pagination-bullet { background: var(--smoke); }
+    .swiper-pagination-bullet-active { background: var(--accent); }
+
+    /* COMMISSION */
+    .commission { padding: 120px 60px; background: var(--bg); }
+    .commission-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .commission-info p { font-size: 1.05rem; line-height: 1.8; color: var(--smoke); margin-bottom: 24px; }
+    .commission-details { display: flex; flex-direction: column; gap: 14px; margin-top: 32px; }
+    .commission-detail-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .commission-detail-label { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .commission-detail-value { font-size: 0.9rem; color: var(--ivory); }
+    .commission-form { display: flex; flex-direction: column; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+    .form-group input, .form-group select, .form-group textarea { background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 1rem; outline: none; transition: border-color 0.3s; resize: none; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-submit { background: var(--accent); color: var(--bg); border: none; padding: 16px 44px; font-family: var(--font-serif); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; }
+    .form-submit:hover { background: var(--accent-light); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 60px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.2rem; letter-spacing: 0.25em; color: var(--ivory); margin-bottom: 14px; }
+    .footer-desc { font-size: 0.9rem; line-height: 1.7; color: var(--smoke); }
+    .footer-col h4 { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { color: var(--smoke); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo">VULCAN</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="preloader-fill"></div></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"></div>
+    <div class="scroll-label">Scroll</div>
+  </div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">VULCAN GEOTHERMAL</a>
+    <ul class="nav-links">
+      <li><a href="about.html">Laboratory</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="process.html">Science</a></li>
+      <li><a href="contact.html">Collaborate</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta">Enquire</a>
+  </nav>
+
+  <!-- HERO TYPE C — Diagonal Split -->
+  <section class="hero" id="hero">
+    <div class="hero-left">
+      <div class="hero-content">
+        <div class="hero-eyebrow">Luxury Geothermal Energy Solutions</div>
+        <h1 class="hero-title">The Earth's<br><em>Primal</em><br>Power</h1>
+        <p class="hero-sub">Vulcan Geothermal harnesses the planet's own heat to deliver reliable, sustainable energy for estates, resorts, and critical infrastructure — engineered with scientific precision.</p>
+        <div class="hero-ctas">
+          <a href="projects.html" class="btn-primary">View Projects</a>
+          <a href="contact.html" class="btn-ghost">Discuss Your Site</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-img"></div>
+      <div class="hero-right-overlay"></div>
+      <div class="hero-diagonal-decor">
+        <div class="hero-decor-text">Est. 2008 — Geothermal Science</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <section class="stats-strip">
+    <div class="stat-item"><span class="stat-num" data-target="47">0</span><span class="stat-label">Installations Worldwide</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="820">0</span><span class="stat-unit">GWh</span><span class="stat-label">Annual Generation</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="16">0</span><span class="stat-label">Years of Expertise</span></div>
+    <div class="stat-item"><span class="stat-num" data-target="99">0</span><span class="stat-unit">%</span><span class="stat-label">Baseload Availability</span></div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="section-header">
+      <div class="section-eyebrow">Our Science</div>
+      <h2 class="section-title">Earth's Heat,<br>Precisely Harnessed</h2>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card">
+        <h3>Geological Mastery</h3>
+        <p>Our geoscientists map subsurface heat flow, permeability, and fluid chemistry to identify and characterise geothermal reservoirs with exceptional accuracy before any drilling begins.</p>
+      </div>
+      <div class="philosophy-card">
+        <h3>Drilling Excellence</h3>
+        <p>Partnering with the world's foremost geothermal drilling contractors, Vulcan delivers wells to specification — on depth, on deviation, and on budget — in environments from Iceland to Indonesia.</p>
+      </div>
+      <div class="philosophy-card">
+        <h3>Power Plant Elegance</h3>
+        <p>Our binary and flash power plant designs integrate seamlessly with the local landscape — compact, quietly operating, and generating clean baseload electricity around the clock.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS GRID -->
+  <section class="projects" id="projects">
+    <div class="section-header">
+      <div class="section-eyebrow">Selected Projects</div>
+      <h2 class="section-title">Geothermal<br>Masterworks</h2>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-1.webp');"></div><div class="project-info"><div class="project-category">Luxury Estate</div><div class="project-title">Hellisheidi Estate</div><div class="project-detail">8MW Binary Cycle — Southwest Iceland</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-2.webp');"></div><div class="project-info"><div class="project-category">Resort</div><div class="project-title">Rotorua Lodge</div><div class="project-detail">2.4MW Direct-Use Heating — New Zealand</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-3.webp');"></div><div class="project-info"><div class="project-category">Commercial</div><div class="project-title">Vulcanus Industrial Park</div><div class="project-detail">22MW Flash Plant — Tuscany, Italy</div></div></div>
+      <div class="project-card"><div class="project-img" style="background-image: url('images/product-4.webp');"></div><div class="project-info"><div class="project-category">Community</div><div class="project-title">Akureyri District Heat</div><div class="project-detail">40MWth District Heating — North Iceland</div></div></div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier">
+    <div class="atelier-image">
+      <div class="atelier-img" style="background-image: url('images/workspace-1.webp');"></div>
+      <div class="atelier-accent"></div>
+    </div>
+    <div class="atelier-content">
+      <div class="section-eyebrow">The Laboratory</div>
+      <h2 class="section-title" style="margin-bottom:24px;">Where Earth Science<br>Becomes Power</h2>
+      <p>Vulcan Geothermal was founded in 2008 by a team of volcanologists, reservoir engineers, and power plant designers united by a belief that the earth beneath us holds unlimited, reliable clean energy.</p>
+      <p>Our laboratory in Reykjavik integrates geological survey, reservoir modelling, plant design, and environmental science under one roof — accelerating project development from concept to commissioning.</p>
+      <div class="atelier-stats">
+        <div><div class="atelier-stat-label">Capacity Factor</div><div class="atelier-stat-value">92%+</div></div>
+        <div><div class="atelier-stat-label">CO₂ Intensity</div><div class="atelier-stat-value">&lt;40g/kWh</div></div>
+        <div><div class="atelier-stat-label">Plant Life</div><div class="atelier-stat-value">50+ years</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process">
+    <div class="section-header">
+      <div class="section-eyebrow">Development Methodology</div>
+      <h2 class="section-title">From Geology<br>to Gigawatts</h2>
+    </div>
+    <div class="process-steps">
+      <div class="process-line"></div>
+      <div class="process-step"><div class="process-step-num">I</div><div><div class="process-step-title">Surface Exploration</div><p class="process-step-desc">Geological mapping, geochemical sampling, and geophysical surveys establish the preliminary resource model for your site.</p></div></div>
+      <div class="process-step"><div class="process-step-num">II</div><div><div class="process-step-title">Reservoir Characterisation</div><p class="process-step-desc">Slim-hole and exploration wells confirm reservoir temperature, permeability, and chemistry to enable bankable resource estimates.</p></div></div>
+      <div class="process-step"><div class="process-step-num">III</div><div><div class="process-step-title">Plant & Well Design</div><p class="process-step-desc">Our engineers design the optimal power plant configuration — binary cycle, flash, or direct-use — matched precisely to reservoir characteristics.</p></div></div>
+      <div class="process-step"><div class="process-step-num">IV</div><div><div class="process-step-title">Drilling & Construction</div><p class="process-step-desc">Production well drilling and power plant construction executed with surgical precision, minimising surface impact and maximising well productivity.</p></div></div>
+      <div class="process-step" style="padding-bottom:0"><div class="process-step-num">V</div><div><div class="process-step-title">Operations & Reservoir Management</div><p class="process-step-desc">Continuous reservoir monitoring, injection optimisation, and predictive maintenance ensure that your geothermal plant delivers baseload power for decades.</p></div></div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage">
+    <div class="section-header">
+      <div class="section-eyebrow">Our Chronicle</div>
+      <h2 class="section-title">A Legacy Written<br>in the Earth</h2>
+    </div>
+    <div class="heritage-timeline">
+      <div class="heritage-item"><div class="heritage-year">2008</div><div class="heritage-content"><h3>Vulcan Founded in Reykjavik</h3><p>Three volcanologists establish Vulcan Geothermal with a vision to bring Icelandic geothermal expertise to the global market.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2011</div><div class="heritage-content"><h3>First International Project</h3><p>The Wairakei expansion in New Zealand delivers Vulcan's first international binary cycle plant — a 6MW addition to an existing steam field.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2016</div><div class="heritage-content"><h3>East Africa Development</h3><p>Vulcan enters the East African Rift with a 40MW development in Kenya, establishing the studio as a truly global geothermal operator.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2020</div><div class="heritage-content"><h3>Enhanced Geothermal Systems</h3><p>Vulcan's EGS research programme achieves first-of-kind power generation from engineered reservoirs in granite — opening new global geothermal potential.</p></div></div>
+      <div class="heritage-item"><div class="heritage-year">2025</div><div class="heritage-content"><h3>Global Portfolio Milestone</h3><p>47 installations across 12 countries generating over 820GWh annually — powering the equivalent of 200,000 homes with clean, reliable baseload energy.</p></div></div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press">
+    <div class="section-header">
+      <div class="section-eyebrow">Recognition</div>
+      <h2 class="section-title">Words from<br>Our Peers</h2>
+    </div>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"Vulcan Geothermal represents the vanguard of geothermal development globally. Their scientific rigour, combined with genuine operational excellence, sets a standard that the industry aspires to."</p><div class="press-source">International Geothermal Association — Innovation Award, 2024</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"The Hellisheidi Estate project redefined what is possible in geothermal energy for private clients. The integration of power generation into the landscape was extraordinary in its discretion and elegance."</p><div class="press-source">World Architecture News — Energy Category, 2023</div></div></div>
+        <div class="swiper-slide"><div class="press-slide"><p class="press-quote">"For institutional investors seeking true baseload renewable assets, Vulcan's project portfolio offers what wind and solar simply cannot: 24/7 clean power with a 50-year asset life."</p><div class="press-source">Bloomberg Green — Geothermal Renaissance, 2024</div></div></div>
+      </div>
+      <div class="swiper-pagination" style="margin-top:28px; position:relative;"></div>
+    </div>
+  </section>
+
+  <!-- COMMISSION FORM -->
+  <section class="commission">
+    <div class="commission-inner">
+      <div class="commission-info">
+        <div class="section-eyebrow">Collaborate</div>
+        <h2 class="section-title" style="margin-bottom:20px;">Begin the<br>Geological Study</h2>
+        <p>Whether your project is a luxury estate seeking thermal comfort, or a utility seeking baseload power, our geoscientists will provide an honest assessment of your site's geothermal potential.</p>
+        <div class="commission-details">
+          <div class="commission-detail-item"><div class="commission-detail-label">Laboratory</div><div class="commission-detail-value">Austurvegur 24, 800 Selfoss, Iceland</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Email</div><div class="commission-detail-value">science@vulcangeothermal.com</div></div>
+          <div class="commission-detail-item"><div class="commission-detail-label">Response</div><div class="commission-detail-value">Within 3 business days</div></div>
+        </div>
+      </div>
+      <form class="commission-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>Given Name</label><input type="text" placeholder="Sigríður"></div>
+          <div class="form-group"><label>Family Name</label><input type="text" placeholder="Björnsdóttir"></div>
+        </div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="sigridur@organisation.is"></div>
+        <div class="form-group"><label>Project Type</label><select><option>Luxury Estate — Direct Use</option><option>Resort Heating</option><option>Commercial Power Generation</option><option>Enhanced Geothermal (EGS)</option><option>District Heating</option></select></div>
+        <div class="form-group"><label>Site Location</label><input type="text" placeholder="Country and region"></div>
+        <div class="form-group"><label>Project Brief</label><textarea rows="4" placeholder="Describe your geothermal opportunity..."></textarea></div>
+        <button type="submit" class="form-submit">Submit Enquiry</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">VULCAN GEOTHERMAL</div>
+        <p class="footer-desc">Luxury geothermal energy solutions crafted with geological precision. Harnessing the Earth's primal heat since 2008.</p>
+      </div>
+      <div class="footer-col"><h4>Laboratory</h4><ul><li><a href="about.html">About</a></li><li><a href="about.html#team">Scientists</a></li><li><a href="about.html#values">Values</a></li></ul></div>
+      <div class="footer-col"><h4>Work</h4><ul><li><a href="projects.html">Projects</a></li><li><a href="process.html">Science</a></li><li><a href="process.html#eas">EGS Research</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li><a href="contact.html">Collaborate</a></li><li><a href="mailto:science@vulcangeothermal.com">Email</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 Vulcan Geothermal Laboratory. All rights reserved.</span>
+      <div style="width:40px;height:1px;background:var(--accent);"></div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    class SplitText {
+      constructor(t, o={}) { const e=typeof t==='string'?document.querySelector(t):(t instanceof Element?t:null); this.chars=[];this.words=[];this.lines=[]; if(!e)return; this._el=e; const tp=(o.type||'chars,words').toLowerCase(); const orig=e.textContent; e.setAttribute('data-split-orig',orig); if(tp.includes('chars')){e.innerHTML=orig.split('').map(c=>c===' '?'<span class="char" style="display:inline-block">&nbsp;</span>':`<span class="char" style="display:inline-block">${c}</span>`).join('');this.chars=Array.from(e.querySelectorAll('.char'));}else if(tp.includes('words')){e.innerHTML=orig.split(' ').filter(w=>w.length>0).map(w=>`<span class="word" style="display:inline-block;margin-right:0.25em">${w}</span>`).join('');this.words=Array.from(e.querySelectorAll('.word'));}this.lines=[e];}
+      revert(){if(this._el){const o=this._el.getAttribute('data-split-orig');if(o)this._el.textContent=o;}}
+    }
+    gsap.registerPlugin(ScrollTrigger);
+
+    const fill = document.getElementById('preloader-fill');
+    let prog = 0;
+    const iv = setInterval(()=>{prog+=Math.random()*15;if(prog>=100){prog=100;clearInterval(iv);}fill.style.width=prog+'%';},80);
+    window.addEventListener('load',()=>{
+      clearInterval(iv);fill.style.width='100%';
+      setTimeout(()=>{
+        gsap.to('#preloader',{opacity:0,duration:0.6,onComplete:()=>{
+          document.getElementById('preloader').style.display='none';
+          document.getElementById('scroll-indicator').classList.add('visible');
+          animateHero();
+        }});
+      },400);
+    });
+    setTimeout(()=>{document.getElementById('scroll-indicator')?.classList.add('visible');},4000);
+
+    window.addEventListener('scroll',()=>{
+      if(window.scrollY>60)document.getElementById('navbar').classList.add('scrolled');
+      else document.getElementById('navbar').classList.remove('scrolled');
+      const total=document.documentElement.scrollHeight-window.innerHeight;
+      document.getElementById('scroll-progress').style.height=(window.scrollY/total*100)+'%';
+    });
+
+    function animateHero() {
+      const dur = ()=>0.9+Math.random()*0.5; const dy = ()=>20+Math.random()*8;
+      gsap.from('.hero-eyebrow',{immediateRender:false,opacity:0,y:dy(),duration:dur(),ease:'power2.out'});
+      gsap.from('.hero-title',{immediateRender:false,opacity:0,y:dy(),duration:dur(),ease:'power2.out',delay:0.15,stagger:0.09});
+      gsap.from('.hero-sub',{immediateRender:false,opacity:0,y:dy(),duration:dur(),ease:'power2.out',delay:0.3,stagger:0.09});
+      gsap.from('.hero-ctas',{immediateRender:false,opacity:0,y:dy(),duration:dur(),ease:'power2.out',delay:0.45,stagger:0.09});
+      gsap.from('.hero-right',{immediateRender:false,opacity:0,x:40,duration:1.2,ease:'power2.out'});
+    }
+
+    document.querySelectorAll('.stat-num').forEach(el=>{
+      gsap.from(el,{immediateRender:false,textContent:0,duration:2.5,ease:'power2.out',snap:{textContent:1},scrollTrigger:{trigger:el,start:'top 85%',once:true}});
+    });
+    gsap.from('.philosophy-card',{immediateRender:false,opacity:0,y:()=>20+Math.random()*8,duration:()=>1+Math.random()*0.4,ease:'power2.out',stagger:0.09,scrollTrigger:{trigger:'.philosophy-grid',start:'top 85%'}});
+    gsap.from('.project-card',{immediateRender:false,opacity:0,y:()=>20+Math.random()*8,duration:()=>1+Math.random()*0.4,ease:'power2.out',stagger:0.09,scrollTrigger:{trigger:'.projects-grid',start:'top 85%'}});
+    gsap.from('.atelier-image',{immediateRender:false,opacity:0,x:-28,duration:1.1,ease:'power2.out',scrollTrigger:{trigger:'.atelier',start:'top 85%'}});
+    gsap.from('.atelier-content',{immediateRender:false,opacity:0,x:28,duration:1.1,ease:'power2.out',scrollTrigger:{trigger:'.atelier',start:'top 85%'}});
+    gsap.from('.process-step',{immediateRender:false,opacity:0,x:-20,duration:()=>1+Math.random()*0.4,ease:'power2.out',stagger:0.09,scrollTrigger:{trigger:'.process-steps',start:'top 85%'}});
+    gsap.from('.heritage-item',{immediateRender:false,opacity:0,y:()=>20+Math.random()*8,duration:()=>1+Math.random()*0.4,ease:'power2.out',stagger:0.09,scrollTrigger:{trigger:'.heritage-timeline',start:'top 85%'}});
+    document.querySelectorAll('.section-header').forEach(h=>{gsap.from(h,{immediateRender:false,opacity:0,y:24,duration:1.0,ease:'power2.out',scrollTrigger:{trigger:h,start:'top 85%'}});});
+
+    new Swiper('.press-swiper',{slidesPerView:1,spaceBetween:24,loop:true,autoplay:{delay:5000},pagination:{el:'.swiper-pagination',clickable:true}});
+  </script>
+</body>
+</html>

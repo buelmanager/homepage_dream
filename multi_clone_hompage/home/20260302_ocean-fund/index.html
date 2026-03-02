@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pelagic Ocean Fund — Restoring the Living Sea</title>
+  <meta name="description" content="Pelagic Ocean Fund drives ocean restoration, marine ecosystem protection, and plastic cleanup initiatives worldwide. Join us in restoring the living sea.">
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=Mulish:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A1818;
+      --surface: #0F2020;
+      --surface2: #142828;
+      --accent: #4DCFB0;
+      --accent-light: #7ADFC8;
+      --accent-dark: #2A9A80;
+      --ivory: #DCEFEC;
+      --smoke: #809890;
+      --muted: #4A6860;
+      --border: #0C1E1E;
+      --font-serif: 'Spectral', Georgia, serif;
+      --font-sans: 'Mulish', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+    .preloader-mark svg { width: 80px; height: 80px; }
+    .preloader-mark svg circle, .preloader-mark svg path { stroke: var(--accent); stroke-width: 1.5; fill: none; stroke-dasharray: 300; stroke-dashoffset: 300; }
+    .preloader-name { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300; color: var(--ivory); letter-spacing: 0.15em; text-transform: uppercase; }
+    .preloader-line { width: 120px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-line::after { content: ''; position: absolute; left: -100%; top: 0; height: 100%; width: 100%; background: var(--accent); animation: lineLoad 1.8s ease forwards 0.5s; }
+    @keyframes lineLoad { to { left: 100%; } }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.6s ease; }
+    #scroll-indicator.visible { opacity: 1; }
+    .si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .si-line { width: 1px; height: 80px; background: var(--border); position: relative; overflow: hidden; }
+    .si-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); height: 0%; transition: height 0.1s linear; }
+    .si-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+
+    /* NAVBAR */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.3s, padding 0.3s; }
+    nav.scrolled { background: rgba(10,24,24,0.88); backdrop-filter: blur(20px); padding: 16px 60px; border-bottom: 1px solid var(--border); }
+    .nav-brand { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--ivory); text-decoration: none; letter-spacing: 0.05em; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { background: var(--accent); color: var(--bg); padding: 10px 24px; border-radius: 2px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* HERO — TYPE G: SCROLL-DRIVEN TEXT */
+    .hero { position: relative; min-height: 200vh; }
+    .hero-bg { position: absolute; inset: 0; background-image: url('images/img-1.webp'); background-size: cover; background-position: center; filter: brightness(0.38); z-index: 0; }
+    .hero-text-wrap { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 80px; z-index: 2; overflow: hidden; }
+    .hero-eyebrow { font-size: 0.75rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .hero-word { font-family: var(--font-serif); font-size: clamp(4rem, 13vw, 12rem); line-height: 0.88; font-weight: 600; text-transform: uppercase; color: var(--ivory); will-change: transform; }
+    .hero-word.word-2 { color: var(--accent-light); }
+    .hero-tagline { font-size: 1.2rem; font-weight: 300; color: var(--smoke); margin-top: 32px; max-width: 480px; line-height: 1.7; }
+    .hero-cta { margin-top: 40px; }
+    .btn-primary { display: inline-block; background: var(--accent); color: var(--bg); padding: 14px 36px; border-radius: 2px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-ghost { display: inline-block; border: 1px solid rgba(220,239,236,0.3); color: var(--ivory); padding: 14px 36px; border-radius: 2px; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; margin-left: 16px; transition: all 0.2s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stats-inner { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .stat-item { padding: 40px; text-align: center; border-right: 1px solid var(--border); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: var(--font-serif); font-size: 3rem; font-weight: 600; color: var(--accent); display: block; line-height: 1; }
+    .stat-label { display: block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* SECTION COMMONS */
+    section { padding: 120px 80px; }
+    .section-eyebrow { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; line-height: 1.2; color: var(--ivory); margin-bottom: 24px; }
+    .section-body { font-size: 1rem; font-weight: 300; line-height: 1.8; color: var(--smoke); max-width: 640px; }
+
+    /* PHILOSOPHY */
+    .philosophy { background: var(--bg); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 72px; }
+    .phil-card { border-top: 1px solid var(--border); padding-top: 32px; }
+    .phil-number { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 300; color: var(--surface2); line-height: 1; margin-bottom: 16px; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 300; color: var(--ivory); margin-bottom: 12px; }
+    .phil-body { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--smoke); }
+
+    /* COLLECTION GRID */
+    .collection { background: var(--surface); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 72px; overflow: visible; }
+    .coll-card { position: relative; height: 440px; overflow: hidden; border-radius: 2px; }
+    .coll-card:nth-child(2) { transform: translateY(40px); }
+    .coll-card:nth-child(4) { transform: translateY(-40px); }
+    .coll-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s ease; }
+    .coll-card:hover .coll-img { transform: scale(1.05); }
+    .coll-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,24,24,0.88) 0%, transparent 55%); }
+    .coll-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 32px; }
+    .coll-tag { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .coll-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300; color: var(--ivory); margin-bottom: 8px; }
+    .coll-desc { font-size: 0.85rem; color: var(--smoke); line-height: 1.6; }
+
+    /* ATELIER */
+    .atelier { background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img-wrap { position: relative; height: 560px; overflow: hidden; border-radius: 2px; }
+    .atelier-img { width: 100%; height: 115%; object-fit: cover; object-position: center; will-change: transform; }
+    .atelier-text { padding: 40px 0; }
+    .atelier-quote { font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; font-weight: 300; color: var(--ivory); line-height: 1.6; margin-bottom: 28px; border-left: 2px solid var(--accent); padding-left: 24px; }
+    .atelier-body { font-size: 0.95rem; font-weight: 300; line-height: 1.85; color: var(--smoke); margin-bottom: 28px; }
+
+    /* PROCESS */
+    .process { background: var(--surface); }
+    .process-list { margin-top: 72px; position: relative; }
+    .process-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-step { display: flex; gap: 48px; padding: 40px 0; position: relative; }
+    .process-step:not(:last-child) { border-bottom: 1px solid var(--border); }
+    .step-marker { flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; background: var(--surface); position: relative; z-index: 2; }
+    .step-num { font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); }
+    .step-content { flex: 1; padding-top: 12px; }
+    .step-title { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 300; color: var(--ivory); margin-bottom: 12px; }
+    .step-body { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--smoke); }
+
+    /* HERITAGE */
+    .heritage { background: var(--bg); }
+    .heritage-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 72px; border-top: 1px solid var(--border); }
+    .heritage-item { padding: 40px 32px; border-right: 1px solid var(--border); }
+    .heritage-item:last-child { border-right: none; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 600; color: var(--accent); margin-bottom: 12px; }
+    .heritage-title { font-size: 0.9rem; font-weight: 500; color: var(--ivory); margin-bottom: 8px; }
+    .heritage-body { font-size: 0.85rem; font-weight: 300; color: var(--smoke); line-height: 1.7; }
+
+    /* PRESS */
+    .press { background: var(--surface); overflow: hidden; }
+    .swiper { width: 100%; margin-top: 60px; }
+    .swiper-slide { padding: 0 40px; }
+    .press-quote { border-left: 2px solid var(--accent); padding: 32px 40px; background: var(--surface2); border-radius: 2px; }
+    .press-text { font-family: var(--font-serif); font-size: 1.2rem; font-style: italic; font-weight: 300; color: var(--ivory); line-height: 1.7; margin-bottom: 24px; }
+    .press-source { font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+
+    /* CONTACT */
+    .contact-section { background: var(--bg); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .contact-form .form-group { margin-bottom: 24px; }
+    .contact-form label { display: block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .contact-form input, .contact-form textarea, .contact-form select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 20px; font-family: var(--font-sans); font-size: 0.95rem; outline: none; border-radius: 2px; transition: border-color 0.2s; }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: var(--accent); }
+    .contact-form textarea { resize: vertical; min-height: 140px; }
+    .contact-form button { background: var(--accent); color: var(--bg); padding: 16px 48px; border: none; border-radius: 2px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .contact-form button:hover { background: var(--accent-light); }
+    .contact-info-title { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 300; color: var(--ivory); margin-bottom: 32px; line-height: 1.3; }
+    .contact-detail { margin-bottom: 24px; }
+    .contact-detail-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .contact-detail-value { font-size: 0.95rem; color: var(--smoke); line-height: 1.6; }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; color: var(--ivory); margin-bottom: 16px; }
+    .footer-tagline { font-size: 0.9rem; font-weight: 300; color: var(--smoke); line-height: 1.7; max-width: 300px; }
+    .footer-col-title { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--smoke); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="30" id="preloader-path"/>
+        <path d="M16 50 Q28 28 40 40 Q52 52 64 30" id="preloader-wave"/>
+      </svg>
+    </div>
+    <div class="preloader-name">Pelagic Ocean Fund</div>
+    <div class="preloader-line"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="si-dot"></div>
+    <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+    <div class="si-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-brand">Pelagic Ocean Fund</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Initiatives</a></li>
+      <li><a href="process.html">Our Work</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Donate</a>
+  </nav>
+
+  <!-- HERO — TYPE G -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-text-wrap">
+      <div class="hero-eyebrow">Est. 2008 · Marine Restoration</div>
+      <div class="hero-word word-1">PELAGIC</div>
+      <div class="hero-word word-2">OCEAN</div>
+      <div class="hero-tagline">Restoring the Living Sea — one reef, one current, one generation at a time.</div>
+      <div class="hero-cta">
+        <a href="#collection" class="btn-primary">Our Initiatives</a>
+        <a href="#contact" class="btn-ghost">Donate</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <span class="stat-num" data-target="3200">0</span>
+        <span class="stat-label">Tonnes Plastic Removed</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="47">0</span>
+        <span class="stat-label">Marine Protected Areas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="680">0</span>
+        <span class="stat-label">Reef Zones Restored</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="18">0</span>
+        <span class="stat-label">Years of Impact</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-eyebrow">Our Principles</div>
+    <h2 class="section-title">The Ocean is Not<br>a Waste Bin</h2>
+    <p class="section-body">Every Pelagic programme begins with the simple premise that healthy oceans are the foundation of all life on Earth. We exist to restore what has been lost and protect what remains.</p>
+    <div class="philosophy-grid">
+      <div class="phil-card">
+        <div class="phil-number">01</div>
+        <div class="phil-title">Marine Science First</div>
+        <div class="phil-body">Every restoration effort is underpinned by marine biology, oceanography, and ecological modelling. We fund science, follow data, and publish all findings openly.</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-number">02</div>
+        <div class="phil-title">Coastal Community Driven</div>
+        <div class="phil-body">Fishing communities are ocean stewards. We partner with coastal peoples to design conservation solutions that protect both biodiversity and livelihoods.</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-number">03</div>
+        <div class="phil-title">Systems Thinking</div>
+        <div class="phil-body">Ocean health is connected to freshwater, atmosphere, and land. Pelagic addresses the full chain — from watershed runoff to deep-sea plastic — not single symptoms.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="collection">
+    <div class="section-eyebrow">Marine Initiatives</div>
+    <h2 class="section-title">Where We Work</h2>
+    <div class="collection-grid">
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-3.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Reef Restoration</div>
+          <div class="coll-title">Coral Garden Programme</div>
+          <div class="coll-desc">Active coral propagation and reef seeding across 680 designated restoration zones.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-1.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Plastic Cleanup</div>
+          <div class="coll-title">Ocean Sweep Operations</div>
+          <div class="coll-desc">Fleet-based and community-led extraction of marine plastic from high-impact ocean zones.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-2.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Protected Areas</div>
+          <div class="coll-title">Blue Sanctuary Network</div>
+          <div class="coll-desc">47 marine protected areas established and actively monitored across three ocean basins.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-3.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Research</div>
+          <div class="coll-title">Deep Blue Monitoring Lab</div>
+          <div class="coll-desc">Autonomous underwater vehicles and sensor arrays tracking ocean chemistry and biodiversity.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img-wrap">
+        <img class="atelier-img" src="images/img-2.webp" alt="Ocean research vessel">
+      </div>
+      <div class="atelier-text">
+        <div class="section-eyebrow">Field Research</div>
+        <h2 class="section-title">Beneath the<br>Surface</h2>
+        <div class="atelier-quote">"The ocean is the origin of all life. Restoring it is not charity — it is civilisational necessity."</div>
+        <p class="atelier-body">Pelagic's research fleet operates year-round across the Atlantic, Pacific, and Indian Oceans, deploying autonomous monitoring systems and working alongside fishing communities to gather the data that drives our restoration decisions.</p>
+        <p class="atelier-body">Our marine biologists, oceanographers, and data scientists collaborate with 28 partner universities worldwide, ensuring that every initiative is grounded in the best available science.</p>
+        <a href="process.html" class="btn-primary">How We Restore</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-eyebrow">Restoration Methodology</div>
+    <h2 class="section-title">Five Phases of<br>Ocean Recovery</h2>
+    <div class="process-list">
+      <div class="process-line"></div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">01</span></div>
+        <div class="step-content">
+          <div class="step-title">Marine Health Assessment</div>
+          <div class="step-body">Baseline surveys using autonomous underwater vehicles, satellite oceanography, and biodiversity sampling. Every programme begins with evidence, not assumption.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">02</span></div>
+        <div class="step-content">
+          <div class="step-title">Pollution Source Intervention</div>
+          <div class="step-body">Targeting primary pollution sources: coastal runoff, fishing vessel waste, and deep-water plastic accumulation zones. Solutions are implemented at source, not just symptom.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">03</span></div>
+        <div class="step-content">
+          <div class="step-title">Active Ecosystem Restoration</div>
+          <div class="step-body">Coral propagation, seagrass replanting, kelp forest seeding, and mangrove restoration programmes. Habitat creation that supports the full marine food web.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">04</span></div>
+        <div class="step-content">
+          <div class="step-title">Marine Protected Area Designation</div>
+          <div class="step-body">Working with governments and international bodies to establish legally binding protections for restored zones, including no-take fishing areas and buffer zones.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">05</span></div>
+        <div class="step-content">
+          <div class="step-title">Long-Term Ecological Monitoring</div>
+          <div class="step-body">Permanent sensor networks and annual biological surveys track recovery trajectories. Data is published in open-access scientific journals and shared with policy makers globally.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-eyebrow">Milestones</div>
+    <h2 class="section-title">Eighteen Years<br>in the Sea</h2>
+    <div class="heritage-list">
+      <div class="heritage-item">
+        <div class="heritage-year">2008</div>
+        <div class="heritage-title">Fund Founded</div>
+        <div class="heritage-body">Pelagic Ocean Fund established with a mandate to restore degraded marine ecosystems through science-led direct action.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2013</div>
+        <div class="heritage-title">First Sanctuary</div>
+        <div class="heritage-body">Designation of the Azaran Marine Sanctuary — our first legally protected area covering 240,000 km² of ocean.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2018</div>
+        <div class="heritage-title">1,000 Tonnes Milestone</div>
+        <div class="heritage-body">Cumulative plastic removal reached 1,000 tonnes, verified and independently audited.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2024</div>
+        <div class="heritage-title">47 Protected Areas</div>
+        <div class="heritage-body">Global Blue Sanctuary Network expanded to 47 marine protected areas across three ocean basins and 22 nations.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press" id="press">
+    <div class="section-eyebrow">Recognition</div>
+    <h2 class="section-title">The World is Watching</h2>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"Pelagic has demonstrated that ocean restoration at scale is not merely aspirational — it is achievable, measurable, and economically defensible."</div>
+            <div class="press-source">— Nature Ocean Science, Peer Review 2025</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"The most rigorous marine conservation fund in operation. Their data is impeccable, their results are real, and their commitment is absolute."</div>
+            <div class="press-source">— International Marine Conservation Congress</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"In a world of environmental greenwashing, Pelagic stands apart. Every claim is backed by peer-reviewed science and verifiable field data."</div>
+            <div class="press-source">— Global Ocean Observer, Annual Review</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <div class="contact-inner">
+      <div>
+        <div class="section-eyebrow">Support the Sea</div>
+        <div class="contact-info-title">Fund Ocean<br>Restoration Today</div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Headquarters</div>
+          <div class="contact-detail-value">Pelagic House, 8 Marine Quarter<br>Lisbon, 1200-100, Portugal</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">General Enquiries</div>
+          <div class="contact-detail-value">info@pelagicfund.org</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Donations &amp; Partnerships</div>
+          <div class="contact-detail-value">+351 21 324 7800</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Research Collaborations</div>
+          <div class="contact-detail-value">science@pelagicfund.org</div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="section-eyebrow">Get in Touch</div>
+        <form>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="your@email.com">
+          </div>
+          <div class="form-group">
+            <label>Interest</label>
+            <select>
+              <option>Individual Donation</option>
+              <option>Corporate Partnership</option>
+              <option>Research Collaboration</option>
+              <option>Volunteer at Sea</option>
+              <option>Media Enquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea placeholder="Tell us how you'd like to help..."></textarea>
+          </div>
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Pelagic Ocean Fund</div>
+        <div class="footer-tagline">Restoring the living sea through science, community, and direct action. Every donation, every partnership, every voice matters.</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Fund</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="about.html#governance">Governance</a></li>
+          <li><a href="about.html#team">Science Team</a></li>
+          <li><a href="about.html#reports">Reports</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Initiatives</div>
+        <ul class="footer-links">
+          <li><a href="collection.html">All Initiatives</a></li>
+          <li><a href="collection.html#reef">Reef Restoration</a></li>
+          <li><a href="collection.html#plastic">Plastic Removal</a></li>
+          <li><a href="process.html">Our Method</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <ul class="footer-links">
+          <li><a href="contact.html">Donate</a></li>
+          <li><a href="contact.html#partner">Partner</a></li>
+          <li><a href="contact.html#volunteer">Volunteer</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Pelagic Ocean Fund. Registered Foundation No. PT-2008-4471.</div>
+      <div class="footer-copy">Privacy · Terms · Accessibility</div>
+    </div>
+  </footer>
+
+  <!-- SPLITTEXT POLYFILL -->
+  <script>
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = []; this.lines = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim(); el.innerHTML = '';
+      const wordArr = text.split(/\s+/);
+      wordArr.forEach((word, wi) => {
+        const wSpan = document.createElement('span');
+        wSpan.className = 'split-word';
+        wSpan.style.cssText = 'display:inline-block;overflow:hidden;';
+        if (type.includes('chars')) {
+          [...word].forEach(ch => { const cSpan = document.createElement('span'); cSpan.className = 'split-char'; cSpan.style.display = 'inline-block'; cSpan.textContent = ch; wSpan.appendChild(cSpan); this.chars.push(cSpan); });
+        } else { wSpan.style.overflow = 'visible'; wSpan.textContent = word; }
+        this.words.push(wSpan); el.appendChild(wSpan);
+        if (wi < wordArr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => { el.innerHTML = this.originals[i]; }); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const preloader = document.getElementById('preloader');
+    const preloaderPath = document.getElementById('preloader-path');
+    const preloaderWave = document.getElementById('preloader-wave');
+
+    gsap.to([preloaderPath, preloaderWave], {
+      strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut', stagger: 0.2,
+      onComplete: () => {
+        gsap.to(preloader, { opacity: 0, duration: 0.6, delay: 0.3,
+          onComplete: () => {
+            preloader.style.display = 'none';
+            document.getElementById('scroll-indicator').classList.add('visible');
+            initAnimations();
+          }
+        });
+      }
+    });
+
+    setTimeout(() => document.getElementById('scroll-indicator')?.classList.add('visible'), 4000);
+
+    const __captureNav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      __captureNav.classList.toggle('scrolled', window.scrollY > 60);
+      const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      const fill = document.getElementById('si-fill');
+      if (fill) fill.style.height = pct + '%';
+    });
+
+    function initAnimations() {
+      // Hero text scroll-driven
+      gsap.to('.word-1', { x: '-25vw', scale: 0.55, opacity: 0.15, scrollTrigger: { trigger: '.hero', start: 'top top', end: '60% top', scrub: 1.5 } });
+      gsap.to('.word-2', { x: '25vw', scale: 0.55, opacity: 0.15, scrollTrigger: { trigger: '.hero', start: 'top top', end: '60% top', scrub: 1.5 } });
+      gsap.to('.hero-tagline', { opacity: 0, y: -30, scrollTrigger: { trigger: '.hero', start: '20% top', end: '50% top', scrub: 1 } });
+      gsap.to('.hero-cta', { opacity: 0, y: -20, scrollTrigger: { trigger: '.hero', start: '25% top', end: '55% top', scrub: 1 } });
+
+      // Hero initial reveal
+      gsap.from('.hero-eyebrow', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', immediateRender: false });
+      gsap.from('.word-1', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', immediateRender: false, delay: 0.2 });
+      gsap.from('.word-2', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', immediateRender: false, delay: 0.4 });
+      gsap.from('.hero-tagline', { opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', immediateRender: false, delay: 0.6 });
+      gsap.from('.hero-cta', { opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', immediateRender: false, delay: 0.8 });
+
+      // Stats
+      document.querySelectorAll('.stat-num').forEach(el => {
+        gsap.from(el, { textContent: 0, duration: 2, ease: 'power2.out', snap: { textContent: 1 }, immediateRender: false, scrollTrigger: { trigger: el, start: 'top 80%', once: true } });
+      });
+
+      // Philosophy
+      gsap.from('.phil-card', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', stagger: 0.06, immediateRender: false, scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true } });
+
+      // Collection
+      gsap.from('.coll-card', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', stagger: 0.06, immediateRender: false, scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true } });
+
+      // Atelier parallax
+      gsap.to('.atelier-img', { y: '-15%', ease: 'none', scrollTrigger: { trigger: '.atelier-img-wrap', start: 'top bottom', end: 'bottom top', scrub: true } });
+      gsap.from('.atelier-text > *', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', stagger: 0.06, immediateRender: false, scrollTrigger: { trigger: '.atelier-text', start: 'top 85%', once: true } });
+
+      // Process
+      gsap.from('.process-step', { opacity: 0, x: -16, duration: 1.5, ease: 'power1.out', stagger: 0.06, immediateRender: false, scrollTrigger: { trigger: '.process-list', start: 'top 85%', once: true } });
+
+      // Heritage
+      gsap.from('.heritage-item', { opacity: 0, y: 14, duration: 1.5, ease: 'power1.out', stagger: 0.06, immediateRender: false, scrollTrigger: { trigger: '.heritage-list', start: 'top 85%', once: true } });
+
+      // Generic
+      gsap.utils.toArray('.section-eyebrow, .section-title, .section-body').forEach(el => {
+        gsap.from(el, { opacity: 0, y: 14, duration: 1.4, ease: 'power1.out', immediateRender: false, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+      });
+    }
+
+    new Swiper('.press-swiper', {
+      slidesPerView: 1, spaceBetween: 40, loop: true, autoplay: { delay: 5000 },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 } }
+    });
+  </script>
+</body>
+</html>

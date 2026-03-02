@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verdania Wildlife Trust — Where Wild Things Endure</title>
+  <meta name="description" content="Verdania Wildlife Trust protects endangered species and natural habitats across critical ecosystems. Join us in preserving the wild for future generations.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F1A10;
+      --surface: #162016;
+      --surface2: #1A2A1A;
+      --accent: #4DAF6A;
+      --accent-light: #7ACC8A;
+      --accent-dark: #2E7A46;
+      --ivory: #DCF0DC;
+      --smoke: #809080;
+      --muted: #4A6050;
+      --border: #182018;
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); overflow-x: hidden; }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 24px;
+    }
+    .preloader-mark svg { width: 80px; height: 80px; }
+    .preloader-mark svg path { stroke: var(--accent); stroke-width: 1.5; fill: none; stroke-dasharray: 300; stroke-dashoffset: 300; }
+    .preloader-name {
+      font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300;
+      color: var(--ivory); letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .preloader-line { width: 120px; height: 1px; background: var(--border); position: relative; overflow: hidden; }
+    .preloader-line::after {
+      content: ''; position: absolute; left: -100%; top: 0; height: 100%; width: 100%;
+      background: var(--accent); animation: lineLoad 1.8s ease forwards 0.5s;
+    }
+    @keyframes lineLoad { to { left: 100%; } }
+
+    /* SCROLL INDICATOR */
+    #scroll-indicator {
+      position: fixed; left: 32px; top: 50%; transform: translateY(-50%);
+      z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    #scroll-indicator.visible { opacity: 1; }
+    .si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .si-line { width: 1px; height: 80px; background: var(--border); position: relative; overflow: hidden; }
+    .si-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); height: 0%; transition: height 0.1s linear; }
+    .si-label { writing-mode: vertical-rl; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 24px 60px; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.3s, backdrop-filter 0.3s, padding 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(15,26,16,0.85); backdrop-filter: blur(20px);
+      padding: 16px 60px; border-bottom: 1px solid var(--border);
+    }
+    .nav-brand { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--ivory); text-decoration: none; letter-spacing: 0.05em; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { color: var(--smoke); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { background: var(--accent); color: var(--bg); padding: 10px 24px; border-radius: 2px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+    .nav-cta:hover { background: var(--accent-light); }
+
+    /* HERO — TYPE B: PARALLAX */
+    .hero { position: relative; width: 100%; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+    .hero-parallax-bg { position: absolute; inset: -10%; }
+    .parallax-layer { position: absolute; inset: 0; background-size: cover; background-position: center; will-change: transform; }
+    .layer-1 { background-image: url('images/img-1.webp'); filter: brightness(0.55); }
+    .layer-2 { background-image: url('images/img-3.webp'); mix-blend-mode: overlay; opacity: 0.2; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(15,26,16,0.7) 0%, rgba(15,26,16,0.25) 100%); }
+    .hero-content { position: relative; z-index: 2; max-width: 680px; padding: 0 80px; }
+    .hero-eyebrow { font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 300; line-height: 1.05; color: var(--ivory); margin-bottom: 24px; }
+    .hero-title em { font-style: italic; color: var(--accent-light); }
+    .hero-subtitle { font-size: 1.1rem; font-weight: 300; color: var(--smoke); line-height: 1.7; margin-bottom: 40px; max-width: 480px; }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary { display: inline-block; background: var(--accent); color: var(--bg); padding: 14px 36px; border-radius: 2px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+    .btn-primary:hover { background: var(--accent-light); }
+    .btn-ghost { display: inline-block; border: 1px solid rgba(220,240,220,0.3); color: var(--ivory); padding: 14px 36px; border-radius: 2px; font-size: 0.85rem; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-floating { position: absolute; bottom: 60px; right: 80px; z-index: 2; }
+    .float-badge { border: 1px solid rgba(77,175,106,0.4); color: var(--accent-light); padding: 12px 24px; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; backdrop-filter: blur(8px); background: rgba(15,26,16,0.3); }
+
+    /* STATS STRIP */
+    .stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 0; }
+    .stats-inner { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .stat-item { padding: 40px; text-align: center; border-right: 1px solid var(--border); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: var(--font-serif); font-size: 3rem; font-weight: 600; color: var(--accent); display: block; line-height: 1; }
+    .stat-suffix { font-family: var(--font-serif); font-size: 2rem; color: var(--accent); }
+    .stat-label { display: block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-top: 8px; }
+
+    /* SECTION COMMONS */
+    section { padding: 120px 80px; }
+    .section-eyebrow { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; line-height: 1.2; color: var(--ivory); margin-bottom: 24px; }
+    .section-body { font-size: 1rem; font-weight: 300; line-height: 1.8; color: var(--smoke); max-width: 640px; }
+
+    /* PHILOSOPHY */
+    .philosophy { background: var(--bg); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 72px; }
+    .phil-card { border-top: 1px solid var(--border); padding-top: 32px; }
+    .phil-number { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 300; color: var(--surface2); line-height: 1; margin-bottom: 16px; }
+    .phil-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 300; color: var(--ivory); margin-bottom: 12px; }
+    .phil-body { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--smoke); }
+
+    /* COLLECTION GRID */
+    .collection { background: var(--surface); }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 72px; overflow: visible; }
+    .coll-card { position: relative; height: 460px; overflow: hidden; border-radius: 2px; }
+    .coll-card:nth-child(2) { transform: translateY(40px); }
+    .coll-card:nth-child(4) { transform: translateY(-40px); }
+    .coll-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s ease; }
+    .coll-card:hover .coll-img { transform: scale(1.05); }
+    .coll-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,26,16,0.85) 0%, transparent 50%); }
+    .coll-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 32px; }
+    .coll-tag { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .coll-title { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300; color: var(--ivory); margin-bottom: 8px; }
+    .coll-desc { font-size: 0.85rem; color: var(--smoke); line-height: 1.6; }
+
+    /* ATELIER — 2-col */
+    .atelier { background: var(--bg); }
+    .atelier-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .atelier-img-wrap { position: relative; height: 560px; overflow: hidden; border-radius: 2px; }
+    .atelier-img { width: 100%; height: 115%; object-fit: cover; object-position: center; will-change: transform; }
+    .atelier-text { padding: 40px 0; }
+    .atelier-quote { font-family: var(--font-serif); font-size: 1.6rem; font-style: italic; font-weight: 300; color: var(--ivory); line-height: 1.5; margin-bottom: 32px; border-left: 2px solid var(--accent); padding-left: 24px; }
+    .atelier-body { font-size: 0.95rem; font-weight: 300; line-height: 1.85; color: var(--smoke); margin-bottom: 32px; }
+
+    /* PROCESS */
+    .process { background: var(--surface); }
+    .process-list { margin-top: 72px; position: relative; }
+    .process-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .process-fill { position: absolute; left: 0; top: 0; width: 100%; background: var(--accent); height: 0; transition: none; }
+    .process-step { display: flex; gap: 48px; padding: 40px 0; position: relative; }
+    .process-step:not(:last-child) { border-bottom: 1px solid var(--border); }
+    .step-marker { flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; background: var(--bg); position: relative; z-index: 2; }
+    .step-num { font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); }
+    .step-content { flex: 1; padding-top: 12px; }
+    .step-title { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 300; color: var(--ivory); margin-bottom: 12px; }
+    .step-body { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--smoke); }
+
+    /* HERITAGE TIMELINE */
+    .heritage { background: var(--bg); }
+    .heritage-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 72px; border-top: 1px solid var(--border); }
+    .heritage-item { padding: 40px 32px; border-right: 1px solid var(--border); }
+    .heritage-item:last-child { border-right: none; }
+    .heritage-year { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 600; color: var(--accent); margin-bottom: 12px; }
+    .heritage-title { font-size: 0.9rem; font-weight: 500; color: var(--ivory); margin-bottom: 8px; letter-spacing: 0.05em; }
+    .heritage-body { font-size: 0.85rem; font-weight: 300; color: var(--smoke); line-height: 1.7; }
+
+    /* PRESS */
+    .press { background: var(--surface); overflow: hidden; }
+    .swiper { width: 100%; margin-top: 60px; }
+    .swiper-slide { padding: 0 40px; }
+    .press-quote { border-left: 2px solid var(--accent); padding: 32px 40px; background: var(--surface2); border-radius: 2px; }
+    .press-text { font-family: var(--font-serif); font-size: 1.2rem; font-style: italic; font-weight: 300; color: var(--ivory); line-height: 1.7; margin-bottom: 24px; }
+    .press-source { font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+
+    /* CONTACT FORM */
+    .contact-section { background: var(--bg); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .contact-form .form-group { margin-bottom: 24px; }
+    .contact-form label { display: block; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--smoke); margin-bottom: 8px; }
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--ivory); padding: 14px 20px; font-family: var(--font-sans); font-size: 0.95rem; outline: none; border-radius: 2px; transition: border-color 0.2s; }
+    .contact-form input:focus,
+    .contact-form textarea:focus { border-color: var(--accent); }
+    .contact-form textarea { resize: vertical; min-height: 140px; }
+    .contact-form button { background: var(--accent); color: var(--bg); padding: 16px 48px; border: none; border-radius: 2px; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .contact-form button:hover { background: var(--accent-light); }
+    .contact-info { padding: 40px 0; }
+    .contact-info-title { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 300; color: var(--ivory); margin-bottom: 32px; line-height: 1.3; }
+    .contact-detail { margin-bottom: 24px; }
+    .contact-detail-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .contact-detail-value { font-size: 0.95rem; color: var(--smoke); line-height: 1.6; }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; color: var(--ivory); margin-bottom: 16px; }
+    .footer-tagline { font-size: 0.9rem; font-weight: 300; color: var(--smoke); line-height: 1.7; max-width: 300px; }
+    .footer-col-title { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--smoke); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--ivory); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 80 80">
+        <path d="M40 8 C20 8, 8 20, 8 40 C8 60, 20 72, 40 72 C60 72, 72 60, 72 40 C72 20, 60 8, 40 8 Z M40 8 L40 72 M20 20 L60 60 M60 20 L20 60" id="preloader-path"/>
+      </svg>
+    </div>
+    <div class="preloader-name">Verdania Wildlife Trust</div>
+    <div class="preloader-line"></div>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div id="scroll-indicator">
+    <div class="si-dot"></div>
+    <div class="si-line"><div class="si-fill" id="si-fill"></div></div>
+    <div class="si-label">Scroll</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-brand">Verdania Wildlife Trust</a>
+    <ul class="nav-links">
+      <li><a href="about.html">About</a></li>
+      <li><a href="collection.html">Programs</a></li>
+      <li><a href="process.html">Our Work</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Donate</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-parallax-bg">
+      <div class="parallax-layer layer-1"></div>
+      <div class="parallax-layer layer-2"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Est. 1994 · Global Wildlife Sanctuaries</div>
+      <h1 class="hero-title">Where Wild<br>Things <em>Endure</em></h1>
+      <p class="hero-subtitle">Dedicated to the protection of endangered species and the ecosystems they call home. Verdania Wildlife Trust guards biodiversity for generations to come.</p>
+      <div class="hero-ctas">
+        <a href="#collection" class="btn-primary">Our Programs</a>
+        <a href="#contact" class="btn-ghost">Support Us</a>
+      </div>
+    </div>
+    <div class="hero-floating">
+      <div class="float-badge">Protected · Preserved · Perpetual</div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <span class="stat-num" data-target="124">0</span><span class="stat-suffix">K</span>
+        <span class="stat-label">Hectares Protected</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="89">0</span>
+        <span class="stat-label">Species Recovered</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="32">0</span>
+        <span class="stat-label">Sanctuaries Active</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="30">0</span>
+        <span class="stat-label">Years of Impact</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy" id="philosophy">
+    <div class="section-eyebrow">Our Principles</div>
+    <h2 class="section-title">A Trust Built on<br>Living Ecosystems</h2>
+    <p class="section-body">Every conservation decision is guided by science, community, and a deep reverence for the natural world. We do not merely protect land — we restore it.</p>
+    <div class="philosophy-grid">
+      <div class="phil-card">
+        <div class="phil-number">01</div>
+        <div class="phil-title">Ecosystem Integrity</div>
+        <div class="phil-body">We manage habitats as interconnected systems, recognising that every species plays an irreplaceable role in the web of life. Our interventions are holistic and evidence-based.</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-number">02</div>
+        <div class="phil-title">Community Partnership</div>
+        <div class="phil-body">Effective conservation requires local champions. We partner with indigenous communities and regional stewards, honouring traditional ecological knowledge alongside modern science.</div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-number">03</div>
+        <div class="phil-title">Long-Term Restoration</div>
+        <div class="phil-body">Short-term protection is not enough. Verdania employs multi-decade restoration programmes, planting native flora, reintroducing species, and monitoring outcomes rigorously.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTION GRID -->
+  <section class="collection" id="collection">
+    <div class="section-eyebrow">Conservation Programmes</div>
+    <h2 class="section-title">Sanctuaries &amp; Initiatives</h2>
+    <div class="collection-grid">
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-2.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Habitat</div>
+          <div class="coll-title">Thornfield Forest Reserve</div>
+          <div class="coll-desc">56,000 hectares of temperate old-growth, home to 14 endangered mammals.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-4.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Species Recovery</div>
+          <div class="coll-title">Raptor Reintroduction Programme</div>
+          <div class="coll-desc">Breeding and release of endangered birds of prey across three mountain corridors.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-3.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Wetlands</div>
+          <div class="coll-title">Miredale Wetland Corridor</div>
+          <div class="coll-desc">Restoring 12,000 hectares of peatland and fen habitat for migratory birds.</div>
+        </div>
+      </div>
+      <div class="coll-card">
+        <div class="coll-img" style="background-image: url('images/img-1.webp')"></div>
+        <div class="coll-overlay"></div>
+        <div class="coll-content">
+          <div class="coll-tag">Education</div>
+          <div class="coll-title">Wild Schools Initiative</div>
+          <div class="coll-desc">Immersive conservation education reaching 18,000 young people each year.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="atelier" id="atelier">
+    <div class="atelier-inner">
+      <div class="atelier-img-wrap">
+        <img class="atelier-img" src="images/img-2.webp" alt="Wildlife conservation fieldwork">
+      </div>
+      <div class="atelier-text">
+        <div class="section-eyebrow">Field Operations</div>
+        <h2 class="section-title">Science in<br>the Field</h2>
+        <div class="atelier-quote">"Conservation is the stewardship of all life — not just the charismatic or convenient."</div>
+        <p class="atelier-body">Our field teams operate year-round across four continents, deploying advanced monitoring technology alongside time-tested ecological methods. Camera traps, acoustic sensors, and satellite collaring provide real-time insights that guide our interventions.</p>
+        <p class="atelier-body">Every hectare managed under Verdania's care benefits from a living management plan, updated annually with data from our science team.</p>
+        <a href="process.html" class="btn-primary">How We Work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-eyebrow">Conservation Methodology</div>
+    <h2 class="section-title">From Assessment<br>to Restoration</h2>
+    <div class="process-list">
+      <div class="process-line"><div class="process-fill" id="process-fill"></div></div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">01</span></div>
+        <div class="step-content">
+          <div class="step-title">Ecological Baseline Survey</div>
+          <div class="step-body">Comprehensive assessment of species composition, habitat condition, and threat vectors using both field surveys and remote-sensing data. Establishes a measurable baseline against which all future progress is tracked.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">02</span></div>
+        <div class="step-content">
+          <div class="step-title">Threat Mitigation &amp; Zoning</div>
+          <div class="step-body">Identifying and neutralising immediate pressures — poaching, invasive species, habitat fragmentation. Zones are established to balance strict protection with sustainable community access.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">03</span></div>
+        <div class="step-content">
+          <div class="step-title">Habitat Restoration Works</div>
+          <div class="step-body">Active restoration: native planting, water table management, invasive removal, and corridor creation. Works are phased across multi-year timelines with measurable milestones.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">04</span></div>
+        <div class="step-content">
+          <div class="step-title">Species Recovery Programme</div>
+          <div class="step-body">Captive breeding, translocation, and wild population support for critically endangered species. Each programme follows IUCN protocols and is reported to international conservation bodies.</div>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-marker"><span class="step-num">05</span></div>
+        <div class="step-content">
+          <div class="step-title">Long-Term Monitoring &amp; Adaptive Management</div>
+          <div class="step-body">Continuous ecological monitoring feeding into annually revised management plans. Science drives every decision, ensuring resources are directed where they have the greatest measurable impact.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section class="heritage" id="heritage">
+    <div class="section-eyebrow">Our Journey</div>
+    <h2 class="section-title">Three Decades of<br>Wild Recovery</h2>
+    <div class="heritage-list">
+      <div class="heritage-item">
+        <div class="heritage-year">1994</div>
+        <div class="heritage-title">Trust Founded</div>
+        <div class="heritage-body">Verdania established with a mandate to protect three critically threatened forest systems in the temperate north.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2003</div>
+        <div class="heritage-title">Thornfield Reserve</div>
+        <div class="heritage-body">Acquisition and permanent protection of 56,000 hectares, the Trust's flagship old-growth sanctuary.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2011</div>
+        <div class="heritage-title">100 Species Milestone</div>
+        <div class="heritage-body">The Trust's recovery programmes achieved measurable population increases for 100 distinct species.</div>
+      </div>
+      <div class="heritage-item">
+        <div class="heritage-year">2022</div>
+        <div class="heritage-title">Global Expansion</div>
+        <div class="heritage-body">Partnerships with four international conservation bodies, extending Verdania's impact across 12 countries.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="press" id="press">
+    <div class="section-eyebrow">Recognition</div>
+    <h2 class="section-title">What the World Says</h2>
+    <div class="swiper press-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"Verdania's rigorous science-led approach has set a new global standard for habitat restoration. Their results are measurable, reproducible, and genuinely transformative."</div>
+            <div class="press-source">— International Journal of Conservation Biology</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"In thirty years, Verdania has demonstrated that with sufficient will and resources, even the most degraded ecosystems can be brought back to life."</div>
+            <div class="press-source">— World Conservation Monitor, Annual Review</div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="press-quote">
+            <div class="press-text">"A model for all conservation charities: transparent, evidence-based, and utterly committed to the wild things they protect."</div>
+            <div class="press-source">— The Ecologist Magazine</div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT FORM -->
+  <section class="contact-section" id="contact">
+    <div class="contact-inner">
+      <div class="contact-info">
+        <div class="section-eyebrow">Get Involved</div>
+        <div class="contact-info-title">Support the Wild.<br>Join the Trust.</div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Address</div>
+          <div class="contact-detail-value">Verdania House, 12 Conservation Way<br>Edinburgh, EH3 9LQ, Scotland</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">General Enquiries</div>
+          <div class="contact-detail-value">info@verdaniatrust.org</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Donations &amp; Partnerships</div>
+          <div class="contact-detail-value">+44 131 890 2200</div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Field Volunteering</div>
+          <div class="contact-detail-value">Open April–October, applications year-round</div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="section-eyebrow">Send a Message</div>
+        <form>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="your@email.com">
+          </div>
+          <div class="form-group">
+            <label>Interest</label>
+            <select>
+              <option>Donation &amp; Giving</option>
+              <option>Corporate Partnership</option>
+              <option>Field Volunteering</option>
+              <option>Research Collaboration</option>
+              <option>General Enquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea placeholder="Tell us how you'd like to get involved..."></textarea>
+          </div>
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Verdania Wildlife Trust</div>
+        <div class="footer-tagline">Protecting endangered species and critical habitats since 1994. Every gift, every partnership, every volunteer hour makes the wild endure.</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Trust</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="about.html#governance">Governance</a></li>
+          <li><a href="about.html#team">Our Team</a></li>
+          <li><a href="about.html#reports">Annual Reports</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Conservation</div>
+        <ul class="footer-links">
+          <li><a href="collection.html">All Programmes</a></li>
+          <li><a href="collection.html#habitats">Habitats</a></li>
+          <li><a href="collection.html#species">Species</a></li>
+          <li><a href="process.html">Our Methodology</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <ul class="footer-links">
+          <li><a href="contact.html">Donate</a></li>
+          <li><a href="contact.html#volunteer">Volunteer</a></li>
+          <li><a href="contact.html#corporate">Corporate</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Verdania Wildlife Trust. Registered Charity No. SC042819.</div>
+      <div class="footer-copy">Privacy Policy · Terms · Accessibility</div>
+    </div>
+  </footer>
+
+  <!-- SPLITTEXT POLYFILL -->
+  <script>
+  class SplitText {
+    constructor(target, options={}) {
+      this.elements = typeof target === 'string' ? [...document.querySelectorAll(target)] : (Array.isArray(target) ? target : [target]);
+      this.chars = []; this.words = []; this.lines = [];
+      this.originals = this.elements.map(el => el.innerHTML);
+      this.elements.forEach(el => this._split(el, options.type || 'words'));
+    }
+    _split(el, type) {
+      const text = el.textContent.trim();
+      el.innerHTML = '';
+      const wordArr = text.split(/\s+/);
+      wordArr.forEach((word, wi) => {
+        const wSpan = document.createElement('span');
+        wSpan.className = 'split-word';
+        wSpan.style.cssText = 'display:inline-block;overflow:hidden;';
+        if (type.includes('chars')) {
+          [...word].forEach(ch => {
+            const cSpan = document.createElement('span');
+            cSpan.className = 'split-char';
+            cSpan.style.display = 'inline-block';
+            cSpan.textContent = ch;
+            wSpan.appendChild(cSpan);
+            this.chars.push(cSpan);
+          });
+        } else {
+          wSpan.style.overflow = 'visible';
+          wSpan.textContent = word;
+        }
+        this.words.push(wSpan);
+        el.appendChild(wSpan);
+        if (wi < wordArr.length - 1) el.appendChild(document.createTextNode('\u00a0'));
+      });
+    }
+    revert() { this.elements.forEach((el, i) => { el.innerHTML = this.originals[i]; }); }
+  }
+  </script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Preloader
+    const preloader = document.getElementById('preloader');
+    const preloaderPath = document.getElementById('preloader-path');
+
+    gsap.to(preloaderPath, {
+      strokeDashoffset: 0,
+      duration: 1.4,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        gsap.to(preloader, {
+          opacity: 0, duration: 0.6, delay: 0.4,
+          onComplete: () => {
+            preloader.style.display = 'none';
+            document.getElementById('scroll-indicator').classList.add('visible');
+            initAnimations();
+          }
+        });
+      }
+    });
+
+    setTimeout(() => document.getElementById('scroll-indicator')?.classList.add('visible'), 4000);
+
+    // Navbar scroll
+    const __captureNav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) __captureNav.classList.add('scrolled');
+      else __captureNav.classList.remove('scrolled');
+    });
+
+    // Scroll indicator progress
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const total = document.body.scrollHeight - window.innerHeight;
+      const pct = total > 0 ? (scrolled / total) * 100 : 0;
+      const fill = document.getElementById('si-fill');
+      if (fill) fill.style.height = pct + '%';
+    });
+
+    // Parallax hero
+    document.querySelector('.hero').addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 30;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      gsap.to('.layer-1', { x: x * 0.5, y: y * 0.5, duration: 1, ease: 'power2.out' });
+      gsap.to('.layer-2', { x: x * 1.2, y: y * 1.0, duration: 1, ease: 'power2.out' });
+    });
+
+    function initAnimations() {
+      // Hero
+      const heroTl = gsap.timeline();
+      heroTl.from('.hero-eyebrow', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', immediateRender: false })
+        .from('.hero-title', { opacity: 0, y: 28, duration: 1.2, ease: 'power2.out', immediateRender: false }, '-=0.6')
+        .from('.hero-subtitle', { opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', immediateRender: false }, '-=0.8')
+        .from('.hero-ctas', { opacity: 0, y: 20, duration: 0.9, ease: 'power2.out', immediateRender: false }, '-=0.7')
+        .from('.float-badge', { opacity: 0, x: 20, duration: 0.9, ease: 'power2.out', immediateRender: false }, '-=0.6');
+
+      // Stats counter
+      document.querySelectorAll('.stat-num').forEach(el => {
+        gsap.from(el, {
+          textContent: 0,
+          duration: 2,
+          ease: 'power2.out',
+          snap: { textContent: 1 },
+          immediateRender: false,
+          scrollTrigger: { trigger: el, start: 'top 80%', once: true }
+        });
+      });
+
+      // Philosophy cards
+      gsap.from('.phil-card', {
+        opacity: 0, y: 28, duration: 1.1, ease: 'power2.out', stagger: 0.09, immediateRender: false,
+        scrollTrigger: { trigger: '.philosophy-grid', start: 'top 85%', once: true }
+      });
+
+      // Collection cards
+      gsap.from('.coll-card', {
+        opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09, immediateRender: false,
+        scrollTrigger: { trigger: '.collection-grid', start: 'top 85%', once: true }
+      });
+
+      // Atelier parallax
+      gsap.to('.atelier-img', {
+        y: '-15%',
+        ease: 'none',
+        scrollTrigger: { trigger: '.atelier-img-wrap', start: 'top bottom', end: 'bottom top', scrub: true }
+      });
+
+      // Atelier text
+      gsap.from('.atelier-text > *', {
+        opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09, immediateRender: false,
+        scrollTrigger: { trigger: '.atelier-text', start: 'top 85%', once: true }
+      });
+
+      // Process steps
+      gsap.from('.process-step', {
+        opacity: 0, x: -20, duration: 1.1, ease: 'power2.out', stagger: 0.09, immediateRender: false,
+        scrollTrigger: { trigger: '.process-list', start: 'top 85%', once: true }
+      });
+
+      // Heritage items
+      gsap.from('.heritage-item', {
+        opacity: 0, y: 24, duration: 1.0, ease: 'power2.out', stagger: 0.09, immediateRender: false,
+        scrollTrigger: { trigger: '.heritage-list', start: 'top 85%', once: true }
+      });
+
+      // Section titles
+      gsap.utils.toArray('.section-eyebrow, .section-title, .section-body').forEach(el => {
+        gsap.from(el, {
+          opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', immediateRender: false,
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
+      });
+    }
+
+    // Swiper
+    new Swiper('.press-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 40,
+      loop: true,
+      autoplay: { delay: 5000 },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 } }
+    });
+  </script>
+</body>
+</html>

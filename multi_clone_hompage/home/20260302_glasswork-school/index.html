@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ignis Glass School — Fire Transforms. Art Endures.</title>
+<meta name="description" content="Ignis Glass School offers intensive education in hot glass blowing, lampworking, kiln fusing and architectural glass — for artists who work with fire.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #1C1008;
+  --surface: #261608;
+  --surface2: #2E1C0A;
+  --accent: #D4612A;
+  --accent-light: #E8884A;
+  --accent-dark: #9C3C14;
+  --ivory: #F0E4DC;
+  --smoke: #A07860;
+  --muted: #604840;
+  --border: #201408;
+  --font-serif: 'Cinzel', 'Times New Roman', serif;
+  --font-sans: 'Crimson Pro', Georgia, serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ivory); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* Preloader */
+#preloader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.preloader-flame { width: 32px; height: 48px; position: relative; }
+.preloader-flame::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 100%, var(--accent) 0%, transparent 70%); animation: flicker 1s ease-in-out infinite alternate; border-radius: 50% 50% 30% 30%; }
+@keyframes flicker { 0% { transform: scaleY(1) scaleX(0.9); opacity: 0.8; } 100% { transform: scaleY(1.15) scaleX(1); opacity: 1; } }
+.preloader-text { font-family: var(--font-serif); font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--smoke); margin-top: 24px; }
+
+/* Scroll Indicator */
+#scroll-indicator { position: fixed; left: 32px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.6s; }
+#scroll-indicator.visible { opacity: 1; }
+.scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--accent)); }
+.scroll-label { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--smoke); writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--font-serif); }
+
+/* Navbar */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s, padding 0.4s; }
+nav.scrolled { background: rgba(28,16,8,0.92); backdrop-filter: blur(12px); padding: 16px 60px; }
+.nav-logo { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--ivory); }
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 40px; list-style: none; }
+.nav-links a { font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--smoke); transition: color 0.3s; }
+.nav-links a:hover { color: var(--accent); }
+.nav-cta { padding: 10px 28px; border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; transition: background 0.3s, color 0.3s; }
+.nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+/* Hero — Type C Diagonal Split */
+.hero { display: flex; width: 100%; height: 100vh; overflow: hidden; }
+.hero-left {
+  width: 48%; background: var(--bg); display: flex; align-items: center;
+  padding: 0 60px; z-index: 2;
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+}
+.hero-right { flex: 1; position: relative; }
+.hero-img {
+  position: absolute; inset: 0;
+  background-image: url('images/img-1.webp');
+  background-size: cover; background-position: center;
+  filter: brightness(0.8);
+}
+.hero-img-overlay { position: absolute; inset: 0; background: linear-gradient(270deg, transparent 50%, rgba(28,16,8,0.6) 100%); }
+.hero-content { max-width: 520px; }
+.hero-eyebrow { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: block; }
+.hero-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 700; line-height: 1.0; color: var(--ivory); margin-bottom: 24px; letter-spacing: 0.03em; }
+.hero-divider { width: 48px; height: 2px; background: var(--accent); margin-bottom: 24px; }
+.hero-sub { font-family: var(--font-sans); font-size: 1rem; line-height: 1.75; color: var(--smoke); margin-bottom: 40px; font-style: italic; max-width: 380px; }
+.hero-ctas { display: flex; gap: 16px; align-items: center; }
+.btn-primary { display: inline-block; padding: 14px 40px; background: var(--accent); color: var(--ivory); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; transition: background 0.3s; }
+.btn-primary:hover { background: var(--accent-light); }
+.btn-outline { display: inline-block; padding: 14px 40px; border: 1px solid rgba(240,228,220,0.25); color: var(--ivory); font-family: var(--font-serif); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; transition: border-color 0.3s, color 0.3s; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Stats Strip */
+.stats-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 60px 80px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; max-width: 1200px; margin: 0 auto; }
+.stat-item { text-align: center; }
+.stat-num { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--accent); display: block; }
+.stat-label { font-family: var(--font-serif); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); margin-top: 10px; display: block; }
+
+/* Section commons */
+.section-label { font-family: var(--font-serif); font-size: 0.62rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: block; }
+.section-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 600; color: var(--ivory); margin-bottom: 60px; line-height: 1.15; }
+
+/* Philosophy */
+.philosophy { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+.phil-card { padding: 48px 36px; background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--accent); }
+.phil-card h3 { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--ivory); margin-bottom: 16px; }
+.phil-card p { font-family: var(--font-sans); font-size: 0.93rem; line-height: 1.8; color: var(--smoke); }
+
+/* Programs Grid */
+.programs { padding: 0 80px 120px; max-width: 1300px; margin: 0 auto; }
+.programs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; overflow: visible; }
+.program-card { background: var(--surface); border: 1px solid var(--border); overflow: hidden; transition: transform 0.4s, box-shadow 0.4s; }
+.program-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.program-card-img { height: 280px; overflow: hidden; }
+.program-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+.program-card:hover .program-card-img img { transform: scale(1.05); }
+.program-card-body { padding: 40px; }
+.program-tag { font-family: var(--font-serif); font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: block; }
+.program-card h3 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--ivory); margin-bottom: 12px; }
+.program-card p { font-family: var(--font-sans); font-size: 0.92rem; line-height: 1.8; color: var(--smoke); margin-bottom: 24px; }
+.program-meta { display: flex; gap: 16px; font-family: var(--font-serif); font-size: 0.72rem; color: var(--muted); padding-top: 20px; border-top: 1px solid var(--border); }
+
+/* Master */
+.master { padding: 120px 80px; background: var(--surface); }
+.master-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.master-img { position: relative; }
+.master-img img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+.master-img-accent { position: absolute; bottom: -20px; right: -20px; width: 55%; aspect-ratio: 1; border: 1px solid var(--accent); z-index: -1; }
+.master-body { padding-right: 40px; }
+.master-name { font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; color: var(--ivory); margin-bottom: 8px; }
+.master-role { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; display: block; }
+.master-bio { font-family: var(--font-sans); font-size: 0.97rem; line-height: 1.9; color: var(--smoke); margin-bottom: 32px; }
+.master-credentials { display: flex; flex-direction: column; gap: 12px; }
+.credential { display: flex; gap: 16px; align-items: flex-start; }
+.credential-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-top: 8px; flex-shrink: 0; }
+.credential p { font-family: var(--font-sans); font-size: 0.85rem; color: var(--smoke); line-height: 1.6; }
+
+/* Curriculum */
+.curriculum { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.step { display: grid; grid-template-columns: 80px 1fr; gap: 40px; padding: 40px 0; border-top: 1px solid var(--border); }
+.step:last-child { border-bottom: 1px solid var(--border); }
+.step-num { font-family: var(--font-serif); font-size: 3rem; font-weight: 400; color: var(--muted); line-height: 1; }
+.step-body h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; color: var(--ivory); margin-bottom: 12px; }
+.step-body p { font-family: var(--font-sans); font-size: 0.9rem; line-height: 1.8; color: var(--smoke); }
+.step-duration { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-top: 12px; display: block; }
+
+/* History */
+.history { padding: 120px 80px; background: var(--surface); }
+.history-inner { max-width: 1200px; margin: 0 auto; }
+.timeline-item { display: grid; grid-template-columns: 120px 1fr; gap: 48px; padding: 32px 0; border-top: 1px solid var(--border); }
+.timeline-year { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: var(--accent); }
+.timeline-content h3 { font-family: var(--font-serif); font-size: 1.05rem; color: var(--ivory); margin-bottom: 8px; }
+.timeline-content p { font-family: var(--font-sans); font-size: 0.87rem; line-height: 1.7; color: var(--smoke); }
+
+/* Testimonials */
+.testimonials { padding: 120px 80px; max-width: 1300px; margin: 0 auto; }
+.swiper-slide-content { padding: 48px; background: var(--surface); border: 1px solid var(--border); }
+.testimonial-stars { color: var(--accent); margin-bottom: 24px; }
+.testimonial-text { font-family: var(--font-sans); font-size: 1.1rem; line-height: 1.8; color: var(--ivory); font-style: italic; margin-bottom: 32px; }
+.testimonial-author { display: flex; align-items: center; gap: 16px; }
+.author-avatar { width: 48px; height: 48px; background: var(--surface2); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); color: var(--accent); }
+.author-info h4 { font-family: var(--font-serif); font-size: 0.88rem; font-weight: 600; color: var(--ivory); }
+.author-info span { font-family: var(--font-sans); font-size: 0.78rem; color: var(--smoke); }
+.swiper-pagination-bullet { background: var(--muted) !important; }
+.swiper-pagination-bullet-active { background: var(--accent) !important; }
+
+/* Enrollment */
+.enrollment { padding: 120px 80px; background: var(--surface); }
+.enrollment-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+.enrollment form { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-family: var(--font-serif); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--smoke); }
+.form-group input, .form-group select, .form-group textarea { background: var(--bg); border: 1px solid var(--border); color: var(--ivory); padding: 14px 18px; font-family: var(--font-sans); font-size: 0.92rem; outline: none; transition: border-color 0.3s; width: 100%; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+.form-group select option { background: var(--bg); }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-submit { grid-column: 1 / -1; }
+.form-submit button { width: 100%; padding: 18px; background: var(--accent); color: var(--ivory); border: none; font-family: var(--font-serif); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; font-weight: 600; transition: background 0.3s; }
+.form-submit button:hover { background: var(--accent-light); }
+
+/* Footer */
+footer { background: var(--bg); border-top: 1px solid var(--border); padding: 80px 80px 40px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+.footer-brand p { font-family: var(--font-sans); font-size: 0.88rem; line-height: 1.7; color: var(--smoke); max-width: 280px; margin-top: 16px; }
+.footer-col h4 { font-family: var(--font-serif); font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col ul a { font-family: var(--font-sans); font-size: 0.88rem; color: var(--smoke); transition: color 0.3s; }
+.footer-col ul a:hover { color: var(--accent); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 32px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-family: var(--font-sans); font-size: 0.78rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-flame"></div>
+  <p class="preloader-text">Ignis Glass School</p>
+</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator">
+  <div class="scroll-line"></div>
+  <span class="scroll-label">Scroll</span>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo"><span>Ignis</span> Glass School</a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="collection.html">Programs</a></li>
+    <li><a href="process.html">Method</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Apply</a>
+</nav>
+
+<!-- Hero — Type C Diagonal Split -->
+<section class="hero" id="hero">
+  <div class="hero-left">
+    <div class="hero-content">
+      <span class="hero-eyebrow">Founded 1992 · Murano Tradition</span>
+      <h1 class="hero-title">Ignis<br>Glass<br>School</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-sub">Fire Transforms. Art Endures. Master the disciplines of hot glass, lampwork and architectural glass from the world's most demanding furnace artists.</p>
+      <div class="hero-ctas">
+        <a href="collection.html" class="btn-primary">Explore Programs</a>
+        <a href="about.html" class="btn-outline">Our Story</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-img"></div>
+    <div class="hero-img-overlay"></div>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section class="stats-strip">
+  <div class="stats-grid">
+    <div class="stat-item reveal-organic">
+      <span class="stat-num">34</span>
+      <span class="stat-label">Years of Fire</span>
+    </div>
+    <div class="stat-item reveal-organic">
+      <span class="stat-num">12</span>
+      <span class="stat-label">Gas-fired Furnaces</span>
+    </div>
+    <div class="stat-item reveal-organic">
+      <span class="stat-num">1,800+</span>
+      <span class="stat-label">Artists Trained</span>
+    </div>
+    <div class="stat-item reveal-organic">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Glass Disciplines</span>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy">
+  <span class="section-label reveal-organic">Our Foundations</span>
+  <h2 class="section-title reveal-organic">Glass as Discipline,<br>Fire as Teacher</h2>
+  <div class="philosophy-grid">
+    <div class="phil-card reveal-organic">
+      <h3>The Gather & the Breath</h3>
+      <p>Hot glass is gathered from the furnace at 1,100°C and shaped by breath, gravity and gravity alone. No moulds, no guides — only the intelligence of the glassblower working in real time with a material that never stays still.</p>
+    </div>
+    <div class="phil-card reveal-organic">
+      <h3>Heat Control as Mastery</h3>
+      <p>Understanding heat — where it lives in the glass, how it moves, how long you have before the material stops responding — is the core skill of every glass discipline. All technique flows from this fundamental knowledge.</p>
+    </div>
+    <div class="phil-card reveal-organic">
+      <h3>Patience in a Hot Shop</h3>
+      <p>A hot glass studio is no place for impatience. The material dictates its own rhythm. We cultivate a quality of attention in our students that applies far beyond the hot shop — a capacity to work with material truth rather than against it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Programs Grid -->
+<section class="programs">
+  <div class="section-header">
+    <span class="section-label reveal-organic">Disciplines</span>
+    <h2 class="section-title reveal-organic">Four Paths<br>through Glass</h2>
+  </div>
+  <div class="programs-grid">
+    <div class="program-card reveal-organic">
+      <div class="program-card-img">
+        <img src="images/img-1.webp" alt="Hot Glass Blowing">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Hot Shop</span>
+        <h3>Glass Blowing Intensive</h3>
+        <p>The fundamental discipline: gather, blow, shape. Students learn to work at the furnace and glory hole, developing the physical intelligence and breath control required to shape molten glass into vessel and sculptural form.</p>
+        <div class="program-meta">
+          <span>8 Weeks</span>
+          <span>·</span>
+          <span>All Levels</span>
+          <span>·</span>
+          <span>12 students max</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-organic">
+      <div class="program-card-img">
+        <img src="images/img-2.webp" alt="Lampwork Studio">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Flame Work</span>
+        <h3>Lampworking Studio</h3>
+        <p>The intimate counterpart to hot shop work: borosilicate rod and tube melted in an oxygen-propane torch, worked with precision at the scale of a jewellery workshop. The discipline of glass bead, scientific glass and botanical form.</p>
+        <div class="program-meta">
+          <span>6 Weeks</span>
+          <span>·</span>
+          <span>All Levels</span>
+          <span>·</span>
+          <span>Individual pace</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-organic">
+      <div class="program-card-img">
+        <img src="images/img-1.webp" alt="Kiln Fusing">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Kiln Work</span>
+        <h3>Kiln Fusing &amp; Slumping</h3>
+        <p>Flat glass composition, layer fusion and mould-formed slumping. Students learn to design for the kiln — understanding compatibility, COE, kiln schedule and the behaviour of colour under heat — producing architectural and decorative glass works.</p>
+        <div class="program-meta">
+          <span>10 Weeks</span>
+          <span>·</span>
+          <span>Beginner friendly</span>
+          <span>·</span>
+          <span>Project-based</span>
+        </div>
+      </div>
+    </div>
+    <div class="program-card reveal-organic">
+      <div class="program-card-img">
+        <img src="images/img-2.webp" alt="Architectural Glass">
+      </div>
+      <div class="program-card-body">
+        <span class="program-tag">Advanced</span>
+        <h3>Architectural Glass</h3>
+        <p>Stained glass panel design, lead came construction, copper foil work (Tiffany method) and architectural specification. For students working toward gallery installation, commission work or the restoration of historic glass.</p>
+        <div class="program-meta">
+          <span>12 Weeks</span>
+          <span>·</span>
+          <span>Prior glass exp.</span>
+          <span>·</span>
+          <span>8 students max</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Master Section -->
+<section class="master">
+  <div class="master-inner">
+    <div class="master-img reveal-organic">
+      <img src="images/img-1.webp" alt="Marco Veltri — Master Glass Artist">
+      <div class="master-img-accent"></div>
+    </div>
+    <div class="master-body reveal-organic">
+      <h2 class="master-name">Marco Veltri</h2>
+      <span class="master-role">Master Glassblower & Founding Director</span>
+      <p class="master-bio">Marco Veltri trained for eleven years on the island of Murano under Maestro Lorenzo Ferro, one of the last living masters of the Venetian cane and murrine traditions. He left Murano in 1991 to establish a school that would make these techniques accessible beyond the closed guild system — one that would teach the full physics of glass, not merely its surface secrets.</p>
+      <div class="master-credentials">
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Trained under Maestro Lorenzo Ferro, Murano, Venezia — 1980–1991</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Member of the Associazione Maestri Vetrai Muranesi</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>Work held in the collections of the Corning Museum of Glass and the V&A London</p>
+        </div>
+        <div class="credential">
+          <div class="credential-dot"></div>
+          <p>UNESCO Craft Ambassador for glass arts, 2019–present</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Curriculum -->
+<section class="curriculum">
+  <span class="section-label reveal-organic">The Glass Path</span>
+  <h2 class="section-title reveal-organic">How We Teach<br>the Hot Shop</h2>
+  <div>
+    <div class="step reveal-organic">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Safety & the Language of Heat</h3>
+        <p>The hot shop is a demanding environment. All students begin with an intensive safety orientation, learning to move with awareness, read the temperature of glass by colour and establish the habits that keep a furnace studio incident-free.</p>
+        <span class="step-duration">Days 1–3</span>
+      </div>
+    </div>
+    <div class="step reveal-organic">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>The Gather: First Contact with Molten Glass</h3>
+        <p>Students make their first gathers from the furnace, learning to control the blowpipe, find the centre of gravity and develop the initial physical intelligence of glassblowing — what it feels like when the glass is responding and when it is not.</p>
+        <span class="step-duration">Week 1</span>
+      </div>
+    </div>
+    <div class="step reveal-organic">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>Form: Cylinder, Sphere & Vessel</h3>
+        <p>The foundational forms of blown glass — cylinder, sphere, and the open vessel — are practised extensively before any decorative work begins. Consistent symmetry is the measure of technical readiness. We do not rush this stage.</p>
+        <span class="step-duration">Weeks 2–4</span>
+      </div>
+    </div>
+    <div class="step reveal-organic">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>Colour: Frit, Cane & Murrine</h3>
+        <p>Colour is applied to molten glass through coloured frit, pulled cane and prepared murrine. Students learn to add, control and design with colour in the hot shop environment — a skill that takes months to develop and years to master.</p>
+        <span class="step-duration">Weeks 5–7</span>
+      </div>
+    </div>
+    <div class="step reveal-organic">
+      <div class="step-num">05</div>
+      <div class="step-body">
+        <h3>Signature Work: Personal Studio Project</h3>
+        <p>The final two weeks are devoted to a personal project — a series of works that demonstrate mastery of form, colour and the student's emerging artistic voice. These pieces are exhibited in the Ignis annual open studio.</p>
+        <span class="step-duration">Weeks 8–9</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- History -->
+<section class="history">
+  <div class="history-inner">
+    <span class="section-label reveal-organic">Our Timeline</span>
+    <h2 class="section-title reveal-organic">Thirty Years<br>at the Furnace</h2>
+    <div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">1992</div>
+        <div class="timeline-content">
+          <h3>Founded in Prague</h3>
+          <p>Marco Veltri establishes Ignis Glass School in a converted Baroque factory near the Vltava river, with three furnaces and a founding class of eight glassblowers drawn from across Eastern Europe.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">2000</div>
+        <div class="timeline-content">
+          <h3>Lampworking Studio Opens</h3>
+          <p>A dedicated lampworking studio is established alongside the hot shop — one of the first European institutions to offer both disciplines under the same roof with a common materials science curriculum.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">2008</div>
+        <div class="timeline-content">
+          <h3>The New Furnace Hall</h3>
+          <p>A purpose-built furnace hall is constructed, featuring six gas-fired furnaces, three glory holes, an annealing tunnel and a dedicated colour lab — among the finest dedicated glass teaching spaces in Europe.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">2019</div>
+        <div class="timeline-content">
+          <h3>UNESCO Craft Partnership</h3>
+          <p>Ignis Glass School is recognised as a UNESCO Craft Partnership institution, joining a global network of schools committed to the preservation and transmission of traditional craft knowledge.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal-organic">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-content">
+          <h3>The Corning Exchange Programme</h3>
+          <p>A formal annual exchange with the Corning Museum of Glass (New York) brings two Ignis faculty to Corning each summer and two Corning instructors to Prague — the first European-American institutional glass exchange of its kind.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+  <span class="section-label reveal-organic">Student Voices</span>
+  <h2 class="section-title reveal-organic">What Our Students Say</h2>
+  <div class="swiper testimonials-swiper reveal-organic">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"Marco's teaching has a quality I cannot fully explain — he shows you something once, and it is as though your hands already knew it. The Ignis programme transformed not just my glass work but my entire relationship to making."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">E</div>
+            <div class="author-info"><h4>Eva Horváth</h4><span>Hot Glass Graduate, Budapest</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"I came to Ignis as a complete beginner and left eight weeks later with a body of work I am proud to exhibit. The small cohort size means you receive genuine individual attention throughout the programme."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">T</div>
+            <div class="author-info"><h4>Thomas Beaumont</h4><span>Glassblowing Student, London</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="swiper-slide-content">
+          <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+          <p class="testimonial-text">"The Architectural Glass programme gave me the technical foundation to begin taking commissions. The combination of historic technique and contemporary design thinking is exactly what working glass artists need."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">N</div>
+            <div class="author-info"><h4>Nadia Prentice</h4><span>Architectural Glass Graduate, Cape Town</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination" style="margin-top: 32px; position: relative; bottom: auto;"></div>
+  </div>
+</section>
+
+<!-- Enrollment Form -->
+<section class="enrollment">
+  <div class="enrollment-inner">
+    <span class="section-label reveal-organic" style="display:block; text-align:center;">Step into the Hot Shop</span>
+    <h2 class="section-title reveal-organic" style="text-align:center;">Apply to Ignis</h2>
+    <p style="font-family:var(--font-sans); font-size:0.95rem; color:var(--smoke); line-height:1.7; text-align:center;" class="reveal-organic">Applications for all programmes are accepted year-round. Hot Glass and Lampwork cohorts begin monthly. Kiln and Architectural Glass programmes begin quarterly.</p>
+    <form class="reveal-organic">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" placeholder="Your first name">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" placeholder="Your last name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>Country</label>
+        <input type="text" placeholder="Your country">
+      </div>
+      <div class="form-group full">
+        <label>Programme Interest</label>
+        <select>
+          <option>Glass Blowing Intensive</option>
+          <option>Lampworking Studio</option>
+          <option>Kiln Fusing & Slumping</option>
+          <option>Architectural Glass</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Glass Experience & Artistic Background</label>
+        <textarea placeholder="Describe any previous glass or craft experience, and tell us what draws you to glass as a medium..."></textarea>
+      </div>
+      <div class="form-submit">
+        <button type="submit">Submit Application</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="nav-logo"><span style="color:var(--accent)">Ignis</span> Glass School</span>
+        <p>A European glass arts school rooted in the Murano tradition. Teaching hot glass, lampwork, fusing and architectural glass to artists who work with fire.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="collection.html">Programs</a></li>
+          <li><a href="process.html">Method</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Disciplines</h4>
+        <ul>
+          <li><a href="collection.html">Glass Blowing</a></li>
+          <li><a href="collection.html">Lampworking</a></li>
+          <li><a href="collection.html">Kiln Fusing</a></li>
+          <li><a href="collection.html">Architectural Glass</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:ohni@ignisglass.cz">ohni@ignisglass.cz</a></li>
+          <li><a href="#">Holešovice, Praha 7</a></li>
+          <li><a href="#">Czech Republic 170 00</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Ignis Glass School. All rights reserved.</p>
+      <p>Fire Transforms. Art Endures.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+window.addEventListener('load', () => {
+  gsap.to('#preloader', { opacity: 0, duration: 1.0, ease: 'power2.out', onComplete: () => {
+    document.getElementById('preloader').style.display = 'none';
+    document.getElementById('scroll-indicator').classList.add('visible');
+  }});
+  gsap.from('.hero-eyebrow', { opacity: 0, y: gsap.utils.random(20,28), duration: 1.2, ease: 'power2.out', delay: 0.5, immediateRender: false });
+  gsap.from('.hero-title', { opacity: 0, x: -40, duration: 1.4, ease: 'power2.out', delay: 0.7, immediateRender: false });
+  gsap.from('.hero-divider', { opacity: 0, scaleX: 0, duration: 1.0, ease: 'power2.out', delay: 1.0, transformOrigin: 'left', immediateRender: false });
+  gsap.from('.hero-sub', { opacity: 0, y: gsap.utils.random(20,28), duration: gsap.utils.random(1.0,1.4), ease: 'power2.out', delay: 1.1, immediateRender: false });
+  gsap.from('.hero-ctas', { opacity: 0, y: 20, duration: 1.0, ease: 'power2.out', delay: 1.3, immediateRender: false });
+});
+
+setTimeout(() => { document.getElementById('scroll-indicator').classList.add('visible'); }, 4000);
+window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
+
+document.querySelectorAll('.reveal-organic').forEach(el => {
+  gsap.from(el, {
+    opacity: 0, y: gsap.utils.random(20,28), duration: gsap.utils.random(1.0,1.4),
+    ease: 'power2.out', immediateRender: false,
+    scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+  });
+});
+
+new Swiper('.testimonials-swiper', {
+  slidesPerView: 1, spaceBetween: 32, loop: true,
+  pagination: { el: '.swiper-pagination', clickable: true },
+  breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+});
+</script>
+</body>
+</html>
